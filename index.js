@@ -1,99 +1,88 @@
-// Mobile Menu Functionality
+// DOM Elements
 const menuToggle = document.getElementById('menuToggle');
 const closeMenu = document.getElementById('closeMenu');
 const mobileMenu = document.getElementById('mobileMenu');
+const navLinks = document.querySelectorAll('.nav-links a, .mobile-menu-links a');
+const sections = document.querySelectorAll('section');
+const header = document.querySelector('.main-nav');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
 
-// Add click event listener for menu toggle
-menuToggle.addEventListener('click', () => {
-    mobileMenu.classList.toggle('active');
-    menuToggle.classList.toggle('active');
-});
+// Theme Toggle Functionality
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
 
-// Add click event listener for close button
-if (closeMenu) {
-    closeMenu.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        menuToggle.classList.remove('active');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+    }
+}
+
+// Initialize Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+setTheme(savedTheme);
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
     });
 }
 
-// Close menu when clicking outside
-window.addEventListener('click', (event) => {
-    if (!menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+// Mobile Menu Functionality
+function toggleMenu() {
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+}
+
+if (menuToggle) menuToggle.addEventListener('click', toggleMenu);
+if (closeMenu) closeMenu.addEventListener('click', toggleMenu);
+
+// Close menu when clicking a link
+mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
         mobileMenu.classList.remove('active');
-        menuToggle.classList.remove('active');
-    }
+        document.body.style.overflow = '';
+    });
 });
 
-// Add touch event handlers for better mobile experience
-document.addEventListener('touchstart', function(e) {
-    const target = e.target;
-    
-    // Add touch feedback to interactive elements
-    if (target.classList.contains('touch-friendly') || target.closest('.nav-links a')) {
-        target.style.backgroundColor = '#ffffff';
-    }
-}, false);
-
-document.addEventListener('touchend', function(e) {
-    const target = e.target;
-    
-    // Reset touch feedback
-    if (target.classList.contains('touch-friendly') || target.closest('.nav-links a')) {
-        target.style.backgroundColor = '';
-    }
-}, false);
-
-// Smooth scroll for navigation links
+// Smooth Scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const targetId = this.getAttribute('href');
+        const target = document.querySelector(targetId);
+
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const headerOffset = 100;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
             });
-            // Close mobile menu if open
-            mobileMenu.classList.remove('active');
-            menuToggle.classList.remove('active');
-            // Update active navigation state
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            this.classList.add('active');
         }
     });
 });
 
-// Add touch-friendly hover effects for mobile devices
-const touchFriendlyElements = document.querySelectorAll('.touch-friendly');
-touchFriendlyElements.forEach(element => {
-    element.addEventListener('touchstart', () => {
-        element.style.opacity = '0.9';
-    });
-    
-    element.addEventListener('touchend', () => {
-        element.style.opacity = '1';
-    });
-});
-
-// Add back button functionality for mobile menu
-window.history.pushState(null, null, window.location.href);
-window.addEventListener('popstate', function() {
-    mobileMenu.classList.remove('active');
-    menuToggle.classList.remove('active');
-});
-
-// Add scroll animation for sections
-const sections = document.querySelectorAll('section');
-const navLinks = document.querySelectorAll('.nav-links a');
-
+// Scroll Spy & Active Link
 window.addEventListener('scroll', () => {
     let current = '';
+    const scrollPosition = window.pageYOffset + 150;
+
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        if (window.pageYOffset >= sectionTop - 100) {
+        const sectionHeight = section.clientHeight;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
             current = section.getAttribute('id');
         }
     });
@@ -104,80 +93,142 @@ window.addEventListener('scroll', () => {
             link.classList.add('active');
         }
     });
-});
 
-// Add smooth scroll for scroll down icon
-document.addEventListener('DOMContentLoaded', () => {
-    const scrollDownLink = document.querySelector('.scroll-down-link');
-    if (scrollDownLink) {
-        scrollDownLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = document.querySelector(scrollDownLink.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
+    // Header Shadow on Scroll
+    if (window.scrollY > 50) {
+        header.style.boxShadow = 'var(--shadow)';
+        header.style.height = '80px';
+    } else {
+        header.style.boxShadow = 'none';
+        header.style.height = 'var(--nav-height)';
     }
 });
 
-// Add parallax effect to scroll down icon
-window.addEventListener('scroll', () => {
-    const scrollDown = document.querySelector('.scroll-down');
-    if (scrollDown) {
-        const scrollPosition = window.pageYOffset;
-        const opacity = 1 - (scrollPosition / 200);
-        scrollDown.style.opacity = opacity > 0 ? opacity : 0;
-    }
+// Scroll Reveal Animation
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+sections.forEach(section => {
+    section.classList.add('fade-in-section');
+    observer.observe(section);
 });
 
-// Create round favicon
-function createRoundFavicon() {
-    const canvas = document.getElementById('faviconCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Draw a white background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw a circle mask
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
-    
-    // Load the profile image
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => {
-        // Draw the image inside the circle
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        // Create a new ImageData object
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        
-        // Create a Blob from the canvas
-        canvas.toBlob((blob) => {
-            // Create a new image
-            const img = new Image();
-            img.src = URL.createObjectURL(blob);
-            
-            // Set as favicon
-            const link = document.querySelector('link[rel*="icon"]') || document.createElement('link');
-            link.type = 'image/x-icon';
-            link.rel = 'shortcut icon';
-            link.href = img.src;
-            document.getElementsByTagName('head')[0].appendChild(link);
-        }, 'image/png');
-    };
-    
-    // Load the profile image
-    img.src = 'https://github.com/thesaifzaman.png';
+// Typing Effect for Hero Title
+const heroTitle = document.querySelector('.profile-info .title');
+if (heroTitle) {
+    const text = heroTitle.textContent;
+    heroTitle.textContent = '';
+    let i = 0;
+
+    function typeWriter() {
+        if (i < text.length) {
+            heroTitle.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 50);
+        }
+    }
+
+    // Start typing after a small delay
+    setTimeout(typeWriter, 500);
 }
 
-// Initialize the round favicon
-document.addEventListener('DOMContentLoaded', () => {
-    createRoundFavicon();
-});
+// Blog Fetching
+const blogContainer = document.getElementById('blog-container');
+
+async function fetchBlogs() {
+    if (!blogContainer) return;
+
+    const mediumUsername = 'info.saifzaman';
+    const hashnodeUsername = 'lazyops';
+    const substackUsername = 'thesaifzaman';
+
+    const mediumUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@${mediumUsername}`;
+    const hashnodeUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://${hashnodeUsername}.hashnode.dev/rss.xml`;
+    // Substack often blocks rss2json, but we'll try. Alternatively, we can just link to it.
+    const substackUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://${substackUsername}.substack.com/feed`;
+
+    let posts = [];
+
+    try {
+        const [mediumRes, hashnodeRes, substackRes] = await Promise.allSettled([
+            fetch(mediumUrl).then(res => res.json()),
+            fetch(hashnodeUrl).then(res => res.json()),
+            fetch(substackUrl).then(res => res.json())
+        ]);
+
+        if (mediumRes.status === 'fulfilled' && mediumRes.value.items) {
+            posts.push(...mediumRes.value.items.map(item => ({
+                title: item.title,
+                link: item.link,
+                date: new Date(item.pubDate),
+                platform: 'Medium',
+                icon: 'fab fa-medium'
+            })));
+        }
+
+        if (hashnodeRes.status === 'fulfilled' && hashnodeRes.value.items) {
+            posts.push(...hashnodeRes.value.items.map(item => ({
+                title: item.title,
+                link: item.link,
+                date: new Date(item.pubDate),
+                platform: 'Hashnode',
+                icon: 'fab fa-hashnode'
+            })));
+        }
+
+        if (substackRes.status === 'fulfilled' && substackRes.value.items) {
+            posts.push(...substackRes.value.items.map(item => ({
+                title: item.title,
+                link: item.link,
+                date: new Date(item.pubDate),
+                platform: 'Substack',
+                icon: 'fas fa-newspaper'
+            })));
+        }
+
+        // Sort by date descending
+        posts.sort((a, b) => b.date - a.date);
+
+        // Take top 6
+        const topPosts = posts.slice(0, 6);
+
+        renderBlogs(topPosts);
+
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        blogContainer.innerHTML = '<div class="blog-card glass"><h3>Unable to load articles at this time.</h3></div>';
+    }
+}
+
+function renderBlogs(posts) {
+    if (posts.length === 0) {
+        blogContainer.innerHTML = '<div class="blog-card glass"><h3>No articles found.</h3></div>';
+        return;
+    }
+
+    blogContainer.innerHTML = posts.map(post => `
+        <div class="blog-card glass">
+            <div class="blog-meta">
+                <span class="blog-platform"><i class="${post.icon}"></i> ${post.platform}</span>
+                <span class="blog-date">${post.date.toLocaleDateString()}</span>
+            </div>
+            <h3>${post.title}</h3>
+            <a href="${post.link}" target="_blank" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
+        </div>
+    `).join('');
+}
+
+// Initialize Blog Fetching
+document.addEventListener('DOMContentLoaded', fetchBlogs);
