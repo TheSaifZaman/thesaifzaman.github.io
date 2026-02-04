@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan Planner - Dashboard</title>
+    <meta name="description" content="Track your spiritual journey during Ramadan with our comprehensive planner">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Navigation injected by JS -->
+    
+    <header class="header">
+        <h1>Ramadan 1447H</h1>
+        <p class="header-subtitle">"O you who have believed, decreed upon you is fasting as it was decreed upon those before you that you may become righteous." — Quran 2:183</p>
+    </header>
+
+    <main class="container page-content">
+        <!-- Welcome Section -->
+        <section class="mb-xl animate-fade-in">
+            <h2 id="greeting">Assalamu Alaikum!</h2>
+            <p class="text-muted" id="date-display"></p>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="mb-xl">
+            <h3 class="mb-md">Your Progress</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="salah-stat">0%</div>
+                    <div class="stat-label">Salah Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="quran-stat">0/30</div>
+                    <div class="stat-label">Juz Read</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dhikr-stat">0</div>
+                    <div class="stat-label">Dhikr Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="day-stat">1</div>
+                    <div class="stat-label">Day of Ramadan</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Navigation Cards -->
+        <section class="mb-xl">
+            <h3 class="mb-md">Quick Access</h3>
+            <div class="grid grid-3">
+                <a href="salah-tracker.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon primary">🕌</div>
+                        <h4 class="card-title">Salah Tracker</h4>
+                    </div>
+                    <p class="text-muted text-small">Track all 11 prayers for 30 days</p>
+                </a>
+                
+                <a href="quran.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon gold">📖</div>
+                        <h4 class="card-title">Quran Tracker</h4>
+                    </div>
+                    <p class="text-muted text-small">Complete your Quran khatam</p>
+                </a>
+                
+                <a href="counter.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon blue">📿</div>
+                        <h4 class="card-title">Dhikr Counter</h4>
+                    </div>
+                    <p class="text-muted text-small">Interactive tasbih counter</p>
+                </a>
+                
+                <a href="dhikr.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon primary">✨</div>
+                        <h4 class="card-title">Dhikr Library</h4>
+                    </div>
+                    <p class="text-muted text-small">Morning, evening & daily adhkar</p>
+                </a>
+                
+                <a href="routine.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon gold">⏰</div>
+                        <h4 class="card-title">Daily Routine</h4>
+                    </div>
+                    <p class="text-muted text-small">Optimal Ramadan schedule</p>
+                </a>
+                
+                <a href="goals.html" class="card" style="text-decoration: none;">
+                    <div class="card-header">
+                        <div class="card-icon blue">🎯</div>
+                        <h4 class="card-title">Goals & Reflections</h4>
+                    </div>
+                    <p class="text-muted text-small">Track your spiritual goals</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Today's Motivation -->
+        <section class="card mb-xl">
+            <h3 class="mb-md">💡 Daily Reminder</h3>
+            <blockquote class="font-arabic text-center" dir="rtl" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                مَنْ صَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ
+            </blockquote>
+            <p class="text-center text-muted" style="font-style: italic;">
+                "Whoever fasts during Ramadan with faith and seeking reward, his previous sins will be forgiven."
+            </p>
+            <p class="text-center text-small text-muted mt-sm">— Sahih Al-Bukhari</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Ramadan Planner • Dedicated to Spiritual Growth</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update greeting
+            document.getElementById('greeting').textContent = DateUtils.getGreeting() + '!';
+            document.getElementById('date-display').textContent = DateUtils.formatDate(new Date());
+            
+            // Update stats
+            const salahProgress = SalahTracker.getTotalProgress();
+            document.getElementById('salah-stat').textContent = salahProgress.percentage + '%';
+            
+            const quranProgress = QuranTracker.getProgress();
+            document.getElementById('quran-stat').textContent = quranProgress.completed + '/30';
+            
+            const dhikrToday = DhikrCounter.getTodayTotal();
+            document.getElementById('dhikr-stat').textContent = dhikrToday;
+            
+            document.getElementById('day-stat').textContent = DateUtils.getRamadanDay();
+        });
+    </script>
+</body>
+</html>

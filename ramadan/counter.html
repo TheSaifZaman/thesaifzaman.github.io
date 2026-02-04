@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhikr Counter - Ramadan Planner</title>
+    <meta name="description" content="Interactive digital tasbih counter for your daily dhikr">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .counter-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .dhikr-display {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            min-height: 80px;
+        }
+
+        .counter-display {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin: 1rem 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .target-display {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .counter-btn {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--primary), var(--primary-light));
+            color: white;
+            font-size: 4rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 40px rgba(6, 78, 59, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .counter-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(6, 78, 59, 0.4);
+        }
+
+        .counter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .counter-btn.complete {
+            background: linear-gradient(145deg, var(--success), #34d399);
+            animation: pulse 0.5s ease;
+        }
+
+        .counter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .dhikr-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .preset-btn {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: var(--surface-hover);
+        }
+
+        .preset-btn.active {
+            border-color: var(--primary);
+            background: var(--success-light);
+        }
+
+        .preset-arabic {
+            font-family: 'Amiri', serif;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .preset-transliteration {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .preset-translation {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation injected by JS -->
+
+    <header class="header">
+        <h1>📿 Dhikr Counter</h1>
+        <p class="header-subtitle">Tap the circle to count. Your progress is saved automatically.</p>
+    </header>
+
+    <main class="container page-content">
+        <!-- Counter Section -->
+        <section class="card counter-section mb-xl">
+            <div class="dhikr-display" id="current-dhikr-arabic" dir="rtl">سُبْحَانَ اللهِ</div>
+            <div id="current-dhikr-name" class="text-muted mb-md">SubhanAllah</div>
+
+            <div class="counter-display" id="counter-value">0</div>
+            <div class="target-display">Target: <span id="target-value">33</span></div>
+
+            <button class="counter-btn" id="counter-btn" onclick="incrementCounter()">
+                👆
+            </button>
+
+            <div class="counter-controls">
+                <button class="btn btn-secondary" onclick="resetCounter()">Reset</button>
+                <button class="btn btn-primary" onclick="saveAndReset()">Save & New</button>
+            </div>
+        </section>
+
+        <!-- Target Setting -->
+        <section class="card mb-xl">
+            <h3 class="mb-md">Set Target</h3>
+            <div class="flex gap-sm flex-wrap">
+                <button class="btn btn-secondary" onclick="setTarget(33)">33</button>
+                <button class="btn btn-secondary" onclick="setTarget(99)">99</button>
+                <button class="btn btn-secondary" onclick="setTarget(100)">100</button>
+                <button class="btn btn-secondary" onclick="setTarget(500)">500</button>
+                <button class="btn btn-secondary" onclick="setTarget(1000)">1000</button>
+                <input type="number" id="custom-target" placeholder="Custom" style="width: 100px;"
+                    onchange="setTarget(this.value)">
+            </div>
+        </section>
+
+        <!-- Dhikr Presets -->
+        <section class="card mb-xl">
+            <h3 class="mb-md">Select Dhikr</h3>
+            <div class="dhikr-presets" id="presets-grid">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- Today's Stats -->
+        <section class="mb-xl">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="today-total">0</div>
+                    <div class="stat-label">Today's Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="sessions-count">0</div>
+                    <div class="stat-label">Sessions Today</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History -->
+        <section class="card">
+            <div class="flex flex-between mb-md">
+                <h3>Recent Sessions</h3>
+                <button class="btn btn-ghost btn-sm" onclick="clearHistory()">Clear</button>
+            </div>
+            <div id="history-list">
+                <p class="text-muted text-center">No sessions yet. Start counting!</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Ramadan Planner • Dedicated to Spiritual Growth</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        const DHIKR_PRESETS = [
+            { id: 'subhanallah', arabic: 'سُبْحَانَ اللهِ', name: 'SubhanAllah', translation: 'Glory be to Allah' },
+            { id: 'alhamdulillah', arabic: 'الْحَمْدُ لِلَّهِ', name: 'Alhamdulillah', translation: 'All praise is due to Allah' },
+            { id: 'allahuakbar', arabic: 'اللهُ أَكْبَرُ', name: 'Allahu Akbar', translation: 'Allah is the Greatest' },
+            { id: 'lailaha', arabic: 'لَا إِلَٰهَ إِلَّا اللهُ', name: 'La ilaha illAllah', translation: 'There is no god but Allah' },
+            { id: 'astaghfirullah', arabic: 'أَسْتَغْفِرُ اللهَ', name: 'Astaghfirullah', translation: 'I seek forgiveness from Allah' },
+            { id: 'salawat', arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ', name: 'Salawat', translation: 'O Allah, send blessings upon Muhammad' },
+            { id: 'lahawla', arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ', name: 'La hawla wa la quwwata', translation: 'There is no power except with Allah' },
+            { id: 'subhanallahwabihamdihi', arabic: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ', name: 'SubhanAllahi wa bihamdihi', translation: 'Glory and praise be to Allah' }
+        ];
+
+        let currentPreset = DHIKR_PRESETS[0];
+
+        function renderPresets() {
+            const grid = document.getElementById('presets-grid');
+            grid.innerHTML = DHIKR_PRESETS.map(preset => `
+                <button class="preset-btn ${currentPreset.id === preset.id ? 'active' : ''}" 
+                        onclick="selectPreset('${preset.id}')">
+                    <div class="preset-arabic" dir="rtl">${preset.arabic}</div>
+                    <div class="preset-transliteration">${preset.name}</div>
+                    <div class="preset-translation">${preset.translation}</div>
+                </button>
+            `).join('');
+        }
+
+        function selectPreset(id) {
+            currentPreset = DHIKR_PRESETS.find(p => p.id === id);
+            DhikrCounter.setDhikr(currentPreset.name);
+            updateDisplay();
+            renderPresets();
+        }
+
+        function updateDisplay() {
+            const data = DhikrCounter.getData();
+            document.getElementById('counter-value').textContent = data.current;
+            document.getElementById('target-value').textContent = data.target;
+            document.getElementById('current-dhikr-arabic').textContent = currentPreset.arabic;
+            document.getElementById('current-dhikr-name').textContent = currentPreset.name;
+
+            const btn = document.getElementById('counter-btn');
+            if (data.current >= data.target) {
+                btn.classList.add('complete');
+                btn.textContent = '✓';
+            } else {
+                btn.classList.remove('complete');
+                btn.textContent = '👆';
+            }
+
+            updateStats();
+        }
+
+        function incrementCounter() {
+            DhikrCounter.increment();
+            updateDisplay();
+
+            // Vibration feedback on mobile
+            if (navigator.vibrate) {
+                navigator.vibrate(20);
+            }
+        }
+
+        function resetCounter() {
+            DhikrCounter.reset();
+            updateDisplay();
+        }
+
+        function saveAndReset() {
+            const data = DhikrCounter.getData();
+            if (data.current > 0) {
+                DhikrCounter.saveToHistory();
+                DhikrCounter.reset();
+                updateDisplay();
+                renderHistory();
+            }
+        }
+
+        function setTarget(target) {
+            target = parseInt(target);
+            if (target > 0) {
+                DhikrCounter.setTarget(target);
+                updateDisplay();
+            }
+        }
+
+        function updateStats() {
+            const history = DhikrCounter.getHistory();
+            const today = new Date().toDateString();
+            const todaySessions = history.filter(h => new Date(h.date).toDateString() === today);
+
+            const todayTotal = todaySessions.reduce((sum, h) => sum + h.count, 0) + DhikrCounter.getData().current;
+            document.getElementById('today-total').textContent = todayTotal;
+            document.getElementById('sessions-count').textContent = todaySessions.length;
+        }
+
+        function renderHistory() {
+            const history = DhikrCounter.getHistory().slice(-10).reverse();
+            const container = document.getElementById('history-list');
+
+            if (history.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No sessions yet. Start counting!</p>';
+                return;
+            }
+
+            container.innerHTML = history.map(h => `
+                <div class="history-item">
+                    <div>
+                        <strong>${h.dhikr}</strong>
+                        <div class="text-small text-muted">${new Date(h.date).toLocaleString()}</div>
+                    </div>
+                    <div class="text-primary" style="font-weight: 600;">${h.count}/${h.target}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all dhikr history?')) {
+                Storage.remove(STORAGE_KEYS.DHIKR_HISTORY);
+                renderHistory();
+                updateStats();
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function (e) {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                incrementCounter();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = DhikrCounter.getData();
+            const preset = DHIKR_PRESETS.find(p => p.name === data.dhikr);
+            if (preset) currentPreset = preset;
+
+            renderPresets();
+            updateDisplay();
+            renderHistory();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goals & Reflections - Ramadan Planner</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .goal-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .goal-item:last-child {
+            border-bottom: none;
+        }
+
+        .goal-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .goal-checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .goal-text {
+            flex: 1;
+        }
+
+        .goal-text.completed {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .reflection-entry {
+            background: var(--surface-hover);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+        }
+
+        .reflection-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>🎯 Goals & Reflections</h1>
+        <p class="header-subtitle">Set intentions and reflect on your spiritual journey.</p>
+    </header>
+
+    <main class="container page-content">
+        <!-- Ramadan Goals -->
+        <section class="card mb-xl">
+            <h3 class="mb-md">My Ramadan Goals</h3>
+            <div class="flex gap-sm mb-md">
+                <input type="text" id="new-goal" placeholder="Add a new goal..." style="flex: 1;">
+                <button class="btn btn-primary" onclick="addGoal()">Add</button>
+            </div>
+            <div id="goals-list"></div>
+        </section>
+
+        <!-- Daily Reflection -->
+        <section class="card mb-xl">
+            <h3 class="mb-md">Daily Reflection</h3>
+            <p class="text-muted text-small mb-md">Day <span id="current-day">1</span> of Ramadan</p>
+            <textarea id="reflection-input"
+                placeholder="What are you grateful for today? What did you learn? How can you improve tomorrow?"
+                rows="4"></textarea>
+            <button class="btn btn-primary mt-md" onclick="saveReflection()">Save Reflection</button>
+        </section>
+
+        <!-- Past Reflections -->
+        <section class="card mb-xl">
+            <div class="flex flex-between mb-md">
+                <h3>Past Reflections</h3>
+                <button class="btn btn-ghost btn-sm" onclick="clearReflections()">Clear All</button>
+            </div>
+            <div id="reflections-list">
+                <p class="text-muted">No reflections yet.</p>
+            </div>
+        </section>
+
+        <!-- Quick Checklist -->
+        <section class="card">
+            <h3 class="mb-md">Daily Checklist</h3>
+            <div id="daily-checklist">
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Prayed all 5 Fard prayers</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Read Quran today</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Made morning/evening adhkar</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Prayed Tarawih</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Made istighfar 100 times</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Gave charity or helped someone</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="goal-text">Avoided gossip and negativity</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Ramadan Planner</p>
+    </footer>
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        function getGoals() { return Storage.get(STORAGE_KEYS.GOALS, []); }
+        function saveGoals(goals) { Storage.set(STORAGE_KEYS.GOALS, goals); }
+
+        function renderGoals() {
+            const goals = getGoals();
+            const list = document.getElementById('goals-list');
+            if (!goals.length) { list.innerHTML = '<p class="text-muted">No goals yet. Add your first goal!</p>'; return; }
+            list.innerHTML = goals.map((g, i) => `
+                <div class="goal-item">
+                    <div class="goal-checkbox ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div>
+                    <div class="goal-text ${g.done ? 'completed' : ''}">${g.text}</div>
+                    <button class="btn btn-ghost btn-sm" onclick="deleteGoal(${i})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function addGoal() {
+            const input = document.getElementById('new-goal');
+            if (!input.value.trim()) return;
+            const goals = getGoals();
+            goals.push({ text: input.value.trim(), done: false });
+            saveGoals(goals);
+            input.value = '';
+            renderGoals();
+        }
+
+        function toggleGoal(i) { const goals = getGoals(); goals[i].done = !goals[i].done; saveGoals(goals); renderGoals(); }
+        function deleteGoal(i) { const goals = getGoals(); goals.splice(i, 1); saveGoals(goals); renderGoals(); }
+        function toggleCheck(el) { el.classList.toggle('checked'); el.textContent = el.classList.contains('checked') ? '✓' : ''; }
+
+        function getReflections() { return Storage.get(STORAGE_KEYS.REFLECTIONS, []); }
+        function saveReflection() {
+            const text = document.getElementById('reflection-input').value.trim();
+            if (!text) return;
+            const reflections = getReflections();
+            reflections.unshift({ text, date: new Date().toISOString(), day: DateUtils.getRamadanDay() });
+            Storage.set(STORAGE_KEYS.REFLECTIONS, reflections);
+            document.getElementById('reflection-input').value = '';
+            renderReflections();
+        }
+
+        function renderReflections() {
+            const list = document.getElementById('reflections-list');
+            const reflections = getReflections();
+            if (!reflections.length) { list.innerHTML = '<p class="text-muted">No reflections yet.</p>'; return; }
+            list.innerHTML = reflections.slice(0, 10).map(r => `
+                <div class="reflection-entry">
+                    <div class="reflection-date">Day ${r.day} • ${new Date(r.date).toLocaleDateString()}</div>
+                    <p style="margin: 0;">${r.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function clearReflections() { if (confirm('Clear all reflections?')) { Storage.remove(STORAGE_KEYS.REFLECTIONS); renderReflections(); } }
+
+        document.getElementById('new-goal').addEventListener('keypress', (e) => { if (e.key === 'Enter') addGoal(); });
+        document.addEventListener('DOMContentLoaded', () => { renderGoals(); renderReflections(); document.getElementById('current-day').textContent = DateUtils.getRamadanDay(); });
+    </script>
+</body>
+
+</html>

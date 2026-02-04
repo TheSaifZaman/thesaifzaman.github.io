@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Tracker - Ramadan Planner</title>
+    <meta name="description" content="Track your Quran completion journey during Ramadan">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .progress-ring {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 12;
+        }
+
+        .progress-ring .bg {
+            stroke: var(--border);
+        }
+
+        .progress-ring .progress {
+            stroke: var(--primary);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .juz-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0.5rem;
+        }
+
+        .juz-btn {
+            aspect-ratio: 1;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .juz-btn:hover {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .juz-btn.completed {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .khatam-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .khatam-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .khatam-btn:hover {
+            background: var(--surface-hover);
+        }
+
+        .khatam-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .juz-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation injected by JS -->
+
+    <header class="header">
+        <h1>📖 Quran Tracker</h1>
+        <p class="header-subtitle">Complete your Quran khatam during this blessed month.</p>
+    </header>
+
+    <main class="container page-content">
+        <!-- Progress Circle -->
+        <section class="card mb-xl text-center">
+            <div class="progress-ring" style="position: relative;">
+                <svg width="200" height="200">
+                    <circle class="bg" cx="100" cy="100" r="88"></circle>
+                    <circle class="progress" id="progress-circle" cx="100" cy="100" r="88" stroke-dasharray="553"
+                        stroke-dashoffset="553"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div class="progress-value" id="juz-completed">0</div>
+                    <div class="text-muted">of 30 Juz</div>
+                </div>
+            </div>
+
+            <h3 id="progress-message">Start your journey!</h3>
+            <p class="text-muted" id="pages-estimate">0 pages read</p>
+        </section>
+
+        <!-- Juz Grid -->
+        <section class="card mb-xl">
+            <div class="flex flex-between flex-wrap gap-md mb-lg">
+                <div>
+                    <h3>Juz Progress</h3>
+                    <p class="text-muted text-small">Click to mark as read</p>
+                </div>
+                <div class="flex gap-sm">
+                    <button class="btn btn-secondary btn-sm" onclick="markAllComplete()">Mark All</button>
+                    <button class="btn btn-ghost btn-sm" onclick="clearQuran()">Clear</button>
+                </div>
+            </div>
+
+            <div class="juz-grid" id="juz-grid">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- Khatam Counter -->
+        <section class="card mb-xl text-center">
+            <h3 class="mb-md">Khatam Counter</h3>
+            <p class="text-muted mb-md">Track how many times you've completed the Quran</p>
+
+            <div class="khatam-counter">
+                <button class="khatam-btn" onclick="decrementKhatam()">−</button>
+                <div class="khatam-value" id="khatam-count">0</div>
+                <button class="khatam-btn" onclick="incrementKhatam()">+</button>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="percentage-stat">0%</div>
+                <div class="stat-label">Complete</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="remaining-stat">30</div>
+                <div class="stat-label">Juz Remaining</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="daily-target">1</div>
+                <div class="stat-label">Juz/Day Target</div>
+            </div>
+        </section>
+
+        <!-- Reading Tips -->
+        <section class="card mt-xl">
+            <h3 class="mb-md">💡 Tips for Completing Quran</h3>
+            <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                <li class="mb-sm">Read 1 Juz (20 pages) per day to complete in 30 days</li>
+                <li class="mb-sm">Split into 4 pages after each salah</li>
+                <li class="mb-sm">Read with understanding - use a translation</li>
+                <li class="mb-sm">Listen to recitation during commute or work</li>
+                <li class="mb-sm">Set a specific time each day for Quran</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Ramadan Planner • Dedicated to Spiritual Growth</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        const KHATAM_KEY = 'ramadan-khatam-count';
+
+        function renderJuzGrid() {
+            const grid = document.getElementById('juz-grid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 30; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'juz-btn' + (QuranTracker.isCompleted(i) ? ' completed' : '');
+                btn.textContent = i;
+                btn.title = `Juz ${i}`;
+                btn.onclick = () => toggleJuz(i, btn);
+                grid.appendChild(btn);
+            }
+        }
+
+        function toggleJuz(juz, btn) {
+            const isCompleted = QuranTracker.toggle(juz);
+            btn.classList.toggle('completed', isCompleted);
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = QuranTracker.getProgress();
+
+            // Update circle
+            const circle = document.getElementById('progress-circle');
+            const circumference = 553; // 2 * PI * 88
+            const offset = circumference - (progress.percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Update text
+            document.getElementById('juz-completed').textContent = progress.completed;
+            document.getElementById('percentage-stat').textContent = progress.percentage + '%';
+            document.getElementById('remaining-stat').textContent = 30 - progress.completed;
+            document.getElementById('pages-estimate').textContent = (progress.completed * 20) + ' pages read';
+
+            // Update message
+            const messages = [
+                'Start your journey!',
+                'Great start! Keep going!',
+                'Making progress!',
+                'Quarter done! Amazing!',
+                'Almost halfway there!',
+                'Halfway complete! MashaAllah!',
+                'More than half done!',
+                'Incredible progress!',
+                'Almost there!',
+                'Just a few more!',
+                '🎉 Khatam Complete! MashaAllah!'
+            ];
+            const msgIndex = Math.min(Math.floor(progress.completed / 3), 10);
+            document.getElementById('progress-message').textContent = messages[msgIndex];
+
+            // Calculate daily target
+            const ramadanDay = DateUtils.getRamadanDay();
+            const daysLeft = Math.max(1, 30 - ramadanDay);
+            const juzLeft = 30 - progress.completed;
+            const dailyTarget = Math.ceil(juzLeft / daysLeft);
+            document.getElementById('daily-target').textContent = dailyTarget || '✓';
+        }
+
+        function markAllComplete() {
+            for (let i = 1; i <= 30; i++) {
+                const data = QuranTracker.getData();
+                if (!data[`juz${i}`]) {
+                    QuranTracker.toggle(i);
+                }
+            }
+            renderJuzGrid();
+            updateProgress();
+        }
+
+        function clearQuran() {
+            if (confirm('Clear all Quran progress?')) {
+                QuranTracker.clear();
+                renderJuzGrid();
+                updateProgress();
+            }
+        }
+
+        function getKhatamCount() {
+            return Storage.get(KHATAM_KEY, 0);
+        }
+
+        function setKhatamCount(count) {
+            Storage.set(KHATAM_KEY, Math.max(0, count));
+            document.getElementById('khatam-count').textContent = count;
+        }
+
+        function incrementKhatam() {
+            setKhatamCount(getKhatamCount() + 1);
+        }
+
+        function decrementKhatam() {
+            setKhatamCount(getKhatamCount() - 1);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderJuzGrid();
+            updateProgress();
+            document.getElementById('khatam-count').textContent = getKhatamCount();
+        });
+    </script>
+</body>
+
+</html>

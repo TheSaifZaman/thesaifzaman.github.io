@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day Salah Tracker - Ramadan Planner</title>
+    <meta name="description" content="Track all your daily prayers for the entire month of Ramadan">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .salah-tracker-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .salah-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(30, minmax(35px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            min-width: 800px;
+        }
+
+        .salah-cell {
+            background: var(--surface);
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.7rem;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .salah-cell:hover:not(.header):not(.prayer-name) {
+            background: var(--surface-hover);
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .salah-cell.header {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: default;
+            position: sticky;
+            top: 0;
+        }
+
+        .salah-cell.prayer-name {
+            background: var(--surface-hover);
+            font-weight: 600;
+            cursor: default;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        .salah-cell.corner {
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 3;
+            background: var(--primary-dark);
+        }
+
+        .salah-cell.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .salah-cell.completed::after {
+            content: '✓';
+            font-weight: bold;
+        }
+
+        .salah-cell.fard {
+            border-left: 3px solid var(--success);
+        }
+
+        .salah-cell.sunnah {
+            border-left: 3px solid var(--info);
+        }
+
+        .salah-cell.nafl {
+            border-left: 3px solid var(--warning);
+        }
+
+        .salah-cell.wajib {
+            border-left: 3px solid var(--error);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation injected by JS -->
+
+    <header class="header">
+        <h1>🕌 30-Day Salah Tracker</h1>
+        <p class="header-subtitle">Track all your prayers throughout Ramadan. Click to toggle completion.</p>
+    </header>
+
+    <main class="container page-content">
+        <!-- Progress Overview -->
+        <section class="mb-xl">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-completed">0</div>
+                    <div class="stat-label">Prayers Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-percentage">0%</div>
+                    <div class="stat-label">Overall Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="fard-percentage">0%</div>
+                    <div class="stat-label">Fard Prayers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="current-streak">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls -->
+        <section class="mb-lg flex flex-between flex-wrap gap-md">
+            <div>
+                <h2>Prayer Grid</h2>
+                <p class="text-muted text-small">Click any cell to mark as completed</p>
+            </div>
+            <div class="flex gap-sm">
+                <button class="btn btn-secondary btn-sm" onclick="clearAllSalah()">Clear All</button>
+            </div>
+        </section>
+
+        <!-- Salah Tracker Grid -->
+        <section class="card mb-lg">
+            <div class="salah-tracker-container">
+                <div class="salah-grid" id="salah-grid">
+                    <!-- Grid will be generated by JS -->
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--success);"></div>
+                    <span>Fard (Obligatory)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--info);"></div>
+                    <span>Sunnah Muakkadah</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--error);"></div>
+                    <span>Wajib</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--warning);"></div>
+                    <span>Nafl (Optional)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prayer Details -->
+        <section class="card">
+            <h3 class="mb-md">Prayer Reference</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Prayer</th>
+                            <th>Type</th>
+                            <th>Timing</th>
+                            <th>Rakaat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Fajr</strong></td>
+                            <td>Fard</td>
+                            <td>Before sunrise</td>
+                            <td>2 Sunnah + 2 Fard</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ishraq</strong></td>
+                            <td>Nafl</td>
+                            <td>~15-20 min after sunrise</td>
+                            <td>2 Nafl</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duha</strong></td>
+                            <td>Nafl</td>
+                            <td>Forenoon</td>
+                            <td>2-8 Nafl</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dhuhr</strong></td>
+                            <td>Fard</td>
+                            <td>After zenith</td>
+                            <td>4 Sunnah + 4 Fard + 2 Sunnah</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Asr</strong></td>
+                            <td>Fard</td>
+                            <td>Afternoon</td>
+                            <td>4 Sunnah + 4 Fard</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maghrib</strong></td>
+                            <td>Fard</td>
+                            <td>After sunset</td>
+                            <td>3 Fard + 2 Sunnah</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Isha</strong></td>
+                            <td>Fard</td>
+                            <td>Night</td>
+                            <td>4 Sunnah + 4 Fard + 2 Sunnah</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tarawih</strong></td>
+                            <td>Sunnah</td>
+                            <td>After Isha (Ramadan)</td>
+                            <td>8 or 20 Rakaat</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Witr</strong></td>
+                            <td>Wajib</td>
+                            <td>After Tarawih</td>
+                            <td>1 or 3 Rakaat</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tahajjud</strong></td>
+                            <td>Nafl</td>
+                            <td>Last third of night</td>
+                            <td>2+ Rakaat</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Awwabin</strong></td>
+                            <td>Nafl</td>
+                            <td>After Maghrib</td>
+                            <td>2-6 Rakaat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Ramadan Planner • Dedicated to Spiritual Growth</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        function renderSalahGrid() {
+            const grid = document.getElementById('salah-grid');
+            grid.innerHTML = '';
+
+            // Corner cell
+            const corner = document.createElement('div');
+            corner.className = 'salah-cell header corner';
+            corner.textContent = 'Day →';
+            grid.appendChild(corner);
+
+            // Day headers
+            for (let day = 1; day <= 30; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'salah-cell header';
+                dayCell.textContent = day;
+                grid.appendChild(dayCell);
+            }
+
+            // Prayer rows
+            PRAYERS.forEach(prayer => {
+                // Prayer name cell
+                const nameCell = document.createElement('div');
+                nameCell.className = `salah-cell prayer-name ${prayer.type}`;
+                nameCell.textContent = prayer.name;
+                nameCell.title = `${prayer.name} (${prayer.type})`;
+                grid.appendChild(nameCell);
+
+                // Day cells
+                for (let day = 1; day <= 30; day++) {
+                    const cell = document.createElement('div');
+                    cell.className = `salah-cell ${prayer.type}`;
+                    cell.dataset.day = day;
+                    cell.dataset.prayer = prayer.id;
+
+                    if (SalahTracker.isCompleted(day, prayer.id)) {
+                        cell.classList.add('completed');
+                    }
+
+                    cell.onclick = function () {
+                        const isNowCompleted = SalahTracker.toggle(day, prayer.id);
+                        cell.classList.toggle('completed', isNowCompleted);
+                        updateStats();
+                    };
+
+                    grid.appendChild(cell);
+                }
+            });
+        }
+
+        function updateStats() {
+            const progress = SalahTracker.getTotalProgress();
+            document.getElementById('total-completed').textContent = progress.completed;
+            document.getElementById('total-percentage').textContent = progress.percentage + '%';
+
+            // Calculate fard percentage
+            const data = SalahTracker.getData();
+            const fardPrayers = PRAYERS.filter(p => p.type === 'fard');
+            let fardCompleted = 0;
+            for (let day = 1; day <= 30; day++) {
+                fardPrayers.forEach(prayer => {
+                    if (data[`${day}-${prayer.id}`]) fardCompleted++;
+                });
+            }
+            const fardTotal = 30 * fardPrayers.length;
+            document.getElementById('fard-percentage').textContent = Math.round((fardCompleted / fardTotal) * 100) + '%';
+
+            // Calculate streak
+            let streak = 0;
+            for (let day = 1; day <= 30; day++) {
+                const dayProgress = SalahTracker.getDayProgress(day);
+                if (dayProgress.completed >= 5) { // At least 5 prayers (all fard)
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('current-streak').textContent = streak;
+        }
+
+        function clearAllSalah() {
+            if (confirm('Are you sure you want to clear all salah tracking data? This cannot be undone.')) {
+                SalahTracker.clear();
+                renderSalahGrid();
+                updateStats();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderSalahGrid();
+            updateStats();
+        });
+    </script>
+</body>
+
+</html>
