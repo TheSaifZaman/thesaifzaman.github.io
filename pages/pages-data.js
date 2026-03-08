@@ -11,7 +11,7 @@ var PAGES_DATA = [
     {
         title: "Barakah Planner",
         description: "Daily planner with analytics, Hifz tracking, Prophetic Routines, Ramadan modules, and detailed reports.",
-        href: "../barakah-planner/index.html",
+        href: "https://barakah-planner.vercel.app/",
         icon: "fas fa-calendar-check",
         color: "purple",
         category: "Productivity",
