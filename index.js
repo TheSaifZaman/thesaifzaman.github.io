@@ -12,7 +12,8 @@ const DATA = {
     avatar: "new_avatar.jpg",
     about: [
       "I am a Business-Driven Cloud-Native Software Engineer and Platform Architect with over 5 years of experience building scalable, resilient digital ecosystems. My expertise lies in prioritizing core business objectives and leveraging a \"stackless\" approach to deliver strategically impactful solutions using Go, PHP, Java, and Python.",
-      "Specializing in DevOps Excellence, Cloud Cost Efficiency, and AI-powered systems, I drive the transformation of how teams build, test, and deploy applications. I am deeply committed to bridging technology with strategy, mentoring teams, and fostering a culture of continuous learning to ensure engineering efforts directly translate into business success."
+      "Specializing in DevOps Excellence, Cloud Cost Efficiency, and AI-powered systems, I drive the transformation of how teams build, test, and deploy applications. I am deeply committed to bridging technology with strategy, mentoring teams, and fostering a culture of continuous learning to ensure engineering efforts directly translate into business success.",
+      "By embracing Agentic Development, RAG pipelines, and LLM-driven workflows, I have transformed my engineering output \u2014 automating complex tasks, accelerating code generation, and building intelligent systems that multiply productivity. This AI-first approach makes me a 10x engineer in practice: shipping faster, solving harder problems, and staying ahead in a landscape where the ability to orchestrate AI agents and design effective prompts is the defining competitive edge."
     ],
     social: [
       { name: "LinkedIn", url: "https://linkedin.com/in/thesaifzaman/", icon: "fab fa-linkedin" },
