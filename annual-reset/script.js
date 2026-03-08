@@ -116,7 +116,7 @@
     wb.setAttribute('aria-label', 'Open interactive workbook');
     wb.innerHTML = `
       <div class="day-card-preview">
-        <img src="images/workbook.png" alt="Workbook preview" loading="lazy">
+        <img src="https://lh3.googleusercontent.com/d/1WMXWDhH9Ggx-729Imf3DtGi7r213Xjhh" alt="Workbook preview" loading="lazy">
       </div>
       <div class="day-card-body">
         <div class="day-card-title">Interactive Workbook</div>
