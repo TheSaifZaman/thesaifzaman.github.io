@@ -128,6 +128,25 @@
     `;
     daysGrid.appendChild(wb);
 
+    // Guideline card
+    const guide = document.createElement('a');
+    guide.href = 'guideline.html';
+    guide.className = 'day-card guideline-card';
+    guide.setAttribute('aria-label', 'Planning guideline for Muslim professionals');
+    guide.innerHTML = `
+      <div class="day-card-preview resources-preview">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div class="day-card-body">
+        <div class="day-card-title">Planning Guideline</div>
+        <div class="day-card-meta">Year, month, week & day framework</div>
+      </div>
+      <div class="day-card-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+    `;
+    daysGrid.appendChild(guide);
+
     // Resources card
     const res = document.createElement('a');
     res.href = 'resources.html';
