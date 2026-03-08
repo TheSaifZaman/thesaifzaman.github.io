@@ -7,12 +7,15 @@
 const STORAGE_KEYS = {
     SALAH_TRACKER: 'ramadan-salah-tracker',
     QURAN_JUZ: 'ramadan-quran-juz',
+    QURAN_KHATAM: 'ramadan-quran-khatam',
     DHIKR_COUNTER: 'ramadan-dhikr-counter',
     DHIKR_HISTORY: 'ramadan-dhikr-history',
+    DHIKR_TRACKER: 'ramadan-dhikr-tracker',
     GOALS: 'ramadan-goals',
     REFLECTIONS: 'ramadan-reflections',
     THEME: 'ramadan-theme',
-    SETTINGS: 'ramadan-settings'
+    SETTINGS: 'ramadan-settings',
+    RAMADAN_TRACKER: 'ramadan-daily-tracker'
 };
 
 // === Prayers List ===
@@ -251,6 +254,246 @@ const DateUtils = {
         if (hour < 12) return 'Good Morning';
         if (hour < 17) return 'Good Afternoon';
         return 'Good Evening';
+    }
+};
+
+// === Enhanced Quran Khatam Tracker ===
+const QuranKhatam = {
+    getData() {
+        return Storage.get(STORAGE_KEYS.QURAN_KHATAM, {
+            juz: {},
+            notes: {},
+            readingPlan: [],
+            khatamCount: 0,
+            currentKhatamStart: null
+        });
+    },
+
+    updateJuz(juzNum, data) {
+        const khatamData = this.getData();
+        if (!khatamData.juz[juzNum]) {
+            khatamData.juz[juzNum] = { completed: false, pages: {}, date: null };
+        }
+        Object.assign(khatamData.juz[juzNum], data);
+        Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        return khatamData;
+    },
+
+    toggleJuz(juzNum) {
+        const khatamData = this.getData();
+        if (!khatamData.juz[juzNum]) {
+            khatamData.juz[juzNum] = { completed: false, pages: {}, date: null };
+        }
+        khatamData.juz[juzNum].completed = !khatamData.juz[juzNum].completed;
+        khatamData.juz[juzNum].date = khatamData.juz[juzNum].completed ? new Date().toISOString() : null;
+
+        // Check for khatam completion
+        const allCompleted = Object.values(khatamData.juz).filter(j => j.completed).length;
+        if (allCompleted === 30) {
+            khatamData.khatamCount++;
+            khatamData.currentKhatamStart = null;
+            // Reset for new khatam
+            khatamData.juz = {};
+        }
+
+        Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        return khatamData;
+    },
+
+    updatePages(juzNum, pagesRead) {
+        const khatamData = this.getData();
+        if (!khatamData.juz[juzNum]) {
+            khatamData.juz[juzNum] = { completed: false, pages: {}, date: null };
+        }
+        khatamData.juz[juzNum].pages = pagesRead;
+        Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        return khatamData;
+    },
+
+    addNote(juzNum, note) {
+        const khatamData = this.getData();
+        if (!khatamData.notes[juzNum]) {
+            khatamData.notes[juzNum] = [];
+        }
+        khatamData.notes[juzNum].push({
+            text: note,
+            date: new Date().toISOString(),
+            id: Date.now()
+        });
+        Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        return khatamData;
+    },
+
+    deleteNote(juzNum, noteId) {
+        const khatamData = this.getData();
+        if (khatamData.notes[juzNum]) {
+            khatamData.notes[juzNum] = khatamData.notes[juzNum].filter(n => n.id !== noteId);
+            Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        }
+        return khatamData;
+    },
+
+    setReadingPlan(plan) {
+        const khatamData = this.getData();
+        khatamData.readingPlan = plan;
+        Storage.set(STORAGE_KEYS.QURAN_KHATAM, khatamData);
+        return khatamData;
+    },
+
+    getProgress() {
+        const khatamData = this.getData();
+        const completed = Object.values(khatamData.juz).filter(j => j.completed).length;
+        const totalPages = Object.values(khatamData.juz).reduce((sum, j) => {
+            return sum + Object.keys(j.pages || {}).length;
+        }, 0);
+
+        return {
+            completed,
+            total: 30,
+            percentage: Math.round((completed / 30) * 100),
+            totalPages,
+            khatamCount: khatamData.khatamCount || 0
+        };
+    },
+
+    clear() {
+        return Storage.remove(STORAGE_KEYS.QURAN_KHATAM);
+    }
+};
+
+// === Dhikr Tracker by Time ===
+const DhikrTracker = {
+    getData() {
+        return Storage.get(STORAGE_KEYS.DHIKR_TRACKER, {
+            morning: [],
+            evening: [],
+            beforeSleep: [],
+            afterSleep: [],
+            throughout: []
+        });
+    },
+
+    addDhikr(category, dhikr) {
+        const data = this.getData();
+        const newDhikr = {
+            id: Date.now(),
+            arabic: dhikr.arabic || '',
+            transliteration: dhikr.transliteration || '',
+            translation: dhikr.translation || '',
+            target: dhikr.target || 33,
+            current: 0,
+            createdAt: new Date().toISOString()
+        };
+        data[category].push(newDhikr);
+        Storage.set(STORAGE_KEYS.DHIKR_TRACKER, data);
+        return newDhikr;
+    },
+
+    updateDhikr(category, id, updates) {
+        const data = this.getData();
+        const dhikr = data[category].find(d => d.id === id);
+        if (dhikr) {
+            Object.assign(dhikr, updates);
+            Storage.set(STORAGE_KEYS.DHIKR_TRACKER, data);
+        }
+        return data;
+    },
+
+    deleteDhikr(category, id) {
+        const data = this.getData();
+        data[category] = data[category].filter(d => d.id !== id);
+        Storage.set(STORAGE_KEYS.DHIKR_TRACKER, data);
+        return data;
+    },
+
+    incrementCount(category, id) {
+        const data = this.getData();
+        const dhikr = data[category].find(d => d.id === id);
+        if (dhikr) {
+            dhikr.current++;
+            Storage.set(STORAGE_KEYS.DHIKR_TRACKER, data);
+        }
+        return dhikr;
+    },
+
+    resetCount(category, id) {
+        const data = this.getData();
+        const dhikr = data[category].find(d => d.id === id);
+        if (dhikr) {
+            dhikr.current = 0;
+            Storage.set(STORAGE_KEYS.DHIKR_TRACKER, data);
+        }
+        return dhikr;
+    },
+
+    getTodayProgress(category) {
+        const data = this.getData();
+        return data[category].map(dhikr => ({
+            ...dhikr,
+            completed: dhikr.current >= dhikr.target,
+            percentage: Math.round((dhikr.current / dhikr.target) * 100)
+        }));
+    },
+
+    clear() {
+        return Storage.remove(STORAGE_KEYS.DHIKR_TRACKER);
+    }
+};
+
+// === Ramadan Daily Tracker ===
+const RamadanTracker = {
+    getData() {
+        return Storage.get(STORAGE_KEYS.RAMADAN_TRACKER, {});
+    },
+
+    updateDay(day, updates) {
+        const data = this.getData();
+        if (!data[day]) {
+            data[day] = {
+                fast: false,
+                suhoor: false,
+                iftar: false,
+                tarawih: 0,
+                quranReading: '',
+                extraIbadah: [],
+                notes: '',
+                date: new Date().toISOString()
+            };
+        }
+        Object.assign(data[day], updates, { lastUpdated: new Date().toISOString() });
+        Storage.set(STORAGE_KEYS.RAMADAN_TRACKER, data);
+        return data[day];
+    },
+
+    getDay(day) {
+        const data = this.getData();
+        return data[day] || {
+            fast: false,
+            suhoor: false,
+            iftar: false,
+            tarawih: 0,
+            quranReading: '',
+            extraIbadah: [],
+            notes: ''
+        };
+    },
+
+    getSummary() {
+        const data = this.getData();
+        const days = Object.keys(data).length;
+        const fastsCompleted = Object.values(data).filter(d => d.fast).length;
+        const totalTarawih = Object.values(data).reduce((sum, d) => sum + (d.tarawih || 0), 0);
+
+        return {
+            days,
+            fastsCompleted,
+            totalTarawih,
+            completionRate: days > 0 ? Math.round((fastsCompleted / days) * 100) : 0
+        };
+    },
+
+    clear() {
+        return Storage.remove(STORAGE_KEYS.RAMADAN_TRACKER);
     }
 };
 

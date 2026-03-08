@@ -1,0 +1,57 @@
+window.__MANIFEST__ = [
+  {
+    "day": 1,
+    "folder": "Day-1",
+    "title": "Day 1",
+    "slides": [
+      "images/Day-1/slide-01.png",
+      "images/Day-1/slide-02.png",
+      "images/Day-1/slide-03.png",
+      "images/Day-1/slide-04.png",
+      "images/Day-1/slide-05.png",
+      "images/Day-1/slide-06.png",
+      "images/Day-1/slide-07.png",
+      "images/Day-1/slide-08.png",
+      "images/Day-1/slide-09.png",
+      "images/Day-1/slide-10.png",
+      "images/Day-1/slide-11.png",
+      "images/Day-1/slide-12.png",
+      "images/Day-1/slide-13.png",
+      "images/Day-1/slide-14.png",
+      "images/Day-1/slide-15.png",
+      "images/Day-1/slide-16.png",
+      "images/Day-1/slide-17.png",
+      "images/Day-1/slide-18.png",
+      "images/Day-1/slide-19.png",
+      "images/Day-1/slide-20.png",
+      "images/Day-1/slide-21.png",
+      "images/Day-1/slide-22.png"
+    ]
+  },
+  {
+    "day": 2,
+    "folder": "Day-2",
+    "title": "Day 2",
+    "slides": [
+      "images/Day-2/slide-01.png",
+      "images/Day-2/slide-02.png",
+      "images/Day-2/slide-03.png",
+      "images/Day-2/slide-04.png",
+      "images/Day-2/slide-05.png",
+      "images/Day-2/slide-06.png",
+      "images/Day-2/slide-07.png",
+      "images/Day-2/slide-08.png",
+      "images/Day-2/slide-09.png",
+      "images/Day-2/slide-10.png",
+      "images/Day-2/slide-11.png",
+      "images/Day-2/slide-12.png",
+      "images/Day-2/slide-13.png",
+      "images/Day-2/slide-14.png",
+      "images/Day-2/slide-15.png",
+      "images/Day-2/slide-16.png",
+      "images/Day-2/slide-17.png",
+      "images/Day-2/slide-18.png",
+      "images/Day-2/slide-19.png"
+    ]
+  }
+];

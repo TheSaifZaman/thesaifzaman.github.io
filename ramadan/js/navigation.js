@@ -6,9 +6,11 @@
 const NAV_ITEMS = [
     { href: 'index.html', label: 'Dashboard', icon: '🏠' },
     { href: 'salah-tracker.html', label: 'Salah', icon: '🕌' },
-    { href: 'dhikr.html', label: 'Dhikr', icon: '📿' },
+    { href: 'quran-khatam.html', label: 'Khatam', icon: '📖' },
+    { href: 'dhikr-tracker.html', label: 'Dhikr', icon: '📿' },
     { href: 'counter.html', label: 'Counter', icon: '🔢' },
-    { href: 'quran.html', label: 'Quran', icon: '📖' },
+    { href: 'dhikr.html', label: 'Adhkar', icon: '✨' },
+    { href: 'ramadan-tracker.html', label: 'Ramadan', icon: '🌙' },
     { href: 'https://assunnahfoundation.org/zakat-calculator', label: 'Zakat', icon: '🧮' },
     { href: 'routine.html', label: 'Routine', icon: '⏰' },
     { href: 'goals.html', label: 'Goals', icon: '🎯' }

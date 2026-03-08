@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources — Annual Intentions Reset</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --bg: #f8f7f4;
+  --bg-card: #ffffff;
+  --bg-hover: #f0eeea;
+  --bg-overlay: rgba(248, 247, 244, 0.97);
+  --text: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-muted: #999999;
+  --accent: #2d5a3d;
+  --accent-light: rgba(45, 90, 61, 0.08);
+  --gold: #c9a227;
+  --gold-light: rgba(201, 162, 39, 0.12);
+  --border: #e5e2dc;
+  --border-light: #f0eeea;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --topbar-h: 56px;
+  --transition: 0.2s ease;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --bg-card: #1a1a1a;
+  --bg-hover: #252525;
+  --bg-overlay: rgba(15, 15, 15, 0.97);
+  --text: #e8e8e8;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  --accent: #5cb97a;
+  --accent-light: rgba(92, 185, 122, 0.1);
+  --gold: #e0b83a;
+  --gold-light: rgba(224, 184, 58, 0.12);
+  --border: #2a2a2a;
+  --border-light: #1f1f1f;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== SCROLL PROGRESS ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  z-index: 200;
+  transition: width 0.1s linear;
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--bg-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-logo {
+  color: var(--text);
+  display: flex;
+  align-items: center;
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.back-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+/* Theme toggle icons */
+[data-theme="dark"] .icon-sun { display: none; }
+.icon-moon { display: none; }
+[data-theme="dark"] .icon-moon { display: block; }
+
+/* ===== LAYOUT ===== */
+.page-layout {
+  display: flex;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: calc(var(--topbar-h) + 20px);
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  padding: 20px 16px 20px 20px;
+  position: sticky;
+  top: calc(var(--topbar-h) + 20px);
+  height: fit-content;
+  max-height: calc(100vh - var(--topbar-h) - 40px);
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+
+.sidebar-nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.sidebar-nav a:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.sidebar-nav a.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sidebar-nav .nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.sidebar-nav a.active .nav-icon {
+  opacity: 1;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 8px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 24px 20px 16px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* ===== RESOURCE SECTION ===== */
+.resource-section {
+  margin-bottom: 40px;
+  scroll-margin-top: calc(var(--topbar-h) + 24px);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.section-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* ===== RESOURCE CARDS ===== */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.resource-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.resource-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.resource-card .card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.card-icon.download { background: var(--accent-light); color: var(--accent); }
+.card-icon.course { background: var(--gold-light); color: var(--gold); }
+.card-icon.blog { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.card-icon.podcast { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+.card-icon.tool { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+.card-icon.ramadan { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+.card-icon.book { background: rgba(234, 88, 12, 0.1); color: #ea580c; }
+
+[data-theme="dark"] .card-icon.blog { background: rgba(99, 102, 241, 0.15); }
+[data-theme="dark"] .card-icon.podcast { background: rgba(236, 72, 153, 0.15); }
+[data-theme="dark"] .card-icon.tool { background: rgba(14, 165, 233, 0.15); }
+[data-theme="dark"] .card-icon.ramadan { background: rgba(168, 85, 247, 0.15); }
+[data-theme="dark"] .card-icon.book { background: rgba(234, 88, 12, 0.15); }
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.card-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+.tag-free { background: var(--accent-light); color: var(--accent); }
+.tag-pdf { background: var(--gold-light); color: var(--gold); }
+.tag-external { background: var(--bg-hover); color: var(--text-muted); }
+
+.card-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: transform var(--transition);
+}
+
+.resource-card:hover .card-arrow {
+  transform: translateX(3px);
+  color: var(--accent);
+}
+
+/* ===== STICKY CREDIT BAR ===== */
+.credit-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  z-index: 40;
+}
+
+.credit-bar a {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.credit-bar a:hover {
+  color: var(--accent);
+}
+
+.credit-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding: 12px 16px;
+    margin: 0 -24px 20px;
+    border-bottom: 1px solid var(--border-light);
+    scrollbar-width: none;
+  }
+
+  .mobile-nav::-webkit-scrollbar { display: none; }
+
+  .mobile-nav a {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .mobile-nav a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .main-content {
+    padding: 20px 16px;
+  }
+
+  .page-layout {
+    padding-top: calc(var(--topbar-h) + 10px);
+  }
+
+  .resource-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header h1 { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 { font-size: 20px; }
+  .section-header h2 { font-size: 16px; }
+  .resource-card { padding: 12px; }
+}
+
+/* Mobile nav hidden on desktop */
+.mobile-nav { display: none; }
+
+/* ===== ANIMATIONS ===== */
+.resource-section {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.resource-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Topbar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="back-btn" aria-label="Back to home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <a href="index.html" class="topbar-logo" aria-label="Home">
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
+        <path d="M30 70L50 25L70 70" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="36" y1="58" x2="64" y2="58" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="50" cy="18" r="4" fill="var(--accent)"/>
+      </svg>
+    </a>
+    <span class="topbar-title">Resources</span>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">Categories</div>
+    <nav>
+      <ul class="sidebar-nav" id="sidebarNav">
+        <li><a href="#free-planners" class="active" data-section="free-planners">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Free Planners
+        </a></li>
+        <li><a href="#free-downloads" data-section="free-downloads">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Free Downloads
+        </a></li>
+        <li><a href="#free-courses" data-section="free-courses">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          Free Courses
+        </a></li>
+        <li><a href="#ramadan" data-section="ramadan">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          Ramadan Resources
+        </a></li>
+        <div class="sidebar-divider"></div>
+        <li><a href="#books" data-section="books">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          Books & Products
+        </a></li>
+        <li><a href="#blog" data-section="blog">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Blog Articles
+        </a></li>
+        <li><a href="#podcast" data-section="podcast">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+          Podcast & Newsletter
+        </a></li>
+        <li><a href="#programs" data-section="programs">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          Programs & Academy
+        </a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- Mobile category pills -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#free-planners" class="active" data-section="free-planners">Planners</a>
+      <a href="#free-downloads" data-section="free-downloads">Downloads</a>
+      <a href="#free-courses" data-section="free-courses">Courses</a>
+      <a href="#ramadan" data-section="ramadan">Ramadan</a>
+      <a href="#books" data-section="books">Books</a>
+      <a href="#blog" data-section="blog">Blog</a>
+      <a href="#podcast" data-section="podcast">Podcast</a>
+      <a href="#programs" data-section="programs">Programs</a>
+    </div>
+
+    <div class="page-header">
+      <h1>Productive Muslim Resources</h1>
+      <p>A curated collection of free downloads, courses, blog articles, and tools from The Productive Muslim Company to help you live a productive and purposeful life.</p>
+    </div>
+
+    <!-- FREE PLANNERS -->
+    <section class="resource-section" id="free-planners">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h2>Free Planners</h2>
+      </div>
+      <p class="section-desc">Downloadable planners and templates to organize your day, week, and year with barakah.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/freeplanners/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Free Planners Hub</div>
+            <div class="card-desc">Daily, weekly, monthly & goal planners — all free to download.</div>
+            <span class="card-tag tag-free">Free PDF</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/guide-to-planning-your-1447h/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Guide to Planning Your 1447H</div>
+            <div class="card-desc">Plan your Islamic year with intention and clarity using this comprehensive guide.</div>
+            <span class="card-tag tag-free">Free Guide</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/habittracker/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Free Habit Tracker</div>
+            <div class="card-desc">Track your daily habits and build consistency with this printable tracker.</div>
+            <span class="card-tag tag-free">Free PDF</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- FREE DOWNLOADS -->
+    <section class="resource-section" id="free-downloads">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <h2>Free Downloads</h2>
+      </div>
+      <p class="section-desc">Manifestos, guides, and resources to build a barakah-driven life.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/barakah-culture-manifesto-in-100-words/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah Culture Manifesto</div>
+            <div class="card-desc">A 42-page manifesto on living with barakah — the counter-narrative to hustle culture.</div>
+            <span class="card-tag tag-pdf">PDF Download</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/barakah-vs-hustle-culture/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah vs Hustle Culture</div>
+            <div class="card-desc">Understand the key differences and why barakah culture leads to sustainable success.</div>
+            <span class="card-tag tag-free">Free Article</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/aim" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Annual Intentions Masterclass</div>
+            <div class="card-desc">Learn the framework behind setting and achieving your annual goals with barakah.</div>
+            <span class="card-tag tag-free">Free Masterclass</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- FREE COURSES -->
+    <section class="resource-section" id="free-courses">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <h2>Free Courses</h2>
+      </div>
+      <p class="section-desc">Self-paced free courses and mini-masterclasses on productivity, faith, and purpose.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/free-ramadan-course/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Free Ramadan Course</div>
+            <div class="card-desc">Prepare for a productive Ramadan with this comprehensive free course.</div>
+            <span class="card-tag tag-free">Free Course</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/high-performance-ramadan/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">High Performance Ramadan</div>
+            <div class="card-desc">A mini-masterclass on maintaining peak performance during Ramadan.</div>
+            <span class="card-tag tag-free">Free Masterclass</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://shop.productivemuslim.com/products/1666557" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">10 Habits Digital Course</div>
+            <div class="card-desc">Build 10 essential habits for a productive Muslim lifestyle.</div>
+            <span class="card-tag tag-external">Digital Course</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslimacademy.com/courses" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">All Academy Courses</div>
+            <div class="card-desc">Browse the full course catalog at Productive Muslim Academy.</div>
+            <span class="card-tag tag-external">Academy</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- RAMADAN RESOURCES -->
+    <section class="resource-section" id="ramadan">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <h2>Ramadan Resources</h2>
+      </div>
+      <p class="section-desc">Guides, planners, and tools specifically designed for a productive Ramadan.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/taskinator/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon ramadan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Ramadan Taskinator</div>
+            <div class="card-desc">An interactive tool to plan and manage your daily Ramadan tasks and worship.</div>
+            <span class="card-tag tag-free">Free Tool</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/the-productive-ramadan-checklist/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon ramadan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Productive Ramadan Checklist</div>
+            <div class="card-desc">A comprehensive checklist to prepare spiritually and practically for Ramadan.</div>
+            <span class="card-tag tag-free">Free Checklist</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/10-tips-productive-ramadan/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon ramadan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">10 Tips for a Productive Ramadan</div>
+            <div class="card-desc">Actionable tips to maximize your ibadah and productivity during Ramadan.</div>
+            <span class="card-tag tag-free">Free Article</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/ramadan-health-guide/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon ramadan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Ramadan Health & Nutrition Guide</div>
+            <div class="card-desc">Stay healthy and energized throughout Ramadan with these nutrition tips.</div>
+            <span class="card-tag tag-free">Free Guide</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- BOOKS & PRODUCTS -->
+    <section class="resource-section" id="books">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        <h2>Books & Products</h2>
+      </div>
+      <p class="section-desc">Books, journals, and products by Mohammed Faris and The Productive Muslim Company.</p>
+      <div class="resource-grid">
+        <a href="https://barakaheffectbook.com/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon book">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">The Barakah Effect (Book)</div>
+            <div class="card-desc">The latest book on living with barakah — redefining success through an Islamic lens.</div>
+            <span class="card-tag tag-external">Book</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslimbook.com/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon book">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">The Productive Muslim (Book)</div>
+            <div class="card-desc">The original bestseller — practical tips for Muslim productivity rooted in faith.</div>
+            <span class="card-tag tag-external">Book</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://shop.productivemuslim.com/products/the-productive-muslim-company-barakah-journal" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon book">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah Journal</div>
+            <div class="card-desc">A guided journal designed to help you reflect, plan, and live with barakah daily.</div>
+            <span class="card-tag tag-external">Product</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://shop.productivemuslim.com/products/barakah-culture-cards-2nd-edition" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon book">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah Culture Cards</div>
+            <div class="card-desc">Conversation cards to spark meaningful discussions about barakah culture.</div>
+            <span class="card-tag tag-external">Product</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://shop.productivemuslim.com/collections/all" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon book">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Full Store</div>
+            <div class="card-desc">Browse all products from The Productive Muslim Company store.</div>
+            <span class="card-tag tag-external">Shop</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- BLOG ARTICLES -->
+    <section class="resource-section" id="blog">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <h2>Blog Articles</h2>
+      </div>
+      <p class="section-desc">In-depth articles on productivity, spirituality, sleep, and living with barakah.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/the-productive-muslim-sleep-routine/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">The Productive Muslim Sleep Routine</div>
+            <div class="card-desc">How to optimize your sleep based on Prophetic traditions and modern science.</div>
+            <span class="card-tag tag-free">Article</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/morning-routine/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">The Ultimate Morning Routine</div>
+            <div class="card-desc">Start your day with barakah — a step-by-step morning routine guide.</div>
+            <span class="card-tag tag-free">Article</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/how-to-deal-with-information-overload/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Dealing with Information Overload</div>
+            <div class="card-desc">Practical strategies for managing the flood of information in the digital age.</div>
+            <span class="card-tag tag-free">Article</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/self-development/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Self-Development Archives</div>
+            <div class="card-desc">Browse all articles on personal growth, goal-setting, and self-improvement.</div>
+            <span class="card-tag tag-free">Blog Archive</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/spiritual-productivity/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Spiritual Productivity</div>
+            <div class="card-desc">Articles on connecting your spiritual life with daily productivity and purpose.</div>
+            <span class="card-tag tag-free">Blog Archive</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/time-management/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon blog">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Time Management</div>
+            <div class="card-desc">Master your time with Islamic principles and practical techniques.</div>
+            <span class="card-tag tag-free">Blog Archive</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- PODCAST & NEWSLETTER -->
+    <section class="resource-section" id="podcast">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+        <h2>Podcast & Newsletter</h2>
+      </div>
+      <p class="section-desc">Stay connected with the latest insights through the podcast and newsletter.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/category/podcast/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon podcast">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Productive Muslim Podcast</div>
+            <div class="card-desc">All podcast episodes on the official website — productivity, faith, and purpose.</div>
+            <span class="card-tag tag-free">Free Podcast</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://podcasts.apple.com/podcast/the-productive-muslim-podcast/id1070798246" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon podcast">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Listen on Apple Podcasts</div>
+            <div class="card-desc">Subscribe and listen on Apple Podcasts.</div>
+            <span class="card-tag tag-external">Apple Podcasts</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://open.spotify.com/show/0J1DZKi6GQOiXhO8kO8a08" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon podcast">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><path d="M7 12s2-3 5-3 5 3 5 3"/><path d="M6 9s2.5-4 6-4 6 4 6 4"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Listen on Spotify</div>
+            <div class="card-desc">Follow and listen on Spotify.</div>
+            <span class="card-tag tag-external">Spotify</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.beehiiv.com/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Living with Barakah Newsletter</div>
+            <div class="card-desc">Weekly insights on living a productive, purposeful life. Free to subscribe.</div>
+            <span class="card-tag tag-free">Free Newsletter</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- PROGRAMS & ACADEMY -->
+    <section class="resource-section" id="programs">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <h2>Programs & Academy</h2>
+      </div>
+      <p class="section-desc">Premium programs and certifications for deeper transformation and growth.</p>
+      <div class="resource-grid">
+        <a href="https://productivemuslim.com/barakah-academy/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah Academy</div>
+            <div class="card-desc">A comprehensive learning platform for Muslim professionals seeking barakah in all areas.</div>
+            <span class="card-tag tag-external">Academy</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://programs.productivemuslim.com/productivity" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Productive Muslim Program</div>
+            <div class="card-desc">The flagship productivity program for Muslim professionals.</div>
+            <span class="card-tag tag-external">Program</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://programs.productivemuslim.com/barakaheffect" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Barakah Effect Program</div>
+            <div class="card-desc">A deep-dive program into living with barakah at work and in life.</div>
+            <span class="card-tag tag-external">Program</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://programs.productivemuslim.com/certification2" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon course">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Certification Program</div>
+            <div class="card-desc">Become a certified Productive Muslim coach and trainer.</div>
+            <span class="card-tag tag-external">Certification</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/coaching-lp/" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">1-on-1 Executive Coaching</div>
+            <div class="card-desc">Personalized coaching for Muslim professionals and entrepreneurs.</div>
+            <span class="card-tag tag-external">Coaching</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+        <a href="https://productivemuslim.com/business" target="_blank" rel="noopener" class="resource-card">
+          <div class="card-icon tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Grow Your Business With Barakah</div>
+            <div class="card-desc">Business growth strategies rooted in Islamic principles and barakah.</div>
+            <span class="card-tag tag-external">Business</span>
+          </div>
+          <svg class="card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Sticky Credit Bar -->
+<div class="credit-bar">
+  <span>A program by <a href="https://productivemuslim.com/" target="_blank" rel="noopener"><strong>The Productive Muslim Company</strong></a></span>
+  <span class="credit-dot"></span>
+  <span>Built by <a href="https://thesaifzaman.github.io/" target="_blank">Md. Saif Zaman</a></span>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ===== THEME =====
+  function initTheme() {
+    const saved = localStorage.getItem('ar-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ar-theme', next);
+  });
+
+  // ===== SCROLL PROGRESS =====
+  const scrollProgress = document.getElementById('scrollProgress');
+  function updateScrollProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+  // ===== SIDEBAR ACTIVE STATE =====
+  const sidebarLinks = document.querySelectorAll('#sidebarNav a');
+  const mobileLinks = document.querySelectorAll('#mobileNav a');
+  const sections = document.querySelectorAll('.resource-section');
+
+  function updateActiveNav() {
+    let activeId = sections[0]?.id || '';
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 120) activeId = section.id;
+    });
+
+    sidebarLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === activeId);
+    });
+    mobileLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === activeId);
+    });
+
+    // Scroll active mobile pill into view
+    const activePill = document.querySelector('#mobileNav a.active');
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  // Smooth scroll for nav links
+  [...sidebarLinks, ...mobileLinks].forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.getElementById(link.dataset.section);
+      if (target) {
+        const y = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ===== INTERSECTION OBSERVER FOR ANIMATIONS =====
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+  sections.forEach(el => observer.observe(el));
+
+  // ===== INIT =====
+  initTheme();
+  updateScrollProgress();
+  updateActiveNav();
+
+})();
+</script>
+</body>
+</html>

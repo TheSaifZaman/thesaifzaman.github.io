@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workbook — Annual Intentions Reset</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --bg: #f8f7f4;
+  --bg-card: #ffffff;
+  --bg-hover: #f0eeea;
+  --bg-overlay: rgba(248, 247, 244, 0.97);
+  --text: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-muted: #999999;
+  --accent: #2d5a3d;
+  --accent-light: rgba(45, 90, 61, 0.08);
+  --gold: #c9a227;
+  --gold-light: rgba(201, 162, 39, 0.12);
+  --border: #e5e2dc;
+  --border-light: #f0eeea;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --topbar-h: 56px;
+  --transition: 0.2s ease;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --bg-card: #1a1a1a;
+  --bg-hover: #252525;
+  --bg-overlay: rgba(15, 15, 15, 0.97);
+  --text: #e8e8e8;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  --accent: #5cb97a;
+  --accent-light: rgba(92, 185, 122, 0.1);
+  --gold: #e0b83a;
+  --gold-light: rgba(224, 184, 58, 0.12);
+  --border: #2a2a2a;
+  --border-light: #1f1f1f;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== SCROLL PROGRESS ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  z-index: 200;
+  transition: width 0.1s linear;
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+  position: fixed;
+  top: 3px;
+  left: 0; right: 0;
+  height: var(--topbar-h);
+  background: var(--bg-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.back-btn, .icon-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.back-btn:hover, .icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.icon-btn { color: var(--text-secondary); }
+
+.icon-moon { display: none; }
+[data-theme="dark"] .icon-sun { display: none; }
+[data-theme="dark"] .icon-moon { display: block; }
+
+/* ===== MAIN CONTENT ===== */
+.workbook-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: calc(var(--topbar-h) + 24px) 24px 80px;
+}
+
+/* ===== DAY SECTIONS ===== */
+.day-section {
+  margin-bottom: 64px;
+}
+
+.day-header {
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.day-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.day-title {
+  font-size: clamp(24px, 5vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* ===== EXERCISE BLOCKS ===== */
+.exercise {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.exercise.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease, background var(--transition), border-color var(--transition);
+}
+
+.exercise-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.exercise-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.exercise-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* ===== FORM ELEMENTS ===== */
+textarea, input[type="text"] {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  resize: vertical;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+textarea { min-height: 80px; }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+/* ===== TABLES ===== */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+th, td {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+th {
+  background: var(--accent-light);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+td textarea, td input[type="text"] {
+  border: none;
+  background: transparent;
+  padding: 4px 0;
+  border-radius: 0;
+  min-height: 40px;
+}
+
+td textarea:focus, td input[type="text"]:focus {
+  box-shadow: none;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ===== SCORECARD ===== */
+.scorecard-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.scorecard-row:last-child { border-bottom: none; }
+
+.scorecard-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.scorecard-domain {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.scorecard-domain-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.scorecard-slider {
+  width: 160px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scorecard-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ===== NUMBERED LIST ===== */
+.numbered-list {
+  list-style: none;
+}
+
+.numbered-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.numbered-list .num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.numbered-list input[type="text"] {
+  flex: 1;
+}
+
+/* ===== LETTER BOX ===== */
+.letter-box {
+  border: 2px solid var(--gold-light);
+  border-radius: var(--radius);
+  padding: 24px;
+  background: var(--gold-light);
+}
+
+.letter-box .letter-prompt {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.letter-box textarea {
+  background: var(--bg-card);
+  margin-bottom: 16px;
+}
+
+.letter-box textarea:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== 3-COLUMN LAYOUT ===== */
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.three-col .col-header {
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px;
+  background: var(--accent-light);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+/* ===== INTENTIONS TABLE ===== */
+.intentions-area {
+  margin-bottom: 20px;
+}
+
+.intentions-area-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
+  padding-left: 4px;
+  color: var(--accent);
+}
+
+.intentions-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===== CALENDAR TABLE ===== */
+.calendar-table th:first-child { min-width: 140px; }
+.calendar-table th:nth-child(2) { min-width: 140px; }
+.calendar-table th:nth-child(3) { min-width: 200px; }
+
+/* ===== BARAKAH GRID ===== */
+.barakah-section {
+  margin-top: 16px;
+}
+
+.barakah-category {
+  margin-bottom: 20px;
+}
+
+.barakah-category-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.barakah-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.barakah-item {
+  font-size: 13px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ===== DUA TEMPLATE ===== */
+.dua-steps {
+  counter-reset: dua-step;
+  list-style: none;
+}
+
+.dua-steps li {
+  counter-increment: dua-step;
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.dua-steps li::before {
+  content: counter(dua-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ===== HIGH HIMMAH ===== */
+.himmah-intro {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.himmah-qualities {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+.himmah-qualities li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.himmah-qualities li::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 16px;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.prompt-group {
+  margin-bottom: 16px;
+}
+
+.prompt-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* ===== FOOTER ===== */
+.workbook-footer {
+  text-align: center;
+  padding: 48px 24px 80px;
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+}
+
+/* Sticky credit bar */
+.sticky-credit {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  padding: 10px 24px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: background var(--transition), border-color var(--transition);
+}
+.sticky-credit a {
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.sticky-credit a.pm-link { color: var(--text-secondary); }
+.sticky-credit a.pm-link:hover { color: var(--accent); }
+.sticky-credit a.author-link { color: var(--accent); font-weight: 500; }
+.sticky-credit a.author-link:hover { text-decoration: underline; }
+.sticky-credit .dot {
+  width: 3px; height: 3px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .sticky-credit { flex-direction: column; gap: 4px; padding: 8px 16px; }
+  .sticky-credit .dot { display: none; }
+}
+
+.footer-verse {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto 8px;
+  line-height: 1.7;
+}
+
+.footer-ref {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.footer-dua {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.footer-about {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.footer-about a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-about a:hover {
+  text-decoration: underline;
+}
+
+/* ===== ACTION BAR ===== */
+.action-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 32px 0;
+}
+
+.btn {
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn-danger {
+  background: transparent;
+  color: #d44;
+  border: 1px solid #d44;
+}
+.btn-danger:hover { background: rgba(221, 68, 68, 0.08); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 300;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== FLOATING NAV ===== */
+.floating-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: var(--shadow-lg);
+  z-index: 150;
+}
+
+.floating-nav button {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.floating-nav button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.floating-nav button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .workbook-content { padding: calc(var(--topbar-h) + 16px) 16px 80px; }
+  .exercise { padding: 20px; }
+  .three-col { grid-template-columns: 1fr; }
+  .barakah-grid { grid-template-columns: repeat(2, 1fr); }
+  .scorecard-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .scorecard-slider { width: 100%; }
+  .letter-box { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  :root { --topbar-h: 48px; }
+  .topbar { padding: 0 12px; }
+  .topbar-title { font-size: 13px; }
+  .back-btn, .icon-btn { width: 32px; height: 32px; }
+  .workbook-content { padding: calc(var(--topbar-h) + 12px) 12px 80px; }
+  .exercise { padding: 16px; margin-bottom: 20px; }
+  .exercise-title { font-size: 17px; }
+  .barakah-grid { grid-template-columns: 1fr 1fr; }
+  .day-header { margin-bottom: 20px; }
+  .action-bar { flex-direction: column; align-items: stretch; }
+  .floating-nav button { padding: 6px 12px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="back-btn" aria-label="Back to home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <a href="index.html" class="topbar-logo" aria-label="Home" style="text-decoration:none;color:inherit;display:flex;flex-shrink:0;">
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
+        <path d="M30 70L50 25L70 70" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="36" y1="58" x2="64" y2="58" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="50" cy="18" r="4" fill="var(--accent)"/>
+      </svg>
+    </a>
+    <span class="topbar-title">Workbook</span>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- Main Workbook Content -->
+<main class="workbook-content" id="workbookContent">
+  <!-- Built dynamically by JS -->
+</main>
+
+<!-- Footer (content) -->
+<footer class="workbook-footer">
+  <p class="footer-verse">"And those who strive for Us - We will surely guide them to Our ways. And indeed, Allah is with the doers of good."</p>
+  <p class="footer-ref">Quran [29:69]</p>
+  <p class="footer-dua">May Allah accept your intentions, bless your plans, and grant you the highest of Himmah to serve Him and His creation. Ameen.</p>
+</footer>
+
+<!-- Sticky Credit Bar -->
+<div class="sticky-credit">
+  <a href="https://productivemuslim.com/" target="_blank" rel="noopener" class="pm-link">A program by The Productive Muslim Company</a>
+  <span class="dot"></span>
+  <span>Built by <a href="../index.html" class="author-link">Md. Saif Zaman</a></span>
+</div>
+
+<!-- Floating Navigation -->
+<nav class="floating-nav" id="floatingNav">
+  <button data-target="day1">Day 1</button>
+  <button data-target="day2">Day 2</button>
+  <button data-target="day3">Day 3</button>
+</nav>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== DATA =====
+  const SCORECARD_DOMAINS = [
+    { domain: 'Spiritual Life', desc: 'Prayer quality, Quran connection, dhikr, relationship with Allah' },
+    { domain: 'Physical Health', desc: 'Exercise, nutrition, sleep, energy levels' },
+    { domain: 'Family & Relationships', desc: 'Spouse, children, parents, close friends' },
+    { domain: 'Financial Health', desc: 'Income, savings, debt, zakat & sadaqah' },
+    { domain: 'Career & Contribution', desc: 'Work performance, impact, professional growth' },
+    { domain: 'Learning & Growth', desc: 'Islamic knowledge, skills, reading, personal development' },
+    { domain: 'Community & Ummah', desc: 'Volunteering, dawah, community involvement, social impact' }
+  ];
+
+  const ENERGY_COLS = ['Energy Givers', 'Energy Drainers'];
+
+  const CHAIRMAN_PROMPTS = [
+    'What I want to acknowledge and celebrate from this past year...',
+    'What I am most concerned about going into the new year...',
+    'What I want to improve or change in the coming year...',
+    'What I hope and pray for in the year ahead...'
+  ];
+
+  const SSC_COLS = ['Start', 'Stop', 'Continue'];
+
+  const INTENTION_AREAS = [
+    'Spiritual',
+    'Health & Wellness',
+    'Family',
+    'Financial',
+    'Learning & Development'
+  ];
+
+  const ISLAMIC_MONTHS = [
+    { islamic: 'Shawwal', gregorian: 'Mar/Apr' },
+    { islamic: 'Dhul Qa\'dah', gregorian: 'Apr/May' },
+    { islamic: 'Dhul Hijjah', gregorian: 'May/Jun' },
+    { islamic: 'Muharram', gregorian: 'Jun/Jul' },
+    { islamic: 'Safar', gregorian: 'Jul/Aug' },
+    { islamic: 'Rabi\' al-Awwal', gregorian: 'Aug/Sep' },
+    { islamic: 'Rabi\' al-Thani', gregorian: 'Sep/Oct' },
+    { islamic: 'Jumada al-Ula', gregorian: 'Oct/Nov' },
+    { islamic: 'Jumada al-Thani', gregorian: 'Nov/Dec' },
+    { islamic: 'Rajab', gregorian: 'Dec/Jan' },
+    { islamic: 'Sha\'ban', gregorian: 'Jan/Feb' },
+    { islamic: 'Ramadan', gregorian: 'Feb/Mar' }
+  ];
+
+  const BARAKAH_VALUES = [
+    'Ihsan (Excellence)', 'Tawakkul (Trust in Allah)', 'Shukr (Gratitude)',
+    'Sabr (Patience)', 'Sidq (Truthfulness)', 'Amanah (Trustworthiness)',
+    'Adl (Justice)', 'Rahma (Mercy)', 'Ilm (Knowledge)',
+    'Hikma (Wisdom)', 'Tawadu (Humility)', 'Iffah (Modesty)',
+    'Shaja\'ah (Courage)', 'Karamah (Dignity)', 'Ithaar (Selflessness)',
+    'Muhasabah (Self-Accountability)', 'Istiqamah (Consistency)'
+  ];
+
+  const BARAKAH_MINDSETS = [
+    'Abundance vs. Scarcity', 'Growth vs. Fixed', 'Contribution vs. Consumption',
+    'Proactive vs. Reactive', 'Long-term vs. Short-term', 'Akhirah-focused vs. Dunya-focused',
+    'Community vs. Individualism', 'Quality vs. Quantity', 'Barakah vs. Busyness',
+    'Service vs. Self-interest', 'Learning vs. Knowing', 'Process vs. Outcome',
+    'Simplicity vs. Complexity', 'Gratitude vs. Entitlement', 'Accountability vs. Blame',
+    'Action vs. Procrastination', 'Integration vs. Compartmentalization'
+  ];
+
+  const BARAKAH_RITUALS = [
+    'Morning Adhkar', 'Evening Adhkar', 'Quran Recitation',
+    'Tahajjud Prayer', 'Duha Prayer', 'Weekly Fasting',
+    'Daily Journaling', 'Weekly Review', 'Monthly Goal-Setting',
+    'Quarterly Retreat', 'Annual Reset', 'Daily Exercise',
+    'Family Meeting', 'Community Service', 'Seeking Knowledge',
+    'Mentoring Others', 'Sadaqah Habit'
+  ];
+
+  const HIMMAH_WORSHIP_PROMPTS = [
+    'What does my ideal daily worship routine look like?',
+    'What Quran goals do I want to achieve this year?',
+    'How will I deepen my connection with Allah through dua?',
+    'What acts of voluntary worship will I commit to consistently?'
+  ];
+
+  const HIMMAH_FAMILY_PROMPTS = [
+    'What kind of family environment do I want to create?',
+    'How will I invest quality time with my spouse/parents/children?',
+    'What family traditions or rituals will I establish?',
+    'How will I model Islamic values for my family?'
+  ];
+
+  const HIMMAH_UMMAH_PROMPTS = [
+    'What unique skills or resources can I contribute to the Ummah?',
+    'What community project or cause will I champion this year?',
+    'How will I mentor or support at least one person this year?'
+  ];
+
+  const DUA_STEPS = [
+    'Begin with Hamd (Praise of Allah)',
+    'Send Salawat upon the Prophet (peace be upon him)',
+    'Acknowledge your blessings and express gratitude',
+    'Confess your shortcomings and ask for forgiveness',
+    'Present your intentions and goals as duas',
+    'Make dua for your family, community, and Ummah',
+    'Close with Salawat and say Ameen'
+  ];
+
+  const HIMMAH_QUALITIES = [
+    'Setting lofty goals that serve both dunya and akhirah',
+    'Refusing to settle for mediocrity in worship and work',
+    'Maintaining consistency even when motivation fades',
+    'Seeking excellence (Ihsan) in every endeavor',
+    'Being driven by purpose, not just productivity'
+  ];
+
+  // ===== BUILD UI =====
+  const content = document.getElementById('workbookContent');
+
+  function h(tag, attrs, ...children) {
+    const el = document.createElement(tag);
+    if (attrs) {
+      for (const [k, v] of Object.entries(attrs)) {
+        if (k === 'className') el.className = v;
+        else if (k === 'innerHTML') el.innerHTML = v;
+        else el.setAttribute(k, v);
+      }
+    }
+    children.forEach(c => {
+      if (typeof c === 'string') el.appendChild(document.createTextNode(c));
+      else if (c) el.appendChild(c);
+    });
+    return el;
+  }
+
+  function buildExercise(num, title, desc, contentEl) {
+    const ex = h('div', { className: 'exercise' });
+    if (num) ex.appendChild(h('div', { className: 'exercise-num' }, 'Exercise ' + num));
+    ex.appendChild(h('div', { className: 'exercise-title' }, title));
+    if (desc) ex.appendChild(h('div', { className: 'exercise-desc' }, desc));
+    ex.appendChild(contentEl);
+    return ex;
+  }
+
+  function buildTextarea(key, placeholder) {
+    const ta = h('textarea', { 'data-key': key, placeholder: placeholder || '' });
+    ta.rows = 3;
+    return ta;
+  }
+
+  function buildInput(key, placeholder) {
+    return h('input', { type: 'text', 'data-key': key, placeholder: placeholder || '' });
+  }
+
+  // ===== DAY 1 =====
+  const day1 = h('section', { className: 'day-section', id: 'day1' });
+  const day1Header = h('div', { className: 'day-header' });
+  day1Header.appendChild(h('div', { className: 'day-label' }, 'Day 1'));
+  day1Header.appendChild(h('div', { className: 'day-title' }, 'Your Annual Review'));
+  day1.appendChild(day1Header);
+
+  // Exercise 01: Scorecard
+  const scorecardWrap = h('div');
+  SCORECARD_DOMAINS.forEach((d, i) => {
+    const row = h('div', { className: 'scorecard-row' });
+    const info = h('div', { className: 'scorecard-info' });
+    info.appendChild(h('div', { className: 'scorecard-domain' }, d.domain));
+    info.appendChild(h('div', { className: 'scorecard-domain-desc' }, d.desc));
+    row.appendChild(info);
+
+    const slider = h('div', { className: 'scorecard-slider' });
+    const range = h('input', { type: 'range', min: '1', max: '10', value: '5', 'data-key': 'scorecard_' + i });
+    const val = h('span', { className: 'scorecard-value' }, '5');
+    range.addEventListener('input', () => { val.textContent = range.value; });
+    slider.appendChild(range);
+    slider.appendChild(val);
+    row.appendChild(slider);
+    scorecardWrap.appendChild(row);
+  });
+  day1.appendChild(buildExercise('01', 'Life Domains Scorecard', 'Rate each area of your life from 1 (needs attention) to 10 (thriving). Be honest with yourself.', scorecardWrap));
+
+  // Exercise 02: Energy Audit
+  const energyWrap = h('div', { className: 'table-wrap' });
+  const energyTable = h('table');
+  const eThead = h('thead');
+  const eTr = h('tr');
+  ENERGY_COLS.forEach(col => eTr.appendChild(h('th', null, col)));
+  eThead.appendChild(eTr);
+  energyTable.appendChild(eThead);
+  const eTbody = h('tbody');
+  for (let i = 0; i < 5; i++) {
+    const tr = h('tr');
+    ENERGY_COLS.forEach((col, ci) => {
+      const td = h('td');
+      td.appendChild(buildTextarea('energy_' + ci + '_' + i, col + ' #' + (i + 1)));
+      tr.appendChild(td);
+    });
+    eTbody.appendChild(tr);
+  }
+  energyTable.appendChild(eTbody);
+  energyWrap.appendChild(energyTable);
+  day1.appendChild(buildExercise('02', 'Energy Audit', 'Identify what gives you energy and what drains it. This awareness helps you design a more intentional year.', energyWrap));
+
+  // Exercise 03: Blessings & Lessons
+  const blessLessWrap = h('div');
+  const blessTitle = h('div', { className: 'exercise-desc', innerHTML: '<strong>10 Blessings</strong> from this past year:' });
+  blessLessWrap.appendChild(blessTitle);
+  const blessList = h('ol', { className: 'numbered-list' });
+  for (let i = 0; i < 10; i++) {
+    const li = h('li');
+    li.appendChild(h('span', { className: 'num' }, String(i + 1)));
+    li.appendChild(buildInput('blessing_' + i, 'Blessing #' + (i + 1)));
+    blessList.appendChild(li);
+  }
+  blessLessWrap.appendChild(blessList);
+
+  const lessTitle = h('div', { className: 'exercise-desc', innerHTML: '<strong>5 Lessons</strong> learned this year:', style: 'margin-top: 24px;' });
+  blessLessWrap.appendChild(lessTitle);
+  const lessList = h('ol', { className: 'numbered-list' });
+  for (let i = 0; i < 5; i++) {
+    const li = h('li');
+    li.appendChild(h('span', { className: 'num' }, String(i + 1)));
+    li.appendChild(buildInput('lesson_' + i, 'Lesson #' + (i + 1)));
+    lessList.appendChild(li);
+  }
+  blessLessWrap.appendChild(lessList);
+  day1.appendChild(buildExercise('03', '10 Blessings & 5 Lessons', 'Reflect on the blessings Allah has given you and the lessons you have learned.', blessLessWrap));
+
+  // Exercise 04: Chairman's Letter
+  const letterWrap = h('div', { className: 'letter-box' });
+  CHAIRMAN_PROMPTS.forEach((prompt, i) => {
+    const pg = h('div', { className: 'prompt-group' });
+    pg.appendChild(h('div', { className: 'letter-prompt' }, prompt));
+    pg.appendChild(buildTextarea('chairman_' + i));
+    letterWrap.appendChild(pg);
+  });
+  day1.appendChild(buildExercise('04', 'The Chairman\'s Letter', 'Imagine you are the chairman of your own life. Write a letter reviewing the past year and looking ahead.', letterWrap));
+
+  // Exercise 05: Start / Stop / Continue
+  const sscWrap = h('div', { className: 'table-wrap' });
+  const sscTable = h('table');
+  const sThead = h('thead');
+  const sTr = h('tr');
+  SSC_COLS.forEach(col => sTr.appendChild(h('th', null, col)));
+  sThead.appendChild(sTr);
+  sscTable.appendChild(sThead);
+  const sTbody = h('tbody');
+  for (let i = 0; i < 5; i++) {
+    const tr = h('tr');
+    SSC_COLS.forEach((col, ci) => {
+      const td = h('td');
+      td.appendChild(buildTextarea('ssc_' + ci + '_' + i, col + ' #' + (i + 1)));
+      tr.appendChild(td);
+    });
+    sTbody.appendChild(tr);
+  }
+  sscTable.appendChild(sTbody);
+  sscWrap.appendChild(sscTable);
+  day1.appendChild(buildExercise('05', 'Start / Stop / Continue', 'What habits, activities, or commitments should you start, stop, or continue?', sscWrap));
+
+  content.appendChild(day1);
+
+  // ===== DAY 2 =====
+  const day2 = h('section', { className: 'day-section', id: 'day2' });
+  const day2Header = h('div', { className: 'day-header' });
+  day2Header.appendChild(h('div', { className: 'day-label' }, 'Day 2'));
+  day2Header.appendChild(h('div', { className: 'day-title' }, 'Renew Your Intentions'));
+  day2.appendChild(day2Header);
+
+  // Exercise 06: Intentions
+  const intWrap = h('div');
+  INTENTION_AREAS.forEach((area, ai) => {
+    const areaDiv = h('div', { className: 'intentions-area' });
+    areaDiv.appendChild(h('div', { className: 'intentions-area-title' }, area));
+    const inputs = h('div', { className: 'intentions-inputs' });
+    for (let j = 0; j < 3; j++) {
+      inputs.appendChild(buildInput('intention_' + ai + '_' + j, 'Intention ' + (j + 1)));
+    }
+    areaDiv.appendChild(inputs);
+    intWrap.appendChild(areaDiv);
+  });
+  day2.appendChild(buildExercise('06', 'Set 3-5 Intentions for Each Life Area', 'Define clear intentions (niyyah) for each area. Remember: "Actions are by intentions" (Hadith).', intWrap));
+
+  // Exercise 07: Duas
+  const duaWrap = h('div');
+  duaWrap.appendChild(buildTextarea('duas_main', 'Write your heartfelt duas for the coming year. Include personal, family, community, and Ummah-level duas...'));
+  duaWrap.querySelector('textarea').rows = 8;
+  day2.appendChild(buildExercise('07', 'Write Your Duas', 'Turn your intentions into duas. Writing them down deepens your connection and clarity.', duaWrap));
+
+  // Exercise 08: Working Plan
+  const calWrap = h('div', { className: 'table-wrap' });
+  const calTable = h('table', { className: 'calendar-table' });
+  const cThead = h('thead');
+  const cTr = h('tr');
+  ['Islamic Month', 'Gregorian Equivalent', 'Key Project / Focus'].forEach(col => cTr.appendChild(h('th', null, col)));
+  cThead.appendChild(cTr);
+  calTable.appendChild(cThead);
+  const cTbody = h('tbody');
+  ISLAMIC_MONTHS.forEach((m, i) => {
+    const tr = h('tr');
+    tr.appendChild(h('td', { style: 'font-weight: 500;' }, m.islamic));
+    tr.appendChild(h('td', { style: 'color: var(--text-secondary); font-size: 13px;' }, m.gregorian));
+    const td = h('td');
+    td.appendChild(buildInput('calendar_' + i, 'Project or focus for ' + m.islamic));
+    tr.appendChild(td);
+    cTbody.appendChild(tr);
+  });
+  calTable.appendChild(cTbody);
+  calWrap.appendChild(calTable);
+  day2.appendChild(buildExercise('08', 'Build Your Working Plan', 'Map your intentions to the Islamic calendar. Plan your year around key Islamic months and events.', calWrap));
+
+  // Reference: Barakah Culture
+  const barakahWrap = h('div', { className: 'barakah-section' });
+  const categories = [
+    { title: 'Values', items: BARAKAH_VALUES },
+    { title: 'Mindsets', items: BARAKAH_MINDSETS },
+    { title: 'Rituals', items: BARAKAH_RITUALS }
+  ];
+  categories.forEach(cat => {
+    const catDiv = h('div', { className: 'barakah-category' });
+    catDiv.appendChild(h('div', { className: 'barakah-category-title' }, cat.title + ' (' + cat.items.length + ')'));
+    const grid = h('div', { className: 'barakah-grid' });
+    cat.items.forEach(item => {
+      grid.appendChild(h('div', { className: 'barakah-item' }, item));
+    });
+    catDiv.appendChild(grid);
+    barakahWrap.appendChild(catDiv);
+  });
+
+  const refEx = h('div', { className: 'exercise' });
+  refEx.appendChild(h('div', { className: 'exercise-num' }, 'Reference'));
+  refEx.appendChild(h('div', { className: 'exercise-title' }, 'Barakah Culture'));
+  refEx.appendChild(h('div', { className: 'exercise-desc' }, 'Use these values, mindsets, and rituals as building blocks for your intentional life.'));
+  refEx.appendChild(barakahWrap);
+  day2.appendChild(refEx);
+
+  content.appendChild(day2);
+
+  // ===== DAY 3 =====
+  const day3 = h('section', { className: 'day-section', id: 'day3' });
+  const day3Header = h('div', { className: 'day-header' });
+  day3Header.appendChild(h('div', { className: 'day-label' }, 'Day 3'));
+  day3Header.appendChild(h('div', { className: 'day-title' }, 'High Himmah Activation'));
+  day3.appendChild(day3Header);
+
+  // Intro
+  const introEx = h('div', { className: 'exercise' });
+  introEx.appendChild(h('div', { className: 'exercise-title' }, 'What is High Himmah?'));
+  introEx.appendChild(h('p', { className: 'himmah-intro' }, 'Himmah is an Arabic concept meaning aspiration, resolve, and lofty ambition. A person of High Himmah doesn\'t settle for the minimum \u2014 they strive for the highest in worship, character, and contribution. The Prophet (peace be upon him) said: "When you ask Allah, ask for al-Firdaws."'));
+  const qList = h('ul', { className: 'himmah-qualities' });
+  HIMMAH_QUALITIES.forEach(q => qList.appendChild(h('li', null, q)));
+  introEx.appendChild(qList);
+  day3.appendChild(introEx);
+
+  // Exercise 09: Worship
+  const worshipWrap = h('div');
+  HIMMAH_WORSHIP_PROMPTS.forEach((p, i) => {
+    const pg = h('div', { className: 'prompt-group' });
+    pg.appendChild(h('div', { className: 'prompt-label' }, p));
+    pg.appendChild(buildTextarea('himmah_worship_' + i));
+    worshipWrap.appendChild(pg);
+  });
+  day3.appendChild(buildExercise('09', 'High Himmah for Personal Worship', 'Envision the highest version of your worship life. What would it look like if you truly aimed for al-Firdaws?', worshipWrap));
+
+  // Exercise 10: Family
+  const familyWrap = h('div');
+  HIMMAH_FAMILY_PROMPTS.forEach((p, i) => {
+    const pg = h('div', { className: 'prompt-group' });
+    pg.appendChild(h('div', { className: 'prompt-label' }, p));
+    pg.appendChild(buildTextarea('himmah_family_' + i));
+    familyWrap.appendChild(pg);
+  });
+  day3.appendChild(buildExercise('10', 'High Himmah for Family', 'Aim high for the people closest to you. What kind of family legacy do you want to build?', familyWrap));
+
+  // Exercise 11: Ummah
+  const ummahWrap = h('div');
+  HIMMAH_UMMAH_PROMPTS.forEach((p, i) => {
+    const pg = h('div', { className: 'prompt-group' });
+    pg.appendChild(h('div', { className: 'prompt-label' }, p));
+    pg.appendChild(buildTextarea('himmah_ummah_' + i));
+    ummahWrap.appendChild(pg);
+  });
+  day3.appendChild(buildExercise('11', 'High Himmah for the Ummah', 'Think beyond yourself. How will you serve the broader Muslim community and humanity?', ummahWrap));
+
+  // Exercise 12: Dua Session Template
+  const duaTemplateWrap = h('div');
+  const stepsList = h('ol', { className: 'dua-steps' });
+  DUA_STEPS.forEach(step => stepsList.appendChild(h('li', null, step)));
+  duaTemplateWrap.appendChild(stepsList);
+  const duaSpace = h('div', { style: 'margin-top: 20px;' });
+  duaSpace.appendChild(h('div', { className: 'prompt-label' }, 'Use this space to draft your dua session:'));
+  duaSpace.appendChild(buildTextarea('dua_session', 'Begin with Bismillah...'));
+  duaSpace.querySelector('textarea').rows = 8;
+  duaTemplateWrap.appendChild(duaSpace);
+  day3.appendChild(buildExercise('12', 'Dua Session Template', 'Follow this 7-step structure for a powerful, focused dua session.', duaTemplateWrap));
+
+  content.appendChild(day3);
+
+  // Action bar
+  const actionBar = h('div', { className: 'action-bar' });
+  const saveBtn = h('button', { className: 'btn btn-primary', id: 'saveBtn' }, 'Save Progress');
+  const clearBtn = h('button', { className: 'btn btn-danger', id: 'clearBtn' }, 'Clear All');
+  actionBar.appendChild(saveBtn);
+  actionBar.appendChild(clearBtn);
+  content.appendChild(actionBar);
+
+  // ===== PERSISTENCE =====
+  const STORAGE_KEY = 'workbook_state';
+
+  function getAllInputs() {
+    return document.querySelectorAll('[data-key]');
+  }
+
+  function saveState() {
+    const state = {};
+    getAllInputs().forEach(el => {
+      state[el.dataset.key] = el.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      getAllInputs().forEach(el => {
+        if (state[el.dataset.key] !== undefined) {
+          el.value = state[el.dataset.key];
+          // update scorecard display values
+          if (el.type === 'range') {
+            const valEl = el.parentElement.querySelector('.scorecard-value');
+            if (valEl) valEl.textContent = el.value;
+          }
+        }
+      });
+    } catch (e) { /* ignore corrupt data */ }
+  }
+
+  // Auto-save on input
+  document.addEventListener('input', (e) => {
+    if (e.target.dataset.key) {
+      saveState();
+    }
+  });
+
+  // Save button
+  saveBtn.addEventListener('click', () => {
+    saveState();
+    showToast('Progress saved');
+  });
+
+  // Clear button
+  clearBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear all workbook data? This cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      getAllInputs().forEach(el => {
+        if (el.type === 'range') {
+          el.value = 5;
+          const valEl = el.parentElement.querySelector('.scorecard-value');
+          if (valEl) valEl.textContent = '5';
+        } else {
+          el.value = '';
+        }
+      });
+      showToast('All data cleared');
+    }
+  });
+
+  // ===== TOAST =====
+  const toast = document.getElementById('toast');
+  let toastTimeout;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ===== THEME =====
+  const THEME_KEY = 'ar-theme';
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) {
+      applyTheme(saved);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      applyTheme('dark');
+    }
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  initTheme();
+
+  // ===== SCROLL PROGRESS =====
+  const scrollProgress = document.getElementById('scrollProgress');
+  function updateScrollProgress() {
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY;
+    const pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    scrollProgress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+  // ===== INTERSECTION OBSERVER (fade-in) =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.exercise').forEach(el => observer.observe(el));
+
+  // ===== FLOATING NAV =====
+  const floatingNav = document.getElementById('floatingNav');
+  const navBtns = floatingNav.querySelectorAll('button');
+  const daySections = document.querySelectorAll('.day-section');
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (target) {
+        const y = target.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  function updateActiveNav() {
+    let activeId = 'day1';
+    daySections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 120) activeId = section.id;
+    });
+    navBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.target === activeId);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  // ===== INIT =====
+  loadState();
+  updateScrollProgress();
+  updateActiveNav();
+
+})();
+</script>
+</body>
+</html>
