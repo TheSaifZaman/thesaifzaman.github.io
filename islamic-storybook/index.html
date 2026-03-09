@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Storybook | Md. Saif Zaman</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../new_avatar.jpg">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Authentic Islamic stories for all ages — Qisas al-Anbiya, Sahaba stories, Quranic tales, Islamic history, and more.">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="logo">
+                <a href="../pages/index.html"><i class="fas fa-arrow-left"></i></a>
+                <span class="logo-text">Islamic Storybook</span>
+                <span class="logo-arabic">قصص إسلامية</span>
+            </div>
+            <div class="nav-right">
+                <button id="btnProgress" class="nav-btn" title="My Progress">
+                    <i class="fas fa-chart-pie"></i>
+                </button>
+                <a href="../pages/index.html" class="nav-btn" title="All Pages">
+                    <i class="fas fa-th-large"></i>
+                </a>
+                <a href="../index.html" class="nav-btn" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button id="themeToggle" class="nav-btn" aria-label="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Modal -->
+    <div id="progressModal" class="modal-overlay hidden">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-pie"></i> My Reading Progress</h2>
+                <button id="btnCloseProgress" class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="progressBody">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button id="btnResetProgress" class="btn-secondary">
+                    <i class="fas fa-trash-alt"></i> Reset Progress
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Reader Modal -->
+    <div id="storyModal" class="modal-overlay hidden">
+        <div class="modal story-modal glass-card">
+            <div class="modal-header">
+                <div class="story-modal-title-area">
+                    <h2 id="storyModalTitle"></h2>
+                    <p id="storyModalTitleAr" class="story-title-ar"></p>
+                </div>
+                <button id="btnCloseStory" class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="story-modal-meta" id="storyModalMeta"></div>
+            <div class="modal-body story-modal-body" id="storyModalBody">
+                <!-- Tabs -->
+                <div class="story-tabs">
+                    <button class="story-tab active" data-tab="story"><i class="fas fa-book-open"></i> Story</button>
+                    <button class="story-tab" data-tab="quiz"><i class="fas fa-question-circle"></i> Quiz</button>
+                    <button class="story-tab" data-tab="moral"><i class="fas fa-lightbulb"></i> Lessons</button>
+                </div>
+                <div id="tabStory" class="tab-panel active">
+                    <div id="storyText" class="story-text"></div>
+                    <div id="storyReference" class="story-reference"></div>
+                </div>
+                <div id="tabQuiz" class="tab-panel hidden">
+                    <div id="quizContainer"></div>
+                </div>
+                <div id="tabMoral" class="tab-panel hidden">
+                    <div id="moralContent"></div>
+                </div>
+            </div>
+            <div class="modal-footer story-footer">
+                <button id="btnMarkComplete" class="btn-complete">
+                    <i class="fas fa-check-circle"></i> Mark as Read
+                </button>
+                <div class="story-nav">
+                    <button id="btnPrevStory" class="btn-secondary"><i class="fas fa-chevron-left"></i> Previous</button>
+                    <button id="btnNextStory" class="btn-secondary">Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Banner -->
+        <div class="hero-banner glass-card">
+            <div class="hero-text">
+                <h1>Islamic Storybook</h1>
+                <p class="hero-subtitle">Authentic stories from the Quran, Sunnah & Islamic history — for all ages</p>
+                <p class="hero-arabic">﴿ نَحْنُ نَقُصُّ عَلَيْكَ أَحْسَنَ الْقَصَصِ ﴾</p>
+                <p class="hero-translation">"We narrate to you the best of stories" — Surah Yusuf 12:3</p>
+            </div>
+            <div class="hero-stats" id="heroStats">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="search-filter-bar glass-card">
+            <div class="search-wrap">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search stories, prophets, companions..." autocomplete="off">
+                <button id="btnClearSearch" class="btn-clear-search hidden"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="filter-rows">
+                <div class="filter-group">
+                    <span class="filter-group-label"><i class="fas fa-child"></i> Age</span>
+                    <div class="filter-pills" data-group="age">
+                        <button class="fpill active" data-val="all">All</button>
+                        <button class="fpill" data-val="kids">Kids</button>
+                        <button class="fpill" data-val="teen">Teen</button>
+                        <button class="fpill" data-val="adult">Adult</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-group-label"><i class="fas fa-signal"></i> Level</span>
+                    <div class="filter-pills" data-group="difficulty">
+                        <button class="fpill active" data-val="all">All</button>
+                        <button class="fpill fpill-easy" data-val="easy">Easy</button>
+                        <button class="fpill fpill-medium" data-val="medium">Medium</button>
+                        <button class="fpill fpill-hard" data-val="hard">Detailed</button>
+                    </div>
+                </div>
+                <div class="filter-group filter-group-right">
+                    <span class="filter-group-label"><i class="fas fa-sort-amount-down"></i> Sort</span>
+                    <div class="sort-btns" id="sortBtns">
+                        <button class="fpill active" data-sort="featured"><i class="fas fa-star"></i> Featured</button>
+                        <button class="fpill" data-sort="az">A–Z</button>
+                        <button class="fpill" data-sort="shortest"><i class="fas fa-clock"></i> Shortest</button>
+                        <button class="fpill" data-sort="longest"><i class="fas fa-clock"></i> Longest</button>
+                    </div>
+                </div>
+                <div class="filter-group filter-group-right">
+                    <button id="btnUnreadOnly" class="fpill fpill-toggle" data-active="false">
+                        <i class="far fa-circle"></i> Unread Only
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="category-tabs glass-card">
+            <button class="cat-pill active" data-cat="all">
+                <i class="fas fa-globe"></i> All Stories
+                <span class="cat-count" id="count-all"></span>
+            </button>
+            <button class="cat-pill" data-cat="qisas-anbiya">
+                <i class="fas fa-star-and-crescent"></i> Qisas al-Anbiya
+                <span class="cat-count" id="count-qisas-anbiya"></span>
+            </button>
+            <button class="cat-pill" data-cat="qisas-quran">
+                <i class="fas fa-book"></i> Qisas al-Quran
+                <span class="cat-count" id="count-qisas-quran"></span>
+            </button>
+            <button class="cat-pill" data-cat="qisas-sahaba">
+                <i class="fas fa-users"></i> Qisas al-Sahaba
+                <span class="cat-count" id="count-qisas-sahaba"></span>
+            </button>
+            <button class="cat-pill" data-cat="islamic-history">
+                <i class="fas fa-landmark"></i> Islamic History
+                <span class="cat-count" id="count-islamic-history"></span>
+            </button>
+            <button class="cat-pill" data-cat="akhira">
+                <i class="fas fa-moon"></i> Akhira
+                <span class="cat-count" id="count-akhira"></span>
+            </button>
+            <button class="cat-pill" data-cat="end-times">
+                <i class="fas fa-hourglass-end"></i> End Times
+                <span class="cat-count" id="count-end-times"></span>
+            </button>
+            <button class="cat-pill" data-cat="miracles">
+                <i class="fas fa-magic"></i> Miracles
+                <span class="cat-count" id="count-miracles"></span>
+            </button>
+            <button class="cat-pill" data-cat="motivation">
+                <i class="fas fa-heart"></i> Motivation
+                <span class="cat-count" id="count-motivation"></span>
+            </button>
+            <button class="cat-pill" data-cat="lessons">
+                <i class="fas fa-lightbulb"></i> Lessons
+                <span class="cat-count" id="count-lessons"></span>
+            </button>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info" id="resultsInfo"></div>
+
+        <!-- Story Cards Grid -->
+        <div id="storiesGrid" class="stories-grid">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state hidden">
+            <i class="fas fa-search"></i>
+            <h3>No stories found</h3>
+            <p>Try a different search term or category.</p>
+            <button onclick="resetFilters()" class="btn-primary">Show All Stories</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pages-footer">
+        <p class="footer-note">All stories are from authentic Islamic sources: the Holy Quran, Sahih Bukhari, Sahih Muslim, Ibn Kathir's Al-Bidaya wan-Nihaya, and classical scholars.</p>
+        <p><a href="../index.html" class="footer-home-link">Home</a></p>
+        <p>&copy; 2026 - <a href="https://thesaifzaman.github.io/" target="_blank">Md. Saif Zaman</a>. All rights reserved.</p>
+    </footer>
+
+    <script src="stories-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -84,6 +84,16 @@ var PAGES_DATA = [
         featured: true
     },
     {
+        title: "Islamic Storybook",
+        description: "Authentic Islamic stories for all ages — Prophets, Sahaba, Quranic tales, Akhira, End Times and more. With quizzes, progress tracking, and beautiful reader view.",
+        href: "../islamic-storybook/index.html",
+        icon: "fas fa-book-open",
+        color: "purple",
+        category: "Knowledge",
+        tags: ["stories", "prophets", "sahaba", "quran", "history", "akhira", "kids"],
+        featured: true
+    },
+    {
         title: "Muslim Dev Mentorship",
         description: "Free 1-on-1 mentorship for Muslim developers — because the best of people are those who benefit others.",
         href: "../muslim-dev-mentorship/index.html",
