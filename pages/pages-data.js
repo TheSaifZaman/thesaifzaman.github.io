@@ -74,6 +74,16 @@ var PAGES_DATA = [
         tags: ["tools", "apps", "api", "open-source", "directory", "developers"]
     },
     {
+        title: "Hijri Calendar",
+        description: "Interactive Islamic calendar with 150+ historical events from Prophet Adam (AS) to Prophet Muhammad (PBUH), fasting days, and detailed event descriptions.",
+        href: "../hijri-calendar/index.html",
+        icon: "fas fa-calendar-alt",
+        color: "teal",
+        category: "Spiritual",
+        tags: ["calendar", "hijri", "history", "events", "fasting", "islamic"],
+        featured: true
+    },
+    {
         title: "Muslim Dev Mentorship",
         description: "Free 1-on-1 mentorship for Muslim developers — because the best of people are those who benefit others.",
         href: "../muslim-dev-mentorship/index.html",
