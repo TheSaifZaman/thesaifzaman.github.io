@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantile Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Quantile Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n)</span>
+            <span class="complexity-tag">Predict: O(1)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Quantile Regression predicts specific quantiles (e.g., median, 25th percentile, 75th percentile) of the response variable instead of the mean. It uses an asymmetric loss function that weights overestimation and underestimation differently.</p>
+            <p>This is useful when you care about prediction intervals or when the data has heteroscedastic variance (different spread at different x values). By fitting multiple quantile lines, you get a complete picture of the conditional distribution.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Check loss:</strong> &rho;<sub>&tau;</sub>(u) = u(&tau; &minus; I(u &lt; 0))</li>
+                    <li><strong>Cost:</strong> J(w) = &Sigma;<sub>i</sub> &rho;<sub>&tau;</sub>(y<sub>i</sub> &minus; x<sub>i</sub><sup>T</sup>w)</li>
+                    <li><strong>&tau; = 0.5:</strong> Median regression (robust to outliers)</li>
+                    <li><strong>&tau; = 0.1, 0.9:</strong> Lower and upper prediction bounds</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Robust:</strong> Median regression is less sensitive to outliers than OLS.</li>
+                    <li><strong>Prediction intervals:</strong> Multiple quantiles give prediction bands.</li>
+                    <li><strong>No normality assumption:</strong> Works for any error distribution.</li>
+                    <li><strong>Linear programming:</strong> Can be solved as a linear program.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function quantileLoss(y, yHat, tau) {
+    var residual = y - yHat;
+    if (residual >= 0) return tau * residual;
+    return (tau - 1) * residual;
+}
+
+function quantileRegression(points, tau, lr, epochs) {
+    var w = 0, b = 0;
+    for (var e = 0; e < epochs; e++) {
+        for (var i = 0; i < points.length; i++) {
+            var pred = w * points[i].x + b;
+            var err = points[i].y - pred;
+            var grad = err >= 0 ? -tau : (1 - tau);
+            w -= lr * grad * (-points[i].x);
+            b -= lr * grad * (-1);
+        }
+    }
+    return { slope: w, intercept: b };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/code/carlmcbrideellis/quantile-regression-example" target="_blank">Kaggle: Quantile Regression Example</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-jan-2021" target="_blank">Kaggle: Prediction Intervals with Quantile Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "quantile-regression", title: "Quantile Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:1.5,y:3.5},{x:2,y:3.9},{x:2.5,y:5.5},{x:3,y:6.2},{x:3.5,y:4.8},{x:4,y:7.8},{x:4.5,y:9.2},{x:5,y:10.1},{x:5,y:7.5}];
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Scattered data. Quantile Regression fits lines for different quantiles (10th, 50th, 90th)."
+        });
+
+        // OLS mean line
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:1.0,x2:6,y2:1.0+1.7*6,color:'#94a3b8',dash:'5,5'}],
+            explanation: "OLS (mean regression): fits the conditional mean. Sensitive to outliers."
+        });
+
+        // 10th quantile
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:1.0,x2:6,y2:1.0+1.7*6,color:'#94a3b8',dash:'5,5'},
+                {x1:0,y1:0.2,x2:6,y2:0.2+1.4*6,color:'#ef4444'}
+            ],
+            explanation: "\u03c4 = 0.10 (red): 10th percentile line. ~10% of data falls below this."
+        });
+
+        // 50th quantile (median)
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.2,x2:6,y2:0.2+1.4*6,color:'#ef4444'},
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.65*6,color:'#22c55e'}
+            ],
+            explanation: "\u03c4 = 0.50 (green): median regression. More robust than mean regression."
+        });
+
+        // 90th quantile
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.2,x2:6,y2:0.2+1.4*6,color:'#ef4444'},
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.65*6,color:'#22c55e'},
+                {x1:0,y1:2.0,x2:6,y2:2.0+1.8*6,color:'#8b5cf6'}
+            ],
+            explanation: "\u03c4 = 0.90 (purple): 90th percentile line. ~90% of data falls below this."
+        });
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.2,x2:6,y2:0.2+1.4*6,color:'#ef4444'},
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.65*6,color:'#22c55e'},
+                {x1:0,y1:2.0,x2:6,y2:2.0+1.8*6,color:'#8b5cf6'}
+            ],
+            explanation: "Quantile Regression complete! Red=10th, Green=50th (median), Purple=90th percentile."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:13} });
+    </script>
+</body>
+</html>

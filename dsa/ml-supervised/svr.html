@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Vector Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Support Vector Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n&sup2;)</span>
+            <span class="complexity-tag">Predict: O(sv)</span>
+            <span class="complexity-tag">Space: O(sv)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Support Vector Regression (SVR) fits a function within an &epsilon;-insensitive tube around the data. Points inside the tube incur no loss; only points outside the tube contribute to the error. The goal is to find the flattest function that has at most &epsilon; deviation from the actual values.</p>
+            <p>The &epsilon; parameter controls the width of the tube. Larger &epsilon; means more tolerance and a simpler model. Support vectors are the data points that lie on or outside the tube boundary.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Objective:</strong> min &frac12;||w||&sup2; + C &Sigma;<sub>i</sub>(&xi;<sub>i</sub> + &xi;<sub>i</sub>*)</li>
+                    <li><strong>Constraints:</strong> |y<sub>i</sub> &minus; (w&middot;x<sub>i</sub> + b)| &le; &epsilon; + &xi;<sub>i</sub></li>
+                    <li><strong>&epsilon;-insensitive loss:</strong> L<sub>&epsilon;</sub>(y, f(x)) = max(0, |y &minus; f(x)| &minus; &epsilon;)</li>
+                    <li><strong>Support vectors:</strong> Points on or outside the &epsilon;-tube boundary.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Epsilon tube:</strong> Points inside the tube have zero loss.</li>
+                    <li><strong>Sparse solution:</strong> Only support vectors define the model.</li>
+                    <li><strong>Kernel trick:</strong> Can model nonlinear relationships via kernels.</li>
+                    <li><strong>Robust:</strong> Less sensitive to individual outliers than OLS.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function svrPredict(x, supportVectors, alphas, b, kernel) {
+    var sum = 0;
+    for (var i = 0; i < supportVectors.length; i++) {
+        sum += alphas[i] * kernel(supportVectors[i], x);
+    }
+    return sum + b;
+}
+
+function epsilonLoss(y, pred, epsilon) {
+    var diff = Math.abs(y - pred);
+    return diff > epsilon ? diff - epsilon : 0;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/code/faressayah/support-vector-regression-svr" target="_blank">Kaggle: SVR Tutorial</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices with SVR</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.hackerrank.com/challenges/predicting-house-prices/problem" target="_blank">HackerRank: Predicting House Prices</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "svr", title: "Support Vector Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:1.5,y:3.0},{x:2,y:3.9},{x:2.5,y:5.0},{x:3,y:6.2},{x:3.5,y:5.5},{x:4,y:7.8},{x:4.5,y:8.5},{x:5,y:10.1}];
+        var m = 1.85, b = 0.3, eps = 1.0;
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Data points. SVR will fit a line with an \u03b5-insensitive tube around it."
+        });
+
+        // Show regression line
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:b,x2:6,y2:b+m*6,color:'#22c55e'}],
+            explanation: "Regression line: y = " + m + "x + " + b
+        });
+
+        // Show epsilon tube
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:b,x2:6,y2:b+m*6,color:'#22c55e'},
+                {x1:0,y1:b+eps,x2:6,y2:b+m*6+eps,color:'#f59e0b',dash:'5,5'},
+                {x1:0,y1:b-eps,x2:6,y2:b+m*6-eps,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "\u03b5-tube (dashed): points inside have zero loss. \u03b5 = " + eps
+        });
+
+        // Identify support vectors (outside tube)
+        var svPts = points.map(function(p){
+            var pred = m * p.x + b;
+            var inside = Math.abs(p.y - pred) <= eps;
+            return {x:p.x, y:p.y, color: inside ? '#3b82f6' : '#ef4444', r: inside ? 5 : 8};
+        });
+        steps.push({
+            points: svPts,
+            lines: [
+                {x1:0,y1:b,x2:6,y2:b+m*6,color:'#22c55e'},
+                {x1:0,y1:b+eps,x2:6,y2:b+m*6+eps,color:'#f59e0b',dash:'5,5'},
+                {x1:0,y1:b-eps,x2:6,y2:b+m*6-eps,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "Red = support vectors (on/outside tube boundary). Blue = inside tube (zero loss)."
+        });
+
+        steps.push({
+            points: svPts,
+            lines: [
+                {x1:0,y1:b,x2:6,y2:b+m*6,color:'#22c55e'},
+                {x1:0,y1:b+eps,x2:6,y2:b+m*6+eps,color:'#f59e0b',dash:'5,5'},
+                {x1:0,y1:b-eps,x2:6,y2:b+m*6-eps,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "SVR complete! The model is defined only by support vectors. Tube width controls bias-variance."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:13} });
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Decision Tree</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(n log n)</span>
+            <span class="complexity-tag">Predict: O(log n)</span>
+            <span class="complexity-tag">Space: O(nodes)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Decision Tree recursively splits the feature space into regions using if-then rules. At each internal node, it selects the feature and threshold that best separates the classes (using Gini impurity or information gain). Leaf nodes contain the final class predictions.</p>
+            <p>The tree grows by greedily choosing the best split at each step until a stopping criterion is met (max depth, min samples, or pure leaves).</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Gini Impurity:</strong> G = 1 &minus; &Sigma;<sub>k</sub> p<sub>k</sub>&sup2;</li>
+                    <li><strong>Entropy:</strong> H = &minus;&Sigma;<sub>k</sub> p<sub>k</sub> log<sub>2</sub>(p<sub>k</sub>)</li>
+                    <li><strong>Information Gain:</strong> IG = H(parent) &minus; &Sigma; (n<sub>child</sub>/n) H(child)</li>
+                    <li><strong>Split criterion:</strong> Choose feature & threshold maximizing IG (or minimizing Gini).</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Interpretable:</strong> Easy to visualize and explain decisions.</li>
+                    <li><strong>Non-parametric:</strong> No assumptions about data distribution.</li>
+                    <li><strong>Handles mixed types:</strong> Works with both numerical and categorical features.</li>
+                    <li><strong>Prone to overfitting:</strong> Deep trees memorize training data. Prune or limit depth.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function giniImpurity(labels) {
+    var counts = {}, n = labels.length;
+    for (var i = 0; i < n; i++) {
+        counts[labels[i]] = (counts[labels[i]] || 0) + 1;
+    }
+    var gini = 1;
+    for (var k in counts) {
+        var p = counts[k] / n;
+        gini -= p * p;
+    }
+    return gini;
+}
+
+function buildTree(data, labels, depth, maxDepth) {
+    if (depth >= maxDepth || giniImpurity(labels) === 0) {
+        return { leaf: true, label: majorityVote(labels) };
+    }
+    var bestSplit = findBestSplit(data, labels);
+    var left = buildTree(bestSplit.leftData, bestSplit.leftLabels, depth+1, maxDepth);
+    var right = buildTree(bestSplit.rightData, bestSplit.rightLabels, depth+1, maxDepth);
+    return { feature: bestSplit.feature, threshold: bestSplit.threshold, left: left, right: right };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (Decision Tree)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/tree-traversals-inorder-preorder-postorder/problem" target="_blank">HackerRank: Tree Traversal</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/playground-series-s3e14" target="_blank">Kaggle: Playground Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "decision-tree", title: "Decision Tree", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var w = 500;
+
+        // Build a simple tree visualization
+        steps.push({
+            type: 'tree',
+            nodes: [
+                {id:0, x:w/2, y:30, label:'x<3?', state:'comparing'}
+            ],
+            edges: [],
+            explanation: "Start: evaluate root split. Is feature x < 3?"
+        });
+
+        steps.push({
+            type: 'tree',
+            nodes: [
+                {id:0, x:w/2, y:30, label:'x<3?', state:'sorted'},
+                {id:1, x:w/4, y:100, label:'y<3?', state:'comparing'},
+                {id:2, x:3*w/4, y:100, label:'B', state:''}
+            ],
+            edges: [{from:0,to:1},{from:0,to:2}],
+            explanation: "First split: left branch (x<3) needs further splitting. Right branch = Class B."
+        });
+
+        steps.push({
+            type: 'tree',
+            nodes: [
+                {id:0, x:w/2, y:30, label:'x<3?', state:'sorted'},
+                {id:1, x:w/4, y:100, label:'y<3?', state:'sorted'},
+                {id:2, x:3*w/4, y:100, label:'B', state:'sorted'},
+                {id:3, x:w/8, y:170, label:'A', state:'comparing'},
+                {id:4, x:3*w/8, y:170, label:'A', state:'comparing'}
+            ],
+            edges: [{from:0,to:1},{from:0,to:2},{from:1,to:3},{from:1,to:4}],
+            explanation: "Second split on y<3: both leaves are Class A. Tree is fully grown."
+        });
+
+        steps.push({
+            type: 'tree',
+            nodes: [
+                {id:0, x:w/2, y:30, label:'x<3?', state:'sorted'},
+                {id:1, x:w/4, y:100, label:'y<3?', state:'sorted'},
+                {id:2, x:3*w/4, y:100, label:'B', state:'sorted'},
+                {id:3, x:w/8, y:170, label:'A', state:'sorted'},
+                {id:4, x:3*w/8, y:170, label:'A', state:'sorted'}
+            ],
+            edges: [{from:0,to:1},{from:0,to:2},{from:1,to:3},{from:1,to:4}],
+            explanation: "Decision Tree complete! Each path from root to leaf = one classification rule."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3], stepGenerator:generateSteps, type:'tree' });
+    </script>
+</body>
+</html>

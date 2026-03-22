@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequence-to-Sequence — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Sequence-to-Sequence</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(T&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Sequence-to-Sequence (Seq2Seq) is an encoder-decoder architecture that transforms one sequence into another. The <strong>encoder</strong> reads the input sequence and compresses it into a fixed-size context vector. The <strong>decoder</strong> then generates the output sequence token by token, conditioned on this context.</p>
+            <p>Originally using RNNs/LSTMs, the encoder processes the input left-to-right, building up hidden state. The final hidden state (context vector) captures the meaning of the entire input. The decoder starts with this context and autoregressively generates output tokens.</p>
+            <p>Seq2Seq is the foundation for machine translation, text summarization, chatbots, and speech-to-text. The attention mechanism was later added to address the information bottleneck of the fixed context vector.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    <h4>Encoder</h4>
+                    <p>Reads input sequence and produces a context representation.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <h4>Decoder</h4>
+                    <p>Generates output sequence from context, one token at a time.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h4>Variable Lengths</h4>
+                    <p>Input and output can have different lengths.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4>Teacher Forcing</h4>
+                    <p>Uses ground truth as decoder input during training for faster convergence.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Seq2Seq with RNN (simplified pseudocode)
+function seq2seq(inputSeq, encoder, decoder, maxOutputLen) {
+    // ENCODE: process input sequence
+    var hidden = encoder.initHidden();
+    for (var i = 0; i < inputSeq.length; i++) {
+        var result = encoder.forward(inputSeq[i], hidden);
+        hidden = result.hidden;
+    }
+    // hidden is now the context vector
+
+    // DECODE: generate output sequence
+    var output = [];
+    var decoderInput = SOS_TOKEN; // start-of-sequence
+    var decoderHidden = hidden;   // initialize with encoder's final state
+
+    for (var t = 0; t < maxOutputLen; t++) {
+        var result = decoder.forward(decoderInput, decoderHidden);
+        var token = argMax(result.logits);
+        if (token === EOS_TOKEN) break;
+        output.push(token);
+        decoderInput = token;          // autoregressive
+        decoderHidden = result.hidden;
+    }
+    return output;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html" target="_blank">PyTorch Seq2Seq Translation</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.tensorflow.org/text/tutorials/nmt_with_attention" target="_blank">TF Seq2Seq with Attention</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://www.kaggle.com/competitions/jigsaw-toxic-comment-classification-challenge" target="_blank">Text Summarization Seq2Seq</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html" target="_blank">Date Format Converter Seq2Seq</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://arxiv.org/abs/1409.3215" target="_blank">Chatbot with Seq2Seq</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "seq2seq", title: "Sequence-to-Sequence", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var inputWords = ['hello','world','<eos>'];
+            var outputWords = ['bonjour','monde','<eos>'];
+
+            // Encoder network
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'h'},{label:'e'},{label:'l'},{label:'l'},{label:'o'}] },
+                    { nodes: [{label:''},{label:''},{label:''}], weights:[[0.5,0.3,0.2],[0.3,0.6,0.1],[0.2,0.4,0.4],[0.4,0.2,0.4],[0.1,0.5,0.4]] },
+                    { nodes: [{label:'ctx'}], weights:[[0.8],[0.6],[0.7]] }
+                ],
+                explanation: 'ENCODER: reads input "hello" character by character. Each hidden state captures more context. Final hidden state becomes the context vector.'
+            });
+
+            // Encoding each word
+            for (var i = 0; i < inputWords.length; i++) {
+                var encNodes = inputWords.map(function(w,j) {
+                    return { label: w, state: j===i ? 'active' : (j<i ? 'visited' : '') };
+                });
+                steps.push({
+                    type: 'network',
+                    layers: [
+                        { nodes: encNodes },
+                        { nodes: [{label:'h1'},{label:'h2'}], weights: inputWords.map(function(){return [0.5,0.5];}) },
+                        { nodes: [{label:'ctx', state: i===inputWords.length-1?'active':''}], weights:[[0.7],[0.3]] }
+                    ],
+                    explanation: 'Encoding "' + inputWords[i] + '" (token ' + (i+1) + '/' + inputWords.length + '). Hidden state updated. ' + (i===inputWords.length-1 ? 'Context vector ready for decoder!' : 'Processing...')
+                });
+            }
+
+            // Decoder generating each word
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'ctx',state:'active'}] },
+                    { nodes: [{label:'h1'},{label:'h2'}], weights:[[0.6,0.4]] },
+                    { nodes: [{label:'?'},{label:'?'},{label:'?'}], weights:[[0.5,0.3,0.2],[0.2,0.5,0.3]] }
+                ],
+                explanation: 'DECODER: starts with context vector from encoder. Generates output tokens one at a time, autoregressively.'
+            });
+
+            for (var d = 0; d < outputWords.length; d++) {
+                var decNodes = outputWords.map(function(w,j) {
+                    return { label: j<=d ? w : '?', state: j===d ? 'active' : (j<d ? 'visited' : '') };
+                });
+                steps.push({
+                    type: 'network',
+                    layers: [
+                        { nodes: [{label: d===0?'<sos>':outputWords[d-1]}] },
+                        { nodes: [{label:'h1'},{label:'h2'}], weights:[[0.6,0.4]] },
+                        { nodes: decNodes, weights:[[0.5,0.3,0.2],[0.2,0.5,0.3]] }
+                    ],
+                    explanation: 'Decoder step ' + (d+1) + ': input "' + (d===0?'<sos>':outputWords[d-1]) + '" → generates "' + outputWords[d] + '". ' + (outputWords[d]==='<eos>' ? 'End of sequence reached!' : 'Feed this as next input.')
+                });
+            }
+
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'hello'},{label:'world'}] },
+                    { nodes: [{label:'→',state:'active'}], weights:[[1],[1]] },
+                    { nodes: [{label:'bonjour'},{label:'monde'}], weights:[[1,0],[0,1]] }
+                ],
+                explanation: 'Seq2Seq complete! "hello world" → "bonjour monde". The encoder compressed input into context, and the decoder generated the translation.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'network', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

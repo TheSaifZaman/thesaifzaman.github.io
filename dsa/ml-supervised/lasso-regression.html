@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lasso Regression (L1) — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Lasso Regression (L1)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(nd)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Lasso (Least Absolute Shrinkage and Selection Operator) adds an L1 penalty to the cost function. Unlike Ridge, the L1 penalty can drive coefficients exactly to zero, effectively performing feature selection.</p>
+            <p>This makes Lasso particularly useful when you suspect many features are irrelevant. As &lambda; increases, more coefficients become exactly zero, yielding a sparser, more interpretable model.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Cost Function:</strong> J(w) = (1/n) &Sigma;<sub>i</sub>(y<sub>i</sub> &minus; y&#770;<sub>i</sub>)&sup2; + &lambda; &Sigma;<sub>j</sub>|w<sub>j</sub>|</li>
+                    <li><strong>L1 Penalty:</strong> &lambda;||w||<sub>1</sub> = &lambda; &Sigma; |w<sub>j</sub>|</li>
+                    <li><strong>No closed-form:</strong> Solved via coordinate descent or subgradient methods.</li>
+                    <li><strong>Sparsity:</strong> L1 penalty produces exact zeros in the weight vector.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Feature selection:</strong> Automatically zeros out irrelevant features.</li>
+                    <li><strong>Sparse models:</strong> Produces interpretable, compact models.</li>
+                    <li><strong>Non-differentiable:</strong> L1 penalty is not smooth at zero.</li>
+                    <li><strong>Coordinate descent:</strong> Standard solver for Lasso optimization.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function lassoCoordinateDescent(X, y, lambda, maxIter) {
+    var d = X[0].length, n = X.length;
+    var w = new Array(d).fill(0);
+    for (var iter = 0; iter < maxIter; iter++) {
+        for (var j = 0; j < d; j++) {
+            var rho = 0;
+            for (var i = 0; i < n; i++) {
+                var pred = dot(X[i], w) - w[j] * X[i][j];
+                rho += X[i][j] * (y[i] - pred);
+            }
+            // Soft thresholding
+            if (rho < -lambda/2) w[j] = (rho + lambda/2);
+            else if (rho > lambda/2) w[j] = (rho - lambda/2);
+            else w[j] = 0;
+        }
+    }
+    return w;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices (Lasso)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.hackerrank.com/challenges/lasso-regression/problem" target="_blank">HackerRank: Lasso Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/code/jeppbautista/lasso-ridge-and-elastic-net-regression" target="_blank">Kaggle: Lasso vs Ridge Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "lasso-regression", title: "Lasso Regression (L1)", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:2,y:3.9},{x:3,y:6.2},{x:4,y:7.8},{x:5,y:10.1}];
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Data points. Lasso will fit a line while performing feature selection via L1 penalty."
+        });
+
+        // OLS fit
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:0.1,x2:6,y2:0.1+2.0*6,color:'#ef4444'}],
+            explanation: "OLS fit: slope=2.0, intercept=0.1 — all features used with full weights."
+        });
+
+        // Lasso lambda=0.5
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.1,x2:6,y2:0.1+2.0*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.7*6,color:'#f59e0b'}
+            ],
+            explanation: "Lasso (\u03bb=0.5): some coefficient shrinkage. slope=1.7 — weaker features start to zero out."
+        });
+
+        // Lasso lambda=2
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.1,x2:6,y2:0.1+2.0*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:2.0,x2:6,y2:2.0+1.2*6,color:'#22c55e'}
+            ],
+            explanation: "Lasso (\u03bb=2.0): stronger penalty. Many features driven to zero. slope=1.2"
+        });
+
+        // Lasso lambda=5 (very sparse)
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.1,x2:6,y2:0.1+2.0*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:4.5,x2:6,y2:4.5+0.4*6,color:'#8b5cf6'}
+            ],
+            explanation: "Lasso (\u03bb=5.0): very sparse model — most features eliminated. slope=0.4"
+        });
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.1,x2:6,y2:0.1+2.0*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:2.0,x2:6,y2:2.0+1.2*6,color:'#22c55e'}
+            ],
+            explanation: "Lasso excels at feature selection. Choose \u03bb via cross-validation for best generalization."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:13} });
+    </script>
+</body>
+</html>

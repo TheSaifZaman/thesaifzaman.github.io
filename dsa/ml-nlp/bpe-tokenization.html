@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte Pair Encoding (BPE) — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Byte Pair Encoding (BPE)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;V)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Byte Pair Encoding (BPE) is a subword tokenization algorithm used in modern language models (GPT, BERT, etc.). It starts with a vocabulary of individual characters and iteratively merges the most frequent adjacent pair into a new token.</p>
+            <p>Process: (1) Split all words into characters. (2) Count all adjacent character pairs. (3) Merge the most frequent pair into a new symbol. (4) Repeat until reaching the desired vocabulary size.</p>
+            <p>BPE handles rare words by breaking them into known subword units. For example, "unhappiness" might become ["un", "happi", "ness"], allowing the model to understand it even if never seen as a whole word during training.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <h4>Subword Units</h4>
+                    <p>Breaks rare words into frequently occurring subword pieces.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress"></i>
+                    <h4>Iterative Merging</h4>
+                    <p>Most frequent character pair merged at each step.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-robot"></i>
+                    <h4>GPT/BERT Standard</h4>
+                    <p>BPE or variants used by virtually all modern LLMs.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-language"></i>
+                    <h4>No OOV Words</h4>
+                    <p>Any word can be encoded — no out-of-vocabulary problem.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function trainBPE(corpus, numMerges) {
+    // Split words into characters
+    var vocab = {};
+    corpus.forEach(function(word) {
+        var chars = word.split('').join(' ') + ' &lt;/w&gt;';
+        vocab[chars] = (vocab[chars] || 0) + 1;
+    });
+
+    var merges = [];
+    for (var i = 0; i < numMerges; i++) {
+        // Count all adjacent pairs
+        var pairs = {};
+        Object.keys(vocab).forEach(function(word) {
+            var symbols = word.split(' ');
+            for (var j = 0; j < symbols.length - 1; j++) {
+                var pair = symbols[j] + ',' + symbols[j + 1];
+                pairs[pair] = (pairs[pair] || 0) + vocab[word];
+            }
+        });
+
+        // Find most frequent pair
+        var bestPair = null, bestCount = 0;
+        Object.keys(pairs).forEach(function(p) {
+            if (pairs[p] > bestCount) { bestPair = p; bestCount = pairs[p]; }
+        });
+        if (!bestPair) break;
+
+        // Merge pair in all words
+        var parts = bestPair.split(',');
+        merges.push(parts);
+        var newVocab = {};
+        Object.keys(vocab).forEach(function(word) {
+            var newWord = word.split(parts[0] + ' ' + parts[1]).join(parts[0] + parts[1]);
+            newVocab[newWord] = vocab[word];
+        });
+        vocab = newVocab;
+    }
+    return merges;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://huggingface.co/docs/tokenizers/quicktour" target="_blank">HuggingFace Tokenizer Tutorial</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://arxiv.org/abs/1508.07909" target="_blank">Implement BPE from Scratch</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://huggingface.co/docs/tokenizers/quicktour" target="_blank">Compare BPE vs WordPiece vs Unigram</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://platform.openai.com/tokenizer" target="_blank">GPT Tokenizer Analysis</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "bpe-tokenization", title: "Byte Pair Encoding (BPE)", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Show BPE merges as bar chart of pair frequencies
+        function generateSteps() {
+            var steps = [];
+            // Simulated corpus: "low lower lowest new newer newest"
+            // Character pairs and their counts
+            var pairLabels = ['l+o','o+w','w+e','e+r','e+s','s+t','n+e','lo+w','low+e','er+s'];
+            var pairCounts = [3, 3, 4, 3, 2, 2, 3, 0, 0, 0];
+
+            steps.push({ array: pairCounts.slice(0,7), highlights: {}, explanation: 'BPE Step 0: corpus split into characters. Count adjacent pairs: l+o(3), o+w(3), w+e(4), e+r(3), e+s(2), s+t(2), n+e(3). Pairs: ' + pairLabels.slice(0,7).join(', ') });
+
+            // Merge 1: w+e (count 4, highest)
+            var hl1 = {2:'found'};
+            steps.push({ array: [3,3,4,3,2,2,3], highlights: hl1, explanation: 'Merge 1: "w"+"e" → "we" (count 4, most frequent). This creates a new token "we". All instances of "w e" in vocabulary are merged.' });
+
+            // After merge 1, new counts
+            steps.push({ array: [3,3,3,2,2,3,3], highlights: {}, explanation: 'After merge: vocabulary updated. "we" is now a single token. Recount pairs: l+o(3), o+we(3), we+r(3), we+s(2), s+t(2), n+e(3), lo+w is new potential.' });
+
+            // Merge 2: l+o (count 3, tied — pick first)
+            steps.push({ array: [3,3,3,2,2,3,3], highlights: {0:'found'}, explanation: 'Merge 2: "l"+"o" → "lo" (count 3). Multiple pairs tied at 3 — picking "l+o". Common in "low", "lower", "lowest".' });
+
+            // Merge 3
+            steps.push({ array: [3,3,2,2,3,2,3], highlights: {0:'found'}, explanation: 'Merge 3: "lo"+"w" → "low" (count 3). Now "low" is a single token. This is how BPE builds up from characters to common subwords.' });
+
+            // Merge 4
+            steps.push({ array: [3,2,2,3,2,3,2], highlights: {3:'found'}, explanation: 'Merge 4: "n"+"e" → "ne" (count 3). Common in "new", "newer", "newest". Vocabulary grows: {lo, we, low, ne, ...}' });
+
+            // Merge 5
+            steps.push({ array: [2,2,3,2,3,2,2], highlights: {2:'found'}, explanation: 'Merge 5: "ne"+"w" → "new" (count 3). Now both "low" and "new" are single tokens. BPE captures common word stems automatically.' });
+
+            // Final vocabulary
+            steps.push({ array: [5,4,3,3,2,2,1], highlights: {0:'sorted',1:'sorted'}, explanation: 'BPE complete! Final subword tokens: low, new, er, est, we, ne, ... Any word can be encoded as a sequence of these subwords. "lowest" → ["low","est"]. No out-of-vocabulary words!' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [0,0,0,0,0,0,0], type: 'bars', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

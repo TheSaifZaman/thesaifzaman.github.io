@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Logistic Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(nd)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Logistic Regression models the probability that an input belongs to a particular class using the sigmoid (logistic) function. Despite its name, it is a classification algorithm. It finds a linear decision boundary and maps predictions to probabilities between 0 and 1.</p>
+            <p>The model optimizes the binary cross-entropy loss using gradient descent. The decision boundary is the set of points where the predicted probability equals 0.5.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Sigmoid:</strong> &sigma;(z) = 1 / (1 + e<sup>&minus;z</sup>)</li>
+                    <li><strong>Model:</strong> P(y=1|x) = &sigma;(w<sup>T</sup>x + b)</li>
+                    <li><strong>Loss (BCE):</strong> J = &minus;(1/n) &Sigma;[y<sub>i</sub> log(p<sub>i</sub>) + (1&minus;y<sub>i</sub>) log(1&minus;p<sub>i</sub>)]</li>
+                    <li><strong>Decision boundary:</strong> w<sup>T</sup>x + b = 0 (where P = 0.5)</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Probabilistic output:</strong> Returns class probabilities, not just labels.</li>
+                    <li><strong>Linear boundary:</strong> Decision surface is a hyperplane.</li>
+                    <li><strong>Convex loss:</strong> Binary cross-entropy has a single global minimum.</li>
+                    <li><strong>Regularizable:</strong> Can add L1/L2 penalties to prevent overfitting.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+function logisticRegression(X, y, lr, epochs) {
+    var w = new Array(X[0].length).fill(0);
+    var b = 0, n = X.length;
+    for (var e = 0; e < epochs; e++) {
+        var dw = new Array(w.length).fill(0), db = 0;
+        for (var i = 0; i < n; i++) {
+            var z = dot(w, X[i]) + b;
+            var a = sigmoid(z);
+            var err = a - y[i];
+            for (var j = 0; j < w.length; j++) dw[j] += err * X[i][j];
+            db += err;
+        }
+        for (var j2 = 0; j2 < w.length; j2++) w[j2] -= lr * dw[j2] / n;
+        b -= lr * db / n;
+    }
+    return { weights: w, bias: b };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic Survival Prediction</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/s10-logistic-regression/problem" target="_blank">HackerRank: Logistic Regression</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://leetcode.com/problems/best-position-for-a-service-centre/" target="_blank">LeetCode 1515: Best Position for a Service Centre</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "logistic-regression", title: "Logistic Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts,
+            lines: [],
+            explanation: "Two classes: Blue (class 0) and Red (class 1). We need a decision boundary."
+        });
+
+        // Decision boundary iterations
+        var boundaries = [
+            {x1:0,y1:6,x2:6,y2:0, label:"Initial boundary: random diagonal line."},
+            {x1:0.5,y1:5.5,x2:5.5,y2:1, label:"Iteration 10: boundary starts to separate classes."},
+            {x1:1,y1:5.5,x2:5.5,y2:2, label:"Iteration 50: boundary rotates toward optimal position."},
+            {x1:2.5,y1:6,x2:4,y2:1, label:"Converged: sigmoid maps points to probabilities. Boundary at P=0.5."}
+        ];
+
+        for(var i=0;i<boundaries.length;i++){
+            var bd = boundaries[i];
+            steps.push({
+                points: allPts,
+                lines: [{x1:bd.x1,y1:bd.y1,x2:bd.x2,y2:bd.y2,color:'#22c55e'}],
+                explanation: bd.label
+            });
+        }
+
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6,x2:4,y2:1,color:'#22c55e'}],
+            explanation: "Logistic Regression complete! Green line = decision boundary where \u03c3(z) = 0.5."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

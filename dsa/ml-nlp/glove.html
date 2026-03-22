@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GloVe — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>GloVe</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V&sup2;)</span>
+            <span class="complexity-tag">Space: O(V&sup2; + V&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>GloVe (Global Vectors for Word Representation) combines the strengths of count-based methods (like LSA) and prediction-based methods (like Word2Vec). It first builds a global word-word co-occurrence matrix from the entire corpus, then learns embeddings by factorizing this matrix.</p>
+            <p>The key insight is that ratios of co-occurrence probabilities encode semantic relationships. For example, if "ice" co-occurs frequently with "solid" but not "gas", and "steam" co-occurs with "gas" but not "solid", the ratio of these probabilities captures the semantic distinction between ice and steam.</p>
+            <p>GloVe optimizes: <code>w_i &middot; w_j + b_i + b_j = log(X_ij)</code>, where X_ij is the co-occurrence count, weighted to reduce the influence of very frequent pairs.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-globe"></i>
+                    <h4>Global Statistics</h4>
+                    <p>Uses entire corpus co-occurrence matrix, not just local windows.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-percentage"></i>
+                    <h4>Ratio Insight</h4>
+                    <p>Co-occurrence probability ratios capture semantic meaning.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-weight-hanging"></i>
+                    <h4>Weighted Least Squares</h4>
+                    <p>Frequent pairs are downweighted to prevent dominance.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress-alt"></i>
+                    <h4>Matrix Factorization</h4>
+                    <p>Decomposes co-occurrence into low-rank word vectors.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function trainGloVe(cooccurrence, dim, iterations, lr, xmax, alpha) {
+    var V = cooccurrence.length;
+    var W = randomMatrix(V, dim);    // word vectors
+    var Wc = randomMatrix(V, dim);   // context vectors
+    var bw = new Array(V).fill(0);   // word biases
+    var bc = new Array(V).fill(0);   // context biases
+
+    for (var iter = 0; iter < iterations; iter++) {
+        var totalLoss = 0;
+        for (var i = 0; i < V; i++) {
+            for (var j = 0; j < V; j++) {
+                var Xij = cooccurrence[i][j];
+                if (Xij === 0) continue;
+
+                // Weighting function
+                var weight = (Xij < xmax)
+                    ? Math.pow(Xij / xmax, alpha)
+                    : 1.0;
+
+                var dot = dotProduct(W[i], Wc[j]) + bw[i] + bc[j];
+                var diff = dot - Math.log(Xij);
+                var loss = weight * diff * diff;
+                totalLoss += loss;
+
+                // Gradient update
+                var grad = weight * diff;
+                for (var d = 0; d < dim; d++) {
+                    W[i][d] -= lr * grad * Wc[j][d];
+                    Wc[j][d] -= lr * grad * W[i][d];
+                }
+                bw[i] -= lr * grad;
+                bc[j] -= lr * grad;
+            }
+        }
+    }
+    // Final embeddings = W + Wc (or just W)
+    return W;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://nlp.stanford.edu/projects/glove/" target="_blank">Use Pre-trained GloVe Vectors</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/quora-question-pairs" target="_blank">Sentence Similarity with GloVe</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://nlp.stanford.edu/projects/glove/" target="_blank">Word Analogy with GloVe</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://nlp.stanford.edu/projects/glove/" target="_blank">GloVe vs Word2Vec Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "glove", title: "GloVe", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var words = [
+            {word:'ice',   fx:2,  fy:8},
+            {word:'steam', fx:2,  fy:2},
+            {word:'solid', fx:4,  fy:8.5},
+            {word:'gas',   fx:4,  fy:1.5},
+            {word:'water', fx:3,  fy:5},
+            {word:'cold',  fx:1,  fy:7},
+            {word:'hot',   fx:1,  fy:3},
+            {word:'freeze',fx:3.5,fy:9},
+            {word:'boil',  fx:3.5,fy:1}
+        ];
+
+        function generateSteps() {
+            var steps = [];
+
+            // Random initial
+            var rand = words.map(function() {
+                return {x:Math.random()*9+0.5, y:Math.random()*9+0.5, r:6, color:'var(--accent)'};
+            });
+            steps.push({ points: rand, explanation: 'GloVe: learning embeddings from co-occurrence statistics. Starting with random vectors for words: ' + words.map(function(w){return w.word;}).join(', ') + '.' });
+
+            // Build co-occurrence intuition
+            steps.push({ points: rand, explanation: 'Step 1: Build global co-occurrence matrix. Count how often each word pair appears near each other across the entire corpus. "ice" and "cold" co-occur often; "ice" and "hot" rarely.' });
+
+            // Training iterations
+            for (var iter = 1; iter <= 8; iter++) {
+                var t = iter / 8;
+                var pts = words.map(function(w,i) {
+                    var color = (w.word==='ice'||w.word==='cold'||w.word==='solid'||w.word==='freeze') ? 'var(--accent-cyan)' :
+                                (w.word==='steam'||w.word==='hot'||w.word==='gas'||w.word==='boil') ? 'var(--accent-red)' : 'var(--accent-green)';
+                    return { x: rand[i].x+(w.fx-rand[i].x)*t, y: rand[i].y+(w.fy-rand[i].y)*t, r:6, color:color };
+                });
+                steps.push({ points: pts, explanation: 'Iteration ' + iter + ': optimizing w_i·w_j ≈ log(X_ij). Cold-related words (cyan) cluster together, hot-related (red) cluster separately. "water" (green) sits between.' });
+            }
+
+            var final = words.map(function(w) {
+                var color = (w.word==='ice'||w.word==='cold'||w.word==='solid'||w.word==='freeze') ? 'var(--accent-cyan)' :
+                            (w.word==='steam'||w.word==='hot'||w.word==='gas'||w.word==='boil') ? 'var(--accent-red)' : 'var(--accent-green)';
+                return { x:w.fx, y:w.fy, r:6, color:color };
+            });
+            steps.push({ points: final, explanation: 'GloVe embeddings trained. Co-occurrence ratios capture semantics: P(solid|ice)/P(solid|steam) is large, revealing that ice relates to solid. Words: ' + words.map(function(w){return w.word;}).join(', ') });
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: 0, maxX: 10, minY: 0, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

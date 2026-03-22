@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elastic Net — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Elastic Net</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(nd)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Elastic Net combines L1 (Lasso) and L2 (Ridge) regularization. It uses a mixing parameter &alpha; to balance between the two penalties. This gives both feature selection (from L1) and coefficient shrinkage (from L2).</p>
+            <p>When features are correlated, Lasso tends to pick one and ignore the others. Elastic Net handles this grouping effect better &mdash; correlated features tend to get similar coefficients.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Cost:</strong> J(w) = (1/n) &Sigma;(y<sub>i</sub> &minus; y&#770;<sub>i</sub>)&sup2; + &lambda;[&alpha;||w||<sub>1</sub> + (1&minus;&alpha;)||w||<sub>2</sub>&sup2;]</li>
+                    <li><strong>&alpha; = 1:</strong> Pure Lasso (L1 only)</li>
+                    <li><strong>&alpha; = 0:</strong> Pure Ridge (L2 only)</li>
+                    <li><strong>0 &lt; &alpha; &lt; 1:</strong> Mix of both penalties</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Best of both:</strong> Feature selection + coefficient shrinkage.</li>
+                    <li><strong>Grouping effect:</strong> Correlated features get similar weights.</li>
+                    <li><strong>Two hyperparameters:</strong> &lambda; (strength) and &alpha; (mix ratio).</li>
+                    <li><strong>Robust:</strong> Works well when features outnumber samples.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function elasticNet(X, y, lambda, alpha, maxIter) {
+    var d = X[0].length, n = X.length;
+    var w = new Array(d).fill(0);
+    for (var iter = 0; iter < maxIter; iter++) {
+        for (var j = 0; j < d; j++) {
+            var rho = 0;
+            for (var i = 0; i < n; i++) {
+                var pred = dot(X[i], w) - w[j] * X[i][j];
+                rho += X[i][j] * (y[i] - pred);
+            }
+            // Soft thresholding with L2 denominator
+            var l1 = lambda * alpha;
+            var l2 = lambda * (1 - alpha);
+            if (rho < -l1/2) w[j] = (rho + l1/2) / (1 + l2);
+            else if (rho > l1/2) w[j] = (rho - l1/2) / (1 + l2);
+            else w[j] = 0;
+        }
+    }
+    return w;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices (Elastic Net)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/code/jeppbautista/lasso-ridge-and-elastic-net-regression" target="_blank">Kaggle: Lasso, Ridge, Elastic Net Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "elastic-net", title: "Elastic Net", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:2,y:3.9},{x:3,y:6.2},{x:4,y:7.8},{x:5,y:10.1}];
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Data points. Elastic Net combines L1 and L2 regularization."
+        });
+
+        // Pure Ridge (alpha=0)
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:0.8,x2:6,y2:0.8+1.8*6,color:'#ef4444'}],
+            explanation: "Ridge only (\u03b1=0): all features kept, coefficients shrunk. slope=1.8"
+        });
+
+        // Pure Lasso (alpha=1)
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.8*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:1.5,x2:6,y2:1.5+1.5*6,color:'#f59e0b'}
+            ],
+            explanation: "Lasso only (\u03b1=1): sparser model, some features zeroed. slope=1.5"
+        });
+
+        // Elastic Net (alpha=0.5)
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:0.8,x2:6,y2:0.8+1.8*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:1.5,x2:6,y2:1.5+1.5*6,color:'#f59e0b',dash:'5,5'},
+                {x1:0,y1:1.1,x2:6,y2:1.1+1.65*6,color:'#22c55e'}
+            ],
+            explanation: "Elastic Net (\u03b1=0.5): balanced between Ridge and Lasso. slope=1.65"
+        });
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:1.1,x2:6,y2:1.1+1.65*6,color:'#22c55e'}],
+            explanation: "Elastic Net provides the best of both worlds: sparsity from L1, stability from L2."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:12} });
+    </script>
+</body>
+</html>

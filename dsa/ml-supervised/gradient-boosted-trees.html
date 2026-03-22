@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Boosted Trees — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Gradient Boosted Trees</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Train: O(k&middot;n log n)</span>
+            <span class="complexity-tag">Predict: O(k&middot;log n)</span>
+            <span class="complexity-tag">Space: O(k&middot;nodes)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Gradient Boosted Trees build an ensemble of decision trees sequentially. Each new tree is trained on the residual errors (negative gradient of the loss function) of the previous ensemble. The final prediction is the sum of all trees' outputs, weighted by a learning rate.</p>
+            <p>Unlike Random Forest (parallel bagging), boosting is sequential &mdash; each tree explicitly corrects the mistakes of its predecessors. This additive approach produces a strong learner from many weak learners.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Ensemble:</strong> F<sub>m</sub>(x) = F<sub>m&minus;1</sub>(x) + &eta; &middot; h<sub>m</sub>(x)</li>
+                    <li><strong>Residuals:</strong> r<sub>im</sub> = &minus;&part;L(y<sub>i</sub>, F(x<sub>i</sub>)) / &part;F(x<sub>i</sub>)</li>
+                    <li><strong>Learning rate:</strong> &eta; (0 &lt; &eta; &le; 1) shrinks each tree's contribution.</li>
+                    <li><strong>Loss functions:</strong> MSE (regression), log-loss (classification), etc.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>State-of-the-art:</strong> Top performer in Kaggle competitions (XGBoost, LightGBM).</li>
+                    <li><strong>Sequential training:</strong> Each tree corrects previous errors.</li>
+                    <li><strong>Regularization:</strong> Learning rate, max depth, subsampling prevent overfitting.</li>
+                    <li><strong>Feature importance:</strong> Provides reliable feature rankings.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function gradientBoosting(X, y, nTrees, lr, maxDepth) {
+    var predictions = new Array(y.length).fill(mean(y));
+    var trees = [];
+    for (var m = 0; m < nTrees; m++) {
+        // Compute residuals
+        var residuals = y.map(function(yi, i) {
+            return yi - predictions[i];
+        });
+        // Fit tree to residuals
+        var tree = buildTree(X, residuals, 0, maxDepth);
+        trees.push(tree);
+        // Update predictions
+        for (var i = 0; i < X.length; i++) {
+            predictions[i] += lr * treePredict(tree, X[i]);
+        }
+    }
+    return trees;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (XGBoost)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices (GBT)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://www.kaggle.com/competitions/otto-group-product-classification-challenge" target="_blank">Kaggle: Otto Group Classification</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "gradient-boosted-trees", title: "Gradient Boosted Trees", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Data with two classes. Gradient Boosting will iteratively improve the boundary."
+        });
+
+        // Iteration 1: weak stump
+        steps.push({
+            points: allPts,
+            lines: [{x1:3.5,y1:0,x2:3.5,y2:7,color:'#94a3b8'}],
+            explanation: "Tree 1 (weak): simple vertical split at x=3.5. Misclassifies some points."
+        });
+
+        // Iteration 2: refine
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:3.5,y1:0,x2:3.5,y2:7,color:'rgba(148,163,184,0.3)'},
+                {x1:2.8,y1:6,x2:5,y2:2,color:'#f59e0b'}
+            ],
+            explanation: "Tree 2 corrects residuals: refines boundary toward the diagonal. Better separation."
+        });
+
+        // Iteration 3: further refine
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:3.5,y1:0,x2:3.5,y2:7,color:'rgba(148,163,184,0.2)'},
+                {x1:2.8,y1:6,x2:5,y2:2,color:'rgba(245,158,11,0.3)'},
+                {x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#8b5cf6'}
+            ],
+            explanation: "Tree 3 corrects remaining errors: boundary fine-tuned."
+        });
+
+        // Final ensemble
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'}],
+            explanation: "Final ensemble boundary (green): sum of all trees. Each tree contributed a small correction."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'}],
+            explanation: "Gradient Boosting complete! Sequential correction yields state-of-the-art performance."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

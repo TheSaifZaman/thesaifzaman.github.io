@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Linear Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(n)</span>
+            <span class="complexity-tag">Predict: O(1)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Linear Regression fits a straight line through data points by minimizing the sum of squared residuals (Ordinary Least Squares). It finds the best-fit line <strong>y = mx + b</strong> such that the total squared distance between each observed point and the predicted value on the line is minimized.</p>
+            <p>The model assumes a linear relationship between the input feature(s) and the target variable. For a single feature, we compute the slope <strong>m</strong> and intercept <strong>b</strong> using the normal equation or gradient descent.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Model:</strong> y&#770; = w<sub>0</sub> + w<sub>1</sub>x</li>
+                    <li><strong>Cost Function (MSE):</strong> J(w) = (1/n) &Sigma;<sub>i=1</sub><sup>n</sup> (y<sub>i</sub> &minus; y&#770;<sub>i</sub>)&sup2;</li>
+                    <li><strong>Gradient:</strong> &part;J/&part;w = &minus;(2/n) X<sup>T</sup>(y &minus; Xw)</li>
+                    <li><strong>Closed-form:</strong> w = (X<sup>T</sup>X)<sup>&minus;1</sup>X<sup>T</sup>y</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Interpretable:</strong> Coefficients directly show feature importance.</li>
+                    <li><strong>Assumes linearity:</strong> Works best when the true relationship is approximately linear.</li>
+                    <li><strong>Sensitive to outliers:</strong> Squared loss amplifies large errors.</li>
+                    <li><strong>No hyperparameters:</strong> The closed-form solution requires no tuning.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function linearRegression(points) {
+    var n = points.length;
+    var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    for (var i = 0; i < n; i++) {
+        sumX += points[i].x;
+        sumY += points[i].y;
+        sumXY += points[i].x * points[i].y;
+        sumX2 += points[i].x * points[i].x;
+    }
+    var slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    var intercept = (sumY - slope * sumX) / n;
+    return { slope: slope, intercept: intercept };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices Prediction</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/correlation-and-regression-lines-6/problem" target="_blank">HackerRank: Correlation and Regression Lines</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-jan-2021" target="_blank">Kaggle: Tabular Playground Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://www.hackerrank.com/challenges/s10-least-square-regression-line/problem" target="_blank">HackerRank: Least Square Regression Line</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "linear-regression", title: "Linear Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:2,y:3.9},{x:3,y:6.2},{x:4,y:7.8},{x:5,y:10.1}];
+        var n = points.length;
+
+        // Step 1: show raw points
+        steps.push({
+            points: points.map(function(p){ return {x:p.x, y:p.y, color:'#3b82f6'}; }),
+            lines: [],
+            explanation: "Raw data points. We want to fit a line y = mx + b that minimizes squared errors."
+        });
+
+        // Compute regression
+        var sumX=0,sumY=0,sumXY=0,sumX2=0;
+        for(var i=0;i<n;i++){sumX+=points[i].x;sumY+=points[i].y;sumXY+=points[i].x*points[i].y;sumX2+=points[i].x*points[i].x;}
+        var finalSlope=(n*sumXY-sumX*sumY)/(n*sumX2-sumX*sumX);
+        var finalIntercept=(sumY-finalSlope*sumX)/n;
+
+        // Animate line rotation
+        var guesses = [
+            {m:0, b:5, label:"Initial guess: flat line y = 5"},
+            {m:1, b:1, label:"Try slope=1, intercept=1"},
+            {m:1.5, b:0.5, label:"Try slope=1.5, intercept=0.5"},
+            {m:finalSlope, b:finalIntercept, label:"Best fit: slope="+finalSlope.toFixed(2)+", intercept="+finalIntercept.toFixed(2)}
+        ];
+
+        for(var g=0;g<guesses.length;g++){
+            var m=guesses[g].m, b=guesses[g].b;
+            var pts = points.map(function(p){ return {x:p.x, y:p.y, color:'#3b82f6'}; });
+            var mse = 0;
+            for(var j=0;j<n;j++){var pred=m*points[j].x+b; mse+=(points[j].y-pred)*(points[j].y-pred);}
+            mse /= n;
+            steps.push({
+                points: pts,
+                lines: [{x1:0, y1:b, x2:6, y2:m*6+b, color:'#ef4444'}],
+                explanation: guesses[g].label + " | MSE = " + mse.toFixed(3)
+            });
+        }
+
+        // Final with residuals shown as points on line
+        var finalPts = points.map(function(p){ return {x:p.x, y:p.y, color:'#3b82f6'}; });
+        for(var k=0;k<n;k++){
+            finalPts.push({x:points[k].x, y:finalSlope*points[k].x+finalIntercept, color:'#22c55e', r:3});
+        }
+        steps.push({
+            points: finalPts,
+            lines: [{x1:0, y1:finalIntercept, x2:6, y2:finalSlope*6+finalIntercept, color:'#22c55e'}],
+            explanation: "Final fit with predicted values (green) on the regression line. Model ready!"
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:12} });
+    </script>
+</body>
+</html>

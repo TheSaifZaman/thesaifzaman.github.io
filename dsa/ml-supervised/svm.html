@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Vector Machine — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Support Vector Machine</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n&sup2;)</span>
+            <span class="complexity-tag">Predict: O(sv)</span>
+            <span class="complexity-tag">Space: O(sv)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>SVM finds the optimal hyperplane that maximizes the margin between two classes. The margin is the distance between the decision boundary and the nearest data points from each class (called support vectors).</p>
+            <p>For non-linearly separable data, the kernel trick maps data to a higher-dimensional space where a linear separator exists. Common kernels include polynomial and RBF (Gaussian).</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Objective:</strong> min &frac12;||w||&sup2; subject to y<sub>i</sub>(w&middot;x<sub>i</sub> + b) &ge; 1</li>
+                    <li><strong>Margin:</strong> 2/||w|| (maximized by minimizing ||w||&sup2;)</li>
+                    <li><strong>Soft margin:</strong> min &frac12;||w||&sup2; + C &Sigma;&xi;<sub>i</sub></li>
+                    <li><strong>Kernel trick:</strong> K(x<sub>i</sub>, x<sub>j</sub>) = &phi;(x<sub>i</sub>)&middot;&phi;(x<sub>j</sub>)</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Maximum margin:</strong> Finds the widest possible separation.</li>
+                    <li><strong>Support vectors:</strong> Only boundary points define the model.</li>
+                    <li><strong>Kernel trick:</strong> Handles nonlinear boundaries efficiently.</li>
+                    <li><strong>Effective in high dimensions:</strong> Works well when d > n.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function svmPredict(x, supportVectors, alphas, labels, b, kernel) {
+    var sum = 0;
+    for (var i = 0; i < supportVectors.length; i++) {
+        sum += alphas[i] * labels[i] * kernel(supportVectors[i], x);
+    }
+    return sum + b >= 0 ? 1 : -1;
+}
+
+function linearKernel(a, b) {
+    return a[0]*b[0] + a[1]*b[1];
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (SVM)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer (SVM)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.hackerrank.com/challenges/svm-classification/problem" target="_blank">HackerRank: SVM Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "svm", title: "Support Vector Machine", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Two classes. SVM finds the hyperplane with maximum margin between them."
+        });
+
+        // A possible boundary (not optimal)
+        steps.push({
+            points: allPts,
+            lines: [{x1:2,y1:6.5,x2:5,y2:0.5,color:'#94a3b8'}],
+            explanation: "A possible boundary — but is this the best one? The margin could be wider."
+        });
+
+        // Optimal boundary
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'}],
+            explanation: "Optimal hyperplane: maximizes the distance to nearest points from both classes."
+        });
+
+        // Show margin lines
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'},
+                {x1:1.8,y1:6.2,x2:4.3,y2:1.2,color:'#f59e0b',dash:'5,5'},
+                {x1:3.2,y1:6.8,x2:5.7,y2:1.8,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "Margin (dashed): the gap between the two classes. SVM maximizes this gap."
+        });
+
+        // Highlight support vectors
+        var svPts = classA.map(function(p){
+            var isSV = (p.x===2.5&&p.y===3.5);
+            return {x:p.x,y:p.y,color:'#3b82f6',r:isSV?8:5};
+        }).concat(classB.map(function(p){
+            var isSV = (p.x===4&&p.y===5)||(p.x===5.5&&p.y===4.5);
+            return {x:p.x,y:p.y,color:'#ef4444',r:isSV?8:5};
+        }));
+        steps.push({
+            points: svPts,
+            lines: [
+                {x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'},
+                {x1:1.8,y1:6.2,x2:4.3,y2:1.2,color:'#f59e0b',dash:'5,5'},
+                {x1:3.2,y1:6.8,x2:5.7,y2:1.8,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "Support vectors (larger circles): the closest points to the boundary that define the margin."
+        });
+
+        steps.push({
+            points: svPts,
+            lines: [
+                {x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'},
+                {x1:1.8,y1:6.2,x2:4.3,y2:1.2,color:'#f59e0b',dash:'5,5'},
+                {x1:3.2,y1:6.8,x2:5.7,y2:1.8,color:'#f59e0b',dash:'5,5'}
+            ],
+            explanation: "SVM complete! Maximum-margin classifier with support vectors defining the decision boundary."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

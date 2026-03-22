@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Forest — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Random Forest</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(k&middot;n log n)</span>
+            <span class="complexity-tag">Predict: O(k&middot;log n)</span>
+            <span class="complexity-tag">Space: O(k&middot;nodes)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Random Forest is an ensemble of decision trees trained on random subsets of the data (bagging) and random subsets of features. Each tree votes on the class, and the majority vote determines the final prediction.</p>
+            <p>By combining many weak learners with different biases, Random Forest reduces variance without significantly increasing bias. The randomness in data and feature selection decorrelates the trees, making the ensemble more robust.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Bagging:</strong> Train each tree on a bootstrap sample of size n.</li>
+                    <li><strong>Feature subsample:</strong> At each split, consider only &radic;d random features.</li>
+                    <li><strong>Prediction:</strong> y&#770; = mode(h<sub>1</sub>(x), h<sub>2</sub>(x), ..., h<sub>k</sub>(x))</li>
+                    <li><strong>OOB Error:</strong> Each tree is tested on ~37% of samples it didn't train on.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Low variance:</strong> Averaging reduces overfitting from individual trees.</li>
+                    <li><strong>Feature importance:</strong> Measures how much each feature contributes.</li>
+                    <li><strong>Parallelizable:</strong> Trees are independent; can train in parallel.</li>
+                    <li><strong>Robust:</strong> Works well out-of-the-box with minimal tuning.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function randomForest(data, labels, nTrees, maxDepth) {
+    var trees = [];
+    for (var t = 0; t < nTrees; t++) {
+        var sample = bootstrapSample(data, labels);
+        var tree = buildTree(sample.data, sample.labels, 0, maxDepth, true);
+        trees.push(tree);
+    }
+    return {
+        predict: function(x) {
+            var votes = {};
+            for (var i = 0; i < trees.length; i++) {
+                var pred = treePredict(trees[i], x);
+                votes[pred] = (votes[pred] || 0) + 1;
+            }
+            return majorityVote(votes);
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (Random Forest)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/playground-series-s3e14" target="_blank">Kaggle: Playground Series Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.hackerrank.com/challenges/random-forest-classification/problem" target="_blank">HackerRank: Random Forest Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "random-forest", title: "Random Forest", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Data with two classes. Random Forest builds multiple trees, each seeing different data subsets."
+        });
+
+        // Tree 1 boundary
+        steps.push({
+            points: allPts,
+            lines: [{x1:3,y1:0,x2:3,y2:7,color:'#22c55e'}],
+            explanation: "Tree 1 boundary: splits at x=3 (vertical line)."
+        });
+
+        // Tree 2 boundary
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:3,y1:0,x2:3,y2:7,color:'#22c55e',dash:'5,5'},
+                {x1:0,y1:4,x2:7,y2:4,color:'#f59e0b'}
+            ],
+            explanation: "Tree 2 boundary: splits at y=4 (horizontal line)."
+        });
+
+        // Tree 3 boundary
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:3,y1:0,x2:3,y2:7,color:'#22c55e',dash:'5,5'},
+                {x1:0,y1:4,x2:7,y2:4,color:'#f59e0b',dash:'5,5'},
+                {x1:1,y1:6.5,x2:6,y2:1.5,color:'#8b5cf6'}
+            ],
+            explanation: "Tree 3 boundary: diagonal split. Each tree has a different perspective."
+        });
+
+        // Combined (majority vote)
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:3,y1:0,x2:3,y2:7,color:'rgba(34,197,94,0.3)'},
+                {x1:0,y1:4,x2:7,y2:4,color:'rgba(245,158,11,0.3)'},
+                {x1:1,y1:6.5,x2:6,y2:1.5,color:'rgba(139,92,246,0.3)'},
+                {x1:2.8,y1:6.5,x2:5.2,y2:1,color:'#22c55e'}
+            ],
+            explanation: "Ensemble boundary (green): majority vote of all trees. Smoother than any single tree."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.8,y1:6.5,x2:5.2,y2:1,color:'#22c55e'}],
+            explanation: "Random Forest complete! Ensemble of diverse trees reduces variance and improves accuracy."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

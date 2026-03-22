@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptron — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Perceptron</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(n&middot;d)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Perceptron is the simplest neural network &mdash; a single-layer linear classifier. It computes a weighted sum of inputs, applies a step function, and outputs a binary class. It learns by updating weights whenever a misclassification occurs.</p>
+            <p>The perceptron convergence theorem guarantees that if the data is linearly separable, the algorithm will find a separating hyperplane in finite steps. For non-linearly separable data, it will not converge.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Output:</strong> y&#770; = sign(w&middot;x + b)</li>
+                    <li><strong>Update rule:</strong> w &larr; w + &eta;(y<sub>i</sub> &minus; y&#770;<sub>i</sub>)x<sub>i</sub></li>
+                    <li><strong>Bias update:</strong> b &larr; b + &eta;(y<sub>i</sub> &minus; y&#770;<sub>i</sub>)</li>
+                    <li><strong>Convergence:</strong> Guaranteed for linearly separable data.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Simplest NN:</strong> Foundation of all neural network architectures.</li>
+                    <li><strong>Online learning:</strong> Updates weights one sample at a time.</li>
+                    <li><strong>Linear only:</strong> Cannot solve XOR or non-linearly separable problems.</li>
+                    <li><strong>Building block:</strong> Multi-layer perceptrons (MLP) overcome the linear limitation.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function perceptron(X, y, lr, maxEpochs) {
+    var w = new Array(X[0].length).fill(0);
+    var b = 0;
+    for (var epoch = 0; epoch < maxEpochs; epoch++) {
+        var errors = 0;
+        for (var i = 0; i < X.length; i++) {
+            var pred = dot(w, X[i]) + b >= 0 ? 1 : -1;
+            if (pred !== y[i]) {
+                for (var j = 0; j < w.length; j++) {
+                    w[j] += lr * y[i] * X[i][j];
+                }
+                b += lr * y[i];
+                errors++;
+            }
+        }
+        if (errors === 0) break; // Converged
+    }
+    return { weights: w, bias: b };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (Perceptron)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/perceptron/problem" target="_blank">HackerRank: Perceptron</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/code/prashant111/perceptron-classifier-from-scratch" target="_blank">Kaggle: Perceptron From Scratch</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "perceptron", title: "Perceptron", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Two linearly separable classes. The Perceptron will rotate a decision line until all points are correctly classified."
+        });
+
+        // Epoch 1: random initial line
+        steps.push({
+            points: allPts,
+            lines: [{x1:0,y1:1,x2:6,y2:7,color:'#94a3b8'}],
+            explanation: "Epoch 1: initial boundary (random weights). Many misclassifications."
+        });
+
+        // Epoch 2: rotate
+        steps.push({
+            points: allPts,
+            lines: [{x1:0,y1:3,x2:7,y2:5,color:'#f59e0b'}],
+            explanation: "Epoch 2: weights updated after misclassifications. Line rotates toward better separation."
+        });
+
+        // Epoch 3: rotate more
+        steps.push({
+            points: allPts,
+            lines: [{x1:1,y1:6,x2:6,y2:1,color:'#8b5cf6'}],
+            explanation: "Epoch 3: further rotation. Getting closer to separating both classes."
+        });
+
+        // Converged
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'}],
+            explanation: "Converged! All points correctly classified. No more weight updates needed."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: [{x1:2.5,y1:6.5,x2:5,y2:1.5,color:'#22c55e'}],
+            explanation: "Perceptron complete! The simplest neural network finds a linear decision boundary."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayesian Linear Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bayesian Linear Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Train: O(n&sup3;)</span>
+            <span class="complexity-tag">Predict: O(d&sup2;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Bayesian Linear Regression treats model parameters as probability distributions rather than fixed values. It starts with a prior belief about the weights and updates it using observed data to produce a posterior distribution. This naturally provides uncertainty estimates for predictions.</p>
+            <p>Instead of a single best-fit line, Bayesian regression gives a distribution of possible lines. Regions with more data have narrower uncertainty bands, while predictions far from the data have wider uncertainty.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Prior:</strong> P(w) = N(w | 0, &sigma;<sub>w</sub>&sup2;I)</li>
+                    <li><strong>Likelihood:</strong> P(y | X, w) = N(y | Xw, &sigma;<sup>2</sup>I)</li>
+                    <li><strong>Posterior:</strong> P(w | X, y) &prop; P(y | X, w) &middot; P(w)</li>
+                    <li><strong>Posterior mean:</strong> w&#772; = (&sigma;<sup>&minus;2</sup>X<sup>T</sup>X + &Sigma;<sub>0</sub><sup>&minus;1</sup>)<sup>&minus;1</sup>&sigma;<sup>&minus;2</sup>X<sup>T</sup>y</li>
+                    <li><strong>Predictive:</strong> P(y* | x*) = N(x*<sup>T</sup>w&#772;, x*<sup>T</sup>&Sigma;<sub>w</sub>x* + &sigma;&sup2;)</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Uncertainty quantification:</strong> Provides confidence intervals for predictions.</li>
+                    <li><strong>Prior knowledge:</strong> Can incorporate domain expertise via priors.</li>
+                    <li><strong>No overfitting:</strong> Bayesian framework naturally regularizes.</li>
+                    <li><strong>Computationally expensive:</strong> Requires matrix inversions for exact inference.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bayesianRegression(X, y, priorVar, noiseVar) {
+    // Prior: w ~ N(0, priorVar * I)
+    // Posterior: w | X, y ~ N(mean_w, cov_w)
+    var XtX = matMul(transpose(X), X);
+    var priorPrecision = scaleMatrix(identity(X[0].length), 1/priorVar);
+    var posteriorPrec = addMatrices(
+        scaleMatrix(XtX, 1/noiseVar),
+        priorPrecision
+    );
+    var posteriorCov = inverse(posteriorPrec);
+    var posteriorMean = matVecMul(
+        posteriorCov,
+        scaleVec(matVecMul(transpose(X), y), 1/noiseVar)
+    );
+    return { mean: posteriorMean, cov: posteriorCov };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/code/drscarlat/bayesian-linear-regression" target="_blank">Kaggle: Bayesian Linear Regression Notebook</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-jan-2021" target="_blank">Kaggle: Bayesian Approach to Regression</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bayesian-linear-regression", title: "Bayesian Linear Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:2,y:3.9},{x:3,y:6.2},{x:4,y:7.8},{x:5,y:10.1}];
+        var m = 1.98, b = 0.12; // best fit
+
+        // Prior: wide uncertainty
+        steps.push({
+            points: [],
+            lines: [
+                {x1:0,y1:b-3,x2:6,y2:m*6+b-3,color:'rgba(139,92,246,0.2)'},
+                {x1:0,y1:b-2,x2:6,y2:m*6+b-2,color:'rgba(139,92,246,0.3)'},
+                {x1:0,y1:b,x2:6,y2:m*6+b,color:'rgba(139,92,246,0.5)'},
+                {x1:0,y1:b+2,x2:6,y2:m*6+b+2,color:'rgba(139,92,246,0.3)'},
+                {x1:0,y1:b+3,x2:6,y2:m*6+b+3,color:'rgba(139,92,246,0.2)'}
+            ],
+            explanation: "Prior distribution: before seeing data, many possible lines (wide uncertainty bands)."
+        });
+
+        // After 1 data point
+        steps.push({
+            points: [{x:points[0].x,y:points[0].y,color:'#3b82f6'}],
+            lines: [
+                {x1:0,y1:b-2,x2:6,y2:m*6+b-2,color:'rgba(139,92,246,0.2)'},
+                {x1:0,y1:b-1,x2:6,y2:m*6+b-1,color:'rgba(139,92,246,0.3)'},
+                {x1:0,y1:b,x2:6,y2:m*6+b,color:'rgba(139,92,246,0.5)'},
+                {x1:0,y1:b+1,x2:6,y2:m*6+b+1,color:'rgba(139,92,246,0.3)'},
+                {x1:0,y1:b+2,x2:6,y2:m*6+b+2,color:'rgba(139,92,246,0.2)'}
+            ],
+            explanation: "After 1 observation: uncertainty narrows slightly around the data point."
+        });
+
+        // After 3 data points
+        steps.push({
+            points: points.slice(0,3).map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:b-1.2,x2:6,y2:m*6+b-1.2,color:'rgba(139,92,246,0.2)'},
+                {x1:0,y1:b-0.6,x2:6,y2:m*6+b-0.6,color:'rgba(139,92,246,0.35)'},
+                {x1:0,y1:b,x2:6,y2:m*6+b,color:'rgba(139,92,246,0.6)'},
+                {x1:0,y1:b+0.6,x2:6,y2:m*6+b+0.6,color:'rgba(139,92,246,0.35)'},
+                {x1:0,y1:b+1.2,x2:6,y2:m*6+b+1.2,color:'rgba(139,92,246,0.2)'}
+            ],
+            explanation: "After 3 observations: posterior becomes tighter. More data = more confidence."
+        });
+
+        // All data points
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:b-0.6,x2:6,y2:m*6+b-0.6,color:'rgba(139,92,246,0.2)'},
+                {x1:0,y1:b-0.3,x2:6,y2:m*6+b-0.3,color:'rgba(139,92,246,0.35)'},
+                {x1:0,y1:b,x2:6,y2:m*6+b,color:'#22c55e'},
+                {x1:0,y1:b+0.3,x2:6,y2:m*6+b+0.3,color:'rgba(139,92,246,0.35)'},
+                {x1:0,y1:b+0.6,x2:6,y2:m*6+b+0.6,color:'rgba(139,92,246,0.2)'}
+            ],
+            explanation: "After all 5 observations: narrow uncertainty bands. Green = posterior mean."
+        });
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:b-0.6,x2:6,y2:m*6+b-0.6,color:'rgba(139,92,246,0.2)'},
+                {x1:0,y1:b,x2:6,y2:m*6+b,color:'#22c55e'},
+                {x1:0,y1:b+0.6,x2:6,y2:m*6+b+0.6,color:'rgba(139,92,246,0.2)'}
+            ],
+            explanation: "Bayesian Regression complete! Purple bands show prediction uncertainty — wider away from data."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:-2,maxY:14} });
+    </script>
+</body>
+</html>

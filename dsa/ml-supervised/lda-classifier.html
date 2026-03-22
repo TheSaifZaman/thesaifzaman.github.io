@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Discriminant Analysis — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Linear Discriminant Analysis</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n&middot;d&sup2;)</span>
+            <span class="complexity-tag">Predict: O(d&sup2;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>LDA projects data onto a lower-dimensional space that maximizes class separability. It finds the projection direction that maximizes the ratio of between-class variance to within-class variance. This makes it both a dimensionality reduction technique and a classifier.</p>
+            <p>LDA assumes that each class has a Gaussian distribution with the same covariance matrix but different means. The decision boundary is linear because the shared covariance leads to linear discriminant functions.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Between-class scatter:</strong> S<sub>B</sub> = &Sigma;<sub>k</sub> n<sub>k</sub>(&mu;<sub>k</sub> &minus; &mu;)(&mu;<sub>k</sub> &minus; &mu;)<sup>T</sup></li>
+                    <li><strong>Within-class scatter:</strong> S<sub>W</sub> = &Sigma;<sub>k</sub> &Sigma;<sub>i&isin;C<sub>k</sub></sub> (x<sub>i</sub> &minus; &mu;<sub>k</sub>)(x<sub>i</sub> &minus; &mu;<sub>k</sub>)<sup>T</sup></li>
+                    <li><strong>Objective:</strong> max J(w) = w<sup>T</sup>S<sub>B</sub>w / w<sup>T</sup>S<sub>W</sub>w</li>
+                    <li><strong>Solution:</strong> Eigenvectors of S<sub>W</sub><sup>&minus;1</sup>S<sub>B</sub></li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Dimensionality reduction:</strong> Projects to at most (k&minus;1) dimensions for k classes.</li>
+                    <li><strong>Shared covariance:</strong> Assumes same spread for all classes.</li>
+                    <li><strong>Optimal for Gaussian:</strong> Best linear classifier when assumptions hold.</li>
+                    <li><strong>Supervised PCA:</strong> Like PCA but uses class labels to find best projection.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function lda(data, labels) {
+    var classes = unique(labels);
+    var globalMean = mean2D(data);
+    var Sw = zeros(2,2), Sb = zeros(2,2);
+
+    classes.forEach(function(c) {
+        var subset = data.filter(function(_,i){ return labels[i]===c; });
+        var mu = mean2D(subset);
+        var n = subset.length;
+        // Within-class scatter
+        subset.forEach(function(x) {
+            var diff = [x[0]-mu[0], x[1]-mu[1]];
+            Sw = addMat(Sw, outerProduct(diff, diff));
+        });
+        // Between-class scatter
+        var diffMu = [mu[0]-globalMean[0], mu[1]-globalMean[1]];
+        Sb = addMat(Sb, scaleMat(outerProduct(diffMu, diffMu), n));
+    });
+
+    // w = Sw^-1 * (mu1 - mu2)
+    var w = matVecMul(inverse2x2(Sw), [/* mu1 - mu2 */]);
+    return w;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/code/rishabhiitbhu/lda-from-scratch" target="_blank">Kaggle: LDA From Scratch</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer (LDA)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.hackerrank.com/challenges/lda-classification/problem" target="_blank">HackerRank: LDA Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "lda-classifier", title: "Linear Discriminant Analysis", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:2,y:3},{x:1.5,y:2.5},{x:2.5,y:3.5},{x:1,y:3}];
+        var classB = [{x:4,y:5},{x:5,y:6},{x:4.5,y:5.5},{x:5.5,y:4.5},{x:5,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Two classes in 2D. LDA finds the projection direction that best separates them."
+        });
+
+        // Show class means
+        var meanA = {x:1.7, y:2.7};
+        var meanB = {x:4.8, y:5.2};
+        var withMeans = allPts.concat([
+            {x:meanA.x, y:meanA.y, color:'#06b6d4', r:8},
+            {x:meanB.x, y:meanB.y, color:'#f59e0b', r:8}
+        ]);
+        steps.push({
+            points: withMeans, lines: [],
+            explanation: "Class means: cyan (\u03bc_A) and amber (\u03bc_B). LDA maximizes the distance between projected means."
+        });
+
+        // Show projection direction
+        steps.push({
+            points: withMeans,
+            lines: [{x1:0,y1:0.5,x2:6.5,y2:6.5,color:'#8b5cf6',dash:'5,5'}],
+            explanation: "LDA projection axis (purple dashed): direction maximizing between-class / within-class variance."
+        });
+
+        // Show decision boundary (perpendicular to projection)
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:0,y1:0.5,x2:6.5,y2:6.5,color:'#8b5cf6',dash:'5,5'},
+                {x1:2,y1:6,x2:5.5,y2:2.5,color:'#22c55e'}
+            ],
+            explanation: "Decision boundary (green): perpendicular to the LDA projection at the midpoint of projected means."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: [{x1:2,y1:6,x2:5.5,y2:2.5,color:'#22c55e'}],
+            explanation: "LDA complete! Linear boundary that maximizes class separation. Optimal when classes are Gaussian with shared covariance."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

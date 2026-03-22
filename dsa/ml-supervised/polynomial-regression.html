@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Polynomial Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(nd&sup2;)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Polynomial Regression extends linear regression by fitting a polynomial curve instead of a straight line. It transforms the input features into polynomial features (x, x&sup2;, x&sup3;, ...) and then applies linear regression on the expanded feature set.</p>
+            <p>This allows the model to capture nonlinear relationships while still using the same OLS framework. The degree of the polynomial controls the model's flexibility &mdash; higher degrees fit the training data better but risk overfitting.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Model:</strong> y&#770; = w<sub>0</sub> + w<sub>1</sub>x + w<sub>2</sub>x&sup2; + ... + w<sub>d</sub>x<sup>d</sup></li>
+                    <li><strong>Cost Function:</strong> J(w) = (1/n) &Sigma;<sub>i=1</sub><sup>n</sup> (y<sub>i</sub> &minus; y&#770;<sub>i</sub>)&sup2;</li>
+                    <li><strong>Feature Transform:</strong> &phi;(x) = [1, x, x&sup2;, ..., x<sup>d</sup>]</li>
+                    <li><strong>Solution:</strong> w = (&Phi;<sup>T</sup>&Phi;)<sup>&minus;1</sup>&Phi;<sup>T</sup>y</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Flexible:</strong> Can model nonlinear relationships with appropriate degree.</li>
+                    <li><strong>Overfitting risk:</strong> High-degree polynomials can overfit small datasets.</li>
+                    <li><strong>Feature engineering:</strong> Polynomial features are created before fitting.</li>
+                    <li><strong>Same solver:</strong> Uses OLS after feature transformation.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function polyRegression(points, degree) {
+    // Build Vandermonde matrix
+    var n = points.length;
+    var X = [], Y = [];
+    for (var i = 0; i < n; i++) {
+        var row = [];
+        for (var d = 0; d <= degree; d++) {
+            row.push(Math.pow(points[i].x, d));
+        }
+        X.push(row);
+        Y.push(points[i].y);
+    }
+    // Solve using normal equation (simplified)
+    // w = (X^T X)^-1 X^T Y
+    return solveNormalEquation(X, Y);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices (Polynomial Features)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/s10-polynomial-regression/problem" target="_blank">HackerRank: Polynomial Regression</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/code/fk0728/feature-engineering-with-polynomial-features" target="_blank">Kaggle: Polynomial Feature Engineering</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "polynomial-regression", title: "Polynomial Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:1.2},{x:2,y:3.5},{x:3,y:2.8},{x:4,y:8.1},{x:5,y:6.5},{x:6,y:14.2}];
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Raw data points. A straight line won't fit well — we need a curve."
+        });
+
+        // Degree 1 (linear)
+        var linePts = [];
+        for(var t=0;t<=60;t++){var xv=t/10; linePts.push({x1:xv,y1:0.5+2*xv,x2:xv+0.1,y2:0.5+2*(xv+0.1),color:'#ef4444'});}
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:0.5,x2:7,y2:0.5+2*7,color:'#ef4444'}],
+            explanation: "Degree 1 (linear fit): y = 0.5 + 2x — underfits the curve."
+        });
+
+        // Degree 2 (quadratic) - approximate
+        var quadPts = points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};});
+        var quadLines = [];
+        for(var t2=0;t2<65;t2++){
+            var x1=t2/10, x2=(t2+1)/10;
+            var y1q=1.5-1.2*x1+0.45*x1*x1, y2q=1.5-1.2*x2+0.45*x2*x2;
+            quadLines.push({x1:x1,y1:y1q,x2:x2,y2:y2q,color:'#f59e0b'});
+        }
+        steps.push({
+            points: quadPts, lines: quadLines,
+            explanation: "Degree 2 (quadratic fit): y = 1.5 - 1.2x + 0.45x² — captures the curve better."
+        });
+
+        // Degree 3 (cubic) - better fit
+        var cubLines = [];
+        for(var t3=0;t3<65;t3++){
+            var x1c=t3/10, x2c=(t3+1)/10;
+            var y1c=2.0-2.5*x1c+1.2*x1c*x1c-0.08*x1c*x1c*x1c;
+            var y2c=2.0-2.5*x2c+1.2*x2c*x2c-0.08*x2c*x2c*x2c;
+            cubLines.push({x1:x1c,y1:y1c,x2:x2c,y2:y2c,color:'#22c55e'});
+        }
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: cubLines,
+            explanation: "Degree 3 (cubic fit): better captures the data trend without overfitting."
+        });
+
+        steps.push({
+            points: points.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: cubLines,
+            explanation: "Polynomial Regression complete! Higher degrees add flexibility but risk overfitting."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5,6], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:-1,maxY:16} });
+    </script>
+</body>
+</html>

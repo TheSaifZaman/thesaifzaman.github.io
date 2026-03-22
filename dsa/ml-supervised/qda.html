@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadratic Discriminant Analysis — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Quadratic Discriminant Analysis</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n&middot;d&sup2;)</span>
+            <span class="complexity-tag">Predict: O(d&sup2;)</span>
+            <span class="complexity-tag">Space: O(k&middot;d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>QDA is similar to LDA but allows each class to have its own covariance matrix. This results in quadratic (curved) decision boundaries rather than linear ones, making QDA more flexible at the cost of more parameters to estimate.</p>
+            <p>When class distributions truly differ in spread and orientation, QDA outperforms LDA. However, it requires more training data to reliably estimate per-class covariance matrices.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Discriminant:</strong> &delta;<sub>k</sub>(x) = &minus;&frac12;log|&Sigma;<sub>k</sub>| &minus; &frac12;(x&minus;&mu;<sub>k</sub>)<sup>T</sup>&Sigma;<sub>k</sub><sup>&minus;1</sup>(x&minus;&mu;<sub>k</sub>) + log P(C<sub>k</sub>)</li>
+                    <li><strong>Per-class covariance:</strong> &Sigma;<sub>k</sub> (each class has its own)</li>
+                    <li><strong>Decision boundary:</strong> Quadratic curve where &delta;<sub>1</sub>(x) = &delta;<sub>2</sub>(x)</li>
+                    <li><strong>Parameters:</strong> k&middot;(d&sup2; + d)/2 covariance parameters (more than LDA)</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Curved boundaries:</strong> Can model elliptical and parabolic decision surfaces.</li>
+                    <li><strong>Per-class covariance:</strong> More flexible than LDA's shared covariance.</li>
+                    <li><strong>More parameters:</strong> Needs more data to avoid overfitting.</li>
+                    <li><strong>Generative model:</strong> Models each class as a separate Gaussian.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function qda(data, labels) {
+    var classes = unique(labels);
+    var models = {};
+    classes.forEach(function(c) {
+        var subset = data.filter(function(_,i){ return labels[i]===c; });
+        models[c] = {
+            prior: subset.length / data.length,
+            mean: mean2D(subset),
+            cov: covariance2D(subset)
+        };
+    });
+    return {
+        predict: function(x) {
+            var best = null, bestScore = -Infinity;
+            classes.forEach(function(c) {
+                var m = models[c];
+                var score = -0.5 * logDet(m.cov)
+                    - 0.5 * mahalanobis(x, m.mean, m.cov)
+                    + Math.log(m.prior);
+                if (score > bestScore) { bestScore = score; best = c; }
+            });
+            return best;
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/code/arthurtok/qda-vs-lda-classification" target="_blank">Kaggle: QDA vs LDA Classification</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/playground-series-s3e14" target="_blank">Kaggle: Playground Classification (QDA)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "qda", title: "Quadratic Discriminant Analysis", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:3},{x:1.5,y:4},{x:2,y:3.5},{x:1.2,y:2.5},{x:2.2,y:4.2}];
+        var classB = [{x:4,y:2},{x:5,y:3},{x:4.5,y:1.5},{x:5.5,y:2.5},{x:4.8,y:3.5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Two classes with different spreads. LDA (linear) may not fit well here."
+        });
+
+        // LDA linear boundary
+        steps.push({
+            points: allPts,
+            lines: [{x1:3,y1:0,x2:3,y2:6,color:'#94a3b8',dash:'5,5'}],
+            explanation: "LDA boundary (linear): assumes shared covariance. Doesn't capture the different class shapes."
+        });
+
+        // QDA: curved boundary approximated with line segments
+        var curve = [];
+        for(var t=0;t<20;t++){
+            var y1=t*0.3, y2=(t+1)*0.3;
+            var x1=3.0+0.3*Math.sin((y1-3)*1.2), x2=3.0+0.3*Math.sin((y2-3)*1.2);
+            curve.push({x1:x1,y1:y1,x2:x2,y2:y2,color:'#8b5cf6'});
+        }
+        steps.push({
+            points: allPts,
+            lines: [{x1:3,y1:0,x2:3,y2:6,color:'#94a3b8',dash:'5,5'}].concat(curve),
+            explanation: "QDA boundary (purple curve): per-class covariance allows a curved decision surface."
+        });
+
+        // Final
+        steps.push({
+            points: allPts,
+            lines: curve.map(function(l){l.color='#22c55e';return l;}),
+            explanation: "QDA fits a quadratic boundary. Better for classes with different spreads/orientations."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: curve,
+            explanation: "QDA complete! More flexible than LDA but needs more data to estimate per-class covariance."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:7,minY:0,maxY:6} });
+    </script>
+</body>
+</html>

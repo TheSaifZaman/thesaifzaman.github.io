@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TF-IDF — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>TF-IDF</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n&middot;V)</span>
+            <span class="complexity-tag">Space: O(n&middot;V)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>TF-IDF (Term Frequency - Inverse Document Frequency) is a numerical statistic that measures how important a word is to a document within a collection (corpus). It is the product of two components:</p>
+            <p><strong>TF (Term Frequency)</strong>: How often a word appears in a document. <code>TF(t,d) = count(t in d) / |d|</code></p>
+            <p><strong>IDF (Inverse Document Frequency)</strong>: How rare a word is across all documents. <code>IDF(t) = log(N / df(t))</code>, where N is total documents and df(t) is the number of documents containing t.</p>
+            <p>Common words like "the" get low IDF scores (they appear everywhere), while distinctive words get high scores. TF-IDF is widely used in search engines, document classification, and text summarization.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-sort-amount-up"></i>
+                    <h4>Term Frequency</h4>
+                    <p>Words that appear more in a document are more relevant to it.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-gem"></i>
+                    <h4>Inverse Document Freq</h4>
+                    <p>Rare words across the corpus are more distinctive.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-search"></i>
+                    <h4>Search Ranking</h4>
+                    <p>Foundation of information retrieval and search engines.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-filter"></i>
+                    <h4>Stop Word Suppression</h4>
+                    <p>Common words naturally get low scores without explicit removal.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function computeTFIDF(documents) {
+    var N = documents.length;
+    var df = {}; // document frequency per term
+
+    // Count document frequency
+    documents.forEach(function(doc) {
+        var seen = {};
+        doc.split(' ').forEach(function(word) {
+            if (!seen[word]) { seen[word] = true; df[word] = (df[word] || 0) + 1; }
+        });
+    });
+
+    // Compute TF-IDF for each document
+    return documents.map(function(doc) {
+        var words = doc.split(' ');
+        var tf = {};
+        words.forEach(function(w) { tf[w] = (tf[w] || 0) + 1; });
+
+        var tfidf = {};
+        Object.keys(tf).forEach(function(w) {
+            var termFreq = tf[w] / words.length;
+            var idf = Math.log(N / df[w]);
+            tfidf[w] = termFreq * idf;
+        });
+        return tfidf;
+    });
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html" target="_blank">Sklearn TF-IDF Vectorizer</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://www.kaggle.com/competitions/nlp-getting-started" target="_blank">Document Classification with TF-IDF</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/quora-question-pairs" target="_blank">Text Similarity with TF-IDF Cosine</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.kaggle.com/competitions/jigsaw-toxic-comment-classification-challenge" target="_blank">Keyword Extraction from Documents</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "tf-idf", title: "TF-IDF", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var docs = [
+            'the cat sat on the mat',
+            'the dog chased the cat',
+            'the bird flew over the mat'
+        ];
+        var words = ['cat','sat','mat','dog','chased','bird','flew','over','the','on'];
+
+        function generateSteps() {
+            var steps = [];
+            var N = docs.length;
+
+            // Compute DF
+            var df = {};
+            docs.forEach(function(doc) {
+                var seen = {};
+                doc.split(' ').forEach(function(w) { if (!seen[w]) { seen[w]=true; df[w]=(df[w]||0)+1; }});
+            });
+
+            // Show TF for doc 1
+            var doc = docs[0].split(' ');
+            var tf = {};
+            doc.forEach(function(w) { tf[w]=(tf[w]||0)+1; });
+
+            var tfVals = words.map(function(w) { return tf[w] ? Math.round((tf[w]/doc.length)*100)/100 : 0; });
+            steps.push({ array: tfVals, highlights: {}, explanation: 'Term Frequency for Doc 1: "' + docs[0] + '". TF = count/total words. "the" appears twice (TF=0.33), most words appear once.' });
+
+            // Show IDF
+            var idfVals = words.map(function(w) { return Math.round(Math.log(N/(df[w]||1))*100)/100; });
+            var idfHl = {};
+            words.forEach(function(w,i) { if (df[w]===N) idfHl[i]='comparing'; else if (df[w]===1) idfHl[i]='found'; });
+            steps.push({ array: idfVals, highlights: idfHl, explanation: 'IDF scores: "the" appears in all 3 docs → IDF=0 (not distinctive). Words in only 1 doc get IDF=1.1 (very distinctive). Blue = common, green = rare.' });
+
+            // Compute TF-IDF for each doc
+            for (var d = 0; d < docs.length; d++) {
+                var dw = docs[d].split(' ');
+                var dtf = {};
+                dw.forEach(function(w) { dtf[w]=(dtf[w]||0)+1; });
+
+                var tfidf = words.map(function(w) {
+                    var t = dtf[w] ? dtf[w]/dw.length : 0;
+                    var idf = Math.log(N/(df[w]||1));
+                    return Math.round(t*idf*100)/100;
+                });
+
+                var hl = {};
+                var maxI = 0;
+                tfidf.forEach(function(v,i) { if (v > tfidf[maxI]) maxI = i; });
+                if (tfidf[maxI] > 0) hl[maxI] = 'found';
+
+                steps.push({ array: tfidf, highlights: hl, explanation: 'TF-IDF for Doc ' + (d+1) + ': "' + docs[d] + '". Highest: "' + words[maxI] + '" — distinctive and frequent in this doc. "the" gets 0 everywhere.' });
+            }
+
+            steps.push({ array: idfVals, highlights: {}, explanation: 'TF-IDF complete. Words are: ' + words.join(', ') + '. Key insight: common words vanish, distinctive words rise to the top.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [0,0,0,0,0,0,0,0,0,0], type: 'bars', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Softmax Regression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Softmax Regression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(n&middot;k&middot;d)</span>
+            <span class="complexity-tag">Predict: O(k&middot;d)</span>
+            <span class="complexity-tag">Space: O(k&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Softmax Regression (Multinomial Logistic Regression) extends logistic regression to handle multiple classes. Instead of a sigmoid function, it uses the softmax function to output a probability distribution over all k classes.</p>
+            <p>Each class has its own weight vector. The softmax function ensures all output probabilities sum to 1. The model is trained using cross-entropy loss and gradient descent.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Softmax:</strong> P(y=k|x) = e<sup>w<sub>k</sub><sup>T</sup>x</sup> / &Sigma;<sub>j</sub> e<sup>w<sub>j</sub><sup>T</sup>x</sup></li>
+                    <li><strong>Cross-entropy loss:</strong> J = &minus;(1/n) &Sigma;<sub>i</sub> &Sigma;<sub>k</sub> y<sub>ik</sub> log(p<sub>ik</sub>)</li>
+                    <li><strong>Gradient:</strong> &nabla;J<sub>k</sub> = (1/n) X<sup>T</sup>(p<sub>k</sub> &minus; y<sub>k</sub>)</li>
+                    <li><strong>Output:</strong> k probability values summing to 1.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Multiclass:</strong> Naturally handles more than 2 classes.</li>
+                    <li><strong>Probabilistic:</strong> Outputs calibrated class probabilities.</li>
+                    <li><strong>Linear boundaries:</strong> Decision regions are convex polytopes.</li>
+                    <li><strong>Foundation:</strong> Output layer of most neural network classifiers.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function softmax(z) {
+    var max = Math.max.apply(null, z);
+    var exps = z.map(function(v) { return Math.exp(v - max); });
+    var sum = exps.reduce(function(a, b) { return a + b; }, 0);
+    return exps.map(function(e) { return e / sum; });
+}
+
+function softmaxRegression(X, Y, k, lr, epochs) {
+    var d = X[0].length, n = X.length;
+    var W = zeros(k, d); // k weight vectors
+    for (var e = 0; e < epochs; e++) {
+        for (var i = 0; i < n; i++) {
+            var z = [];
+            for (var c = 0; c < k; c++) z.push(dot(W[c], X[i]));
+            var probs = softmax(z);
+            for (var c2 = 0; c2 < k; c2++) {
+                var err = probs[c2] - (Y[i] === c2 ? 1 : 0);
+                for (var j = 0; j < d; j++) W[c2][j] -= lr * err * X[i][j];
+            }
+        }
+    }
+    return W;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer (Softmax)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/otto-group-product-classification-challenge" target="_blank">Kaggle: Otto Group Multiclass Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.hackerrank.com/challenges/softmax-regression/problem" target="_blank">HackerRank: Softmax Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "softmax-regression", title: "Softmax Regression", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var classA = [{x:1,y:2},{x:1.5,y:2.5},{x:2,y:1.5}];
+        var classB = [{x:4,y:5},{x:4.5,y:5.5},{x:5,y:4.5}];
+        var classC = [{x:1,y:5.5},{x:1.5,y:6},{x:2,y:5}];
+        var allPts = classA.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};})
+            .concat(classB.map(function(p){return {x:p.x,y:p.y,color:'#ef4444'};}))
+            .concat(classC.map(function(p){return {x:p.x,y:p.y,color:'#22c55e'};}));
+
+        steps.push({
+            points: allPts, lines: [],
+            explanation: "Three classes: Blue (A), Red (B), Green (C). Softmax assigns probabilities to all 3 classes."
+        });
+
+        // Boundary between A and B
+        steps.push({
+            points: allPts,
+            lines: [{x1:1,y1:5,x2:5,y2:1,color:'#f59e0b'}],
+            explanation: "Boundary 1: separates Blue from Red. Softmax creates pairwise linear boundaries."
+        });
+
+        // Boundary between A and C
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:1,y1:5,x2:5,y2:1,color:'#f59e0b'},
+                {x1:0,y1:3.8,x2:3,y2:3.8,color:'#8b5cf6'}
+            ],
+            explanation: "Boundary 2: separates Blue from Green (horizontal-ish boundary)."
+        });
+
+        // Boundary between B and C
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:1,y1:5,x2:5,y2:1,color:'#f59e0b'},
+                {x1:0,y1:3.8,x2:3,y2:3.8,color:'#8b5cf6'},
+                {x1:2.5,y1:6.5,x2:4,y2:3.5,color:'#06b6d4'}
+            ],
+            explanation: "Boundary 3: separates Red from Green. Three boundaries create 3 class regions."
+        });
+
+        steps.push({
+            points: allPts,
+            lines: [
+                {x1:1,y1:5,x2:5,y2:1,color:'#f59e0b'},
+                {x1:0,y1:3.8,x2:3,y2:3.8,color:'#8b5cf6'},
+                {x1:2.5,y1:6.5,x2:4,y2:3.5,color:'#06b6d4'}
+            ],
+            explanation: "Softmax Regression complete! Each region maps to the class with highest probability. Sum of all class probabilities = 1."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:7} });
+    </script>
+</body>
+</html>

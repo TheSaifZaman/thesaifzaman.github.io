@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ridge Regression (L2) — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Ridge Regression (L2)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Train: O(nd&sup2;)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Ridge Regression adds an L2 penalty term to the ordinary least squares cost function. This shrinks the coefficients toward zero (but never exactly to zero), preventing overfitting by discouraging large weights.</p>
+            <p>The regularization parameter &lambda; controls the strength of the penalty. As &lambda; increases, the coefficients shrink more, and the model becomes simpler and more biased but less prone to variance.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Cost Function:</strong> J(w) = (1/n) &Sigma;<sub>i</sub>(y<sub>i</sub> &minus; y&#770;<sub>i</sub>)&sup2; + &lambda; &Sigma;<sub>j</sub>w<sub>j</sub>&sup2;</li>
+                    <li><strong>L2 Penalty:</strong> &lambda;||w||<sub>2</sub>&sup2; = &lambda; &Sigma; w<sub>j</sub>&sup2;</li>
+                    <li><strong>Closed-form:</strong> w = (X<sup>T</sup>X + &lambda;I)<sup>&minus;1</sup>X<sup>T</sup>y</li>
+                    <li><strong>Effect:</strong> Shrinks all coefficients toward zero proportionally.</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Regularized:</strong> Prevents overfitting by penalizing large weights.</li>
+                    <li><strong>No feature selection:</strong> All features are kept but shrunk.</li>
+                    <li><strong>Bias-variance tradeoff:</strong> &lambda; controls the balance.</li>
+                    <li><strong>Multicollinearity:</strong> Handles correlated features better than OLS.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function ridgeRegression(X, y, lambda) {
+    // w = (X^T X + lambda*I)^-1 X^T y
+    var XtX = matMul(transpose(X), X);
+    var n = XtX.length;
+    for (var i = 0; i < n; i++) {
+        XtX[i][i] += lambda; // Add L2 penalty
+    }
+    var XtY = matVecMul(transpose(X), y);
+    return solve(XtX, XtY);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques" target="_blank">Kaggle: House Prices (Ridge)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.hackerrank.com/challenges/ridge-regression/problem" target="_blank">HackerRank: Ridge Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/code/dansbecker/underfitting-and-overfitting" target="_blank">Kaggle: Underfitting and Overfitting</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "ridge-regression", title: "Ridge Regression (L2)", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [{x:1,y:2.1},{x:2,y:3.9},{x:3,y:6.2},{x:4,y:7.8},{x:5,y:10.1}];
+        // Add an outlier
+        var pts = points.concat([{x:3,y:12}]);
+
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [],
+            explanation: "Data points with an outlier at (3,12). OLS will be pulled toward it."
+        });
+
+        // OLS fit (pulled by outlier)
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [{x1:0,y1:1.0,x2:6,y2:1.0+1.9*6,color:'#ef4444'}],
+            explanation: "OLS fit (no regularization): heavily influenced by the outlier. slope=1.9"
+        });
+
+        // Ridge lambda=0.5
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:1.0,x2:6,y2:1.0+1.9*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:1.8,x2:6,y2:1.8+1.6*6,color:'#f59e0b'}
+            ],
+            explanation: "Ridge (\u03bb=0.5): coefficients shrink, line is less steep. slope=1.6"
+        });
+
+        // Ridge lambda=2
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:1.0,x2:6,y2:1.0+1.9*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:2.5,x2:6,y2:2.5+1.3*6,color:'#22c55e'}
+            ],
+            explanation: "Ridge (\u03bb=2.0): stronger penalty, further shrinkage. slope=1.3"
+        });
+
+        // Ridge lambda=10
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:1.0,x2:6,y2:1.0+1.9*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:3.5,x2:6,y2:3.5+0.8*6,color:'#8b5cf6'}
+            ],
+            explanation: "Ridge (\u03bb=10): very strong penalty. Line nearly flat. slope=0.8"
+        });
+
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,color:'#3b82f6'};}),
+            lines: [
+                {x1:0,y1:1.0,x2:6,y2:1.0+1.9*6,color:'#ef4444',dash:'5,5'},
+                {x1:0,y1:2.5,x2:6,y2:2.5+1.3*6,color:'#22c55e'}
+            ],
+            explanation: "Ridge Regression balances fit and simplicity. \u03bb=2 gives the best generalization here."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[1,2,3,4,5], stepGenerator:generateSteps, type:'scatter',
+        renderOptions:{minX:0,maxX:6,minY:0,maxY:14} });
+    </script>
+</body>
+</html>

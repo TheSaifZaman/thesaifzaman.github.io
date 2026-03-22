@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beam Search — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Beam Search</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(b&middot;V&middot;T)</span>
+            <span class="complexity-tag">Space: O(b&middot;T)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Beam Search is a heuristic search algorithm used in sequence decoding (machine translation, text generation, speech recognition). At each time step, instead of keeping only the single best candidate (greedy) or all candidates (exhaustive), it keeps the top <strong>b</strong> candidates, where b is the beam width.</p>
+            <p>At each step: (1) expand each of the b candidates by all possible next tokens, (2) score all expansions, (3) keep only the top b. This explores a wider space than greedy search while remaining tractable compared to exhaustive search.</p>
+            <p>Beam width b=1 is greedy search. Larger b finds better sequences but costs more compute. Typical values are b=4 to b=10 in practice.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <h4>Top-k Expansion</h4>
+                    <p>Keeps b best candidates at each decoding step.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-balance-scale-right"></i>
+                    <h4>Quality vs Speed</h4>
+                    <p>Larger beam width = better results but slower decoding.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-language"></i>
+                    <h4>Translation</h4>
+                    <p>Standard decoding method for seq2seq and transformer models.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-ruler"></i>
+                    <h4>Length Penalty</h4>
+                    <p>Normalizes scores by length to avoid preferring short sequences.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function beamSearch(model, startToken, beamWidth, maxLen) {
+    var beams = [{ tokens: [startToken], score: 0 }];
+
+    for (var t = 0; t < maxLen; t++) {
+        var candidates = [];
+        for (var i = 0; i < beams.length; i++) {
+            var beam = beams[i];
+            if (beam.tokens[beam.tokens.length - 1] === EOS) {
+                candidates.push(beam); // keep finished beams
+                continue;
+            }
+            // Get next token probabilities
+            var logProbs = model.predict(beam.tokens);
+            for (var v = 0; v < logProbs.length; v++) {
+                candidates.push({
+                    tokens: beam.tokens.concat([v]),
+                    score: beam.score + logProbs[v]
+                });
+            }
+        }
+        // Keep top beamWidth candidates
+        candidates.sort(function(a, b) { return b.score - a.score; });
+        beams = candidates.slice(0, beamWidth);
+    }
+    return beams[0].tokens; // best sequence
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://huggingface.co/docs/transformers/generation_strategies" target="_blank">HuggingFace Beam Search Generation</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/feedback-prize-english-language-learning" target="_blank">Implement Beam Search Decoder</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://huggingface.co/docs/transformers/generation_strategies" target="_blank">Beam Search vs Greedy Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://arxiv.org/abs/1609.08144" target="_blank">Beam Search with Length Penalty</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://huggingface.co/docs/transformers/generation_strategies" target="_blank">Diverse Beam Search</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "beam-search", title: "Beam Search", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Tree visualization: beam search expanding candidates
+        function generateSteps() {
+            var steps = [];
+            var beamWidth = 2;
+            // Simulated vocabulary tokens
+            var tokens = ['the','a','cat','dog','sat','ran','on','mat'];
+
+            // Level 0: start
+            var w = 500;
+            steps.push({
+                nodes: [{id:0, x:w/2, y:30, label:'<s>', state:'active'}],
+                edges: [],
+                explanation: 'Beam Search (width=2): start with <s> token. At each step, expand all candidates and keep top 2.'
+            });
+
+            // Level 1: expand to all, keep top 2
+            var l1 = [{id:1,label:'the',score:0.4},{id:2,label:'a',score:0.3},{id:3,label:'cat',score:0.15},{id:4,label:'dog',score:0.15}];
+            var l1nodes = [{id:0,x:w/2,y:30,label:'<s>',state:''}];
+            var l1edges = [];
+            l1.forEach(function(n,i) {
+                l1nodes.push({id:n.id, x:80+i*130, y:100, label:n.label, state:'comparing'});
+                l1edges.push({from:0, to:n.id});
+            });
+            steps.push({ nodes:l1nodes, edges:l1edges, explanation: 'Step 1: expand <s> → 4 candidates. Scores: the(0.4), a(0.3), cat(0.15), dog(0.15). All shown.' });
+
+            // Keep top 2
+            var k1nodes = [{id:0,x:w/2,y:30,label:'<s>',state:''}];
+            k1nodes.push({id:1,x:170,y:100,label:'the',state:'active'});
+            k1nodes.push({id:2,x:330,y:100,label:'a',state:'active'});
+            k1nodes.push({id:3,x:80,y:100,label:'cat',state:'pruned'});
+            k1nodes.push({id:4,x:420,y:100,label:'dog',state:'pruned'});
+            steps.push({ nodes:k1nodes, edges:[{from:0,to:1},{from:0,to:2},{from:0,to:3,state:'pruned'},{from:0,to:4,state:'pruned'}], explanation: 'Keep top 2: "the" (0.4) and "a" (0.3). Pruned: "cat" and "dog". Beam width controls search breadth.' });
+
+            // Level 2: expand kept beams
+            var l2nodes = [{id:0,x:w/2,y:30,label:'<s>',state:''},{id:1,x:170,y:100,label:'the',state:''},{id:2,x:330,y:100,label:'a',state:''}];
+            var l2edges = [{from:0,to:1},{from:0,to:2}];
+            var l2exp = [
+                {id:10,parent:1,label:'cat',score:0.35,x:80,y:180},
+                {id:11,parent:1,label:'dog',score:0.3,x:170,y:180},
+                {id:12,parent:2,label:'cat',score:0.25,x:280,y:180},
+                {id:13,parent:2,label:'dog',score:0.28,x:380,y:180}
+            ];
+            l2exp.forEach(function(n) {
+                l2nodes.push({id:n.id, x:n.x, y:n.y, label:n.label, state:'comparing'});
+                l2edges.push({from:n.parent, to:n.id});
+            });
+            steps.push({ nodes:l2nodes, edges:l2edges, explanation: 'Step 2: expand both beams. "the"→cat(0.35),dog(0.30). "a"→cat(0.25),dog(0.28). 4 candidates total.' });
+
+            // Keep top 2 of level 2
+            var k2nodes = [{id:0,x:w/2,y:30,label:'<s>',state:''},{id:1,x:170,y:100,label:'the',state:''},{id:2,x:330,y:100,label:'a',state:''}];
+            k2nodes.push({id:10,x:130,y:180,label:'cat',state:'active'});
+            k2nodes.push({id:11,x:210,y:180,label:'dog',state:'active'});
+            k2nodes.push({id:12,x:310,y:180,label:'cat',state:'pruned'});
+            k2nodes.push({id:13,x:390,y:180,label:'dog',state:'pruned'});
+            var k2edges = [{from:0,to:1},{from:0,to:2},{from:1,to:10},{from:1,to:11},{from:2,to:12,state:'pruned'},{from:2,to:13,state:'pruned'}];
+            steps.push({ nodes:k2nodes, edges:k2edges, explanation: 'Keep top 2: "the cat" (0.35) and "the dog" (0.30). Both from "the" beam. "a" branch pruned entirely.' });
+
+            // Level 3
+            var l3nodes = [{id:0,x:w/2,y:30,label:'<s>',state:''},{id:1,x:170,y:100,label:'the',state:''},{id:10,x:130,y:180,label:'cat',state:''},{id:11,x:280,y:180,label:'dog',state:''}];
+            var l3edges = [{from:0,to:1},{from:1,to:10},{from:1,to:11}];
+            l3nodes.push({id:20,x:70,y:260,label:'sat',state:'active'});
+            l3nodes.push({id:21,x:170,y:260,label:'ran',state:'comparing'});
+            l3nodes.push({id:22,x:280,y:260,label:'sat',state:'comparing'});
+            l3nodes.push({id:23,x:380,y:260,label:'ran',state:'active'});
+            l3edges.push({from:10,to:20},{from:10,to:21},{from:11,to:22},{from:11,to:23});
+            steps.push({ nodes:l3nodes, edges:l3edges, explanation: 'Step 3: "the cat"→sat(0.32),ran(0.20). "the dog"→sat(0.18),ran(0.29). Best: "the cat sat" and "the dog ran".' });
+
+            // Final
+            steps.push({ nodes:l3nodes, edges:l3edges, explanation: 'Beam search complete. Best sequence: "the cat sat" (score 0.32). Beam width 2 found good results without exhaustive search over all 8^3 = 512 possible 3-word sequences.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'tree', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

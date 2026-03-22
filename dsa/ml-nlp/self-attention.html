@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Attention — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Self-Attention</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&sup2;&middot;d)</span>
+            <span class="complexity-tag">Space: O(n&sup2; + n&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Self-Attention (Scaled Dot-Product Attention) is the core mechanism of Transformer models. Each token in a sequence attends to every other token, computing how much "attention" to pay to each position when building its representation.</p>
+            <p>For each token, three vectors are computed: <strong>Query</strong> (Q), <strong>Key</strong> (K), and <strong>Value</strong> (V). Attention scores are computed as: <code>Attention(Q,K,V) = softmax(QK<sup>T</sup> / &radic;d_k) &middot; V</code></p>
+            <p>The resulting attention matrix shows which tokens attend to which. For example, in "The cat sat on the mat", the word "sat" might strongly attend to "cat" (its subject) and "mat" (related by preposition). This enables the model to capture long-range dependencies without recurrence.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h4>All-to-All</h4>
+                    <p>Every token attends to every other token in the sequence.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-key"></i>
+                    <h4>Q, K, V</h4>
+                    <p>Query asks, Key answers relevance, Value provides content.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-layer-group"></i>
+                    <h4>Multi-Head</h4>
+                    <p>Multiple attention heads capture different relationship types.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Parallelizable</h4>
+                    <p>Unlike RNNs, all positions computed simultaneously.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function scaledDotProductAttention(Q, K, V) {
+    // Q, K, V: arrays of shape [seqLen, dim]
+    var dk = Q[0].length;
+    var scale = Math.sqrt(dk);
+    var seqLen = Q.length;
+
+    // Compute attention scores: QK^T / sqrt(dk)
+    var scores = [];
+    for (var i = 0; i < seqLen; i++) {
+        scores[i] = [];
+        for (var j = 0; j < seqLen; j++) {
+            var dot = 0;
+            for (var d = 0; d < dk; d++) {
+                dot += Q[i][d] * K[j][d];
+            }
+            scores[i][j] = dot / scale;
+        }
+    }
+
+    // Apply softmax per row
+    var attention = scores.map(function(row) {
+        var maxVal = Math.max.apply(null, row);
+        var exps = row.map(function(v) { return Math.exp(v - maxVal); });
+        var sum = exps.reduce(function(a, b) { return a + b; }, 0);
+        return exps.map(function(e) { return e / sum; });
+    });
+
+    // Weighted sum of values
+    var output = [];
+    for (var i = 0; i < seqLen; i++) {
+        output[i] = new Array(dk).fill(0);
+        for (var j = 0; j < seqLen; j++) {
+            for (var d = 0; d < dk; d++) {
+                output[i][d] += attention[i][j] * V[j][d];
+            }
+        }
+    }
+    return { output: output, weights: attention };
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://pytorch.org/tutorials/beginner/transformer_tutorial.html" target="_blank">Implement Self-Attention from Scratch</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://arxiv.org/abs/1706.03762" target="_blank">Build a Transformer Encoder</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://jalammar.github.io/illustrated-transformer/" target="_blank">Multi-Head Attention Implementation</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://jalammar.github.io/illustrated-transformer/" target="_blank">Visualize Attention Weights</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://arxiv.org/abs/1706.03762" target="_blank">Masked Self-Attention for Decoding</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "self-attention", title: "Self-Attention", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Matrix visualization: attention weights between tokens
+        var tokens = ['The','cat','sat','on','mat'];
+        var n = tokens.length;
+
+        // Simulated attention weights (each row sums to ~1)
+        var attentionMatrix = [
+            [0.35, 0.25, 0.15, 0.10, 0.15],
+            [0.10, 0.30, 0.25, 0.10, 0.25],
+            [0.05, 0.40, 0.20, 0.10, 0.25],
+            [0.10, 0.10, 0.30, 0.20, 0.30],
+            [0.15, 0.20, 0.20, 0.15, 0.30]
+        ];
+
+        function generateSteps() {
+            var steps = [];
+
+            // Step 1: show tokens
+            var initGrid = [];
+            var headerRow = [{value:'', state:''}];
+            tokens.forEach(function(t) { headerRow.push({value:t, state:'wall'}); });
+            initGrid.push(headerRow);
+            tokens.forEach(function(t) {
+                var row = [{value:t, state:'wall'}];
+                tokens.forEach(function() { row.push({value:'?', state:''}); });
+                initGrid.push(row);
+            });
+            steps.push({ grid: initGrid, explanation: 'Self-Attention: "' + tokens.join(' ') + '". Each row shows how much one token attends to all others. Rows = queries, columns = keys.' });
+
+            // Compute Q, K, V step
+            steps.push({ grid: initGrid, explanation: 'Step 1: Compute Q = X·W_Q, K = X·W_K, V = X·W_V for each token. These linear projections create the query, key, and value vectors.' });
+
+            // Show attention scores being computed row by row
+            for (var i = 0; i < n; i++) {
+                var grid = [];
+                var hdr = [{value:'', state:''}];
+                tokens.forEach(function(t) { hdr.push({value:t, state:'wall'}); });
+                grid.push(hdr);
+
+                for (var r = 0; r < n; r++) {
+                    var row = [{value:tokens[r], state:'wall'}];
+                    for (var c = 0; c < n; c++) {
+                        if (r < i) {
+                            var v = attentionMatrix[r][c];
+                            row.push({value: v.toFixed(2), state: v > 0.3 ? 'found' : (v > 0.2 ? 'comparing' : '')});
+                        } else if (r === i) {
+                            var v2 = attentionMatrix[r][c];
+                            row.push({value: v2.toFixed(2), state: 'active'});
+                        } else {
+                            row.push({value: '?', state: ''});
+                        }
+                    }
+                    grid.push(row);
+                }
+
+                var maxJ = 0;
+                for (var j = 1; j < n; j++) { if (attentionMatrix[i][j] > attentionMatrix[i][maxJ]) maxJ = j; }
+                steps.push({ grid: grid, explanation: 'Computing attention for "' + tokens[i] + '": QK^T/sqrt(d), then softmax. "' + tokens[i] + '" attends most to "' + tokens[maxJ] + '" (weight ' + attentionMatrix[i][maxJ].toFixed(2) + ').' });
+            }
+
+            // Final complete matrix
+            var finalGrid = [];
+            var fhdr = [{value:'', state:''}];
+            tokens.forEach(function(t) { fhdr.push({value:t, state:'wall'}); });
+            finalGrid.push(fhdr);
+            for (var r = 0; r < n; r++) {
+                var row = [{value:tokens[r], state:'wall'}];
+                for (var c = 0; c < n; c++) {
+                    var v = attentionMatrix[r][c];
+                    row.push({value: v.toFixed(2), state: v > 0.3 ? 'found' : (v > 0.2 ? 'comparing' : '')});
+                }
+                finalGrid.push(row);
+            }
+            steps.push({ grid: finalGrid, explanation: 'Complete attention matrix. Key observations: "sat" strongly attends to "cat" (subject). "on" attends to both "sat" and "mat". This captures grammatical and semantic relationships without recurrence.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'matrix', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

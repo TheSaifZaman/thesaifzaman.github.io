@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naive Bayes — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Naive Bayes</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Train: O(n&middot;d)</span>
+            <span class="complexity-tag">Predict: O(d)</span>
+            <span class="complexity-tag">Space: O(k&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Naive Bayes applies Bayes' theorem with the "naive" assumption that all features are conditionally independent given the class. Despite this strong assumption rarely being true, it works surprisingly well in practice, especially for text classification.</p>
+            <p>During training, it computes the prior probability of each class and the likelihood of each feature given the class. At prediction time, it combines these using Bayes' theorem and picks the class with the highest posterior probability.</p>
+            <div class="key-points">
+                <h3>Math Formula</h3>
+                <ul>
+                    <li><strong>Bayes' Theorem:</strong> P(C|x) = P(x|C) &middot; P(C) / P(x)</li>
+                    <li><strong>Naive assumption:</strong> P(x|C) = &Pi;<sub>j</sub> P(x<sub>j</sub>|C)</li>
+                    <li><strong>Prediction:</strong> y&#770; = argmax<sub>C</sub> P(C) &Pi;<sub>j</sub> P(x<sub>j</sub>|C)</li>
+                    <li><strong>Gaussian NB:</strong> P(x<sub>j</sub>|C) = N(x<sub>j</sub>; &mu;<sub>jC</sub>, &sigma;<sub>jC</sub>&sup2;)</li>
+                </ul>
+            </div>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Very fast:</strong> Training and prediction are both linear time.</li>
+                    <li><strong>Text classification:</strong> Excellent for spam detection, sentiment analysis.</li>
+                    <li><strong>Small data:</strong> Works well even with limited training data.</li>
+                    <li><strong>Independence assumption:</strong> Correlated features can hurt performance.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function naiveBayes(trainData, trainLabels) {
+    var classes = unique(trainLabels);
+    var stats = {}; // { class: { prior, means[], vars[] } }
+    classes.forEach(function(c) {
+        var subset = trainData.filter(function(_, i) { return trainLabels[i] === c; });
+        stats[c] = {
+            prior: subset.length / trainData.length,
+            means: columnMeans(subset),
+            vars: columnVariances(subset)
+        };
+    });
+    return {
+        predict: function(x) {
+            var bestClass = null, bestProb = -Infinity;
+            classes.forEach(function(c) {
+                var logProb = Math.log(stats[c].prior);
+                for (var j = 0; j < x.length; j++) {
+                    logProb += gaussianLogPdf(x[j], stats[c].means[j], stats[c].vars[j]);
+                }
+                if (logProb > bestProb) { bestProb = logProb; bestClass = c; }
+            });
+            return bestClass;
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/titanic" target="_blank">Kaggle: Titanic (Naive Bayes)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-7/problem" target="_blank">HackerRank: Bayes' Theorem</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/nlp-getting-started" target="_blank">Kaggle: NLP Disaster Tweets (Naive Bayes)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "naive-bayes", title: "Naive Bayes", category: "Supervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Show as bars: probability distributions for each feature per class
+        steps.push({
+            array: [0.3, 0.5, 0.8, 0.2, 0.6],
+            highlights: {},
+            type: 'bars',
+            explanation: "Feature likelihoods for Class A: P(x_j | A) for 5 features."
+        });
+
+        steps.push({
+            array: [0.7, 0.4, 0.2, 0.9, 0.3],
+            highlights: {},
+            type: 'bars',
+            explanation: "Feature likelihoods for Class B: P(x_j | B) for 5 features."
+        });
+
+        steps.push({
+            array: [0.3, 0.5, 0.8, 0.2, 0.6],
+            highlights: {0:'comparing',1:'comparing',2:'comparing',3:'comparing',4:'comparing'},
+            type: 'bars',
+            explanation: "Compute P(A) \u00d7 \u220f P(x_j|A) = 0.5 \u00d7 0.3 \u00d7 0.5 \u00d7 0.8 \u00d7 0.2 \u00d7 0.6 = 0.0072"
+        });
+
+        steps.push({
+            array: [0.7, 0.4, 0.2, 0.9, 0.3],
+            highlights: {0:'comparing',1:'comparing',2:'comparing',3:'comparing',4:'comparing'},
+            type: 'bars',
+            explanation: "Compute P(B) \u00d7 \u220f P(x_j|B) = 0.5 \u00d7 0.7 \u00d7 0.4 \u00d7 0.2 \u00d7 0.9 \u00d7 0.3 = 0.0076"
+        });
+
+        steps.push({
+            array: [0.0072, 0.0076],
+            highlights: {1:'sorted'},
+            type: 'bars',
+            explanation: "P(A|x)=0.0072 vs P(B|x)=0.0076. Class B wins! Prediction = B."
+        });
+
+        steps.push({
+            array: [0.0072, 0.0076],
+            highlights: {1:'sorted'},
+            type: 'bars',
+            explanation: "Naive Bayes complete! Fast probabilistic classifier. Works great for text & high-dimensional data."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container:'#viz', data:[0.3,0.5,0.8,0.2,0.6], stepGenerator:generateSteps, type:'bars' });
+    </script>
+</body>
+</html>

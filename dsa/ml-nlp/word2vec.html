@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word2Vec — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Word2Vec</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;d)</span>
+            <span class="complexity-tag">Space: O(V&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Word2Vec learns dense vector representations (embeddings) for words such that semantically similar words end up close together in the vector space. It was introduced by Mikolov et al. at Google in 2013 and revolutionized NLP.</p>
+            <p>Two architectures exist: <strong>Skip-gram</strong> predicts context words given a center word, and <strong>CBOW</strong> (Continuous Bag of Words) predicts the center word from context. Training uses a shallow neural network with one hidden layer, where the learned weights become the word embeddings.</p>
+            <p>Famous property: vector arithmetic captures semantic relationships. For example, <code>king - man + woman &asymp; queen</code>.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-vector-square"></i>
+                    <h4>Dense Embeddings</h4>
+                    <p>Each word maps to a compact d-dimensional vector (typically 100-300d).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-arrows-alt"></i>
+                    <h4>Semantic Arithmetic</h4>
+                    <p>king - man + woman = queen via vector operations.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-search-plus"></i>
+                    <h4>Context Windows</h4>
+                    <p>Learns from surrounding words within a fixed window size.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Efficient Training</h4>
+                    <p>Negative sampling makes training scale to huge corpora.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Skip-gram with negative sampling (simplified)
+function trainWord2Vec(corpus, dim, windowSize, negSamples, lr) {
+    var vocab = buildVocab(corpus);
+    var W = randomMatrix(vocab.length, dim);  // input embeddings
+    var C = randomMatrix(vocab.length, dim);  // context embeddings
+
+    corpus.forEach(function(sentence) {
+        for (var i = 0; i < sentence.length; i++) {
+            var center = vocab.indexOf(sentence[i]);
+            // Positive context words
+            for (var j = -windowSize; j <= windowSize; j++) {
+                if (j === 0 || i + j < 0 || i + j >= sentence.length) continue;
+                var context = vocab.indexOf(sentence[i + j]);
+
+                // Positive sample: push center and context together
+                var dot = dotProduct(W[center], C[context]);
+                var sig = sigmoid(dot);
+                updateVectors(W[center], C[context], lr * (1 - sig));
+
+                // Negative samples: push center and random words apart
+                for (var n = 0; n < negSamples; n++) {
+                    var neg = randomWord(vocab);
+                    dot = dotProduct(W[center], C[neg]);
+                    sig = sigmoid(dot);
+                    updateVectors(W[center], C[neg], lr * (-sig));
+                }
+            }
+        }
+    });
+    return W; // final word embeddings
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://radimrehurek.com/gensim/models/word2vec.html" target="_blank">Train Word2Vec with Gensim</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/word2vec-nlp-tutorial" target="_blank">Sentiment Analysis with Word2Vec</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://nlp.stanford.edu/projects/glove/" target="_blank">Word Analogy Task</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://arxiv.org/abs/1301.3781" target="_blank">Implement Skip-gram from Scratch</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://projector.tensorflow.org/" target="_blank">Visualize Embeddings with t-SNE</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "word2vec", title: "Word2Vec", category: "NLP Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // 2D word embedding scatter plot — words cluster by semantic similarity
+        var wordPositions = [
+            {word:'king',   x:7,  y:8},
+            {word:'queen',  x:6,  y:8.5},
+            {word:'man',    x:7.5,y:5},
+            {word:'woman',  x:6.5,y:5.5},
+            {word:'cat',    x:2,  y:3},
+            {word:'dog',    x:2.5,y:2.5},
+            {word:'puppy',  x:3,  y:2},
+            {word:'kitten', x:1.5,y:3.5},
+            {word:'run',    x:5,  y:1},
+            {word:'walk',   x:4.5,y:1.5}
+        ];
+
+        function generateSteps() {
+            var steps = [];
+
+            // Start with random positions
+            var random = wordPositions.map(function(w) {
+                return {x: Math.random()*9+0.5, y: Math.random()*9+0.5, r:6, color:'var(--accent)' };
+            });
+            steps.push({ points: random, explanation: 'Word2Vec starts with random embeddings. Each point is a word projected into 2D space. No structure yet.' });
+
+            // Gradually move to final positions over several training epochs
+            for (var epoch = 1; epoch <= 8; epoch++) {
+                var t = epoch / 8;
+                var pts = wordPositions.map(function(w, i) {
+                    var rx = random[i].x, ry = random[i].y;
+                    var color = 'var(--accent)';
+                    if (w.word==='king'||w.word==='queen'||w.word==='man'||w.word==='woman') color='var(--accent-purple)';
+                    else if (w.word==='cat'||w.word==='dog'||w.word==='puppy'||w.word==='kitten') color='var(--accent-green)';
+                    else color='var(--accent-amber)';
+                    return { x: rx+(w.x-rx)*t, y: ry+(w.y-ry)*t, r:6, color:color };
+                });
+                steps.push({ points: pts, explanation: 'Training epoch ' + epoch + ': words with similar contexts move closer. Purple = royalty/gender, green = animals, amber = actions.' });
+            }
+
+            // Final state with labels shown in explanation
+            var final = wordPositions.map(function(w) {
+                var color = 'var(--accent)';
+                if (w.word==='king'||w.word==='queen'||w.word==='man'||w.word==='woman') color='var(--accent-purple)';
+                else if (w.word==='cat'||w.word==='dog'||w.word==='puppy'||w.word==='kitten') color='var(--accent-green)';
+                else color='var(--accent-amber)';
+                return { x:w.x, y:w.y, r:6, color:color };
+            });
+            steps.push({ points: final, explanation: 'Trained embeddings: semantic clusters emerge. Words: ' + wordPositions.map(function(w){return w.word;}).join(', ') + '. king-man+woman ≈ queen via vector arithmetic.' });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: 0, maxX: 10, minY: 0, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>
