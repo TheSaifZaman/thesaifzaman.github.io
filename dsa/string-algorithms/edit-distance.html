@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Distance (Levenshtein) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Edit Distance (Levenshtein)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Edit distance (Levenshtein distance) measures the minimum number of single-character operations needed to transform one string into another. The three allowed operations are: <strong>insert</strong> a character, <strong>delete</strong> a character, or <strong>substitute</strong> (replace) a character. For example, the edit distance between "kitten" and "sitting" is 3.</p>
+            <p>The DP approach builds an (n+1) x (m+1) table where <code>dp[i][j]</code> represents the edit distance between the first i characters of word1 and the first j characters of word2. The base cases are <code>dp[i][0] = i</code> (delete all) and <code>dp[0][j] = j</code> (insert all). For each cell, if characters match, <code>dp[i][j] = dp[i-1][j-1]</code> (no edit needed); otherwise, take <code>1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])</code> representing delete, insert, and substitute respectively.</p>
+            <p>Edit distance is fundamental in spell checking, DNA sequence alignment, natural language processing, and fuzzy string matching. Variations include weighted edit distance (different costs per operation) and Damerau-Levenshtein (which also allows transpositions).</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h4>Three Operations</h4>
+                    <p>Insert, delete, or substitute a single character. Each costs 1.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-th"></i>
+                    <h4>DP Table</h4>
+                    <p>Fill (n+1)x(m+1) grid bottom-up; answer at dp[n][m].</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-spell-check"></i>
+                    <h4>Spell Checking</h4>
+                    <p>Core of autocorrect: find dictionary words within small edit distance.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress-alt"></i>
+                    <h4>Space Optimization</h4>
+                    <p>Can reduce to O(min(n,m)) space by keeping only two rows at a time.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function editDistance(word1, word2) {
+    var n = word1.length, m = word2.length;
+    var dp = [];
+    for (var i = 0; i <= n; i++) {
+        dp[i] = new Array(m + 1).fill(0);
+        dp[i][0] = i;
+    }
+    for (var j = 0; j <= m; j++) dp[0][j] = j;
+
+    for (var i = 1; i <= n; i++) {
+        for (var j = 1; j <= m; j++) {
+            if (word1[i - 1] === word2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = 1 + Math.min(
+                    dp[i - 1][j],     // delete
+                    dp[i][j - 1],     // insert
+                    dp[i - 1][j - 1]  // substitute
+                );
+            }
+        }
+    }
+    return dp[n][m];
+}
+
+// Space-optimized version using two rows
+function editDistanceOptimized(word1, word2) {
+    var n = word1.length, m = word2.length;
+    var prev = [], curr = [];
+    for (var j = 0; j <= m; j++) prev[j] = j;
+
+    for (var i = 1; i <= n; i++) {
+        curr[0] = i;
+        for (var j = 1; j <= m; j++) {
+            if (word1[i - 1] === word2[j - 1]) {
+                curr[j] = prev[j - 1];
+            } else {
+                curr[j] = 1 + Math.min(prev[j], curr[j - 1], prev[j - 1]);
+            }
+        }
+        prev = curr.slice();
+    }
+    return prev[m];
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>72</td><td><a href="https://leetcode.com/problems/edit-distance/" target="_blank">Edit Distance</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>161</td><td><a href="https://leetcode.com/problems/one-edit-distance/" target="_blank">One Edit Distance</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>583</td><td><a href="https://leetcode.com/problems/delete-operation-for-two-strings/" target="_blank">Delete Operation for Two Strings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>712</td><td><a href="https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/" target="_blank">Minimum ASCII Delete Sum for Two Strings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>10</td><td><a href="https://leetcode.com/problems/regular-expression-matching/" target="_blank">Regular Expression Matching</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>44</td><td><a href="https://leetcode.com/problems/wildcard-matching/" target="_blank">Wildcard Matching</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>115</td><td><a href="https://leetcode.com/problems/distinct-subsequences/" target="_blank">Distinct Subsequences</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>97</td><td><a href="https://leetcode.com/problems/interleaving-string/" target="_blank">Interleaving String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "edit-distance", title: "Edit Distance (Levenshtein)", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var word1 = 'HORSE';
+        var word2 = 'ROS';
+
+        function generateSteps() {
+            var steps = [];
+            var n = word1.length, m = word2.length;
+            var dp = [];
+            for (var i = 0; i <= n; i++) {
+                dp[i] = new Array(m + 1).fill(0);
+                dp[i][0] = i;
+            }
+            for (var j = 0; j <= m; j++) dp[0][j] = j;
+
+            function makeGrid(highlightI, highlightJ, state) {
+                var grid = [];
+                // Header row
+                var headerRow = [{ value: '', state: '' }, { value: '', state: '' }];
+                for (var j = 0; j < m; j++) headerRow.push({ value: word2[j], state: 'header' });
+                grid.push(headerRow);
+
+                for (var i = 0; i <= n; i++) {
+                    var row = [];
+                    row.push({ value: i === 0 ? '' : word1[i - 1], state: 'header' });
+                    for (var j = 0; j <= m; j++) {
+                        var cellState = '';
+                        if (i === highlightI && j === highlightJ) cellState = state || 'highlight-active';
+                        row.push({ value: dp[i][j], state: cellState });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({ type: 'grid', grid: makeGrid(-1, -1), explanation: 'Edit Distance: Transform "' + word1 + '" into "' + word2 + '". Base cases: dp[i][0]=i (delete all), dp[0][j]=j (insert all).' });
+
+            for (var i = 1; i <= n; i++) {
+                for (var j = 1; j <= m; j++) {
+                    if (word1[i - 1] === word2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                        steps.push({ type: 'grid', grid: makeGrid(i, j, 'highlight-sorted'), explanation: 'dp[' + i + '][' + j + ']: "' + word1[i-1] + '"=="' + word2[j-1] + '". No edit needed. dp[' + (i-1) + '][' + (j-1) + '] = ' + dp[i][j] + '.' });
+                    } else {
+                        var del = dp[i - 1][j];
+                        var ins = dp[i][j - 1];
+                        var sub = dp[i - 1][j - 1];
+                        dp[i][j] = 1 + Math.min(del, ins, sub);
+                        var op = '';
+                        if (dp[i][j] === del + 1) op = 'delete';
+                        else if (dp[i][j] === ins + 1) op = 'insert';
+                        else op = 'substitute';
+                        steps.push({ type: 'grid', grid: makeGrid(i, j, 'highlight-compare'), explanation: 'dp[' + i + '][' + j + ']: "' + word1[i-1] + '"!="' + word2[j-1] + '". 1+min(del=' + del + ', ins=' + ins + ', sub=' + sub + ') = ' + dp[i][j] + ' (' + op + ').' });
+                    }
+                }
+            }
+
+            // Backtrack to show operations
+            var ops = [];
+            var bi = n, bj = m;
+            var path = [];
+            while (bi > 0 || bj > 0) {
+                path.push([bi, bj]);
+                if (bi > 0 && bj > 0 && word1[bi - 1] === word2[bj - 1]) {
+                    bi--; bj--;
+                } else if (bi > 0 && bj > 0 && dp[bi][bj] === dp[bi - 1][bj - 1] + 1) {
+                    ops.push('substitute "' + word1[bi - 1] + '" with "' + word2[bj - 1] + '"');
+                    bi--; bj--;
+                } else if (bi > 0 && dp[bi][bj] === dp[bi - 1][bj] + 1) {
+                    ops.push('delete "' + word1[bi - 1] + '"');
+                    bi--;
+                } else {
+                    ops.push('insert "' + word2[bj - 1] + '"');
+                    bj--;
+                }
+            }
+
+            // Final grid with path
+            var finalGrid = [];
+            var headerRow = [{ value: '', state: '' }, { value: '', state: '' }];
+            for (var j = 0; j < m; j++) headerRow.push({ value: word2[j], state: 'header' });
+            finalGrid.push(headerRow);
+
+            for (var i = 0; i <= n; i++) {
+                var row = [{ value: i === 0 ? '' : word1[i - 1], state: 'header' }];
+                for (var j = 0; j <= m; j++) {
+                    var cellState = '';
+                    for (var p = 0; p < path.length; p++) {
+                        if (path[p][0] === i && path[p][1] === j) { cellState = 'highlight-sorted'; break; }
+                    }
+                    row.push({ value: dp[i][j], state: cellState });
+                }
+                finalGrid.push(row);
+            }
+
+            steps.push({ type: 'grid', grid: finalGrid, explanation: 'Edit distance = ' + dp[n][m] + '. Operations: ' + (ops.length ? ops.reverse().join(', ') : 'none') + '.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    })();
+    </script>
+</body>
+</html>

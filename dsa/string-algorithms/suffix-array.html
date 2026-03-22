@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suffix Array — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Suffix Array</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Build: O(n log n)</span>
+            <span class="complexity-tag">Search: O(m log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A suffix array is a sorted array of all suffixes of a string. For a string of length n, the suffix starting at position i is <code>S[i..n-1]</code>. The suffix array stores the starting indices of these suffixes in lexicographic order. It provides a space-efficient alternative to suffix trees for many string processing tasks.</p>
+            <p>The naive construction sorts all n suffixes, taking O(n&sup2; log n) due to O(n) comparison cost. Efficient algorithms (like the prefix doubling approach by Karp-Miller-Rosenberg) achieve O(n log n) by iteratively sorting suffixes based on their first 1, 2, 4, 8, ... characters, using the previous round's ranks to compare in O(1).</p>
+            <p>Combined with the LCP (Longest Common Prefix) array, suffix arrays enable efficient substring search in O(m log n), finding longest repeated substrings, counting distinct substrings, and many other string operations. They use less memory than suffix trees while supporting similar queries.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-sort-alpha-down"></i>
+                    <h4>Sorted Suffixes</h4>
+                    <p>All suffixes sorted lexicographically, stored as starting indices.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    <h4>Space Efficient</h4>
+                    <p>O(n) space vs O(n) for suffix trees, but with smaller constants.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-search"></i>
+                    <h4>Binary Search</h4>
+                    <p>Pattern search in O(m log n) using binary search on sorted suffixes.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-layer-group"></i>
+                    <h4>LCP Array</h4>
+                    <p>Augment with LCP array for longest repeated substring, distinct substrings, etc.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function buildSuffixArray(s) {
+    var n = s.length;
+    var suffixes = [];
+    for (var i = 0; i < n; i++) {
+        suffixes.push({ index: i, suffix: s.substring(i) });
+    }
+    suffixes.sort(function (a, b) {
+        return a.suffix < b.suffix ? -1 : a.suffix > b.suffix ? 1 : 0;
+    });
+    return suffixes.map(function (s) { return s.index; });
+}
+
+// O(n log n) prefix doubling approach
+function buildSuffixArrayFast(s) {
+    var n = s.length;
+    var sa = [], rank = [], tmp = [];
+    for (var i = 0; i < n; i++) {
+        sa[i] = i;
+        rank[i] = s.charCodeAt(i);
+    }
+    for (var k = 1; k < n; k *= 2) {
+        var r = rank.slice();
+        sa.sort(function (a, b) {
+            if (r[a] !== r[b]) return r[a] - r[b];
+            var ra = a + k < n ? r[a + k] : -1;
+            var rb = b + k < n ? r[b + k] : -1;
+            return ra - rb;
+        });
+        rank[sa[0]] = 0;
+        for (var i = 1; i < n; i++) {
+            rank[sa[i]] = rank[sa[i - 1]];
+            if (r[sa[i]] !== r[sa[i - 1]] ||
+                (sa[i] + k < n ? r[sa[i] + k] : -1) !==
+                (sa[i - 1] + k < n ? r[sa[i - 1] + k] : -1)) {
+                rank[sa[i]]++;
+            }
+        }
+    }
+    return sa;
+}
+
+function searchPattern(text, sa, pattern) {
+    var lo = 0, hi = sa.length - 1;
+    while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        var suffix = text.substring(sa[mid], sa[mid] + pattern.length);
+        if (suffix < pattern) lo = mid + 1;
+        else if (suffix > pattern) hi = mid - 1;
+        else return sa[mid]; // found
+    }
+    return -1;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1044</td><td><a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank">Longest Duplicate Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1062</td><td><a href="https://leetcode.com/problems/longest-repeating-substring/" target="_blank">Longest Repeating Substring</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1316</td><td><a href="https://leetcode.com/problems/distinct-echo-substrings/" target="_blank">Distinct Echo Substrings</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>718</td><td><a href="https://leetcode.com/problems/maximum-length-of-repeated-subarray/" target="_blank">Maximum Length of Repeated Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>187</td><td><a href="https://leetcode.com/problems/repeated-dna-sequences/" target="_blank">Repeated DNA Sequences</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "suffix-array", title: "Suffix Array", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var str = 'BANANA$';
+
+        function generateSteps() {
+            var steps = [];
+            var n = str.length;
+
+            function makeArray() {
+                var arr = [];
+                for (var k = 0; k < n; k++) arr.push(str.charCodeAt(k) - 30);
+                return arr;
+            }
+
+            // Collect all suffixes
+            var suffixes = [];
+            for (var i = 0; i < n; i++) {
+                suffixes.push({ index: i, suffix: str.substring(i) });
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Building suffix array for "' + str + '". First, list all suffixes.' });
+
+            // Show each suffix
+            for (var i = 0; i < n; i++) {
+                var hl = {};
+                for (var k = i; k < n; k++) hl[k] = 'comparing';
+                steps.push({ array: makeArray(), highlights: hl, explanation: 'Suffix ' + i + ': "' + suffixes[i].suffix + '" (starting at index ' + i + ').' });
+            }
+
+            // Sort
+            suffixes.sort(function (a, b) {
+                return a.suffix < b.suffix ? -1 : a.suffix > b.suffix ? 1 : 0;
+            });
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Now sort all suffixes lexicographically...' });
+
+            // Show sorted order
+            for (var i = 0; i < suffixes.length; i++) {
+                var hl = {};
+                var idx = suffixes[i].index;
+                for (var k = idx; k < n; k++) hl[k] = 'sorted';
+                steps.push({ array: makeArray(), highlights: hl, explanation: 'Rank ' + i + ': "' + suffixes[i].suffix + '" (index ' + idx + ').' });
+            }
+
+            var sa = suffixes.map(function (s) { return s.index; });
+            steps.push({ array: sa, highlights: {}, explanation: 'Suffix Array: [' + sa.join(', ') + ']. These are the starting indices of suffixes in sorted order.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

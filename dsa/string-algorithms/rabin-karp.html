@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rabin-Karp Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Rabin-Karp Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Avg: O(n+m)</span>
+            <span class="complexity-tag">Worst: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Rabin-Karp algorithm uses hashing to find pattern matches in text. Instead of comparing characters one by one, it computes a hash value for the pattern and for each window of text of the same length. If the hashes match, it performs a character-by-character verification to confirm (since hash collisions are possible).</p>
+            <p>The key insight is the <strong>rolling hash</strong>: when sliding the window one position right, the new hash can be computed in O(1) from the old hash by removing the contribution of the leftmost character and adding the new rightmost character. This avoids recomputing the hash from scratch for each position.</p>
+            <p>Rabin-Karp excels at multi-pattern matching &mdash; searching for any of k patterns simultaneously in O(n*k) average time. It is also used in plagiarism detection, DNA sequence matching, and other applications where multiple pattern searches are needed.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-hashtag"></i>
+                    <h4>Rolling Hash</h4>
+                    <p>Update hash in O(1) as the window slides, avoiding full recomputation.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-clone"></i>
+                    <h4>Multi-Pattern</h4>
+                    <p>Easily extended to search for multiple patterns simultaneously.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-random"></i>
+                    <h4>Probabilistic</h4>
+                    <p>Hash collisions require verification; choose a good hash to minimize spurious hits.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-dna"></i>
+                    <h4>Practical Uses</h4>
+                    <p>DNA matching, plagiarism detection, longest duplicate substring problems.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function rabinKarp(text, pattern) {
+    var n = text.length, m = pattern.length;
+    var d = 256, q = 101; // base and prime
+    var h = 1, p = 0, t = 0;
+    var results = [];
+
+    // h = d^(m-1) mod q
+    for (var i = 0; i < m - 1; i++)
+        h = (h * d) % q;
+
+    // Initial hash values
+    for (var i = 0; i < m; i++) {
+        p = (d * p + pattern.charCodeAt(i)) % q;
+        t = (d * t + text.charCodeAt(i)) % q;
+    }
+
+    // Slide pattern over text
+    for (var i = 0; i <= n - m; i++) {
+        if (p === t) {
+            // Verify character by character
+            var match = true;
+            for (var j = 0; j < m; j++) {
+                if (text[i + j] !== pattern[j]) {
+                    match = false; break;
+                }
+            }
+            if (match) results.push(i);
+        }
+        // Compute hash for next window
+        if (i < n - m) {
+            t = (d * (t - text.charCodeAt(i) * h) +
+                 text.charCodeAt(i + m)) % q;
+            if (t < 0) t += q;
+        }
+    }
+    return results;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>187</td><td><a href="https://leetcode.com/problems/repeated-dna-sequences/" target="_blank">Repeated DNA Sequences</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1044</td><td><a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank">Longest Duplicate Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>28</td><td><a href="https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" target="_blank">Find the Index of the First Occurrence in a String</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>686</td><td><a href="https://leetcode.com/problems/repeated-string-match/" target="_blank">Repeated String Match</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1062</td><td><a href="https://leetcode.com/problems/longest-repeating-substring/" target="_blank">Longest Repeating Substring</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>718</td><td><a href="https://leetcode.com/problems/maximum-length-of-repeated-subarray/" target="_blank">Maximum Length of Repeated Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "rabin-karp", title: "Rabin-Karp Algorithm", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var text = 'ABCABCABDABCABC';
+        var pattern = 'ABCABC';
+
+        function generateSteps() {
+            var steps = [];
+            var n = text.length, m = pattern.length;
+            var d = 256, q = 101;
+            var h = 1, p = 0, t = 0;
+
+            function makeArray() {
+                var arr = [];
+                for (var k = 0; k < n; k++) arr.push(text.charCodeAt(k) - 60);
+                return arr;
+            }
+
+            for (var i = 0; i < m - 1; i++) h = (h * d) % q;
+            for (var i = 0; i < m; i++) {
+                p = (d * p + pattern.charCodeAt(i)) % q;
+                t = (d * t + text.charCodeAt(i)) % q;
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Rabin-Karp: Text = "' + text + '", Pattern = "' + pattern + '". Pattern hash = ' + p + '.' });
+
+            for (var i = 0; i <= n - m; i++) {
+                var hl = {};
+                for (var k = i; k < i + m; k++) hl[k] = 'comparing';
+
+                if (p === t) {
+                    var match = true;
+                    for (var j = 0; j < m; j++) {
+                        if (text[i + j] !== pattern[j]) { match = false; break; }
+                    }
+                    if (match) {
+                        for (var k = i; k < i + m; k++) hl[k] = 'sorted';
+                        steps.push({ array: makeArray(), highlights: hl, explanation: 'Hash match at index ' + i + '! Verified: pattern found at position ' + i + '.' });
+                    } else {
+                        for (var k = i; k < i + m; k++) hl[k] = 'swapped';
+                        steps.push({ array: makeArray(), highlights: hl, explanation: 'Hash match at index ' + i + ' but character verification failed (spurious hit).' });
+                    }
+                } else {
+                    steps.push({ array: makeArray(), highlights: hl, explanation: 'Window at index ' + i + ': hash = ' + t + ' != pattern hash ' + p + '. Slide window.' });
+                }
+
+                if (i < n - m) {
+                    t = (d * (t - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % q;
+                    if (t < 0) t += q;
+                }
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Rabin-Karp search complete.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

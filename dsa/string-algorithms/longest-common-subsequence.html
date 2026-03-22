@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Longest Common Subsequence — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Longest Common Subsequence</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Longest Common Subsequence (LCS) problem finds the longest sequence of characters that appears in the same relative order (but not necessarily contiguously) in both input strings. For example, the LCS of "ABCBDAB" and "BDCAB" is "BCAB" (length 4).</p>
+            <p>The classic dynamic programming solution builds an (n+1) x (m+1) table where <code>dp[i][j]</code> represents the LCS length of the first i characters of string A and the first j characters of string B. The recurrence is: if <code>A[i-1] == B[j-1]</code>, then <code>dp[i][j] = dp[i-1][j-1] + 1</code>; otherwise, <code>dp[i][j] = max(dp[i-1][j], dp[i][j-1])</code>.</p>
+            <p>The actual LCS string can be recovered by backtracking from <code>dp[n][m]</code>: whenever the characters match, include that character and move diagonally; otherwise, move in the direction of the larger value. LCS has applications in diff tools (comparing files), bioinformatics (DNA sequence alignment), and version control.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-th"></i>
+                    <h4>DP Table</h4>
+                    <p>Build (n+1)x(m+1) table bottom-up; each cell depends on 3 neighbors.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-equals"></i>
+                    <h4>Character Match</h4>
+                    <p>When characters match, extend diagonal value by 1; otherwise take the max of left/above.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-undo"></i>
+                    <h4>Backtracking</h4>
+                    <p>Trace back through the table from dp[n][m] to reconstruct the actual LCS string.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-file-code"></i>
+                    <h4>Diff Tool Foundation</h4>
+                    <p>Unix diff and git diff use LCS variants to show minimal changes between files.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function lcs(a, b) {
+    var n = a.length, m = b.length;
+    var dp = [];
+    for (var i = 0; i <= n; i++) {
+        dp[i] = new Array(m + 1).fill(0);
+    }
+
+    for (var i = 1; i <= n; i++) {
+        for (var j = 1; j <= m; j++) {
+            if (a[i - 1] === b[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+
+    // Backtrack to find the LCS string
+    var result = '';
+    var i = n, j = m;
+    while (i > 0 && j > 0) {
+        if (a[i - 1] === b[j - 1]) {
+            result = a[i - 1] + result;
+            i--; j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+    return { length: dp[n][m], subsequence: result };
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1143</td><td><a href="https://leetcode.com/problems/longest-common-subsequence/" target="_blank">Longest Common Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>583</td><td><a href="https://leetcode.com/problems/delete-operation-for-two-strings/" target="_blank">Delete Operation for Two Strings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>712</td><td><a href="https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/" target="_blank">Minimum ASCII Delete Sum for Two Strings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1092</td><td><a href="https://leetcode.com/problems/shortest-common-supersequence/" target="_blank">Shortest Common Supersequence</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>516</td><td><a href="https://leetcode.com/problems/longest-palindromic-subsequence/" target="_blank">Longest Palindromic Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>392</td><td><a href="https://leetcode.com/problems/is-subsequence/" target="_blank">Is Subsequence</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>115</td><td><a href="https://leetcode.com/problems/distinct-subsequences/" target="_blank">Distinct Subsequences</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>300</td><td><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">Longest Increasing Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "longest-common-subsequence", title: "Longest Common Subsequence", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var a = 'ABCBDAB';
+        var b = 'BDCAB';
+
+        function generateSteps() {
+            var steps = [];
+            var n = a.length, m = b.length;
+            var dp = [];
+            for (var i = 0; i <= n; i++) dp[i] = new Array(m + 1).fill(0);
+
+            // Header row labels: "", "", B, D, C, A, B
+            function makeGrid(highlightI, highlightJ, state) {
+                var grid = [];
+                // Header row
+                var headerRow = [{ value: '', state: '' }, { value: '', state: '' }];
+                for (var j = 0; j < m; j++) headerRow.push({ value: b[j], state: 'header' });
+                grid.push(headerRow);
+
+                for (var i = 0; i <= n; i++) {
+                    var row = [];
+                    row.push({ value: i === 0 ? '' : a[i - 1], state: 'header' });
+                    for (var j = 0; j <= m; j++) {
+                        var cellState = '';
+                        if (i === highlightI && j === highlightJ) cellState = state || 'highlight-active';
+                        row.push({ value: dp[i][j], state: cellState });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({ type: 'grid', grid: makeGrid(-1, -1), explanation: 'LCS of "' + a + '" and "' + b + '". Build DP table: dp[i][j] = LCS length of first i chars of A and first j chars of B.' });
+
+            for (var i = 1; i <= n; i++) {
+                for (var j = 1; j <= m; j++) {
+                    if (a[i - 1] === b[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                        steps.push({ type: 'grid', grid: makeGrid(i, j, 'highlight-sorted'), explanation: 'dp[' + i + '][' + j + ']: A[' + (i-1) + ']="' + a[i-1] + '" == B[' + (j-1) + ']="' + b[j-1] + '". dp[' + (i-1) + '][' + (j-1) + ']+1 = ' + dp[i][j] + '.' });
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                        steps.push({ type: 'grid', grid: makeGrid(i, j, 'highlight-compare'), explanation: 'dp[' + i + '][' + j + ']: A[' + (i-1) + ']="' + a[i-1] + '" != B[' + (j-1) + ']="' + b[j-1] + '". max(dp[' + (i-1) + '][' + j + '], dp[' + i + '][' + (j-1) + ']) = ' + dp[i][j] + '.' });
+                    }
+                }
+            }
+
+            // Backtrack
+            var result = '';
+            var bi = n, bj = m;
+            var path = [];
+            while (bi > 0 && bj > 0) {
+                if (a[bi - 1] === b[bj - 1]) {
+                    result = a[bi - 1] + result;
+                    path.push([bi, bj]);
+                    bi--; bj--;
+                } else if (dp[bi - 1][bj] > dp[bi][bj - 1]) {
+                    bi--;
+                } else {
+                    bj--;
+                }
+            }
+
+            // Show final with backtrack path highlighted
+            var finalGrid = [];
+            var headerRow = [{ value: '', state: '' }, { value: '', state: '' }];
+            for (var j = 0; j < m; j++) headerRow.push({ value: b[j], state: 'header' });
+            finalGrid.push(headerRow);
+
+            for (var i = 0; i <= n; i++) {
+                var row = [{ value: i === 0 ? '' : a[i - 1], state: 'header' }];
+                for (var j = 0; j <= m; j++) {
+                    var cellState = '';
+                    for (var p = 0; p < path.length; p++) {
+                        if (path[p][0] === i && path[p][1] === j) { cellState = 'highlight-sorted'; break; }
+                    }
+                    row.push({ value: dp[i][j], state: cellState });
+                }
+                finalGrid.push(row);
+            }
+
+            steps.push({ type: 'grid', grid: finalGrid, explanation: 'LCS length = ' + dp[n][m] + '. Backtrack path (green) gives LCS: "' + result + '".' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aho-Corasick Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Aho-Corasick Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Build: O(m&middot;k)</span>
+            <span class="complexity-tag">Search: O(n+z)</span>
+            <span class="complexity-tag">Space: O(m&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Aho-Corasick algorithm is a multi-pattern string matching algorithm. Given a set of patterns (a "dictionary") and a text string, it finds all occurrences of all patterns in a single pass through the text. It combines a trie (prefix tree) of patterns with failure links (similar to KMP's failure function) and output links.</p>
+            <p>Construction has three phases: (1) Build a trie from all patterns; (2) Compute failure links using BFS &mdash; a failure link from node u points to the longest proper suffix of the string represented by u that is also a prefix of some pattern; (3) Compute output links that chain to the next node along the failure path that represents a complete pattern.</p>
+            <p>During search, the automaton processes each text character once. On a mismatch, it follows failure links (like KMP) to find the next valid state. At each state, output links report all patterns ending at the current text position. Total search time is O(n + z) where z is the number of pattern occurrences found.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-sitemap"></i>
+                    <h4>Trie + Failure Links</h4>
+                    <p>Combines trie structure with KMP-like failure transitions for multi-pattern matching.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-search-plus"></i>
+                    <h4>All Patterns at Once</h4>
+                    <p>Finds all occurrences of all patterns in a single linear scan of the text.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-robot"></i>
+                    <h4>Finite Automaton</h4>
+                    <p>The resulting structure is a deterministic finite automaton that processes text character by character.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Real-World Use</h4>
+                    <p>Used in antivirus scanners, intrusion detection, content filtering, and bioinformatics.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function AhoCorasick(patterns) {
+    this.goto = [{}];        // goto function
+    this.fail = [0];         // failure links
+    this.output = [[]];      // output at each state
+    this.stateCount = 1;
+
+    // Build goto (trie)
+    for (var p = 0; p < patterns.length; p++) {
+        var state = 0;
+        for (var i = 0; i < patterns[p].length; i++) {
+            var ch = patterns[p][i];
+            if (!this.goto[state][ch]) {
+                this.goto[state][ch] = this.stateCount;
+                this.goto.push({});
+                this.fail.push(0);
+                this.output.push([]);
+                this.stateCount++;
+            }
+            state = this.goto[state][ch];
+        }
+        this.output[state].push(patterns[p]);
+    }
+
+    // Build failure links (BFS)
+    var queue = [];
+    for (var ch in this.goto[0]) {
+        var s = this.goto[0][ch];
+        this.fail[s] = 0;
+        queue.push(s);
+    }
+    while (queue.length) {
+        var r = queue.shift();
+        for (var ch in this.goto[r]) {
+            var s = this.goto[r][ch];
+            queue.push(s);
+            var state = this.fail[r];
+            while (state && !this.goto[state][ch]) state = this.fail[state];
+            this.fail[s] = this.goto[state][ch] || 0;
+            if (this.fail[s] === s) this.fail[s] = 0;
+            this.output[s] = this.output[s].concat(this.output[this.fail[s]]);
+        }
+    }
+}
+
+AhoCorasick.prototype.search = function (text) {
+    var results = [];
+    var state = 0;
+    for (var i = 0; i < text.length; i++) {
+        while (state && !this.goto[state][text[i]]) state = this.fail[state];
+        state = this.goto[state][text[i]] || 0;
+        for (var j = 0; j < this.output[state].length; j++) {
+            results.push({ index: i - this.output[state][j].length + 1, pattern: this.output[state][j] });
+        }
+    }
+    return results;
+};</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>208</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Implement Trie (Prefix Tree)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>212</td><td><a href="https://leetcode.com/problems/word-search-ii/" target="_blank">Word Search II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>472</td><td><a href="https://leetcode.com/problems/concatenated-words/" target="_blank">Concatenated Words</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1032</td><td><a href="https://leetcode.com/problems/stream-of-characters/" target="_blank">Stream of Characters</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "aho-corasick", title: "Aho-Corasick Algorithm", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var patterns = ['he', 'she', 'his', 'hers'];
+        var text = 'ahishers';
+
+        function generateSteps() {
+            var steps = [];
+            var w = 500;
+
+            // Show the trie being built step by step
+            // States: 0=root, 1=h, 2=he(out:he), 3=s, 4=sh, 5=she(out:she),
+            //         6=hi, 7=his(out:his), 8=her, 9=hers(out:hers)
+
+            var trieBuilt = {
+                nodes: [
+                    { id: 0, x: w/2, y: 30, label: 'root' },
+                    { id: 1, x: w/4, y: 100, label: 'h' },
+                    { id: 2, x: w/8, y: 180, label: 'e' },
+                    { id: 3, x: 3*w/4, y: 100, label: 's' },
+                    { id: 4, x: 3*w/4, y: 180, label: 'h' },
+                    { id: 5, x: 3*w/4, y: 260, label: 'e', state: 'highlight-sorted' },
+                    { id: 6, x: 2*w/5, y: 180, label: 'i' },
+                    { id: 7, x: 2*w/5, y: 260, label: 's', state: 'highlight-sorted' },
+                    { id: 8, x: w/8, y: 260, label: 'r' },
+                    { id: 9, x: w/8, y: 340, label: 's', state: 'highlight-sorted' }
+                ],
+                edges: [
+                    { from: 0, to: 1 }, { from: 1, to: 2 }, { from: 0, to: 3 },
+                    { from: 3, to: 4 }, { from: 4, to: 5 }, { from: 1, to: 6 },
+                    { from: 6, to: 7 }, { from: 2, to: 8 }, { from: 8, to: 9 }
+                ]
+            };
+
+            steps.push({
+                type: 'tree',
+                nodes: [{ id: 0, x: w/2, y: 30, label: 'root' }],
+                edges: [],
+                explanation: 'Aho-Corasick: Build automaton for patterns: [' + patterns.join(', ') + ']. Search in "' + text + '".'
+            });
+
+            // Add patterns one by one
+            steps.push({
+                type: 'tree',
+                nodes: [
+                    { id: 0, x: w/2, y: 30, label: 'root' },
+                    { id: 1, x: w/4, y: 100, label: 'h', state: 'highlight-active' },
+                    { id: 2, x: w/4, y: 180, label: 'e', state: 'highlight-active' }
+                ],
+                edges: [{ from: 0, to: 1 }, { from: 1, to: 2 }],
+                explanation: 'Insert pattern "he". Node "e" is an output node (pattern "he" found).'
+            });
+
+            steps.push({
+                type: 'tree',
+                nodes: [
+                    { id: 0, x: w/2, y: 30, label: 'root' },
+                    { id: 1, x: w/4, y: 100, label: 'h' },
+                    { id: 2, x: w/4, y: 180, label: 'e' },
+                    { id: 3, x: 3*w/4, y: 100, label: 's', state: 'highlight-active' },
+                    { id: 4, x: 3*w/4, y: 180, label: 'h', state: 'highlight-active' },
+                    { id: 5, x: 3*w/4, y: 260, label: 'e', state: 'highlight-active' }
+                ],
+                edges: [{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 0, to: 3 }, { from: 3, to: 4 }, { from: 4, to: 5 }],
+                explanation: 'Insert pattern "she". Node at the end is an output node for "she".'
+            });
+
+            steps.push({
+                type: 'tree',
+                nodes: trieBuilt.nodes,
+                edges: trieBuilt.edges,
+                explanation: 'All patterns inserted: "he", "she", "his", "hers". Green nodes are output nodes. Now compute failure links and search.'
+            });
+
+            // Simulate search through text
+            var found = [
+                { pos: 1, pat: 'his', msg: 'At position 1: found "his"!' },
+                { pos: 3, pat: 'she', msg: 'At position 3: found "she"!' },
+                { pos: 4, pat: 'he', msg: 'At position 4: found "he" (via output link from "she")!' },
+                { pos: 4, pat: 'hers', msg: 'At position 4: found "hers"!' }
+            ];
+
+            for (var f = 0; f < found.length; f++) {
+                var hl = JSON.parse(JSON.stringify(trieBuilt));
+                steps.push({ type: 'tree', nodes: hl.nodes, edges: hl.edges, explanation: 'Scanning text "' + text + '": ' + found[f].msg });
+            }
+
+            steps.push({ type: 'tree', nodes: trieBuilt.nodes, edges: trieBuilt.edges, explanation: 'Search complete. Found: "his" at 1, "she" at 3, "he" at 4, "hers" at 4.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'tree' });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suffix Tree (Ukkonen's) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Suffix Tree (Ukkonen's)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Build: O(n)</span>
+            <span class="complexity-tag">Search: O(m)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A suffix tree is a compressed trie containing all suffixes of a string. Each edge is labeled with a substring, and every suffix of the original string corresponds to a path from the root to a leaf. The tree has at most 2n-1 nodes for a string of length n (n leaves and at most n-1 internal nodes).</p>
+            <p>Ukkonen's algorithm builds the suffix tree online, left to right, in O(n) time. It processes one character at a time, extending all current suffixes. Three key rules govern extensions: (1) if the current path ends at a leaf, extend the edge label; (2) if the next character already exists in the tree, do nothing (implicit extension); (3) if it doesn't exist, create a new branch. Suffix links speed up traversal between extension points.</p>
+            <p>Suffix trees enable powerful string operations: O(m) pattern matching, finding the longest repeated substring, longest common substring of two strings, and many more. While they use more space than suffix arrays, they offer faster query times for certain operations.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h4>Compressed Trie</h4>
+                    <p>Edge labels are substrings, not single characters, keeping the tree compact.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-link"></i>
+                    <h4>Suffix Links</h4>
+                    <p>Internal nodes link to the node representing the next shorter suffix, enabling O(1) jumps.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-play"></i>
+                    <h4>Online Construction</h4>
+                    <p>Ukkonen's builds incrementally, character by character, in O(n) total time.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-search"></i>
+                    <h4>O(m) Pattern Search</h4>
+                    <p>Match pattern by following edges; if a complete path exists, the pattern occurs.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Simplified suffix tree (naive construction for clarity)
+function SuffixTreeNode() {
+    this.children = {};
+    this.start = -1;
+    this.end = -1;
+    this.suffixIndex = -1;
+}
+
+function buildSuffixTree(text) {
+    var root = new SuffixTreeNode();
+    for (var i = 0; i < text.length; i++) {
+        var current = root;
+        for (var j = i; j < text.length; j++) {
+            var ch = text[j];
+            if (!current.children[ch]) {
+                var node = new SuffixTreeNode();
+                node.start = j;
+                node.end = text.length - 1;
+                node.suffixIndex = i;
+                current.children[ch] = node;
+                break;
+            }
+            current = current.children[ch];
+        }
+    }
+    return root;
+}
+
+function searchInSuffixTree(root, text, pattern) {
+    var current = root;
+    for (var i = 0; i < pattern.length; i++) {
+        if (!current.children[pattern[i]]) return false;
+        current = current.children[pattern[i]];
+    }
+    return true;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1044</td><td><a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank">Longest Duplicate Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>208</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Implement Trie (Prefix Tree)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>336</td><td><a href="https://leetcode.com/problems/palindrome-pairs/" target="_blank">Palindrome Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>472</td><td><a href="https://leetcode.com/problems/concatenated-words/" target="_blank">Concatenated Words</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "suffix-tree", title: "Suffix Tree (Ukkonen's)", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var str = 'ABAB$';
+
+        function generateSteps() {
+            var steps = [];
+            var w = 500;
+
+            // Build a simple suffix tree for visualization
+            // Suffixes of "ABAB$": ABAB$, BAB$, AB$, B$, $
+            // We'll show the tree being built step by step
+
+            var treeSteps = [
+                {
+                    label: 'Start with empty root.',
+                    nodes: [{ id: 0, x: w/2, y: 30, label: 'root' }],
+                    edges: []
+                },
+                {
+                    label: 'Insert suffix "ABAB$" (index 0).',
+                    nodes: [
+                        { id: 0, x: w/2, y: 30, label: 'root' },
+                        { id: 1, x: w/4, y: 120, label: 'ABAB$', state: 'highlight-active' }
+                    ],
+                    edges: [{ from: 0, to: 1 }]
+                },
+                {
+                    label: 'Insert suffix "BAB$" (index 1).',
+                    nodes: [
+                        { id: 0, x: w/2, y: 30, label: 'root' },
+                        { id: 1, x: w/5, y: 120, label: 'ABAB$' },
+                        { id: 2, x: 3*w/5, y: 120, label: 'BAB$', state: 'highlight-active' }
+                    ],
+                    edges: [{ from: 0, to: 1 }, { from: 0, to: 2 }]
+                },
+                {
+                    label: 'Insert suffix "AB$" (index 2). Branch at "AB" node.',
+                    nodes: [
+                        { id: 0, x: w/2, y: 30, label: 'root' },
+                        { id: 3, x: w/6, y: 110, label: 'AB' },
+                        { id: 4, x: w/10, y: 200, label: 'AB$' },
+                        { id: 5, x: w/3.5, y: 200, label: '$', state: 'highlight-active' },
+                        { id: 2, x: 3*w/5, y: 110, label: 'BAB$' },
+                        { id: 6, x: 4*w/5, y: 110, label: '$' }
+                    ],
+                    edges: [{ from: 0, to: 3 }, { from: 3, to: 4 }, { from: 3, to: 5 }, { from: 0, to: 2 }, { from: 0, to: 6 }]
+                },
+                {
+                    label: 'Insert suffix "B$" (index 3). Branch at "B" node.',
+                    nodes: [
+                        { id: 0, x: w/2, y: 30, label: 'root' },
+                        { id: 3, x: w/7, y: 110, label: 'AB' },
+                        { id: 4, x: w/12, y: 200, label: 'AB$' },
+                        { id: 5, x: w/4, y: 200, label: '$' },
+                        { id: 7, x: 2.5*w/5, y: 110, label: 'B' },
+                        { id: 8, x: 2*w/5, y: 200, label: 'AB$' },
+                        { id: 9, x: 3*w/5, y: 200, label: '$', state: 'highlight-active' },
+                        { id: 6, x: 4.2*w/5, y: 110, label: '$' }
+                    ],
+                    edges: [
+                        { from: 0, to: 3 }, { from: 3, to: 4 }, { from: 3, to: 5 },
+                        { from: 0, to: 7 }, { from: 7, to: 8 }, { from: 7, to: 9 },
+                        { from: 0, to: 6 }
+                    ]
+                },
+                {
+                    label: 'Suffix tree complete! All 5 suffixes represented as root-to-leaf paths.',
+                    nodes: [
+                        { id: 0, x: w/2, y: 30, label: 'root', state: 'highlight-sorted' },
+                        { id: 3, x: w/7, y: 110, label: 'AB', state: 'highlight-sorted' },
+                        { id: 4, x: w/12, y: 200, label: 'AB$', state: 'highlight-sorted' },
+                        { id: 5, x: w/4, y: 200, label: '$', state: 'highlight-sorted' },
+                        { id: 7, x: 2.5*w/5, y: 110, label: 'B', state: 'highlight-sorted' },
+                        { id: 8, x: 2*w/5, y: 200, label: 'AB$', state: 'highlight-sorted' },
+                        { id: 9, x: 3*w/5, y: 200, label: '$', state: 'highlight-sorted' },
+                        { id: 6, x: 4.2*w/5, y: 110, label: '$', state: 'highlight-sorted' }
+                    ],
+                    edges: [
+                        { from: 0, to: 3 }, { from: 3, to: 4 }, { from: 3, to: 5 },
+                        { from: 0, to: 7 }, { from: 7, to: 8 }, { from: 7, to: 9 },
+                        { from: 0, to: 6 }
+                    ]
+                }
+            ];
+
+            for (var i = 0; i < treeSteps.length; i++) {
+                steps.push({
+                    type: 'tree',
+                    nodes: treeSteps[i].nodes,
+                    edges: treeSteps[i].edges,
+                    explanation: treeSteps[i].label
+                });
+            }
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'tree' });
+    })();
+    </script>
+</body>
+</html>

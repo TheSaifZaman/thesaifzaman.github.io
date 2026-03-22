@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Z-Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Z-algorithm computes the Z-array for a string S in linear time. For each position i, Z[i] is the length of the longest substring starting at position i that matches a prefix of S. By definition, Z[0] is set to 0 (or the length of the string, depending on convention).</p>
+            <p>The algorithm maintains a window [L, R] representing the rightmost Z-box found so far &mdash; the interval that matches a prefix of S and extends furthest to the right. For each new position i, if i falls within [L, R], we can use previously computed Z-values to get a head start, then extend by comparing characters directly.</p>
+            <p>For pattern matching, concatenate <code>pattern + "$" + text</code> (where "$" is a character not in either string), then compute the Z-array. Any position i where Z[i] equals the pattern length indicates a match. This gives O(n+m) string matching, similar to KMP but with a different approach.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-ruler-horizontal"></i>
+                    <h4>Z-Array</h4>
+                    <p>Z[i] = length of longest substring starting at i matching a prefix of S.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-window-maximize"></i>
+                    <h4>Z-Box Window</h4>
+                    <p>Maintains [L,R] to reuse previous work, achieving O(n) amortized.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-link"></i>
+                    <h4>Concatenation Trick</h4>
+                    <p>Pattern + separator + text enables pattern matching via Z-array.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>KMP Alternative</h4>
+                    <p>Equivalent power to KMP but conceptually simpler for many problems.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function zFunction(s) {
+    var n = s.length;
+    var z = new Array(n).fill(0);
+    var l = 0, r = 0;
+    for (var i = 1; i < n; i++) {
+        if (i < r) {
+            z[i] = Math.min(r - i, z[i - l]);
+        }
+        while (i + z[i] < n && s[z[i]] === s[i + z[i]]) {
+            z[i]++;
+        }
+        if (i + z[i] > r) {
+            l = i;
+            r = i + z[i];
+        }
+    }
+    return z;
+}
+
+function zSearch(text, pattern) {
+    var concat = pattern + '$' + text;
+    var z = zFunction(concat);
+    var m = pattern.length;
+    var results = [];
+    for (var i = m + 1; i < concat.length; i++) {
+        if (z[i] === m) {
+            results.push(i - m - 1);
+        }
+    }
+    return results;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>28</td><td><a href="https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" target="_blank">Find the Index of the First Occurrence in a String</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>459</td><td><a href="https://leetcode.com/problems/repeated-substring-pattern/" target="_blank">Repeated Substring Pattern</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>214</td><td><a href="https://leetcode.com/problems/shortest-palindrome/" target="_blank">Shortest Palindrome</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1392</td><td><a href="https://leetcode.com/problems/longest-happy-prefix/" target="_blank">Longest Happy Prefix</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>796</td><td><a href="https://leetcode.com/problems/rotate-string/" target="_blank">Rotate String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "z-algorithm", title: "Z-Algorithm", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var str = 'AABXAABXCAABXAABXAY';
+
+        function generateSteps() {
+            var steps = [];
+            var n = str.length;
+            var z = new Array(n).fill(0);
+            var l = 0, r = 0;
+
+            function makeArray() {
+                var arr = [];
+                for (var k = 0; k < n; k++) arr.push(str.charCodeAt(k) - 60);
+                return arr;
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Z-Algorithm on "' + str + '". Z[i] = length of longest substring starting at i that matches a prefix.' });
+
+            for (var i = 1; i < n; i++) {
+                if (i < r) {
+                    z[i] = Math.min(r - i, z[i - l]);
+                }
+                while (i + z[i] < n && str[z[i]] === str[i + z[i]]) {
+                    z[i]++;
+                }
+                if (i + z[i] > r) { l = i; r = i + z[i]; }
+
+                var hl = {};
+                // Highlight the Z-box for this position
+                for (var k = i; k < i + z[i]; k++) hl[k] = 'sorted';
+                if (z[i] > 0) hl[i] = 'comparing';
+
+                steps.push({ array: makeArray(), highlights: hl, explanation: 'i=' + i + ': Z[' + i + '] = ' + z[i] + (z[i] > 0 ? '. Substring "' + str.substr(i, z[i]) + '" matches prefix.' : '. No prefix match.') + ' Z-box: [' + l + ',' + r + ').' });
+            }
+
+            steps.push({ array: z, highlights: {}, explanation: 'Z-array complete: [' + z.join(',') + ']. Values show prefix match lengths at each position.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

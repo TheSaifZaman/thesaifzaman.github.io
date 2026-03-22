@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMP Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>KMP Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n+m)</span>
+            <span class="complexity-tag">Space: O(m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Knuth-Morris-Pratt (KMP) algorithm is an efficient string-matching algorithm that searches for occurrences of a pattern within a text. Unlike the naive approach that backtracks on every mismatch, KMP preprocesses the pattern to build a failure function (also called the partial match table or prefix function) that tells it how far to skip ahead when a mismatch occurs.</p>
+            <p>The failure function <code>lps[i]</code> stores the length of the longest proper prefix of <code>pattern[0..i]</code> that is also a suffix. When a mismatch happens at position <code>j</code> in the pattern, instead of restarting from scratch, KMP shifts the pattern so that <code>lps[j-1]</code> characters are already matched, avoiding redundant comparisons.</p>
+            <p>This preprocessing takes O(m) time where m is the pattern length, and the search itself takes O(n) time where n is the text length. The total time complexity is O(n+m), making KMP significantly faster than the naive O(n*m) approach for large inputs, especially when the pattern contains repeating sub-patterns.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-forward"></i>
+                    <h4>No Backtracking</h4>
+                    <p>The text pointer never moves backwards, ensuring O(n) scan time.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-table"></i>
+                    <h4>Failure Function</h4>
+                    <p>LPS array encodes pattern structure to skip redundant comparisons.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Linear Time</h4>
+                    <p>O(n+m) guaranteed, unlike naive O(n*m) worst case.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-stream"></i>
+                    <h4>Streaming Friendly</h4>
+                    <p>Can process text character by character without needing the full text in memory.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function buildLPS(pattern) {
+    var m = pattern.length;
+    var lps = new Array(m).fill(0);
+    var len = 0;
+    var i = 1;
+    while (i < m) {
+        if (pattern[i] === pattern[len]) {
+            len++;
+            lps[i] = len;
+            i++;
+        } else {
+            if (len !== 0) {
+                len = lps[len - 1];
+            } else {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+    return lps;
+}
+
+function kmpSearch(text, pattern) {
+    var n = text.length, m = pattern.length;
+    var lps = buildLPS(pattern);
+    var results = [];
+    var i = 0, j = 0;
+    while (i < n) {
+        if (text[i] === pattern[j]) {
+            i++; j++;
+        }
+        if (j === m) {
+            results.push(i - j);
+            j = lps[j - 1];
+        } else if (i < n && text[i] !== pattern[j]) {
+            if (j !== 0) {
+                j = lps[j - 1];
+            } else {
+                i++;
+            }
+        }
+    }
+    return results;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>28</td><td><a href="https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" target="_blank">Find the Index of the First Occurrence in a String</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>459</td><td><a href="https://leetcode.com/problems/repeated-substring-pattern/" target="_blank">Repeated Substring Pattern</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>214</td><td><a href="https://leetcode.com/problems/shortest-palindrome/" target="_blank">Shortest Palindrome</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1392</td><td><a href="https://leetcode.com/problems/longest-happy-prefix/" target="_blank">Longest Happy Prefix</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>686</td><td><a href="https://leetcode.com/problems/repeated-string-match/" target="_blank">Repeated String Match</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>796</td><td><a href="https://leetcode.com/problems/rotate-string/" target="_blank">Rotate String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1764</td><td><a href="https://leetcode.com/problems/form-array-by-concatenating-subarrays-of-another-array/" target="_blank">Form Array by Concatenating Subarrays</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>572</td><td><a href="https://leetcode.com/problems/subtree-of-another-tree/" target="_blank">Subtree of Another Tree</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "kmp", title: "KMP Algorithm", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var text = 'ABABDABACDABABCABAB';
+        var pattern = 'ABABCABAB';
+
+        function buildLPS(pat) {
+            var m = pat.length;
+            var lps = new Array(m).fill(0);
+            var len = 0, i = 1;
+            while (i < m) {
+                if (pat[i] === pat[len]) { len++; lps[i] = len; i++; }
+                else { if (len !== 0) len = lps[len - 1]; else { lps[i] = 0; i++; } }
+            }
+            return lps;
+        }
+
+        function generateSteps() {
+            var steps = [];
+            var n = text.length, m = pattern.length;
+            var lps = buildLPS(pattern);
+
+            // Show text as character boxes
+            function makeArray() {
+                var arr = [];
+                for (var k = 0; k < n; k++) arr.push(text.charCodeAt(k) - 60);
+                return arr;
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'KMP Search: Text = "' + text + '", Pattern = "' + pattern + '". First, the LPS (failure) array is computed: [' + lps.join(',') + '].' });
+
+            var i = 0, j = 0;
+            while (i < n) {
+                var h = {};
+                // Highlight current alignment
+                for (var k = i - j; k < i - j + m && k < n; k++) {
+                    if (k >= 0) h[k] = 'comparing';
+                }
+                if (i < n) h[i] = 'swapped';
+
+                if (text[i] === pattern[j]) {
+                    steps.push({ array: makeArray(), highlights: h, explanation: 'Match: text[' + i + ']="' + text[i] + '" == pattern[' + j + ']="' + pattern[j] + '". Advance both pointers.' });
+                    i++; j++;
+                } else {
+                    steps.push({ array: makeArray(), highlights: h, explanation: 'Mismatch: text[' + i + ']="' + text[i] + '" != pattern[' + j + ']="' + pattern[j] + '".' + (j !== 0 ? ' Use LPS: j = lps[' + (j-1) + '] = ' + lps[j-1] + '.' : ' Pattern at start, advance text pointer.') });
+                    if (j !== 0) { j = lps[j - 1]; }
+                    else { i++; }
+                }
+
+                if (j === m) {
+                    var hFound = {};
+                    for (var f = i - m; f < i; f++) hFound[f] = 'sorted';
+                    steps.push({ array: makeArray(), highlights: hFound, explanation: 'Pattern found at index ' + (i - m) + '!' });
+                    j = lps[j - 1];
+                }
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'KMP search complete. All occurrences found.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

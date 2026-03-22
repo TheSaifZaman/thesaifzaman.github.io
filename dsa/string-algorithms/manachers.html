@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manacher's Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Manacher's Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Manacher's algorithm finds the longest palindromic substring in linear time. The key challenge with palindromes is handling both odd-length and even-length cases. Manacher's solves this by transforming the string: insert a special character (e.g., '#') between every character and at the boundaries, so "abba" becomes "#a#b#b#a#". This way, every palindrome becomes odd-length.</p>
+            <p>The algorithm maintains a center C and right boundary R of the rightmost palindrome found so far. For each position i, it uses the mirror position (2*C - i) to get a starting estimate for the palindrome radius. If i is within R, the palindrome at the mirror gives a lower bound. Then it tries to expand further by comparing characters.</p>
+            <p>This mirror-and-expand strategy ensures each character is visited at most twice, giving O(n) total time. The result is a P-array where P[i] holds the radius of the palindrome centered at i in the transformed string. The longest palindromic substring is found by taking the maximum P[i].</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <h4>Transform Trick</h4>
+                    <p>Insert separators to unify odd and even palindromes into one case.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-mirror"></i>
+                    <h4>Mirror Property</h4>
+                    <p>Reuse palindrome radii from mirror positions to avoid redundant work.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h4>Center & Right</h4>
+                    <p>Track the palindrome extending furthest right; update as new ones are found.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>True Linear Time</h4>
+                    <p>Each character compared at most twice, achieving genuine O(n).</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function manacher(s) {
+    // Transform: "abc" -> "^#a#b#c#$"
+    var t = '^#' + s.split('').join('#') + '#$';
+    var n = t.length;
+    var p = new Array(n).fill(0);
+    var c = 0, r = 0;
+
+    for (var i = 1; i < n - 1; i++) {
+        var mirror = 2 * c - i;
+        if (i < r) {
+            p[i] = Math.min(r - i, p[mirror]);
+        }
+        // Expand around center i
+        while (t[i + p[i] + 1] === t[i - p[i] - 1]) {
+            p[i]++;
+        }
+        // Update center and right boundary
+        if (i + p[i] > r) {
+            c = i;
+            r = i + p[i];
+        }
+    }
+
+    // Find the maximum palindrome
+    var maxLen = 0, centerIdx = 0;
+    for (var i = 1; i < n - 1; i++) {
+        if (p[i] > maxLen) {
+            maxLen = p[i];
+            centerIdx = i;
+        }
+    }
+    var start = (centerIdx - maxLen) / 2;
+    return s.substring(start, start + maxLen);
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank">Longest Palindromic Substring</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>647</td><td><a href="https://leetcode.com/problems/palindromic-substrings/" target="_blank">Palindromic Substrings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>214</td><td><a href="https://leetcode.com/problems/shortest-palindrome/" target="_blank">Shortest Palindrome</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>125</td><td><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank">Valid Palindrome</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>336</td><td><a href="https://leetcode.com/problems/palindrome-pairs/" target="_blank">Palindrome Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "manachers", title: "Manacher's Algorithm", category: "String Algorithms" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var original = 'ABACABAD';
+
+        function generateSteps() {
+            var steps = [];
+            var t = '^#' + original.split('').join('#') + '#$';
+            var n = t.length;
+            var p = new Array(n).fill(0);
+            var c = 0, r = 0;
+
+            function makeArray() {
+                var arr = [];
+                for (var k = 0; k < original.length; k++) arr.push(original.charCodeAt(k) - 60);
+                return arr;
+            }
+
+            steps.push({ array: makeArray(), highlights: {}, explanation: 'Manacher\'s on "' + original + '". Transformed: "' + t + '". We compute P[i] = palindrome radius at each position.' });
+
+            for (var i = 1; i < n - 1; i++) {
+                var mirror = 2 * c - i;
+                if (i < r) p[i] = Math.min(r - i, p[mirror]);
+                while (t[i + p[i] + 1] === t[i - p[i] - 1]) p[i]++;
+                if (i + p[i] > r) { c = i; r = i + p[i]; }
+
+                // Only show steps for non-separator positions (actual characters)
+                if (t[i] !== '#' && t[i] !== '^' && t[i] !== '$') {
+                    var origIdx = Math.floor((i - 2) / 2);
+                    var radius = p[i];
+                    var palStart = Math.floor((i - radius - 2) / 2);
+                    var palEnd = palStart + radius;
+                    var hl = {};
+                    hl[origIdx] = 'comparing';
+                    for (var k = Math.max(0, palStart); k <= Math.min(original.length - 1, palEnd); k++) {
+                        hl[k] = 'sorted';
+                    }
+                    hl[origIdx] = 'swapped';
+                    var palStr = original.substring(Math.max(0, palStart), palEnd + 1);
+                    steps.push({ array: makeArray(), highlights: hl, explanation: 'Center at "' + t[i] + '" (orig index ' + origIdx + '): P[' + i + ']=' + radius + '. Palindrome: "' + palStr + '". C=' + c + ', R=' + r + '.' });
+                }
+            }
+
+            // Find max
+            var maxLen = 0, centerIdx = 0;
+            for (var i = 1; i < n - 1; i++) {
+                if (p[i] > maxLen) { maxLen = p[i]; centerIdx = i; }
+            }
+            var start = Math.floor((centerIdx - maxLen) / 2);
+            var longest = original.substring(start, start + maxLen);
+            var hlFinal = {};
+            for (var k = start; k < start + maxLen; k++) hlFinal[k] = 'sorted';
+            steps.push({ array: makeArray(), highlights: hlFinal, explanation: 'Longest palindromic substring: "' + longest + '" (length ' + maxLen + ', starting at index ' + start + ').' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>
