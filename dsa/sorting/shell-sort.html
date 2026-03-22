@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shell Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Shell Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Best: O(n log n)</span>
+            <span class="complexity-tag">Avg: O(n^1.5)</span>
+            <span class="complexity-tag">Worst: O(n^2)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Shell Sort is a generalization of Insertion Sort that allows the exchange of elements that are far apart. It works by sorting elements at specific intervals (gaps) and progressively reducing the gap until it becomes 1, at which point it performs a standard Insertion Sort on a nearly-sorted array.</p>
+            <p>The key insight is that Insertion Sort is very efficient on nearly-sorted data. By first sorting elements that are far apart, Shell Sort moves elements closer to their final positions quickly. The gap sequence determines the algorithm's performance; common sequences include n/2 (Shell's original), Knuth's (3^k-1)/2, and Sedgewick's sequence.</p>
+            <p>Shell Sort's time complexity depends on the gap sequence used. With Shell's original sequence (n/2, n/4, ..., 1), the worst case is O(n&sup2;), but better sequences achieve O(n^(4/3)) or even O(n log&sup2; n). It is an in-place algorithm with good cache performance.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> No &mdash; elements can jump over equal elements during gap-based sorting.</li>
+                    <li><strong>In-place:</strong> Yes &mdash; O(1) extra space.</li>
+                    <li><strong>Adaptive:</strong> Yes &mdash; benefits from partially sorted input.</li>
+                    <li><strong>Gap-dependent:</strong> Performance varies significantly with gap sequence choice.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function shellSort(arr) {
+    var n = arr.length;
+    // Using Shell's original gap sequence: n/2, n/4, ..., 1
+    for (var gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+        for (var i = gap; i < n; i++) {
+            var temp = arr[i];
+            var j = i;
+            while (j >= gap && arr[j - gap] > temp) {
+                arr[j] = arr[j - gap];
+                j -= gap;
+            }
+            arr[j] = temp;
+        }
+    }
+    return arr;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>75</td><td><a href="https://leetcode.com/problems/sort-colors/" target="_blank">Sort Colors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>148</td><td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "shell-sort", title: "Shell Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Shell Sort performs gap-based insertion sort with decreasing gaps." });
+
+        for (var gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+            var hGap = {};
+            // Highlight elements at gap intervals to show the groups
+            for (var gi = 0; gi < gap && gi < n; gi++) { hGap[gi] = 'active'; }
+            steps.push({ array: arr.slice(), highlights: hGap, explanation: "Gap = " + gap + ". Perform insertion sort on interleaved subsequences " + gap + " apart." });
+
+            for (var i = gap; i < n; i++) {
+                var temp = arr[i];
+                var j = i;
+
+                var hPick = {};
+                hPick[i] = 'current';
+                if (j - gap >= 0) hPick[j - gap] = 'comparing';
+                steps.push({ array: arr.slice(), highlights: hPick, explanation: "Gap " + gap + ": Insert arr[" + i + "]=" + temp + ". Compare with element " + gap + " positions back." });
+
+                while (j >= gap && arr[j - gap] > temp) {
+                    arr[j] = arr[j - gap];
+
+                    var hs = {};
+                    hs[j] = 'swapped';
+                    hs[j - gap] = 'swapped';
+                    steps.push({ array: arr.slice(), highlights: hs, explanation: "Shift " + arr[j] + " from index " + (j - gap) + " to index " + j + "." });
+
+                    j -= gap;
+                }
+                arr[j] = temp;
+
+                if (j !== i) {
+                    var hp = {};
+                    hp[j] = 'active';
+                    steps.push({ array: arr.slice(), highlights: hp, explanation: "Place " + temp + " at index " + j + "." });
+                }
+            }
+
+            var hAfter = {};
+            steps.push({ array: arr.slice(), highlights: hAfter, explanation: "After gap=" + gap + " pass: [" + arr.join(", ") + "]." });
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: arr.slice(), highlights: hFinal, explanation: "Shell Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

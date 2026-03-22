@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heap Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Heap Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Best: O(n log n)</span>
+            <span class="complexity-tag">Avg: O(n log n)</span>
+            <span class="complexity-tag">Worst: O(n log n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Heap Sort works in two phases. First, it builds a max-heap from the input array. A max-heap is a complete binary tree where every parent node is greater than or equal to its children. This can be done in O(n) time using the "heapify" procedure from the bottom up.</p>
+            <p>In the second phase, it repeatedly extracts the maximum element (root of the heap) by swapping it with the last element of the heap, reducing the heap size by one, and then restoring the heap property by "sifting down" the new root. Each extraction takes O(log n) time.</p>
+            <p>Heap Sort guarantees O(n log n) worst-case performance with O(1) extra space, making it useful when guaranteed performance and minimal memory are required. However, it is not stable and has poor cache locality compared to Quick Sort, making it slower in practice despite the same asymptotic complexity.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> No &mdash; heap operations can change relative order of equal elements.</li>
+                    <li><strong>In-place:</strong> Yes &mdash; O(1) extra space.</li>
+                    <li><strong>Adaptive:</strong> No &mdash; always O(n log n).</li>
+                    <li><strong>Guaranteed performance:</strong> O(n log n) worst case, unlike Quick Sort.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function heapSort(arr) {
+    var n = arr.length;
+
+    // Build max-heap
+    for (var i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+
+    // Extract elements one by one
+    for (var i = n - 1; i > 0; i--) {
+        var temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+    return arr;
+}
+
+function heapify(arr, size, root) {
+    var largest = root;
+    var left = 2 * root + 1;
+    var right = 2 * root + 2;
+    if (left < size && arr[left] > arr[largest]) largest = left;
+    if (right < size && arr[right] > arr[largest]) largest = right;
+    if (largest !== root) {
+        var temp = arr[root];
+        arr[root] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, size, largest);
+    }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>215</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Kth Largest Element in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>347</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>295</td><td><a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank">Find Median from Data Stream</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "heap-sort", title: "Heap Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Heap Sort first builds a max-heap, then extracts max repeatedly." });
+
+        function heapify(size, root, phase) {
+            var largest = root;
+            var left = 2 * root + 1;
+            var right = 2 * root + 2;
+
+            var hc = {};
+            for (var s = size; s < n; s++) { hc[s] = 'sorted'; }
+            hc[root] = 'active';
+            if (left < size) hc[left] = 'comparing';
+            if (right < size) hc[right] = 'comparing';
+            steps.push({ array: arr.slice(), highlights: hc, explanation: phase + ": Heapify at index " + root + " (value " + arr[root] + "). Compare with children." });
+
+            if (left < size && arr[left] > arr[largest]) largest = left;
+            if (right < size && arr[right] > arr[largest]) largest = right;
+
+            if (largest !== root) {
+                var temp = arr[root];
+                arr[root] = arr[largest];
+                arr[largest] = temp;
+
+                var hs = {};
+                for (var s2 = size; s2 < n; s2++) { hs[s2] = 'sorted'; }
+                hs[root] = 'swapped';
+                hs[largest] = 'swapped';
+                steps.push({ array: arr.slice(), highlights: hs, explanation: phase + ": Swap " + arr[root] + " and " + arr[largest] + " to maintain heap property." });
+
+                heapify(size, largest, phase);
+            }
+        }
+
+        // Build max-heap
+        for (var i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            heapify(n, i, "Build Heap");
+        }
+
+        var hHeap = {};
+        steps.push({ array: arr.slice(), highlights: hHeap, explanation: "Max-heap built. Root " + arr[0] + " is the maximum element." });
+
+        // Extract elements
+        for (var i2 = n - 1; i2 > 0; i2--) {
+            var temp = arr[0];
+            arr[0] = arr[i2];
+            arr[i2] = temp;
+
+            var hs2 = {};
+            for (var s3 = n - 1; s3 > i2; s3--) { hs2[s3] = 'sorted'; }  // fix: show previously sorted too
+            hs2[i2] = 'sorted';
+            hs2[0] = 'swapped';
+            steps.push({ array: arr.slice(), highlights: hs2, explanation: "Swap root " + arr[i2] + " with last heap element. " + arr[i2] + " is now sorted at index " + i2 + "." });
+
+            heapify(i2, 0, "Extract");
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: arr.slice(), highlights: hFinal, explanation: "Heap Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

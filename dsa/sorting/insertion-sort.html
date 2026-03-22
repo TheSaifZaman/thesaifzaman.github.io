@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertion Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Insertion Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Best: O(n)</span>
+            <span class="complexity-tag">Avg: O(n&sup2;)</span>
+            <span class="complexity-tag">Worst: O(n&sup2;)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Insertion Sort builds the final sorted array one item at a time. It takes each element from the unsorted portion and inserts it into its correct position within the already-sorted portion by shifting larger elements to the right.</p>
+            <p>Think of it like sorting playing cards in your hand: you pick up one card at a time and place it in the correct position among the cards you have already sorted. This makes the algorithm very intuitive and easy to implement.</p>
+            <p>Insertion Sort is highly efficient for small datasets and nearly-sorted arrays. Its O(n) best-case performance and stability make it the algorithm of choice for small subarrays in hybrid sorts like Tim Sort. It is also an online algorithm, meaning it can sort elements as they are received.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> Yes &mdash; equal elements maintain their relative order.</li>
+                    <li><strong>In-place:</strong> Yes &mdash; O(1) extra space.</li>
+                    <li><strong>Adaptive:</strong> Yes &mdash; O(n) for nearly sorted input.</li>
+                    <li><strong>Online:</strong> Yes &mdash; can sort as elements arrive.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function insertionSort(arr) {
+    var n = arr.length;
+    for (var i = 1; i < n; i++) {
+        var key = arr[i];
+        var j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    return arr;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="easy"><td>217</td><td><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Contains Duplicate</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>147</td><td><a href="https://leetcode.com/problems/insertion-sort-list/" target="_blank">Insertion Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>148</td><td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "insertion-sort", title: "Insertion Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: { 0: 'sorted' }, explanation: "Initial array. The first element is considered sorted." });
+
+        for (var i = 1; i < n; i++) {
+            var key = arr[i];
+            var h = {};
+            for (var si = 0; si < i; si++) { h[si] = 'sorted'; }
+            h[i] = 'current';
+            steps.push({ array: arr.slice(), highlights: h, explanation: "Pick element " + key + " at index " + i + " to insert into sorted portion." });
+
+            var j = i - 1;
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                var hs = {};
+                for (var si2 = 0; si2 <= i; si2++) { hs[si2] = 'sorted'; }
+                hs[j + 1] = 'swapped';
+                hs[j] = 'comparing';
+                steps.push({ array: arr.slice(), highlights: hs, explanation: "Shift " + arr[j + 1] + " right. Looking for correct position for " + key + "." });
+                j--;
+            }
+            arr[j + 1] = key;
+
+            var hd = {};
+            for (var si3 = 0; si3 <= i; si3++) { hd[si3] = 'sorted'; }
+            hd[j + 1] = 'active';
+            steps.push({ array: arr.slice(), highlights: hd, explanation: "Insert " + key + " at index " + (j + 1) + ". Sorted region now has " + (i + 1) + " elements." });
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: arr.slice(), highlights: hFinal, explanation: "Insertion Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

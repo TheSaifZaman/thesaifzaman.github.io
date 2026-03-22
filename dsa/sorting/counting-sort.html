@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counting Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Counting Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Best: O(n+k)</span>
+            <span class="complexity-tag">Avg: O(n+k)</span>
+            <span class="complexity-tag">Worst: O(n+k)</span>
+            <span class="complexity-tag">Space: O(n+k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Counting Sort is a non-comparison-based sorting algorithm that works by counting the number of occurrences of each distinct element. It then uses these counts to determine the position of each element in the sorted output. The "k" in O(n+k) represents the range of input values.</p>
+            <p>The algorithm first finds the range of input values and creates a count array of that size. It then counts occurrences of each value, computes prefix sums to determine positions, and finally places each element into its correct sorted position by iterating backward through the input (to maintain stability).</p>
+            <p>Counting Sort is extremely efficient when the range of input values (k) is not significantly greater than the number of elements (n). It is commonly used as a subroutine in Radix Sort. Its main limitation is that it only works with non-negative integers (or values that can be mapped to non-negative integers).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> Yes &mdash; preserves relative order of equal elements.</li>
+                    <li><strong>In-place:</strong> No &mdash; requires O(n+k) extra space.</li>
+                    <li><strong>Non-comparison:</strong> Does not compare elements directly.</li>
+                    <li><strong>Linear time:</strong> O(n+k) when k = O(n).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function countingSort(arr) {
+    var max = Math.max.apply(null, arr);
+    var min = Math.min.apply(null, arr);
+    var range = max - min + 1;
+    var count = new Array(range).fill(0);
+    var output = new Array(arr.length);
+
+    // Count occurrences
+    for (var i = 0; i < arr.length; i++) {
+        count[arr[i] - min]++;
+    }
+
+    // Prefix sums
+    for (var i = 1; i < range; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Build output (iterate backward for stability)
+    for (var i = arr.length - 1; i >= 0; i--) {
+        output[count[arr[i] - min] - 1] = arr[i];
+        count[arr[i] - min]--;
+    }
+
+    return output;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>75</td><td><a href="https://leetcode.com/problems/sort-colors/" target="_blank">Sort Colors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>274</td><td><a href="https://leetcode.com/problems/h-index/" target="_blank">H-Index</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="easy"><td>1122</td><td><a href="https://leetcode.com/problems/relative-sort-array/" target="_blank">Relative Sort Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "counting-sort", title: "Counting Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Counting Sort counts occurrences, then places elements using prefix sums." });
+
+        var max = Math.max.apply(null, arr);
+        var min = Math.min.apply(null, arr);
+        var range = max - min + 1;
+        var count = new Array(range).fill(0);
+
+        // Count occurrences
+        for (var i = 0; i < n; i++) {
+            count[arr[i] - min]++;
+            var h = {};
+            h[i] = 'active';
+            steps.push({ array: arr.slice(), highlights: h, explanation: "Count arr[" + i + "]=" + arr[i] + ". Count[" + (arr[i] - min) + "] = " + count[arr[i] - min] + "." });
+        }
+
+        // Prefix sums
+        for (var i2 = 1; i2 < range; i2++) {
+            count[i2] += count[i2 - 1];
+        }
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Prefix sums computed. Each count[i] now indicates the ending position for value " + min + "+i." });
+
+        // Build output
+        var output = new Array(n);
+        for (var i3 = n - 1; i3 >= 0; i3--) {
+            var val = arr[i3];
+            var pos = count[val - min] - 1;
+            output[pos] = val;
+            count[val - min]--;
+
+            var h2 = {};
+            for (var p = 0; p < n; p++) {
+                if (output[p] !== undefined) h2[p] = 'sorted';
+            }
+            h2[pos] = 'swapped';
+            steps.push({ array: output.map(function(v) { return v === undefined ? 0 : v; }), highlights: h2, explanation: "Place " + val + " at position " + pos + " in output array." });
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: output.slice(), highlights: hFinal, explanation: "Counting Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

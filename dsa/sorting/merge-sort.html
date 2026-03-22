@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Merge Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Best: O(n log n)</span>
+            <span class="complexity-tag">Avg: O(n log n)</span>
+            <span class="complexity-tag">Worst: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Merge Sort is a divide-and-conquer algorithm that splits the array into halves, recursively sorts each half, and then merges the two sorted halves back together. The merge operation is the key step: it combines two sorted arrays into a single sorted array in linear time.</p>
+            <p>The algorithm guarantees O(n log n) performance in all cases (best, average, and worst), making it more predictable than Quick Sort. The divide step takes O(log n) levels of recursion, and at each level, the merge step processes all n elements.</p>
+            <p>Merge Sort is particularly useful for sorting linked lists (where it achieves O(1) extra space) and for external sorting of large datasets that do not fit in memory. Its main drawback for arrays is the O(n) extra space required for the merge step.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> Yes &mdash; equal elements maintain their relative order.</li>
+                    <li><strong>In-place:</strong> No &mdash; requires O(n) auxiliary space for arrays.</li>
+                    <li><strong>Adaptive:</strong> No &mdash; always O(n log n) regardless of input.</li>
+                    <li><strong>Parallelizable:</strong> Yes &mdash; sub-problems are independent.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    var mid = Math.floor(arr.length / 2);
+    var left = mergeSort(arr.slice(0, mid));
+    var right = mergeSort(arr.slice(mid));
+    return merge(left, right);
+}
+
+function merge(left, right) {
+    var result = [], i = 0, j = 0;
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) {
+            result.push(left[i++]);
+        } else {
+            result.push(right[j++]);
+        }
+    }
+    return result.concat(left.slice(i)).concat(right.slice(j));
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>148</td><td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>315</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="hard"><td>493</td><td><a href="https://leetcode.com/problems/reverse-pairs/" target="_blank">Reverse Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>23</td><td><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge k Sorted Lists</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>88</td><td><a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank">Merge Sorted Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "merge-sort", title: "Merge Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Merge Sort will divide, sort, and merge." });
+
+        // Bottom-up merge sort for clearer step visualization
+        for (var width = 1; width < n; width *= 2) {
+            for (var start = 0; start < n; start += 2 * width) {
+                var mid = Math.min(start + width, n);
+                var end = Math.min(start + 2 * width, n);
+
+                if (mid >= end) continue;
+
+                // Show the two subarrays being merged
+                var hSub = {};
+                for (var si = start; si < mid; si++) { hSub[si] = 'comparing'; }
+                for (var si2 = mid; si2 < end; si2++) { hSub[si2] = 'active'; }
+                steps.push({ array: arr.slice(), highlights: hSub, explanation: "Merge subarrays [" + start + ".." + (mid - 1) + "] and [" + mid + ".." + (end - 1) + "] (size " + width + ")." });
+
+                // Perform the merge
+                var left = arr.slice(start, mid);
+                var right = arr.slice(mid, end);
+                var i = 0, j = 0, k = start;
+
+                while (i < left.length && j < right.length) {
+                    if (left[i] <= right[j]) {
+                        arr[k] = left[i];
+                        i++;
+                    } else {
+                        arr[k] = right[j];
+                        j++;
+                    }
+                    var hm = {};
+                    hm[k] = 'swapped';
+                    steps.push({ array: arr.slice(), highlights: hm, explanation: "Place " + arr[k] + " at index " + k + "." });
+                    k++;
+                }
+                while (i < left.length) {
+                    arr[k] = left[i];
+                    var hm2 = {};
+                    hm2[k] = 'swapped';
+                    steps.push({ array: arr.slice(), highlights: hm2, explanation: "Place remaining " + arr[k] + " at index " + k + "." });
+                    i++;
+                    k++;
+                }
+                while (j < right.length) {
+                    arr[k] = right[j];
+                    var hm3 = {};
+                    hm3[k] = 'swapped';
+                    steps.push({ array: arr.slice(), highlights: hm3, explanation: "Place remaining " + arr[k] + " at index " + k + "." });
+                    j++;
+                    k++;
+                }
+
+                // Show merged result
+                var hMerged = {};
+                for (var sm = start; sm < end; sm++) { hMerged[sm] = 'sorted'; }
+                steps.push({ array: arr.slice(), highlights: hMerged, explanation: "Merged subarray [" + start + ".." + (end - 1) + "]: " + arr.slice(start, end).join(", ") + "." });
+            }
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: arr.slice(), highlights: hFinal, explanation: "Merge Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

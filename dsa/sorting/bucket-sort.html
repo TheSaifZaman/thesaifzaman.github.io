@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucket Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bucket Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Best: O(n+k)</span>
+            <span class="complexity-tag">Avg: O(n+k)</span>
+            <span class="complexity-tag">Worst: O(n&sup2;)</span>
+            <span class="complexity-tag">Space: O(n+k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Bucket Sort distributes elements into a number of "buckets" based on their value range. Each bucket is then sorted individually, either using a different sorting algorithm (like Insertion Sort) or by recursively applying Bucket Sort. Finally, the sorted buckets are concatenated to produce the sorted array.</p>
+            <p>The algorithm works best when input is uniformly distributed across a range. It divides the range into equal-sized intervals (buckets), places each element into the appropriate bucket, sorts each bucket, and then gathers them back together. With uniform distribution, each bucket contains roughly n/k elements.</p>
+            <p>Bucket Sort achieves average-case O(n+k) time when the input is uniformly distributed. In the worst case (all elements in one bucket), it degrades to whatever the bucket-level sorting algorithm's complexity is. It is commonly used for sorting floating-point numbers uniformly distributed over [0, 1).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> Yes &mdash; if the underlying bucket sort is stable.</li>
+                    <li><strong>In-place:</strong> No &mdash; requires O(n+k) extra space for buckets.</li>
+                    <li><strong>Distribution-based:</strong> Best with uniformly distributed data.</li>
+                    <li><strong>Generalizable:</strong> Works for any range by adjusting bucket boundaries.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bucketSort(arr) {
+    var n = arr.length;
+    if (n <= 1) return arr;
+
+    var min = Math.min.apply(null, arr);
+    var max = Math.max.apply(null, arr);
+    var bucketCount = Math.max(Math.floor(n / 2), 1);
+    var range = (max - min) / bucketCount + 1;
+
+    var buckets = [];
+    for (var i = 0; i < bucketCount; i++) buckets.push([]);
+
+    // Distribute into buckets
+    for (var i = 0; i < n; i++) {
+        var idx = Math.floor((arr[i] - min) / range);
+        buckets[idx].push(arr[i]);
+    }
+
+    // Sort each bucket (insertion sort)
+    var result = [];
+    for (var i = 0; i < buckets.length; i++) {
+        buckets[i].sort(function(a, b) { return a - b; });
+        for (var j = 0; j < buckets[i].length; j++) {
+            result.push(buckets[i][j]);
+        }
+    }
+    return result;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>164</td><td><a href="https://leetcode.com/problems/maximum-gap/" target="_blank">Maximum Gap</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>347</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bucket-sort", title: "Bucket Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Bucket Sort distributes elements into buckets, sorts each, then concatenates." });
+
+        var min = Math.min.apply(null, arr);
+        var max = Math.max.apply(null, arr);
+        var bucketCount = Math.max(Math.floor(n / 2), 1);
+        var range = (max - min) / bucketCount + 1;
+
+        var buckets = [];
+        for (var b = 0; b < bucketCount; b++) { buckets.push([]); }
+
+        // Distribution phase
+        for (var i = 0; i < n; i++) {
+            var idx = Math.floor((arr[i] - min) / range);
+            buckets[idx].push(arr[i]);
+
+            var h = {};
+            h[i] = 'active';
+            steps.push({ array: arr.slice(), highlights: h, explanation: "Place " + arr[i] + " into bucket " + idx + " (range " + Math.round(min + idx * range) + "-" + Math.round(min + (idx + 1) * range - 1) + "). Bucket " + idx + ": [" + buckets[idx].join(", ") + "]." });
+        }
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "All elements distributed into " + bucketCount + " buckets. Now sort each bucket." });
+
+        // Sort each bucket and build result
+        var result = [];
+        for (var bi = 0; bi < buckets.length; bi++) {
+            if (buckets[bi].length === 0) continue;
+
+            // Insertion sort on this bucket
+            var bucket = buckets[bi];
+            for (var ii = 1; ii < bucket.length; ii++) {
+                var key = bucket[ii];
+                var jj = ii - 1;
+                while (jj >= 0 && bucket[jj] > key) {
+                    bucket[jj + 1] = bucket[jj];
+                    jj--;
+                }
+                bucket[jj + 1] = key;
+            }
+
+            steps.push({ array: arr.slice(), highlights: {}, explanation: "Bucket " + bi + " sorted: [" + bucket.join(", ") + "]." });
+
+            for (var ri = 0; ri < bucket.length; ri++) {
+                result.push(bucket[ri]);
+            }
+        }
+
+        // Show concatenation step by step
+        for (var ci = 0; ci < result.length; ci++) {
+            var hc = {};
+            for (var cp = 0; cp <= ci; cp++) { hc[cp] = 'sorted'; }
+            hc[ci] = 'swapped';
+            steps.push({ array: result.slice(0, ci + 1).concat(arr.slice(ci + 1)), highlights: hc, explanation: "Concatenate: place " + result[ci] + " at index " + ci + "." });
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: result.slice(), highlights: hFinal, explanation: "Bucket Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

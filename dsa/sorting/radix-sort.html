@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radix Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Radix Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Best: O(d&middot;(n+k))</span>
+            <span class="complexity-tag">Avg: O(d&middot;(n+k))</span>
+            <span class="complexity-tag">Worst: O(d&middot;(n+k))</span>
+            <span class="complexity-tag">Space: O(n+k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Radix Sort processes integer keys digit by digit, from the least significant digit (LSD) to the most significant digit (MSD). At each digit position, it uses a stable sort (typically Counting Sort) as a subroutine to sort elements based on that digit alone.</p>
+            <p>The key insight is that if we sort by each digit position using a stable sort, the overall order is maintained correctly. After processing all d digits (where d is the number of digits in the largest number), the entire array is sorted. The variable k represents the base (typically 10 for decimal).</p>
+            <p>Radix Sort achieves linear time O(d(n+k)) when the number of digits d is constant. It is particularly efficient for sorting integers, strings of fixed length, or any data that can be decomposed into fixed-size keys. It avoids the O(n log n) lower bound of comparison-based sorts.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stable:</strong> Yes &mdash; relies on stable subroutine sort.</li>
+                    <li><strong>In-place:</strong> No &mdash; requires O(n+k) auxiliary space.</li>
+                    <li><strong>Non-comparison:</strong> Processes digits, not element comparisons.</li>
+                    <li><strong>Linear time:</strong> When d and k are constants relative to n.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function radixSort(arr) {
+    var max = Math.max.apply(null, arr);
+
+    for (var exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+        countingSortByDigit(arr, exp);
+    }
+    return arr;
+}
+
+function countingSortByDigit(arr, exp) {
+    var n = arr.length;
+    var output = new Array(n);
+    var count = new Array(10).fill(0);
+
+    for (var i = 0; i < n; i++) {
+        var digit = Math.floor(arr[i] / exp) % 10;
+        count[digit]++;
+    }
+
+    for (var i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (var i = n - 1; i >= 0; i--) {
+        var digit = Math.floor(arr[i] / exp) % 10;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+    for (var i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>912</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>179</td><td><a href="https://leetcode.com/problems/largest-number/" target="_blank">Largest Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>164</td><td><a href="https://leetcode.com/problems/maximum-gap/" target="_blank">Maximum Gap</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>148</td><td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "radix-sort", title: "Radix Sort", category: "Sorting" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Initial array. Radix Sort processes one digit at a time from least to most significant." });
+
+        var max = Math.max.apply(null, arr);
+        var digitNum = 1;
+
+        for (var exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+            // Show current digit being processed
+            var hDigit = {};
+            for (var di = 0; di < n; di++) { hDigit[di] = 'active'; }
+            steps.push({ array: arr.slice(), highlights: hDigit, explanation: "Pass " + digitNum + ": Sort by " + (digitNum === 1 ? "ones" : digitNum === 2 ? "tens" : "hundreds") + " digit (exp=" + exp + ")." });
+
+            // Counting sort by this digit
+            var output = new Array(n);
+            var count = new Array(10).fill(0);
+
+            for (var i = 0; i < n; i++) {
+                var digit = Math.floor(arr[i] / exp) % 10;
+                count[digit]++;
+            }
+
+            for (var i2 = 1; i2 < 10; i2++) {
+                count[i2] += count[i2 - 1];
+            }
+
+            for (var i3 = n - 1; i3 >= 0; i3--) {
+                var digit2 = Math.floor(arr[i3] / exp) % 10;
+                var pos = count[digit2] - 1;
+                output[pos] = arr[i3];
+                count[digit2]--;
+
+                var hp = {};
+                for (var p = 0; p < n; p++) {
+                    if (output[p] !== undefined) hp[p] = 'comparing';
+                }
+                hp[pos] = 'swapped';
+                steps.push({ array: output.map(function(v) { return v === undefined ? 0 : v; }), highlights: hp, explanation: "Place " + arr[i3] + " (digit " + digit2 + ") at position " + pos + "." });
+            }
+
+            for (var i4 = 0; i4 < n; i4++) {
+                arr[i4] = output[i4];
+            }
+
+            var hPass = {};
+            for (var pi = 0; pi < n; pi++) { hPass[pi] = 'current'; }
+            steps.push({ array: arr.slice(), highlights: hPass, explanation: "After pass " + digitNum + ": [" + arr.join(", ") + "]." });
+
+            digitNum++;
+        }
+
+        var hFinal = {};
+        for (var f = 0; f < n; f++) { hFinal[f] = 'sorted'; }
+        steps.push({ array: arr.slice(), highlights: hFinal, explanation: "Radix Sort complete! Array is fully sorted." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [38, 27, 43, 3, 9, 82, 10], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>
