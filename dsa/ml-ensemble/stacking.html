@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacking — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Stacking (Stacked Generalization)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Training: O(k&middot;n&middot;C)</span>
+            <span class="complexity-tag">Prediction: O(k + M)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Stacking</strong> (Stacked Generalization) trains a <em>meta-learner</em> to combine the predictions of multiple diverse base models. Instead of simple voting or averaging, the meta-learner learns the optimal way to combine base model outputs.</p>
+            <p>The process has two levels: Level 0 consists of k diverse base models (e.g., Random Forest, SVM, Neural Network, KNN). Each base model is trained using cross-validation, and their out-of-fold predictions form a new feature matrix. Level 1 is the meta-learner (often logistic regression or a simple model) trained on this new feature matrix to produce the final prediction.</p>
+            <p>Cross-validation at Level 0 is critical to prevent the meta-learner from overfitting to the training set. Each base model never sees its own training data predictions, only out-of-fold predictions.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Diversity:</strong> Works best when base models are diverse (different algorithms, features, or hyperparameters).</li>
+                    <li><strong>Meta-Learning:</strong> Learns which models are reliable for which types of inputs.</li>
+                    <li><strong>Cross-Validation:</strong> Base model predictions are generated via CV to prevent leakage.</li>
+                    <li><strong>Multi-Level:</strong> Can be extended to multiple stacking levels, though diminishing returns apply.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function stacking(X, y, baseModels, metaModel, kFolds) {
+    var n = X.length;
+    var metaFeatures = [];
+    for (var i = 0; i < n; i++) metaFeatures.push(new Array(baseModels.length).fill(0));
+
+    // Level 0: generate out-of-fold predictions
+    var folds = createKFolds(n, kFolds);
+    baseModels.forEach(function(model, mi) {
+        folds.forEach(function(fold) {
+            var trainX = fold.trainIdx.map(function(i) { return X[i]; });
+            var trainY = fold.trainIdx.map(function(i) { return y[i]; });
+            model.fit(trainX, trainY);
+            fold.valIdx.forEach(function(i) {
+                metaFeatures[i][mi] = model.predict(X[i]);
+            });
+        });
+    });
+
+    // Level 1: train meta-learner
+    metaModel.fit(metaFeatures, y);
+
+    // Retrain base models on full data for inference
+    baseModels.forEach(function(model) { model.fit(X, y); });
+
+    return {
+        predict: function(x) {
+            var features = baseModels.map(function(m) { return m.predict(x); });
+            return metaModel.predict(features);
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/home-credit-default-risk" target="_blank">Home Credit Default Risk (Kaggle) &mdash; Stacking</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "stacking", title: "Stacking", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Network visualization: Input -> Base Models -> Meta-Learner -> Output
+        var inputLayer = { nodes: [
+            { label: 'x1', state: '' },
+            { label: 'x2', state: '' },
+            { label: 'x3', state: '' },
+            { label: 'x4', state: '' }
+        ]};
+        var baseLayer = { nodes: [
+            { label: 'RF', state: '' },
+            { label: 'SVM', state: '' },
+            { label: 'KNN', state: '' }
+        ]};
+        var metaLayer = { nodes: [
+            { label: 'Meta', state: '' }
+        ]};
+        var outputLayer = { nodes: [
+            { label: 'y', state: '' }
+        ]};
+
+        // Step 0: show architecture
+        steps.push({ type: 'network', layers: [inputLayer, baseLayer, metaLayer, outputLayer], explanation: 'Stacking architecture: Input features -> Base models (RF, SVM, KNN) -> Meta-learner -> Output.' });
+
+        // Step 1: data flows to base models
+        var baseFwd = { nodes: baseLayer.nodes.map(function(n) { return { label: n.label, state: 'active' }; }) };
+        steps.push({ type: 'network', layers: [inputLayer, baseFwd, metaLayer, outputLayer], explanation: 'Level 0: Input features are fed to all base models simultaneously. Each model learns different patterns.' });
+
+        // Step 2: RF prediction
+        var baseRF = { nodes: [
+            { label: 'RF', state: 'active' },
+            { label: 'SVM', state: '' },
+            { label: 'KNN', state: '' }
+        ]};
+        steps.push({ type: 'network', layers: [inputLayer, baseRF, metaLayer, outputLayer], explanation: 'Random Forest makes its prediction using out-of-fold cross-validation to prevent overfitting.' });
+
+        // Step 3: SVM prediction
+        var baseSVM = { nodes: [
+            { label: 'RF', state: 'visited' },
+            { label: 'SVM', state: 'active' },
+            { label: 'KNN', state: '' }
+        ]};
+        steps.push({ type: 'network', layers: [inputLayer, baseSVM, metaLayer, outputLayer], explanation: 'SVM makes its out-of-fold predictions. Different algorithm captures different decision boundaries.' });
+
+        // Step 4: KNN prediction
+        var baseKNN = { nodes: [
+            { label: 'RF', state: 'visited' },
+            { label: 'SVM', state: 'visited' },
+            { label: 'KNN', state: 'active' }
+        ]};
+        steps.push({ type: 'network', layers: [inputLayer, baseKNN, metaLayer, outputLayer], explanation: 'KNN makes its out-of-fold predictions. Model diversity is key to stacking performance.' });
+
+        // Step 5: meta-learner combines
+        var baseAll = { nodes: baseLayer.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) };
+        var metaActive = { nodes: [{ label: 'Meta', state: 'active' }] };
+        steps.push({ type: 'network', layers: [inputLayer, baseAll, metaActive, outputLayer], explanation: 'Level 1: Meta-learner receives all base model predictions as features and learns optimal combination weights.' });
+
+        // Step 6: final output
+        var outActive = { nodes: [{ label: 'y', state: 'active' }] };
+        steps.push({ type: 'network', layers: [inputLayer, baseAll, { nodes: [{ label: 'Meta', state: 'visited' }] }, outActive], explanation: 'Final prediction produced. The meta-learner has learned which base model to trust for different input patterns.' });
+
+        // Step 7: done
+        steps.push({ type: 'network', layers: [
+            { nodes: inputLayer.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) },
+            baseAll,
+            { nodes: [{ label: 'Meta', state: 'visited' }] },
+            { nodes: [{ label: 'y', state: 'visited' }] }
+        ], explanation: 'Stacking complete. By learning to combine diverse base models, stacking typically outperforms any single model.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

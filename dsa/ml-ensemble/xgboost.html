@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XGBoost — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>XGBoost</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Training: O(n&middot;d&middot;T&middot;log n)</span>
+            <span class="complexity-tag">Prediction: O(T&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>XGBoost</strong> (eXtreme Gradient Boosting) is an optimized gradient boosting framework that uses second-order Taylor expansion of the loss function to make more precise updates. It adds L1 and L2 regularization on leaf weights to prevent overfitting.</p>
+            <p>At each iteration, XGBoost builds a new tree that fits the negative gradient (residuals) of the loss function. The key innovation is using both the first derivative (gradient) and second derivative (hessian) of the loss to determine optimal leaf values and splits. This leads to more accurate split decisions and better regularization.</p>
+            <p>XGBoost also introduces several engineering optimizations: column block structure for parallel split finding, cache-aware access patterns, sparsity-aware split finding, and out-of-core computation for large datasets.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Second-Order Optimization:</strong> Uses both gradient and hessian for better convergence.</li>
+                    <li><strong>Regularization:</strong> L1 (alpha) and L2 (lambda) on leaf weights reduce overfitting.</li>
+                    <li><strong>Column Subsampling:</strong> Reduces correlation between trees similar to Random Forest.</li>
+                    <li><strong>Pruning:</strong> Uses max_depth and gamma for tree pruning instead of post-pruning.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// XGBoost conceptual pseudocode
+function xgboost(X, y, numRounds, lr, lambda, gamma) {
+    var predictions = new Array(X.length).fill(0);
+    var trees = [];
+
+    for (var t = 0; t < numRounds; t++) {
+        // Compute gradients and hessians
+        var gradients = [], hessians = [];
+        for (var i = 0; i < X.length; i++) {
+            gradients.push(predictions[i] - y[i]);      // g_i
+            hessians.push(1.0);                          // h_i (for MSE)
+        }
+        // Build tree using gain formula:
+        // Gain = 0.5 * [(GL^2/(HL+lambda)) + (GR^2/(HR+lambda))
+        //              - (G^2/(H+lambda))] - gamma
+        var tree = buildXGBTree(X, gradients, hessians, lambda, gamma);
+        trees.push(tree);
+
+        // Update predictions
+        for (var i = 0; i < X.length; i++) {
+            predictions[i] += lr * tree.predict(X[i]);
+        }
+    }
+    return trees;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/otto-group-product-classification-challenge" target="_blank">Otto Product Classification (Kaggle) &mdash; XGBoost</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "xgboost", title: "XGBoost", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(123);
+
+        // Generate a regression dataset: y = sin(x) + noise
+        var N = 20;
+        var points = [];
+        for (var i = 0; i < N; i++) {
+            var x = i * 10 / N;
+            var y = 3 * Math.sin(x * 0.8) + 5 + (rand() - 0.5) * 1.5;
+            points.push({ x: x, y: y, pred: 0, residual: y });
+        }
+
+        // Step 0: original data with no prediction
+        var pts0 = points.map(function(p) {
+            return { x: p.x, y: p.y, state: '', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: pts0, lines: [], explanation: 'Regression dataset. XGBoost will iteratively fit residuals using gradient and hessian information.' });
+
+        // Simulate gradient boosting iterations
+        var lr = 0.3;
+        for (var t = 0; t < 5; t++) {
+            // Simple piecewise constant fit to residuals
+            var buckets = [{s: 0, e: 5}, {s: 5, e: 10}];
+            buckets.forEach(function(b) {
+                var sumG = 0, sumH = 0;
+                points.forEach(function(p) {
+                    if (p.x >= b.s && p.x < b.e) {
+                        sumG += p.residual;
+                        sumH += 1;
+                    }
+                });
+                var leafVal = sumG / (sumH + 1); // lambda=1 regularization
+                points.forEach(function(p) {
+                    if (p.x >= b.s && p.x < b.e) {
+                        p.pred += lr * leafVal;
+                        p.residual = p.y - p.pred;
+                    }
+                });
+            });
+
+            var pts = points.map(function(p) {
+                return { x: p.x, y: p.y, state: '', r: 5 };
+            });
+            var predPts = points.map(function(p) {
+                return { x: p.x, y: p.pred, state: 'active', r: 4 };
+            });
+            var residPts = points.map(function(p) {
+                var absR = Math.abs(p.residual);
+                return { x: p.x, y: p.y, state: absR > 1 ? 'active' : 'visited', r: 3 + absR * 2 };
+            });
+            var mse = points.reduce(function(s, p) { return s + p.residual * p.residual; }, 0) / N;
+
+            steps.push({ type: 'scatter', points: pts.concat(predPts), lines: [], explanation: 'Iteration ' + (t + 1) + ': Tree fitted to residuals with L2 regularization. MSE=' + mse.toFixed(3) + '. Blue = actual, highlighted = predictions.' });
+            steps.push({ type: 'scatter', points: residPts, lines: [], explanation: 'Iteration ' + (t + 1) + ' residuals: Larger dots = bigger errors. XGBoost uses both gradient and hessian to compute optimal leaf values.' });
+        }
+
+        var ptsFinal = points.map(function(p) {
+            return { x: p.x, y: p.pred, state: 'visited', r: 5 };
+        });
+        var ptsOrig = points.map(function(p) {
+            return { x: p.x, y: p.y, state: '', r: 4 };
+        });
+        steps.push({ type: 'scatter', points: ptsOrig.concat(ptsFinal), lines: [], explanation: 'XGBoost complete after 5 rounds. Predictions (green) closely fit the original data (blue).' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Ensemble — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Voting Ensemble</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Training: O(k&middot;C)</span>
+            <span class="complexity-tag">Prediction: O(k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Voting Ensemble</strong> combines predictions from multiple models using a simple voting scheme. It is the most straightforward ensemble method: train several diverse models independently, then aggregate their predictions.</p>
+            <p>There are two main voting strategies:</p>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+                <li><strong>Hard Voting:</strong> Each model casts one vote for its predicted class. The class with the most votes wins (majority rule).</li>
+                <li><strong>Soft Voting:</strong> Models output class probabilities. The class with the highest average probability across all models wins. Generally more accurate than hard voting.</li>
+            </ul>
+            <p>Voting ensembles work best when the base models are diverse and make different types of errors. If all models make the same mistakes, voting cannot improve on any single model.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Simple to Implement:</strong> No meta-learning needed, just aggregate predictions.</li>
+                    <li><strong>Diversity Matters:</strong> Works best with models that make uncorrelated errors.</li>
+                    <li><strong>Weighted Voting:</strong> Can assign higher weights to more accurate models.</li>
+                    <li><strong>Condorcet Jury Theorem:</strong> If each model is >50% accurate and errors are independent, ensemble accuracy approaches 100%.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function votingEnsemble(models, mode) {
+    return {
+        predict: function(x) {
+            if (mode === 'soft') {
+                // Soft voting: average probabilities
+                var avgProbs = {};
+                models.forEach(function(model) {
+                    var probs = model.predictProba(x);
+                    Object.keys(probs).forEach(function(cls) {
+                        avgProbs[cls] = (avgProbs[cls] || 0) + probs[cls];
+                    });
+                });
+                return Object.keys(avgProbs).reduce(function(a, b) {
+                    return avgProbs[a] > avgProbs[b] ? a : b;
+                });
+            } else {
+                // Hard voting: majority rule
+                var votes = {};
+                models.forEach(function(model) {
+                    var pred = model.predict(x);
+                    votes[pred] = (votes[pred] || 0) + 1;
+                });
+                return Object.keys(votes).reduce(function(a, b) {
+                    return votes[a] > votes[b] ? a : b;
+                });
+            }
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://scikit-learn.org/stable/modules/ensemble.html#voting-classifier" target="_blank">Voting Classifier &mdash; Scikit-learn Guide</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "voting-ensemble", title: "Voting Ensemble", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var models = ['RF', 'SVM', 'KNN', 'LR', 'DT'];
+        // Simulate hard voting for 3 classes: A, B, C
+
+        // Step 0: models ready
+        steps.push({ type: 'bars', array: [0, 0, 0, 0, 0], highlights: {}, explanation: 'Five models ready to vote: Random Forest, SVM, KNN, Logistic Regression, Decision Tree. Each will predict a class.' });
+
+        // Step 1: RF votes class A
+        steps.push({ type: 'bars', array: [80, 0, 0, 0, 0], highlights: {0: 'comparing'}, explanation: 'Random Forest predicts class A with 80% confidence.' });
+
+        // Step 2: SVM votes class B
+        steps.push({ type: 'bars', array: [80, 65, 0, 0, 0], highlights: {1: 'comparing'}, explanation: 'SVM predicts class B with 65% confidence.' });
+
+        // Step 3: KNN votes class A
+        steps.push({ type: 'bars', array: [80, 65, 72, 0, 0], highlights: {2: 'comparing'}, explanation: 'KNN predicts class A with 72% confidence.' });
+
+        // Step 4: LR votes class A
+        steps.push({ type: 'bars', array: [80, 65, 72, 78, 0], highlights: {3: 'comparing'}, explanation: 'Logistic Regression predicts class A with 78% confidence.' });
+
+        // Step 5: DT votes class B
+        steps.push({ type: 'bars', array: [80, 65, 72, 78, 60], highlights: {4: 'comparing'}, explanation: 'Decision Tree predicts class B with 60% confidence.' });
+
+        // Step 6: tally hard votes
+        // A: RF, KNN, LR = 3 votes; B: SVM, DT = 2 votes
+        steps.push({ type: 'bars', array: [3, 2, 0], highlights: {0: 'sorted', 1: 'swapped'}, explanation: 'Hard Voting tally: Class A = 3 votes (RF, KNN, LR), Class B = 2 votes (SVM, DT). Class A wins by majority!' });
+
+        // Step 7: soft voting comparison
+        // Avg probabilities: A = (0.80+0.28+0.72+0.78+0.35)/5 = 0.586, B = (0.15+0.65+0.20+0.18+0.60)/5 = 0.356
+        steps.push({ type: 'bars', array: [59, 36, 5], highlights: {0: 'sorted'}, explanation: 'Soft Voting: Average probabilities &mdash; Class A = 58.6%, Class B = 35.6%, Class C = 5.8%. Class A still wins, with more nuanced confidence.' });
+
+        // Final
+        steps.push({ type: 'bars', array: [59, 36, 5], highlights: {0: 'sorted', 1: 'sorted', 2: 'sorted'}, explanation: 'Voting Ensemble complete. Soft voting uses probability averages for better-calibrated decisions. Works best with diverse, independent models.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

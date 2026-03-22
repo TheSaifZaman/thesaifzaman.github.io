@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boosting — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Boosting</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Training: O(n&middot;T&middot;d)</span>
+            <span class="complexity-tag">Prediction: O(T&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Boosting</strong> is a sequential ensemble technique that builds models one at a time, where each new model focuses on correcting the errors made by the previous ones. Unlike bagging (which trains models in parallel), boosting iteratively adjusts sample weights or fits residuals.</p>
+            <p>At each round, misclassified samples receive higher weights so that the next weak learner pays more attention to them. The final prediction is a weighted combination of all weak learners. This sequential focus on hard examples makes boosting extremely powerful at reducing both bias and variance.</p>
+            <p>Popular boosting algorithms include AdaBoost, Gradient Boosting, XGBoost, LightGBM, and CatBoost.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Sequential Training:</strong> Each model depends on the errors of previous models.</li>
+                    <li><strong>Bias Reduction:</strong> Boosting primarily reduces bias by focusing on hard examples.</li>
+                    <li><strong>Weighted Combination:</strong> Better-performing models get higher weights in the final prediction.</li>
+                    <li><strong>Overfitting Risk:</strong> Can overfit noisy data if too many rounds are used without regularization.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function gradientBoosting(X, y, numRounds, learningRate) {
+    var predictions = new Array(X.length).fill(0);
+    var models = [];
+
+    for (var t = 0; t < numRounds; t++) {
+        // Compute residuals
+        var residuals = y.map(function(yi, i) {
+            return yi - predictions[i];
+        });
+        // Fit weak learner to residuals
+        var model = trainDecisionStump(X, residuals);
+        models.push({ model: model, lr: learningRate });
+        // Update predictions
+        for (var i = 0; i < X.length; i++) {
+            predictions[i] += learningRate * model.predict(X[i]);
+        }
+    }
+    return {
+        predict: function(x) {
+            var sum = 0;
+            models.forEach(function(m) {
+                sum += m.lr * m.model.predict(x);
+            });
+            return sum;
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/c/house-prices-advanced-regression-techniques" target="_blank">House Prices (Kaggle) &mdash; Apply Gradient Boosting</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "boosting", title: "Boosting", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(99);
+
+        var N = 15;
+        var points = [];
+        for (var i = 0; i < N; i++) {
+            var x = rand() * 10;
+            var y = rand() * 10;
+            var cls = (x + y > 10) ? 1 : 0;
+            // Add some noise
+            if (rand() < 0.2) cls = 1 - cls;
+            points.push({ x: x, y: y, cls: cls, weight: 1.0 / N, correct: true });
+        }
+
+        // Step 0: original data
+        var pts0 = points.map(function(p) {
+            return { x: p.x, y: p.y, state: p.cls === 1 ? 'active' : '', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: pts0, lines: [], explanation: 'Original dataset. Boosting will iteratively focus on misclassified samples.' });
+
+        // Simulate boosting rounds
+        for (var round = 1; round <= 4; round++) {
+            // Simple decision boundary: x + y > threshold
+            var threshold = 9 + round * 0.5;
+            var misclassified = [];
+
+            points.forEach(function(p, i) {
+                var pred = (p.x + p.y > threshold) ? 1 : 0;
+                p.correct = (pred === p.cls);
+                if (!p.correct) {
+                    p.weight = p.weight * 1.5;
+                    misclassified.push(i);
+                } else {
+                    p.weight = p.weight * 0.8;
+                }
+            });
+
+            // Normalize weights
+            var totalW = points.reduce(function(s, p) { return s + p.weight; }, 0);
+            points.forEach(function(p) { p.weight = p.weight / totalW; });
+
+            var pts = points.map(function(p) {
+                return { x: p.x, y: p.y, state: p.correct ? 'visited' : 'active', r: 3 + p.weight * N * 8 };
+            });
+
+            var line = { x1: 0, y1: threshold, x2: threshold, y2: 0, state: 'active' };
+            steps.push({ type: 'scatter', points: pts, lines: [line], explanation: 'Round ' + round + ': ' + misclassified.length + ' misclassified. Errors get larger weights (bigger dots). Boundary adjusts to focus on hard cases.' });
+        }
+
+        // Final
+        var ptsFinal = points.map(function(p) {
+            return { x: p.x, y: p.y, state: 'visited', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: ptsFinal, lines: [], explanation: 'Boosting complete. The weighted combination of all weak learners produces a strong classifier.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

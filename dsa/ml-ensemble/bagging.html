@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bagging — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bagging (Bootstrap Aggregating)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Training: O(n&middot;T)</span>
+            <span class="complexity-tag">Prediction: O(T)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Bagging</strong> (Bootstrap Aggregating) is an ensemble technique that reduces variance by training multiple models on different random subsets of the training data. Each subset is created by sampling with replacement (bootstrap sampling) from the original dataset.</p>
+            <p>Each base model (often a decision tree) is trained independently on its bootstrap sample. For classification, the final prediction is made by majority vote; for regression, by averaging. Because each model sees a slightly different version of the data, the ensemble is more robust and less prone to overfitting than any single model.</p>
+            <p>Random Forest is the most well-known extension of bagging, adding random feature selection at each split to further decorrelate the trees.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Variance Reduction:</strong> Averaging multiple models reduces overfitting.</li>
+                    <li><strong>Parallelizable:</strong> Each base model can be trained independently.</li>
+                    <li><strong>Bootstrap Sampling:</strong> Each model sees ~63.2% unique samples on average.</li>
+                    <li><strong>Out-of-Bag Error:</strong> ~36.8% unseen samples per model provide a free validation estimate.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bagging(X, y, numModels, sampleSize) {
+    var models = [];
+    var n = X.length;
+    for (var t = 0; t < numModels; t++) {
+        // Bootstrap sample
+        var sampleX = [], sampleY = [];
+        for (var i = 0; i < sampleSize; i++) {
+            var idx = Math.floor(Math.random() * n);
+            sampleX.push(X[idx]);
+            sampleY.push(y[idx]);
+        }
+        models.push(trainDecisionTree(sampleX, sampleY));
+    }
+    return {
+        predict: function(x) {
+            var votes = {};
+            models.forEach(function(m) {
+                var pred = m.predict(x);
+                votes[pred] = (votes[pred] || 0) + 1;
+            });
+            return Object.keys(votes).reduce(function(a, b) {
+                return votes[a] > votes[b] ? a : b;
+            });
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/c/titanic" target="_blank">Titanic Survival (Kaggle) &mdash; Apply Bagging</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bagging", title: "Bagging", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var N = 20;
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(42);
+
+        // Generate original dataset points
+        var original = [];
+        for (var i = 0; i < N; i++) {
+            original.push({ x: rand() * 10, y: rand() * 10, cls: rand() > 0.5 ? 1 : 0 });
+        }
+
+        // Step 0: show original data
+        var pts0 = original.map(function(p) {
+            return { x: p.x, y: p.y, state: p.cls === 1 ? 'active' : '', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: pts0, lines: [], explanation: 'Original dataset with ' + N + ' samples. Blue = class 0, highlighted = class 1.' });
+
+        // Steps 1-4: show bootstrap samples
+        for (var t = 0; t < 4; t++) {
+            var sample = [];
+            var selected = {};
+            for (var j = 0; j < N; j++) {
+                var idx = Math.floor(rand() * N);
+                selected[idx] = true;
+                sample.push(original[idx]);
+            }
+            var pts = original.map(function(p, i) {
+                return { x: p.x, y: p.y, state: selected[i] ? 'active' : 'dimmed', r: selected[i] ? 7 : 3 };
+            });
+            var unique = Object.keys(selected).length;
+            steps.push({ type: 'scatter', points: pts, lines: [], explanation: 'Bootstrap sample ' + (t + 1) + ': ' + unique + '/' + N + ' unique samples selected (with replacement). Larger dots = selected.' });
+        }
+
+        // Final: aggregation
+        var ptsFinal = original.map(function(p) {
+            return { x: p.x, y: p.y, state: 'visited', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: ptsFinal, lines: [], explanation: 'All 4 models trained on different bootstrap samples. Final prediction combines all models by majority vote.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

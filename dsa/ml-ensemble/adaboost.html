@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdaBoost — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>AdaBoost</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Training: O(n&middot;T)</span>
+            <span class="complexity-tag">Prediction: O(T)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>AdaBoost</strong> (Adaptive Boosting) was one of the first successful boosting algorithms. It combines multiple weak classifiers (typically decision stumps) into a single strong classifier by adaptively re-weighting training samples.</p>
+            <p>In each round, samples that were misclassified by the previous weak learner receive higher weights. The next weak learner then focuses more on these harder samples. Each weak learner also gets a weight (alpha) based on its accuracy &mdash; more accurate classifiers have greater influence on the final prediction.</p>
+            <p>The final prediction is a weighted majority vote of all weak classifiers. AdaBoost can achieve arbitrarily low training error given enough rounds, and has strong theoretical guarantees via the PAC learning framework.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Adaptive Weighting:</strong> Sample weights change based on classification errors.</li>
+                    <li><strong>Weak Learner Requirement:</strong> Each model need only be slightly better than random (>50%).</li>
+                    <li><strong>Exponential Loss:</strong> Minimizes exponential loss function implicitly.</li>
+                    <li><strong>Sensitive to Noise:</strong> Outliers get increasingly high weights, which can hurt performance.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function adaBoost(X, y, numRounds) {
+    var n = X.length;
+    var weights = new Array(n).fill(1 / n);
+    var alphas = [], stumps = [];
+
+    for (var t = 0; t < numRounds; t++) {
+        var stump = trainWeightedStump(X, y, weights);
+        var error = 0;
+        for (var i = 0; i < n; i++) {
+            if (stump.predict(X[i]) !== y[i]) error += weights[i];
+        }
+        error = Math.max(error, 1e-10);
+        var alpha = 0.5 * Math.log((1 - error) / error);
+
+        // Update weights
+        for (var i = 0; i < n; i++) {
+            var correct = stump.predict(X[i]) === y[i] ? 1 : -1;
+            weights[i] *= Math.exp(-alpha * correct);
+        }
+        // Normalize
+        var sum = weights.reduce(function(a, b) { return a + b; }, 0);
+        weights = weights.map(function(w) { return w / sum; });
+
+        alphas.push(alpha);
+        stumps.push(stump);
+    }
+    return {
+        predict: function(x) {
+            var score = 0;
+            for (var t = 0; t < stumps.length; t++) {
+                score += alphas[t] * (stumps[t].predict(x) === 1 ? 1 : -1);
+            }
+            return score >= 0 ? 1 : 0;
+        }
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://scikit-learn.org/stable/auto_examples/ensemble/plot_adaboost_twoclass.html" target="_blank">Two-Class AdaBoost &mdash; Scikit-learn Example</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "adaboost", title: "AdaBoost", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(77);
+
+        var N = 16;
+        var points = [];
+        for (var i = 0; i < N; i++) {
+            var x = rand() * 10;
+            var y = rand() * 10;
+            var cls = (x > 5) ? 1 : 0;
+            if (rand() < 0.15) cls = 1 - cls;
+            points.push({ x: x, y: y, cls: cls, weight: 1.0 / N });
+        }
+
+        // Step 0: initial uniform weights
+        var pts0 = points.map(function(p) {
+            return { x: p.x, y: p.y, state: p.cls === 1 ? 'active' : '', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: pts0, lines: [], explanation: 'Initial dataset with uniform weights (all samples equally important). AdaBoost will adaptively adjust weights.' });
+
+        // Simulate rounds
+        var boundaries = [5.0, 4.5, 5.5, 4.0, 5.8];
+        for (var t = 0; t < 5; t++) {
+            var threshold = boundaries[t];
+            var error = 0;
+            var misclassified = [];
+
+            points.forEach(function(p, i) {
+                var pred = (p.x > threshold) ? 1 : 0;
+                if (pred !== p.cls) {
+                    error += p.weight;
+                    misclassified.push(i);
+                }
+            });
+            error = Math.max(error, 0.01);
+            var alpha = 0.5 * Math.log((1 - error) / error);
+
+            points.forEach(function(p, i) {
+                var pred = (p.x > threshold) ? 1 : 0;
+                var correct = pred === p.cls ? 1 : -1;
+                p.weight *= Math.exp(-alpha * correct);
+            });
+            var sum = points.reduce(function(s, p) { return s + p.weight; }, 0);
+            points.forEach(function(p) { p.weight = p.weight / sum; });
+
+            var pts = points.map(function(p) {
+                var isMis = misclassified.indexOf(points.indexOf(p)) >= 0;
+                return { x: p.x, y: p.y, state: isMis ? 'active' : 'visited', r: 3 + p.weight * N * 12 };
+            });
+            var line = { x1: threshold, y1: 0, x2: threshold, y2: 10, state: 'active' };
+            steps.push({ type: 'scatter', points: pts, lines: [line], explanation: 'Round ' + (t + 1) + ': Stump at x=' + threshold.toFixed(1) + '. Error=' + error.toFixed(3) + ', alpha=' + alpha.toFixed(3) + '. Misclassified samples grow larger (higher weight).' });
+        }
+
+        var ptsFinal = points.map(function(p) {
+            return { x: p.x, y: p.y, state: 'visited', r: 5 };
+        });
+        steps.push({ type: 'scatter', points: ptsFinal, lines: [], explanation: 'AdaBoost complete. Final classifier is a weighted vote of all 5 stumps.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

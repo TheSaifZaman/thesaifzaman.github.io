@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LightGBM — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>LightGBM</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Training: O(n&middot;d)</span>
+            <span class="complexity-tag">Space: O(n + bins)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>LightGBM</strong> (Light Gradient Boosting Machine) by Microsoft is a highly efficient gradient boosting framework that uses two key innovations: <em>leaf-wise</em> tree growth and <em>histogram-based</em> split finding.</p>
+            <p>Unlike traditional GBM frameworks that grow trees level-wise (all nodes at the same depth), LightGBM grows trees leaf-wise: it always splits the leaf with the highest loss reduction. This produces deeper, more asymmetric trees that achieve lower loss with fewer splits.</p>
+            <p>LightGBM also uses Gradient-based One-Side Sampling (GOSS) to keep samples with large gradients while randomly sampling from small-gradient samples, and Exclusive Feature Bundling (EFB) to reduce the number of features by bundling mutually exclusive features.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Leaf-Wise Growth:</strong> Splits the leaf with maximum gain, leading to deeper but more accurate trees.</li>
+                    <li><strong>Histogram Binning:</strong> Discretizes features into bins for O(n) split finding.</li>
+                    <li><strong>GOSS:</strong> Gradient-based sampling keeps informative samples, reduces data size.</li>
+                    <li><strong>EFB:</strong> Exclusive Feature Bundling reduces dimensionality without information loss.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// LightGBM leaf-wise growth concept
+function lightGBMGrow(leaves, maxLeaves) {
+    while (leaves.length < maxLeaves) {
+        // Find the leaf with highest potential gain
+        var bestLeaf = null, bestGain = -Infinity;
+        leaves.forEach(function(leaf) {
+            if (leaf.gain > bestGain) {
+                bestGain = leaf.gain;
+                bestLeaf = leaf;
+            }
+        });
+        if (!bestLeaf || bestGain <= 0) break;
+
+        // Split the best leaf
+        var split = findBestHistogramSplit(bestLeaf);
+        var leftChild = { data: split.left, gain: computeGain(split.left) };
+        var rightChild = { data: split.right, gain: computeGain(split.right) };
+
+        // Replace the leaf with its children
+        var idx = leaves.indexOf(bestLeaf);
+        leaves.splice(idx, 1, leftChild, rightChild);
+    }
+    return leaves;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/ieee-fraud-detection" target="_blank">IEEE Fraud Detection (Kaggle) &mdash; LightGBM</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "lightgbm", title: "LightGBM", category: "Ensemble Methods", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Simulate leaf-wise growth with bar visualization
+        // Each bar represents a leaf, height = loss/gain potential
+
+        // Step 0: single root leaf
+        steps.push({ type: 'bars', array: [100], highlights: {0: 'comparing'}, explanation: 'Start: single root leaf containing all data. Loss = 100. LightGBM will split the leaf with highest loss reduction.' });
+
+        // Step 1: first split
+        steps.push({ type: 'bars', array: [60, 40], highlights: {0: 'comparing'}, explanation: 'Leaf-wise split 1: Root split into two leaves. Left leaf (loss=60) has highest potential gain &mdash; will be split next.' });
+
+        // Step 2: split left
+        steps.push({ type: 'bars', array: [25, 35, 40], highlights: {2: 'comparing'}, explanation: 'Leaf-wise split 2: Left leaf split. Now right leaf (loss=40) has highest gain &mdash; split it next.' });
+
+        // Step 3: split right
+        steps.push({ type: 'bars', array: [25, 35, 22, 18], highlights: {1: 'comparing'}, explanation: 'Leaf-wise split 3: Right leaf split. Leaf with loss=35 is now the largest &mdash; split next.' });
+
+        // Step 4: continue
+        steps.push({ type: 'bars', array: [25, 15, 20, 22, 18], highlights: {0: 'comparing'}, explanation: 'Leaf-wise split 4: Continuing to split the leaf with highest loss. This creates deeper, asymmetric trees.' });
+
+        // Step 5: more splits
+        steps.push({ type: 'bars', array: [10, 15, 15, 20, 22, 18], highlights: {4: 'comparing'}, explanation: 'Leaf-wise split 5: Notice the tree grows unevenly &mdash; deeper on the side with harder-to-fit data.' });
+
+        // Step 6: final
+        steps.push({ type: 'bars', array: [10, 15, 15, 20, 12, 10, 18], highlights: {6: 'comparing'}, explanation: 'Leaf-wise split 6: All leaves have relatively low loss. Compared to level-wise growth, fewer total splits are needed to reach the same accuracy.' });
+
+        // Final
+        var h = {};
+        for (var i = 0; i < 7; i++) h[i] = 'sorted';
+        steps.push({ type: 'bars', array: [10, 15, 15, 20, 12, 10, 18], highlights: h, explanation: 'LightGBM leaf-wise growth complete. Key advantage: greedily splits the most informative leaf, achieving lower loss faster than level-wise approaches.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [100], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>
