@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histogram of Oriented Gradients — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Histogram of Oriented Gradients</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>HOG divides the image into small cells, computes gradient direction histograms within each cell, and normalizes them over larger blocks. The resulting feature vector captures the distribution of local edge orientations, making it highly effective for object detection (especially pedestrians).</p>
+            <p>Gradient directions are quantized into bins (typically 9 bins of 20&deg; each covering 0&deg;&ndash;180&deg;). Each pixel votes for its gradient direction bin, weighted by the gradient magnitude. Block normalization reduces sensitivity to illumination changes.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Cell size:</strong> Typically 8&times;8 pixels per cell.</li>
+                    <li><strong>Block size:</strong> 2&times;2 cells with overlapping for normalization.</li>
+                    <li><strong>Bins:</strong> 9 orientation bins (unsigned gradients: 0&deg;&ndash;180&deg;).</li>
+                    <li><strong>Normalization:</strong> L2-norm across blocks for illumination invariance.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function computeHOG(image, cellSize, numBins) {
+    var rows = image.length, cols = image[0].length;
+    var binWidth = 180 / numBins;
+    var cells = [];
+    for (var cy = 0; cy < rows; cy += cellSize) {
+        var cellRow = [];
+        for (var cx = 0; cx < cols; cx += cellSize) {
+            var hist = new Array(numBins).fill(0);
+            for (var r = cy; r < cy + cellSize && r < rows - 1; r++) {
+                for (var c = cx; c < cx + cellSize && c < cols - 1; c++) {
+                    var gx = image[r][c + 1] - image[r][c];
+                    var gy = image[r + 1][c] - image[r][c];
+                    var mag = Math.sqrt(gx * gx + gy * gy);
+                    var angle = (Math.atan2(gy, gx) * 180 / Math.PI + 180) % 180;
+                    var bin = Math.floor(angle / binWidth) % numBins;
+                    hist[bin] += mag;
+                }
+            }
+            cellRow.push(hist);
+        }
+        cells.push(cellRow);
+    }
+    return cells;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer (HOG features)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/dogs-vs-cats" target="_blank">Kaggle: Dogs vs Cats Classification</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://www.kaggle.com/competitions/imagenet-object-localization-challenge" target="_blank">Kaggle: ImageNet Object Localization</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "hog", title: "Histogram of Oriented Gradients", category: "Computer Vision" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var image = [
+            [10,20,30,40,50,60],
+            [15,25,80,45,55,65],
+            [20,30,90,50,60,70],
+            [25,35,85,55,65,75],
+            [30,40,50,60,70,80],
+            [35,45,55,65,75,85]
+        ];
+
+        // Show original pixel grid
+        var grid0 = image.map(function(row) {
+            return row.map(function(v) { return {value: v, state: ''}; });
+        });
+        steps.push({ grid: grid0, explanation: "Original 6\u00d76 grayscale image. HOG computes gradient directions in each cell." });
+
+        // Compute gradients and show direction arrows as symbols
+        var dirs = ['\u2192', '\u2197', '\u2191', '\u2196', '\u2190', '\u2199', '\u2193', '\u2198', '\u2192'];
+        var gradGrid = [];
+        for (var r = 1; r < 5; r++) {
+            var row = [];
+            for (var c = 1; c < 5; c++) {
+                var gx = image[r][c + 1] - image[r][c - 1];
+                var gy = image[r + 1][c] - image[r - 1][c];
+                var angle = (Math.atan2(gy, gx) * 180 / Math.PI + 360) % 360;
+                var dirIdx = Math.round(angle / 45) % 8;
+                row.push({value: dirs[dirIdx], state: 'comparing'});
+            }
+            gradGrid.push(row);
+        }
+        steps.push({ grid: gradGrid, explanation: "Gradient directions for each interior pixel. Arrows show the dominant gradient orientation." });
+
+        // Show histogram bins for top-left 2x2 cell
+        var bins = [0,0,0,0,0,0,0,0,0];
+        for (var r2 = 1; r2 <= 2; r2++) {
+            for (var c2 = 1; c2 <= 2; c2++) {
+                var gx2 = image[r2][c2 + 1] - image[r2][c2 - 1];
+                var gy2 = image[r2 + 1][c2] - image[r2 - 1][c2];
+                var mag = Math.round(Math.sqrt(gx2 * gx2 + gy2 * gy2));
+                var ang = ((Math.atan2(gy2, gx2) * 180 / Math.PI) + 180) % 180;
+                var bin = Math.min(Math.floor(ang / 20), 8);
+                bins[bin] += mag;
+            }
+        }
+        steps.push({
+            array: bins,
+            highlights: {},
+            explanation: "HOG histogram for top-left cell (9 bins, 0\u00b0\u2013180\u00b0). Each bin accumulates gradient magnitudes from its direction range."
+        });
+
+        // Show final grid with magnitudes
+        var magGrid = [];
+        for (var r3 = 1; r3 < 5; r3++) {
+            var mrow = [];
+            for (var c3 = 1; c3 < 5; c3++) {
+                var gx3 = image[r3][c3 + 1] - image[r3][c3 - 1];
+                var gy3 = image[r3 + 1][c3] - image[r3 - 1][c3];
+                var m3 = Math.round(Math.sqrt(gx3 * gx3 + gy3 * gy3));
+                mrow.push({value: m3, state: m3 > 50 ? 'swapped' : 'sorted'});
+            }
+            magGrid.push(mrow);
+        }
+        steps.push({ grid: magGrid, explanation: "Gradient magnitudes. High values (red) = strong edges. These weight the histogram votes." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

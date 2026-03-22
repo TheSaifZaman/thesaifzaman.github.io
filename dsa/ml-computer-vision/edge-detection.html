@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Detection (Sobel/Canny) — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Edge Detection (Sobel/Canny)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Edge detection identifies boundaries in images where pixel intensity changes sharply. The <strong>Sobel operator</strong> uses two 3&times;3 kernels to compute horizontal and vertical gradients independently, then combines them to find the edge magnitude and direction at each pixel.</p>
+            <p>The <strong>Canny edge detector</strong> extends this with Gaussian smoothing, non-maximum suppression along gradient directions, and hysteresis thresholding (using high and low thresholds) to produce clean, thin edges with minimal noise.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Sobel Gx kernel:</strong> [[-1,0,1],[-2,0,2],[-1,0,1]] detects vertical edges.</li>
+                    <li><strong>Sobel Gy kernel:</strong> [[-1,-2,-1],[0,0,0],[1,2,1]] detects horizontal edges.</li>
+                    <li><strong>Gradient magnitude:</strong> G = &radic;(Gx&sup2; + Gy&sup2;) gives edge strength.</li>
+                    <li><strong>Canny adds:</strong> Gaussian blur, NMS, and double-threshold hysteresis.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function sobelEdge(image, rows, cols) {
+    var Gx = [[-1,0,1],[-2,0,2],[-1,0,1]];
+    var Gy = [[-1,-2,-1],[0,0,0],[1,2,1]];
+    var result = [];
+    for (var r = 1; r < rows - 1; r++) {
+        result[r] = [];
+        for (var c = 1; c < cols - 1; c++) {
+            var sx = 0, sy = 0;
+            for (var kr = -1; kr <= 1; kr++) {
+                for (var kc = -1; kc <= 1; kc++) {
+                    sx += image[r+kr][c+kc] * Gx[kr+1][kc+1];
+                    sy += image[r+kr][c+kc] * Gy[kr+1][kc+1];
+                }
+            }
+            result[r][c] = Math.sqrt(sx*sx + sy*sy);
+        }
+    }
+    return result;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://leetcode.com/problems/image-smoother/" target="_blank">Image Smoother</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="easy"><td>3</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://leetcode.com/problems/flood-fill/" target="_blank">Flood Fill</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "edge-detection", title: "Edge Detection (Sobel/Canny)", category: "Computer Vision" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var image = [
+            [10, 20, 30, 40, 50],
+            [15, 25, 80, 45, 55],
+            [20, 30, 90, 50, 60],
+            [25, 35, 85, 55, 65],
+            [30, 40, 50, 60, 70]
+        ];
+        var Gx = [[-1,0,1],[-2,0,2],[-1,0,1]];
+
+        // Step 1: show original pixel grid
+        var grid0 = image.map(function(row) {
+            return row.map(function(v) { return {value: v, state: ''}; });
+        });
+        steps.push({ grid: grid0, explanation: "Original 5\u00d75 grayscale pixel grid. Brighter values = higher intensity." });
+
+        // Step 2: show kernel
+        var grid1 = image.map(function(row) {
+            return row.map(function(v) { return {value: v, state: ''}; });
+        });
+        for (var kr = 0; kr < 3; kr++) {
+            for (var kc = 0; kc < 3; kc++) {
+                grid1[kr][kc].state = 'comparing';
+                grid1[kr][kc].value = Gx[kr][kc];
+            }
+        }
+        steps.push({ grid: grid1, explanation: "Sobel Gx kernel overlaid at top-left: [[-1,0,1],[-2,0,2],[-1,0,1]]. Detects vertical edges." });
+
+        // Slide kernel across valid positions
+        var result = [];
+        for (var r = 1; r <= 3; r++) {
+            result[r - 1] = [];
+            for (var c = 1; c <= 3; c++) {
+                var gridK = image.map(function(row) {
+                    return row.map(function(v) { return {value: v, state: ''}; });
+                });
+                var sx = 0;
+                for (var dr = -1; dr <= 1; dr++) {
+                    for (var dc = -1; dc <= 1; dc++) {
+                        gridK[r + dr][c + dc].state = 'comparing';
+                        sx += image[r + dr][c + dc] * Gx[dr + 1][dc + 1];
+                    }
+                }
+                gridK[r][c].state = 'swapped';
+                result[r - 1][c - 1] = Math.abs(sx);
+                steps.push({ grid: gridK, explanation: "Kernel centered at (" + r + "," + c + "): Gx = " + sx + ", |Gx| = " + Math.abs(sx) + "." });
+            }
+        }
+
+        // Final result grid
+        var gridFinal = result.map(function(row) {
+            return row.map(function(v) { return {value: Math.round(v), state: 'sorted'}; });
+        });
+        steps.push({ grid: gridFinal, explanation: "Edge magnitude result (3\u00d73). High values indicate strong vertical edges where intensity changes rapidly." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

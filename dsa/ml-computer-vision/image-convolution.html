@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Convolution — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Image Convolution</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n&middot;m&middot;k&sup2;)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Image convolution slides a small kernel (filter) over every pixel in an image. At each position, the kernel values are multiplied element-wise with the overlapping image pixels, and the results are summed to produce one output pixel. This operation is the foundation of all CNN-based vision models.</p>
+            <p>Different kernels produce different effects: edge detection (Sobel), blurring (Gaussian), sharpening, embossing, and more. The kernel slides left-to-right, top-to-bottom, computing a weighted sum at each position.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Kernel:</strong> Small matrix (e.g., 3&times;3) of learnable or fixed weights.</li>
+                    <li><strong>Stride:</strong> How many pixels the kernel moves each step (default: 1).</li>
+                    <li><strong>Padding:</strong> Adding zeros around the border to preserve spatial dimensions.</li>
+                    <li><strong>Output size:</strong> (n &minus; k + 2p) / s + 1 where n=input, k=kernel, p=padding, s=stride.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function convolve2D(image, kernel) {
+    var rows = image.length, cols = image[0].length;
+    var kSize = kernel.length, pad = Math.floor(kSize / 2);
+    var output = [];
+    for (var r = pad; r < rows - pad; r++) {
+        var row = [];
+        for (var c = pad; c < cols - pad; c++) {
+            var sum = 0;
+            for (var kr = 0; kr < kSize; kr++) {
+                for (var kc = 0; kc < kSize; kc++) {
+                    sum += image[r - pad + kr][c - pad + kc] * kernel[kr][kc];
+                }
+            }
+            row.push(sum);
+        }
+        output.push(row);
+    }
+    return output;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>661</td><td><a href="https://leetcode.com/problems/image-smoother/" target="_blank">Image Smoother</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2373</td><td><a href="https://leetcode.com/problems/largest-local-values-in-a-matrix/" target="_blank">Largest Local Values in a Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>85</td><td><a href="https://leetcode.com/problems/maximal-rectangle/" target="_blank">Maximal Rectangle</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/digit-recognizer" target="_blank">Kaggle: Digit Recognizer</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://leetcode.com/problems/game-of-life/" target="_blank">Game of Life</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "image-convolution", title: "Image Convolution", category: "Computer Vision" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var imageGrid = [
+            [10,20,30,40,50],
+            [15,25,35,45,55],
+            [20,30,40,50,60],
+            [25,35,45,55,65],
+            [30,40,50,60,70]
+        ];
+        var kernel = [[1,0,-1],[2,0,-2],[1,0,-1]]; // Sobel
+
+        // Step 1: show original image grid
+        var grid0 = imageGrid.map(function(row) {
+            return row.map(function(v) { return {value: v, state: ''}; });
+        });
+        steps.push({ grid: grid0, explanation: "5\u00d75 grayscale pixel grid. We will slide a 3\u00d73 Sobel kernel to detect vertical edges." });
+
+        // Step 2: show kernel
+        var kernelGrid = kernel.map(function(row) {
+            return row.map(function(v) { return {value: v, state: 'comparing'}; });
+        });
+        steps.push({ grid: kernelGrid, explanation: "Sobel kernel: [[1,0,-1],[2,0,-2],[1,0,-1]]. Positive left, negative right \u2014 detects vertical intensity changes." });
+
+        // Steps 3+: slide kernel across each valid position
+        var outputValues = [];
+        for (var r = 0; r <= 2; r++) {
+            var outRow = [];
+            for (var c = 0; c <= 2; c++) {
+                // Build grid with highlighted kernel region
+                var g = imageGrid.map(function(row) {
+                    return row.map(function(v) { return {value: v, state: ''}; });
+                });
+                var sum = 0;
+                var products = [];
+                for (var kr = 0; kr < 3; kr++) {
+                    for (var kc = 0; kc < 3; kc++) {
+                        g[r + kr][c + kc].state = 'comparing';
+                        var prod = imageGrid[r + kr][c + kc] * kernel[kr][kc];
+                        sum += prod;
+                        if (kernel[kr][kc] !== 0) {
+                            products.push(imageGrid[r + kr][c + kc] + "\u00d7" + kernel[kr][kc]);
+                        }
+                    }
+                }
+                g[r + 1][c + 1].state = 'swapped';
+                outRow.push(sum);
+
+                steps.push({ grid: g, explanation: "Kernel at (" + r + "," + c + "): " + products.join(" + ") + " = " + sum });
+            }
+            outputValues.push(outRow);
+        }
+
+        // Final: show output
+        var outGrid = outputValues.map(function(row) {
+            return row.map(function(v) {
+                var absV = Math.abs(v);
+                return {value: v, state: absV > 0 ? 'sorted' : ''};
+            });
+        });
+        steps.push({ grid: outGrid, explanation: "Convolution output (3\u00d73). Non-zero values indicate edges. The Sobel kernel detected uniform horizontal gradients." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

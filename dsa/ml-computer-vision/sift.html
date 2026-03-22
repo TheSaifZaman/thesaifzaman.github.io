@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIFT — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>SIFT</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;log n)</span>
+            <span class="complexity-tag">Space: O(n&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Scale-Invariant Feature Transform (SIFT) detects and describes local features that are invariant to image scale and rotation. It builds a scale-space pyramid using Difference of Gaussians (DoG), finds extrema as candidate keypoints, refines them via sub-pixel localization, assigns orientations, and generates 128-dimensional descriptors.</p>
+            <p>SIFT keypoints are robust to changes in illumination, noise, and moderate viewpoint changes, making them ideal for image matching, object recognition, and panorama stitching.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Scale-space:</strong> Gaussian blur at multiple scales, DoG for blob detection.</li>
+                    <li><strong>Keypoint localization:</strong> Sub-pixel refinement and low-contrast/edge rejection.</li>
+                    <li><strong>Orientation:</strong> Dominant gradient direction for rotation invariance.</li>
+                    <li><strong>Descriptor:</strong> 4&times;4 grid of 8-bin histograms = 128 dimensions.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function detectKeypoints(dogPyramid) {
+    var keypoints = [];
+    for (var s = 1; s < dogPyramid.length - 1; s++) {
+        var curr = dogPyramid[s];
+        for (var r = 1; r < curr.length - 1; r++) {
+            for (var c = 1; c < curr[0].length - 1; c++) {
+                var val = curr[r][c];
+                var isMax = true, isMin = true;
+                // Check 26 neighbors across 3 scales
+                for (var ds = -1; ds <= 1; ds++) {
+                    for (var dr = -1; dr <= 1; dr++) {
+                        for (var dc = -1; dc <= 1; dc++) {
+                            if (ds === 0 && dr === 0 && dc === 0) continue;
+                            var neighbor = dogPyramid[s+ds][r+dr][c+dc];
+                            if (neighbor >= val) isMax = false;
+                            if (neighbor <= val) isMin = false;
+                        }
+                    }
+                }
+                if (isMax || isMin) {
+                    keypoints.push({x: c, y: r, scale: s});
+                }
+            }
+        }
+    }
+    return keypoints;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/competitions/google-landmark-recognition-2020" target="_blank">Kaggle: Google Landmark Recognition</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/image-matching-challenge-2022" target="_blank">Kaggle: Image Matching Challenge</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/landmark-retrieval-2020" target="_blank">Kaggle: Landmark Retrieval</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "sift", title: "SIFT", category: "Computer Vision" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Simulated keypoints at different scales
+        var rawPoints = [
+            {x:2,y:3,s:1},{x:5,y:7,s:1},{x:8,y:2,s:1},
+            {x:3,y:8,s:2},{x:7,y:5,s:2},{x:1,y:6,s:2},
+            {x:6,y:1,s:3},{x:4,y:5,s:3},{x:9,y:8,s:3}
+        ];
+
+        // Step 1: show all candidate points
+        steps.push({
+            points: rawPoints.map(function(p) {
+                return {x: p.x, y: p.y, r: 4, color: '#94a3b8'};
+            }),
+            lines: [],
+            explanation: "Scale-space extrema candidates detected from Difference of Gaussians pyramid."
+        });
+
+        // Step 2: color by scale
+        var scaleColors = ['#3b82f6', '#f59e0b', '#ef4444'];
+        steps.push({
+            points: rawPoints.map(function(p) {
+                return {x: p.x, y: p.y, r: 3 + p.s * 2, color: scaleColors[p.s - 1]};
+            }),
+            lines: [],
+            explanation: "Keypoints at different scales: blue = scale 1, amber = scale 2, red = scale 3. Radius shows scale."
+        });
+
+        // Step 3: reject weak keypoints
+        var strong = rawPoints.filter(function(p, i) { return i !== 2 && i !== 5; });
+        var weak = rawPoints.filter(function(p, i) { return i === 2 || i === 5; });
+        steps.push({
+            points: strong.map(function(p) {
+                return {x: p.x, y: p.y, r: 3 + p.s * 2, color: '#22c55e'};
+            }).concat(weak.map(function(p) {
+                return {x: p.x, y: p.y, r: 3 + p.s * 2, color: '#ef444466'};
+            })),
+            lines: [],
+            explanation: "Low-contrast and edge-response keypoints rejected (faded). 7 strong keypoints remain."
+        });
+
+        // Step 4: assign orientations
+        steps.push({
+            points: strong.map(function(p) {
+                return {x: p.x, y: p.y, r: 3 + p.s * 2, color: '#22c55e'};
+            }),
+            lines: strong.map(function(p) {
+                var angle = (p.x * 37 + p.y * 53) % 360;
+                var rad = angle * Math.PI / 180;
+                var len = 0.8;
+                return {x1: p.x, y1: p.y, x2: p.x + len * Math.cos(rad), y2: p.y + len * Math.sin(rad), color: '#3b82f6'};
+            }),
+            explanation: "Orientation assigned to each keypoint based on dominant gradient direction in neighborhood."
+        });
+
+        // Step 5: final descriptors
+        steps.push({
+            points: strong.map(function(p) {
+                return {x: p.x, y: p.y, r: 3 + p.s * 2, color: '#a855f7', state: 'sorted'};
+            }),
+            lines: [],
+            explanation: "Final SIFT keypoints with 128-D descriptors. Each is scale and rotation invariant, ready for matching."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 10, minY: 0, maxY: 10} });
+    </script>
+</body>
+</html>

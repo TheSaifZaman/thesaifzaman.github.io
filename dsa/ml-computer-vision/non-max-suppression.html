@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Maximum Suppression — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Non-Maximum Suppression</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Non-Maximum Suppression (NMS) is a post-processing step in object detection that eliminates redundant overlapping bounding boxes. After a detector produces many candidate boxes with confidence scores, NMS keeps only the best ones by iteratively selecting the highest-confidence box and removing all boxes that overlap with it above a threshold (typically IoU &gt; 0.5).</p>
+            <p>The algorithm sorts boxes by confidence, picks the top box, computes IoU with all remaining boxes, discards those exceeding the threshold, and repeats until no boxes remain.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Greedy:</strong> Always picks the highest-confidence box first.</li>
+                    <li><strong>IoU threshold:</strong> Typically 0.5; higher keeps more boxes.</li>
+                    <li><strong>Soft-NMS:</strong> Variant that decays scores instead of hard removal.</li>
+                    <li><strong>Per-class:</strong> Usually applied independently per object class.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function nms(boxes, threshold) {
+    // boxes: [{x1,y1,x2,y2,score}]
+    boxes.sort(function(a, b) { return b.score - a.score; });
+    var keep = [];
+    var suppressed = new Array(boxes.length).fill(false);
+    for (var i = 0; i < boxes.length; i++) {
+        if (suppressed[i]) continue;
+        keep.push(boxes[i]);
+        for (var j = i + 1; j < boxes.length; j++) {
+            if (suppressed[j]) continue;
+            if (computeIoU(boxes[i], boxes[j]) > threshold) {
+                suppressed[j] = true;
+            }
+        }
+    }
+    return keep;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="easy"><td>228</td><td><a href="https://leetcode.com/problems/summary-ranges/" target="_blank">Summary Ranges</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/competitions/tensorflow-great-barrier-reef" target="_blank">Kaggle: Great Barrier Reef Detection</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/global-wheat-detection" target="_blank">Kaggle: Global Wheat Detection</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "non-max-suppression", title: "Non-Maximum Suppression", category: "Computer Vision" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Boxes as scatter points: center x,y with radius proportional to score
+        var boxes = [
+            {x1:1, y1:1, x2:4, y2:4, score:0.95, label:'A'},
+            {x1:1.5, y1:1.2, x2:4.3, y2:4.1, score:0.82, label:'B'},
+            {x1:1.2, y1:0.8, x2:3.8, y2:3.9, score:0.70, label:'C'},
+            {x1:6, y1:5, x2:9, y2:8, score:0.88, label:'D'},
+            {x1:6.3, y1:5.2, x2:9.2, y2:8.3, score:0.65, label:'E'}
+        ];
+
+        function cx(b) { return (b.x1 + b.x2) / 2; }
+        function cy(b) { return (b.y1 + b.y2) / 2; }
+
+        // Step 1: show all boxes
+        steps.push({
+            points: boxes.map(function(b) {
+                return {x: cx(b), y: cy(b), r: b.score * 8, color: '#3b82f6'};
+            }),
+            lines: [],
+            explanation: "5 detection boxes with confidence scores: A=0.95, B=0.82, C=0.70, D=0.88, E=0.65. Point size = confidence."
+        });
+
+        // Step 2: sort by score
+        var sorted = boxes.slice().sort(function(a, b) { return b.score - a.score; });
+        steps.push({
+            points: sorted.map(function(b, i) {
+                return {x: cx(b), y: cy(b), r: b.score * 8, color: i === 0 ? '#22c55e' : '#3b82f6'};
+            }),
+            lines: [],
+            explanation: "Sorted by confidence. Pick highest: Box A (score=0.95, green). Check IoU with remaining boxes."
+        });
+
+        // Step 3: suppress B and C (overlap with A)
+        steps.push({
+            points: [
+                {x: cx(boxes[0]), y: cy(boxes[0]), r: boxes[0].score * 8, color: '#22c55e'},
+                {x: cx(boxes[1]), y: cy(boxes[1]), r: boxes[1].score * 8, color: '#ef4444'},
+                {x: cx(boxes[2]), y: cy(boxes[2]), r: boxes[2].score * 8, color: '#ef4444'},
+                {x: cx(boxes[3]), y: cy(boxes[3]), r: boxes[3].score * 8, color: '#3b82f6'},
+                {x: cx(boxes[4]), y: cy(boxes[4]), r: boxes[4].score * 8, color: '#3b82f6'}
+            ],
+            lines: [],
+            explanation: "B and C have IoU > 0.5 with A \u2192 suppressed (red). D and E remain as candidates."
+        });
+
+        // Step 4: pick D, suppress E
+        steps.push({
+            points: [
+                {x: cx(boxes[0]), y: cy(boxes[0]), r: boxes[0].score * 8, color: '#22c55e'},
+                {x: cx(boxes[1]), y: cy(boxes[1]), r: boxes[1].score * 8, color: '#ef444444'},
+                {x: cx(boxes[2]), y: cy(boxes[2]), r: boxes[2].score * 8, color: '#ef444444'},
+                {x: cx(boxes[3]), y: cy(boxes[3]), r: boxes[3].score * 8, color: '#22c55e'},
+                {x: cx(boxes[4]), y: cy(boxes[4]), r: boxes[4].score * 8, color: '#ef4444'}
+            ],
+            lines: [],
+            explanation: "Pick D (score=0.88, green). E has IoU > 0.5 with D \u2192 suppressed. Previous suppressions faded."
+        });
+
+        // Step 5: final result
+        steps.push({
+            points: [
+                {x: cx(boxes[0]), y: cy(boxes[0]), r: boxes[0].score * 8, color: '#22c55e'},
+                {x: cx(boxes[3]), y: cy(boxes[3]), r: boxes[3].score * 8, color: '#22c55e'}
+            ],
+            lines: [],
+            explanation: "NMS complete! 2 boxes kept: A (0.95) and D (0.88). Redundant detections eliminated."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 10, minY: 0, maxY: 10} });
+    </script>
+</body>
+</html>
