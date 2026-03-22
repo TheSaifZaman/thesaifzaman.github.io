@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Exponentiation — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Matrix Exponentiation</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(k&sup3; log n)</span>
+            <span class="complexity-tag">Space: O(k&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Matrix exponentiation combines binary exponentiation with matrix multiplication to compute the n-th term of a linear recurrence in O(k&sup3; log n) time, where k is the matrix size. The classic example is computing the n-th Fibonacci number: F(n) can be expressed as [[1,1],[1,0]]^n, allowing us to find F(10^18) efficiently.</p>
+            <p>Any linear recurrence of the form f(n) = c1*f(n-1) + c2*f(n-2) + ... + ck*f(n-k) can be converted into matrix form. The transformation matrix captures the recurrence coefficients, and raising it to the n-th power gives us the n-th term directly. This is far more efficient than the naive O(n) iterative approach for very large n.</p>
+            <p>The technique works because matrix multiplication is associative, allowing us to use the same binary exponentiation (square-and-multiply) approach. At each step we square a k*k matrix (O(k^3)) and we need O(log n) such steps, giving the overall O(k^3 log n) complexity.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Fibonacci Matrix</strong><br>[[1,1],[1,0]]^n gives [[F(n+1),F(n)],[F(n),F(n-1)]]. Extract F(n) from position [0][1].</div>
+                <div class="key-point"><strong>Linear Recurrences</strong><br>Any recurrence f(n) = sum(ci * f(n-i)) maps to a companion matrix of size k*k.</div>
+                <div class="key-point"><strong>Binary Exponentiation</strong><br>Same square-and-multiply technique, but operations are matrix multiplications instead of scalar.</div>
+                <div class="key-point"><strong>Modular Computation</strong><br>Take mod at each matrix multiplication step to keep values manageable.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>var MOD = 1000000007;
+
+// Multiply two k*k matrices mod MOD
+function matMul(A, B) {
+    var k = A.length;
+    var C = [];
+    for (var i = 0; i < k; i++) {
+        C[i] = [];
+        for (var j = 0; j < k; j++) {
+            var sum = 0;
+            for (var p = 0; p < k; p++) {
+                sum = (sum + A[i][p] * B[p][j]) % MOD;
+            }
+            C[i][j] = sum;
+        }
+    }
+    return C;
+}
+
+// Matrix exponentiation: compute M^n mod MOD
+function matPow(M, n) {
+    var k = M.length;
+    // Identity matrix
+    var result = [];
+    for (var i = 0; i < k; i++) {
+        result[i] = [];
+        for (var j = 0; j < k; j++) {
+            result[i][j] = (i === j) ? 1 : 0;
+        }
+    }
+    while (n > 0) {
+        if (n % 2 === 1) result = matMul(result, M);
+        M = matMul(M, M);
+        n = Math.floor(n / 2);
+    }
+    return result;
+}
+
+// Fibonacci(n) via matrix exponentiation
+function fibonacci(n) {
+    if (n <= 1) return n;
+    var M = [[1, 1], [1, 0]];
+    var res = matPow(M, n - 1);
+    return res[0][0];
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>509</td><td><a href="https://leetcode.com/problems/fibonacci-number/" target="_blank">Fibonacci Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1137</td><td><a href="https://leetcode.com/problems/n-th-tribonacci-number/" target="_blank">N-th Tribonacci Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>552</td><td><a href="https://leetcode.com/problems/student-attendance-record-ii/" target="_blank">Student Attendance Record II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1220</td><td><a href="https://leetcode.com/problems/count-vowels-permutation/" target="_blank">Count Vowels Permutation</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "matrix-exponentiation", title: "Matrix Exponentiation", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize Fibonacci via matrix exponentiation as a grid
+        function generateSteps(data) {
+            var steps = [];
+            var N = Math.min(Math.max(Math.round(data[0]) || 8, 2), 12);
+
+            function matMul(A, B) {
+                return [
+                    [A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]],
+                    [A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]]
+                ];
+            }
+
+            function matToGrid(M, label, state) {
+                return [
+                    [{ value: label, state: state || '' }, { value: '', state: '' }],
+                    [{ value: M[0][0], state: state || '' }, { value: M[0][1], state: state || '' }],
+                    [{ value: M[1][0], state: state || '' }, { value: M[1][1], state: state || '' }]
+                ];
+            }
+
+            var M = [[1,1],[1,0]];
+            var result = [[1,0],[0,1]]; // identity
+
+            steps.push({
+                grid: [
+                    [{ value: 'M =', state: '' }, { value: '', state: '' }],
+                    [{ value: 1, state: 'start' }, { value: 1, state: 'start' }],
+                    [{ value: 1, state: 'start' }, { value: 0, state: 'start' }],
+                    [{ value: '', state: '' }, { value: '', state: '' }],
+                    [{ value: 'Goal:', state: '' }, { value: 'M^' + N, state: 'current' }]
+                ],
+                explanation: 'Fibonacci matrix M = [[1,1],[1,0]]. We compute M^' + N + ' using binary exponentiation. F(' + N + ') = M^' + (N-1) + '[0][0].'
+            });
+
+            var curM = [[1,1],[1,0]];
+            var n = N - 1;
+            var step = 1;
+            var bits = [];
+            var tmp = n;
+            while (tmp > 0) { bits.push(tmp % 2); tmp = Math.floor(tmp / 2); }
+
+            for (var i = 0; i < bits.length; i++) {
+                if (bits[i] === 1) {
+                    result = matMul(result, curM);
+                    steps.push({
+                        grid: [
+                            [{ value: 'Result', state: '' }, { value: '', state: '' }],
+                            [{ value: result[0][0], state: 'start' }, { value: result[0][1], state: 'start' }],
+                            [{ value: result[1][0], state: 'start' }, { value: result[1][1], state: 'start' }]
+                        ],
+                        explanation: 'Step ' + step + ': Bit ' + i + ' is 1. Multiply result by current matrix. Result[0][0] = ' + result[0][0] + '.'
+                    });
+                } else {
+                    steps.push({
+                        grid: [
+                            [{ value: 'Result', state: '' }, { value: '(skip)', state: '' }],
+                            [{ value: result[0][0], state: 'visited' }, { value: result[0][1], state: 'visited' }],
+                            [{ value: result[1][0], state: 'visited' }, { value: result[1][1], state: 'visited' }]
+                        ],
+                        explanation: 'Step ' + step + ': Bit ' + i + ' is 0. Skip multiplication, just square the base matrix.'
+                    });
+                }
+
+                curM = matMul(curM, curM);
+                step++;
+            }
+
+            // Show Fibonacci result
+            var fib = result[0][0];
+            steps.push({
+                grid: [
+                    [{ value: 'F(' + N + ')', state: '' }, { value: '=', state: '' }],
+                    [{ value: fib, state: 'start' }, { value: '', state: '' }]
+                ],
+                explanation: 'Done! F(' + N + ') = ' + fib + '. Computed in O(log ' + (N-1) + ') matrix multiplications.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [8], stepGenerator: generateSteps, type: 'grid' });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusion-Exclusion — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Inclusion-Exclusion</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(2^n) subsets</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Inclusion-Exclusion Principle is a counting technique that computes the size of the union of multiple sets by alternately adding and subtracting the sizes of their intersections. For two sets: |A ∪ B| = |A| + |B| - |A ∩ B|. For three sets: |A ∪ B ∪ C| = |A| + |B| + |C| - |A ∩ B| - |A ∩ C| - |B ∩ C| + |A ∩ B ∩ C|.</p>
+            <p>The general formula alternates signs: add sizes of individual sets, subtract sizes of pairwise intersections, add sizes of triple intersections, and so on. For n sets, this involves summing over all 2^n - 1 non-empty subsets, with the sign determined by whether the subset size is odd (add) or even (subtract).</p>
+            <p>In competitive programming, inclusion-exclusion is used for counting numbers divisible by at least one of several primes, computing Euler's totient function, solving derangement problems, and counting surjective functions. It often transforms a hard counting problem into a manageable sum.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Two Sets</strong><br>|A ∪ B| = |A| + |B| - |A ∩ B|. Subtract the overlap to avoid double-counting.</div>
+                <div class="key-point"><strong>Alternating Signs</strong><br>Add odd-sized intersections, subtract even-sized ones. Sign = (-1)^(k+1) for k-set intersection.</div>
+                <div class="key-point"><strong>Divisibility Counting</strong><br>Count integers ≤ n divisible by any of {p1, p2, ...}: apply IE with |divisible by pi| = floor(n/pi).</div>
+                <div class="key-point"><strong>Derangements</strong><br>D(n) = n! * sum((-1)^k / k!, k=0..n). A classic application of inclusion-exclusion.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Count integers in [1, n] divisible by at least one prime in primes[]
+function countDivisible(n, primes) {
+    var k = primes.length;
+    var total = 0;
+
+    // Iterate over all non-empty subsets (bitmask)
+    for (var mask = 1; mask < (1 << k); mask++) {
+        var product = 1;
+        var bits = 0;
+        for (var i = 0; i < k; i++) {
+            if (mask & (1 << i)) {
+                product *= primes[i];
+                bits++;
+            }
+        }
+        // Odd number of primes → add, even → subtract
+        if (bits % 2 === 1) {
+            total += Math.floor(n / product);
+        } else {
+            total -= Math.floor(n / product);
+        }
+    }
+    return total;
+}
+
+// Derangements: permutations where no element is in its original position
+function derangements(n) {
+    if (n === 0) return 1;
+    if (n === 1) return 0;
+    var result = 0;
+    var factorial = 1;
+    for (var i = 2; i <= n; i++) factorial *= i;
+    var sign = 1;
+    var kFact = 1;
+    for (var k = 0; k <= n; k++) {
+        if (k > 0) kFact *= k;
+        result += sign * factorial / kFact;
+        sign *= -1;
+    }
+    return result;
+}
+
+// Euler's totient via inclusion-exclusion
+function eulerTotient(n) {
+    var result = n;
+    for (var p = 2; p * p <= n; p++) {
+        if (n % p === 0) {
+            while (n % p === 0) n /= p;
+            result -= result / p;
+        }
+    }
+    if (n > 1) result -= result / n;
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>878</td><td><a href="https://leetcode.com/problems/nth-magical-number/" target="_blank">Nth Magical Number</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1994</td><td><a href="https://leetcode.com/problems/the-number-of-good-subsets/" target="_blank">The Number of Good Subsets</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1201</td><td><a href="https://leetcode.com/problems/ugly-number-iii/" target="_blank">Ugly Number III</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2652</td><td><a href="https://leetcode.com/problems/sum-multiples/" target="_blank">Sum Multiples</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "inclusion-exclusion", title: "Inclusion-Exclusion", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Custom Venn diagram visualization for 3 sets
+        function generateSteps(data) {
+            var steps = [];
+
+            // Count numbers 1-30 divisible by 2, 3, or 5
+            var N = 30;
+            var primes = [2, 3, 5];
+
+            var divBy2 = Math.floor(N/2);   // 15
+            var divBy3 = Math.floor(N/3);   // 10
+            var divBy5 = Math.floor(N/5);   // 6
+            var divBy6 = Math.floor(N/6);   // 5
+            var divBy10 = Math.floor(N/10); // 3
+            var divBy15 = Math.floor(N/15); // 2
+            var divBy30 = Math.floor(N/30); // 1
+
+            function makeVenn(stepLabel, aState, bState, cState, abState, acState, bcState, abcState) {
+                // Render as custom via step.render
+                return function(area) {
+                    var w = area.clientWidth || 500;
+                    var h = 320;
+                    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', w);
+                    svg.setAttribute('height', h);
+                    svg.setAttribute('viewBox', '0 0 500 320');
+
+                    // Three overlapping circles
+                    var circles = [
+                        { cx: 180, cy: 140, label: 'Div 2', count: divBy2, state: aState },
+                        { cx: 320, cy: 140, label: 'Div 3', count: divBy3, state: bState },
+                        { cx: 250, cy: 240, label: 'Div 5', count: divBy5, state: cState }
+                    ];
+
+                    circles.forEach(function(c) {
+                        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('cx', c.cx);
+                        circle.setAttribute('cy', c.cy);
+                        circle.setAttribute('r', 90);
+                        circle.setAttribute('fill', c.state === 'active' ? 'rgba(59,130,246,0.25)' :
+                                                    c.state === 'subtract' ? 'rgba(239,68,68,0.25)' :
+                                                    c.state === 'add' ? 'rgba(34,197,94,0.25)' :
+                                                    'rgba(148,163,184,0.1)');
+                        circle.setAttribute('stroke', c.state === 'active' ? '#3b82f6' :
+                                                       c.state === 'subtract' ? '#ef4444' :
+                                                       c.state === 'add' ? '#22c55e' : '#94a3b8');
+                        circle.setAttribute('stroke-width', '2');
+                        svg.appendChild(circle);
+
+                        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', c.cx);
+                        text.setAttribute('y', c.cy < 200 ? c.cy - 70 : c.cy + 85);
+                        text.setAttribute('text-anchor', 'middle');
+                        text.setAttribute('fill', 'var(--text-primary)');
+                        text.setAttribute('font-size', '14');
+                        text.setAttribute('font-weight', '600');
+                        text.textContent = c.label + ' (' + c.count + ')';
+                        svg.appendChild(text);
+                    });
+
+                    area.appendChild(svg);
+                };
+            }
+
+            // Step 1: Show the three sets
+            steps.push({
+                render: makeVenn('Sets', 'active', 'active', 'active', '', '', '', ''),
+                explanation: 'Count integers in [1,' + N + '] divisible by 2, 3, or 5. |div2|=' + divBy2 + ', |div3|=' + divBy3 + ', |div5|=' + divBy5 + '.'
+            });
+
+            // Step 2: Add individual sets
+            var sum1 = divBy2 + divBy3 + divBy5;
+            steps.push({
+                render: makeVenn('Add', 'active', 'active', 'active', '', '', '', ''),
+                explanation: 'Step 1: Add individual sets. ' + divBy2 + ' + ' + divBy3 + ' + ' + divBy5 + ' = ' + sum1 + '. But we over-counted overlaps!'
+            });
+
+            // Step 3: Subtract pairwise
+            var sum2 = sum1 - divBy6 - divBy10 - divBy15;
+            steps.push({
+                render: makeVenn('Subtract', '', '', '', 'subtract', 'subtract', 'subtract', ''),
+                explanation: 'Step 2: Subtract pairwise intersections. -|div6|=' + divBy6 + ' -|div10|=' + divBy10 + ' -|div15|=' + divBy15 + '. Running total: ' + sum2 + '.'
+            });
+
+            // Step 4: Add triple
+            var sum3 = sum2 + divBy30;
+            steps.push({
+                render: makeVenn('Add back', '', '', '', '', '', '', 'add'),
+                explanation: 'Step 3: Add back triple intersection. +|div30|=' + divBy30 + '. Final: ' + sum1 + ' - ' + (divBy6+divBy10+divBy15) + ' + ' + divBy30 + ' = ' + sum3 + '.'
+            });
+
+            // Final: show as bars
+            steps.push({
+                type: 'bars',
+                array: [divBy2, divBy3, divBy5, divBy6, divBy10, divBy15, divBy30, sum3],
+                highlights: { 0: 'active', 1: 'active', 2: 'active', 3: 'swapped', 4: 'swapped', 5: 'swapped', 6: 'sorted', 7: 'sorted' },
+                explanation: 'Result: ' + sum3 + ' numbers in [1,' + N + '] are divisible by 2, 3, or 5. Blue=add, red=subtract, green=result.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [30], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

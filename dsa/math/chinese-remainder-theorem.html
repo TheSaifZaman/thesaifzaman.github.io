@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Remainder Theorem — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Chinese Remainder Theorem</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n log M)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Chinese Remainder Theorem (CRT) states that if we have a system of congruences x ≡ r1 (mod m1), x ≡ r2 (mod m2), ..., x ≡ rk (mod mk), where the moduli m1, m2, ..., mk are pairwise coprime, then there exists a unique solution modulo M = m1 * m2 * ... * mk.</p>
+            <p>The constructive proof gives us an algorithm: for each i, compute Mi = M/mi, then find the modular inverse yi of Mi mod mi using the extended Euclidean algorithm. The solution is x = sum(ri * Mi * yi) mod M. This reconstruction process is at the heart of many number-theoretic algorithms.</p>
+            <p>CRT is used in competitive programming for combining results computed under different moduli, in RSA decryption optimization, and in polynomial interpolation. The generalized CRT extends to non-coprime moduli by checking compatibility conditions.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Pairwise Coprime</strong><br>The moduli must be pairwise coprime (GCD(mi, mj) = 1 for all i != j) for CRT to guarantee a unique solution.</div>
+                <div class="key-point"><strong>Unique Solution</strong><br>The solution x is unique modulo M = m1 * m2 * ... * mk.</div>
+                <div class="key-point"><strong>Construction</strong><br>x = sum(ri * Mi * yi) mod M, where Mi = M/mi and yi = Mi^(-1) mod mi.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Extended GCD: returns [gcd, x, y] where a*x + b*y = gcd
+function extGcd(a, b) {
+    if (b === 0) return [a, 1, 0];
+    var res = extGcd(b, a % b);
+    return [res[0], res[2], res[1] - Math.floor(a / b) * res[2]];
+}
+
+// Chinese Remainder Theorem
+// remainders[i], moduli[i] — x ≡ r_i (mod m_i)
+function crt(remainders, moduli) {
+    var n = remainders.length;
+    var M = 1;
+    for (var i = 0; i < n; i++) M *= moduli[i];
+
+    var x = 0;
+    for (var i = 0; i < n; i++) {
+        var Mi = M / moduli[i];
+        var res = extGcd(Mi, moduli[i]);
+        var yi = ((res[1] % moduli[i]) + moduli[i]) % moduli[i];
+        x += remainders[i] * Mi * yi;
+    }
+    return ((x % M) + M) % M;
+}
+
+// Example: x ≡ 2 (mod 3), x ≡ 3 (mod 5), x ≡ 2 (mod 7)
+// crt([2, 3, 5], [3, 5, 7]) → 23</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (3)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (0)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1979</td><td><a href="https://leetcode.com/problems/find-greatest-common-divisor-of-array/" target="_blank">Find Greatest Common Divisor of Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1250</td><td><a href="https://leetcode.com/problems/check-if-it-is-a-good-array/" target="_blank">Check If It Is a Good Array</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>878</td><td><a href="https://leetcode.com/problems/nth-magical-number/" target="_blank">Nth Magical Number</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "chinese-remainder-theorem", title: "Chinese Remainder Theorem", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize CRT: show residues and the combined solution
+        function generateSteps(data) {
+            var steps = [];
+
+            // System: x ≡ 2 (mod 3), x ≡ 3 (mod 5), x ≡ 2 (mod 7)
+            var remainders = [2, 3, 2];
+            var moduli = [3, 5, 7];
+            var M = 3 * 5 * 7; // 105
+
+            steps.push({
+                array: moduli.slice(),
+                highlights: { 0: 'active', 1: 'active', 2: 'active' },
+                explanation: 'CRT: Solve x ≡ 2 (mod 3), x ≡ 3 (mod 5), x ≡ 2 (mod 7). Moduli: [3, 5, 7]. M = 3*5*7 = ' + M + '.'
+            });
+
+            // Step through each congruence
+            var partialSums = [];
+            for (var i = 0; i < moduli.length; i++) {
+                var mi = moduli[i];
+                var ri = remainders[i];
+                var Mi = M / mi;
+
+                // Find modular inverse of Mi mod mi
+                // Using trial for small numbers
+                var yi = 1;
+                for (var t = 1; t < mi; t++) {
+                    if ((Mi * t) % mi === 1) { yi = t; break; }
+                }
+
+                var term = ri * Mi * yi;
+                partialSums.push(term);
+
+                var arr = [mi, ri, Mi, yi, term];
+                var h = { 0: 'comparing', 1: 'sorted', 2: 'active', 3: 'active', 4: 'comparing' };
+                steps.push({
+                    array: arr,
+                    highlights: h,
+                    explanation: 'Congruence ' + (i+1) + ': m=' + mi + ', r=' + ri + ', M/m=' + Mi + ', inverse=' + yi + '. Term = ' + ri + '*' + Mi + '*' + yi + ' = ' + term + '.'
+                });
+            }
+
+            // Sum and mod
+            var sum = 0;
+            for (var j = 0; j < partialSums.length; j++) sum += partialSums[j];
+            var result = ((sum % M) + M) % M;
+
+            steps.push({
+                array: partialSums.slice(),
+                highlights: { 0: 'comparing', 1: 'comparing', 2: 'comparing' },
+                explanation: 'Sum of terms: ' + partialSums.join(' + ') + ' = ' + sum + '.'
+            });
+
+            steps.push({
+                array: [result],
+                highlights: { 0: 'sorted' },
+                explanation: 'x = ' + sum + ' mod ' + M + ' = ' + result + '. Verify: ' + result + ' mod 3 = ' + (result%3) + ', ' + result + ' mod 5 = ' + (result%5) + ', ' + result + ' mod 7 = ' + (result%7) + '.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [3, 5, 7], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

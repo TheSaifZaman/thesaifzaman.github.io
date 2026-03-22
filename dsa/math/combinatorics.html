@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combinatorics — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Combinatorics</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n) for nCr</span>
+            <span class="complexity-tag">Space: O(n&sup2;) for Pascal's</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Combinatorics is the mathematics of counting. The two fundamental operations are permutations (ordered arrangements) and combinations (unordered selections). The binomial coefficient C(n, r) = n! / (r! * (n-r)!) counts the number of ways to choose r items from n distinct items, and is central to many algorithmic problems.</p>
+            <p>Pascal's Triangle provides an elegant way to compute binomial coefficients: each entry is the sum of the two entries above it, C(n, r) = C(n-1, r-1) + C(n-1, r). This DP approach avoids computing large factorials and naturally handles the modular arithmetic needed for competitive programming.</p>
+            <p>Key formulas include: P(n, r) = n!/(n-r)! for permutations, C(n, r) = n!/(r!(n-r)!) for combinations, and the multinomial coefficient for distributing items into groups. Stars and bars, the pigeonhole principle, and generating functions are advanced tools that extend basic counting.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Pascal's Rule</strong><br>C(n, r) = C(n-1, r-1) + C(n-1, r). Build the triangle row by row in O(n^2).</div>
+                <div class="key-point"><strong>Symmetry</strong><br>C(n, r) = C(n, n-r). Always compute the smaller side for efficiency.</div>
+                <div class="key-point"><strong>Stars and Bars</strong><br>Ways to put n identical items into k bins = C(n+k-1, k-1). Powerful counting tool.</div>
+                <div class="key-point"><strong>Modular nCr</strong><br>Precompute factorials and inverse factorials for O(1) queries of C(n,r) mod p.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Pascal's Triangle — O(n^2)
+function pascalsTriangle(n) {
+    var tri = [[1]];
+    for (var i = 1; i <= n; i++) {
+        var row = [1];
+        for (var j = 1; j < i; j++) {
+            row.push(tri[i-1][j-1] + tri[i-1][j]);
+        }
+        row.push(1);
+        tri.push(row);
+    }
+    return tri;
+}
+
+// nCr using Pascal's Triangle
+function nCr(n, r) {
+    return pascalsTriangle(n)[n][r];
+}
+
+// Modular nCr with precomputed factorials
+var MOD = 1000000007;
+function precompute(n) {
+    var fact = [1], inv = [1];
+    for (var i = 1; i <= n; i++) {
+        fact[i] = (fact[i-1] * i) % MOD;
+    }
+    inv[n] = modPow(fact[n], MOD - 2, MOD);
+    for (var j = n - 1; j >= 0; j--) {
+        inv[j] = (inv[j+1] * (j+1)) % MOD;
+    }
+    return { fact: fact, inv: inv };
+}
+
+function nCrMod(n, r, tables) {
+    if (r < 0 || r > n) return 0;
+    return tables.fact[n] * tables.inv[r] % MOD
+           * tables.inv[n-r] % MOD;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>118</td><td><a href="https://leetcode.com/problems/pascals-triangle/" target="_blank">Pascal's Triangle</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>119</td><td><a href="https://leetcode.com/problems/pascals-triangle-ii/" target="_blank">Pascal's Triangle II</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>62</td><td><a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>31</td><td><a href="https://leetcode.com/problems/next-permutation/" target="_blank">Next Permutation</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>77</td><td><a href="https://leetcode.com/problems/combinations/" target="_blank">Combinations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1569</td><td><a href="https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/" target="_blank">Number of Ways to Reorder Array to Get Same BST</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "combinatorics", title: "Combinatorics", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize Pascal's Triangle building row by row as a grid
+        function generateSteps(data) {
+            var steps = [];
+            var N = Math.min(Math.max(Math.round(data[0]) || 8, 3), 10);
+            var COLS = N * 2 + 1; // wide enough for centering
+
+            var tri = [];
+
+            function buildGrid(highlightRow) {
+                var grid = [];
+                for (var r = 0; r < tri.length; r++) {
+                    var row = [];
+                    var padding = (COLS - (tri[r].length * 2 - 1)) / 2;
+                    var padLeft = Math.floor(padding);
+
+                    // Fill with empty cells for centering
+                    for (var c = 0; c < COLS; c++) {
+                        row.push({ value: '', state: '' });
+                    }
+
+                    // Place values centered
+                    for (var j = 0; j < tri[r].length; j++) {
+                        var col = padLeft + j * 2;
+                        if (col < COLS) {
+                            var st = '';
+                            if (r === highlightRow) st = 'current';
+                            else if (r === highlightRow - 1) st = 'visited';
+                            else st = 'start';
+                            row[col] = { value: tri[r][j], state: st };
+                        }
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            // Row 0
+            tri.push([1]);
+            steps.push({ grid: buildGrid(0), explanation: 'Pascal\'s Triangle — Row 0: [1]. Each entry C(n,r) = C(n-1,r-1) + C(n-1,r).' });
+
+            for (var i = 1; i <= N; i++) {
+                var row = [1];
+                for (var j = 1; j < i; j++) {
+                    row.push(tri[i-1][j-1] + tri[i-1][j]);
+                }
+                row.push(1);
+                tri.push(row);
+
+                var sumParts = [];
+                for (var k = 0; k < row.length; k++) {
+                    if (k === 0 || k === row.length - 1) {
+                        sumParts.push('1');
+                    } else {
+                        sumParts.push(tri[i-1][k-1] + '+' + tri[i-1][k] + '=' + row[k]);
+                    }
+                }
+                steps.push({ grid: buildGrid(i), explanation: 'Row ' + i + ': [' + row.join(', ') + ']. Each inner value = sum of two values above: ' + sumParts.join(', ') + '.' });
+            }
+
+            // Final
+            steps.push({ grid: buildGrid(-1), explanation: 'Pascal\'s Triangle complete! Row n gives all C(n, r) values. Row ' + N + ' = [' + tri[N].join(', ') + ']. Note the symmetry: C(n,r) = C(n,n-r).' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [8], stepGenerator: generateSteps, type: 'grid' });
+    })();
+    </script>
+</body>
+</html>

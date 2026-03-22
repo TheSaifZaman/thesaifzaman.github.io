@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euclidean GCD — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Euclidean GCD</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(log min(a,b))</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Euclidean algorithm is one of the oldest known algorithms, dating back to around 300 BC. It efficiently computes the greatest common divisor (GCD) of two integers. The key insight is that GCD(a, b) = GCD(b, a mod b), which allows us to repeatedly reduce the problem until one of the numbers becomes zero.</p>
+            <p>At each step, we replace the larger number with the remainder of dividing the larger by the smaller. This process converges quickly because the remainder is always strictly smaller than the divisor. When the remainder reaches zero, the other number is the GCD. The algorithm runs in O(log min(a,b)) time, making it extremely efficient even for very large numbers.</p>
+            <p>The Extended Euclidean Algorithm also finds integers x and y such that ax + by = GCD(a,b). This is crucial for computing modular inverses, which are needed in modular division, RSA cryptography, and many competitive programming problems.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Base Case</strong><br>GCD(a, 0) = a. When one number is zero, the other is the GCD.</div>
+                <div class="key-point"><strong>Reduction Step</strong><br>GCD(a, b) = GCD(b, a % b). The remainder is always smaller than b.</div>
+                <div class="key-point"><strong>LCM Connection</strong><br>LCM(a, b) = a * b / GCD(a, b). Always compute GCD first to avoid overflow.</div>
+                <div class="key-point"><strong>Extended GCD</strong><br>Finds x, y where ax + by = GCD(a,b). Essential for modular inverses.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Iterative Euclidean GCD
+function gcd(a, b) {
+    while (b !== 0) {
+        var t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+// Extended Euclidean Algorithm
+// Returns [gcd, x, y] where a*x + b*y = gcd
+function extendedGcd(a, b) {
+    if (b === 0) return [a, 1, 0];
+    var result = extendedGcd(b, a % b);
+    var g = result[0], x1 = result[1], y1 = result[2];
+    return [g, y1, x1 - Math.floor(a / b) * y1];
+}
+
+// LCM using GCD
+function lcm(a, b) {
+    return (a / gcd(a, b)) * b;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (3)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1071</td><td><a href="https://leetcode.com/problems/greatest-common-divisor-of-strings/" target="_blank">Greatest Common Divisor of Strings</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1518</td><td><a href="https://leetcode.com/problems/water-bottles/" target="_blank">Water Bottles</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1979</td><td><a href="https://leetcode.com/problems/find-greatest-common-divisor-of-array/" target="_blank">Find Greatest Common Divisor of Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2807</td><td><a href="https://leetcode.com/problems/insert-greatest-common-divisors-in-linked-list/" target="_blank">Insert Greatest Common Divisors in Linked List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>365</td><td><a href="https://leetcode.com/problems/water-and-jug-problem/" target="_blank">Water and Jug Problem</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "euclidean-gcd", title: "Euclidean GCD", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize GCD division steps as bars
+        function generateSteps(data) {
+            var steps = [];
+            var a = Math.abs(Math.round(data[0])) || 48;
+            var b = Math.abs(Math.round(data[1])) || 18;
+
+            steps.push({ array: [a, b], highlights: { 0: 'comparing', 1: 'comparing' }, explanation: 'Computing GCD(' + a + ', ' + b + ') using the Euclidean algorithm.' });
+
+            var step = 1;
+            while (b !== 0) {
+                var remainder = a % b;
+                var quotient = Math.floor(a / b);
+
+                // Show the division
+                var arr = [a, b];
+                if (remainder > 0) arr.push(remainder);
+                var h = { 0: 'comparing', 1: 'active' };
+                if (remainder > 0) h[2] = 'swapped';
+                steps.push({ array: arr, highlights: h, explanation: 'Step ' + step + ': ' + a + ' = ' + quotient + ' * ' + b + ' + ' + remainder + '. Replace (' + a + ', ' + b + ') with (' + b + ', ' + remainder + ').' });
+
+                a = b;
+                b = remainder;
+                step++;
+
+                // Show new pair
+                if (b !== 0) {
+                    steps.push({ array: [a, b], highlights: { 0: 'comparing', 1: 'comparing' }, explanation: 'New pair: GCD(' + a + ', ' + b + '). Continue dividing.' });
+                }
+            }
+
+            steps.push({ array: [a], highlights: { 0: 'sorted' }, explanation: 'Remainder is 0. GCD = ' + a + '!' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [48, 18], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

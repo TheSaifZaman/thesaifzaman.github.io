@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Theory — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Number Theory</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Topic: Primes, Divisibility, GCD</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Number theory is the branch of mathematics that studies integers and their properties. In competitive programming, number theory provides essential tools for solving problems involving divisibility, primes, modular arithmetic, and combinatorics. Many seemingly complex problems reduce to elegant number-theoretic observations.</p>
+            <p>The fundamental theorem of arithmetic states that every integer greater than 1 can be uniquely represented as a product of prime factors. This factorization underpins algorithms for GCD computation (Euclidean algorithm), primality testing (trial division, Miller-Rabin), and the Sieve of Eratosthenes for generating all primes up to a given limit.</p>
+            <p>Key number theory concepts include: divisibility rules, prime numbers, greatest common divisor (GCD) and least common multiple (LCM), modular arithmetic, Euler's totient function, Fermat's little theorem, and the Chinese Remainder Theorem. Mastering these topics unlocks efficient solutions to a wide array of algorithmic challenges.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Primes</strong><br>Building blocks of integers. Sieve of Eratosthenes finds all primes up to n in O(n log log n).</div>
+                <div class="key-point"><strong>GCD &amp; LCM</strong><br>Euclidean algorithm computes GCD in O(log min(a,b)). LCM(a,b) = a*b / GCD(a,b).</div>
+                <div class="key-point"><strong>Modular Arithmetic</strong><br>Essential for handling large numbers. (a+b) mod m = ((a mod m) + (b mod m)) mod m.</div>
+                <div class="key-point"><strong>Euler's Totient</strong><br>phi(n) counts integers from 1 to n that are coprime to n. Key to Euler's theorem: a^phi(n) = 1 (mod n).</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Check if a number is prime — O(sqrt(n))
+function isPrime(n) {
+    if (n < 2) return false;
+    if (n < 4) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (var i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+}
+
+// GCD using Euclidean algorithm — O(log min(a,b))
+function gcd(a, b) {
+    while (b !== 0) {
+        var t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+// LCM via GCD
+function lcm(a, b) {
+    return (a / gcd(a, b)) * b;
+}
+
+// Euler's totient function — O(sqrt(n))
+function eulerTotient(n) {
+    var result = n;
+    for (var p = 2; p * p <= n; p++) {
+        if (n % p === 0) {
+            while (n % p === 0) n /= p;
+            result -= result / p;
+        }
+    }
+    if (n > 1) result -= result / n;
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (10)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (4)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>204</td><td><a href="https://leetcode.com/problems/count-primes/" target="_blank">Count Primes</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>507</td><td><a href="https://leetcode.com/problems/perfect-number/" target="_blank">Perfect Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>263</td><td><a href="https://leetcode.com/problems/ugly-number/" target="_blank">Ugly Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1071</td><td><a href="https://leetcode.com/problems/greatest-common-divisor-of-strings/" target="_blank">Greatest Common Divisor of Strings</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>372</td><td><a href="https://leetcode.com/problems/super-pow/" target="_blank">Super Pow</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1390</td><td><a href="https://leetcode.com/problems/four-divisors/" target="_blank">Four Divisors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1523</td><td><a href="https://leetcode.com/problems/count-odd-numbers-in-an-interval-range/" target="_blank">Count Odd Numbers in an Interval Range</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2523</td><td><a href="https://leetcode.com/problems/closest-prime-numbers-in-range/" target="_blank">Closest Prime Numbers in Range</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>952</td><td><a href="https://leetcode.com/problems/largest-component-size-by-common-factor/" target="_blank">Largest Component Size by Common Factor</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2709</td><td><a href="https://leetcode.com/problems/greatest-common-divisor-traversal/" target="_blank">Greatest Common Divisor Traversal</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "math-number-theory", title: "Number Theory", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize primality checking: test each number 2..N, highlight primes
+        function generateSteps(data) {
+            var steps = [];
+            var N = Math.min(Math.max(Math.round(data[0]) || 30, 5), 50);
+            var arr = [];
+            for (var i = 2; i <= N; i++) arr.push(i);
+
+            steps.push({ array: arr.slice(), highlights: {}, explanation: 'Numbers from 2 to ' + N + '. We will identify which are prime using trial division.' });
+
+            var primes = [];
+            for (var k = 0; k < arr.length; k++) {
+                var n = arr[k];
+                var h = {};
+                // Mark already found primes
+                for (var p = 0; p < primes.length; p++) h[primes[p] - 2] = 'sorted';
+                h[k] = 'comparing';
+
+                var prime = true;
+                if (n < 2) { prime = false; }
+                else {
+                    for (var d = 2; d * d <= n; d++) {
+                        if (n % d === 0) { prime = false; break; }
+                    }
+                }
+
+                if (prime) {
+                    primes.push(n);
+                    h[k] = 'sorted';
+                    steps.push({ array: arr.slice(), highlights: h, explanation: n + ' is PRIME (no divisors found). Total primes so far: ' + primes.length + '.' });
+                } else {
+                    h[k] = 'swapped';
+                    steps.push({ array: arr.slice(), highlights: h, explanation: n + ' is COMPOSITE.' });
+                }
+            }
+
+            // Final summary
+            var hFinal = {};
+            for (var f = 0; f < arr.length; f++) {
+                var isPr = false;
+                for (var q = 0; q < primes.length; q++) { if (primes[q] === arr[f]) { isPr = true; break; } }
+                hFinal[f] = isPr ? 'sorted' : 'swapped';
+            }
+            steps.push({ array: arr.slice(), highlights: hFinal, explanation: 'Done! Found ' + primes.length + ' primes up to ' + N + '. Green = prime, red = composite.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [30], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

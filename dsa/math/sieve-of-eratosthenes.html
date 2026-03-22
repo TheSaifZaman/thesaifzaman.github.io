@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sieve of Eratosthenes — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Sieve of Eratosthenes</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n log log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Sieve of Eratosthenes is an ancient and efficient algorithm for finding all prime numbers up to a given limit n. It works by iteratively marking the multiples of each prime number as composite (not prime), starting from 2. After processing all numbers up to sqrt(n), the unmarked numbers that remain are the primes.</p>
+            <p>The algorithm begins by assuming all numbers from 2 to n are prime. It then takes the smallest unmarked number (2), and marks all its multiples (4, 6, 8, ...) as composite. Next it moves to the next unmarked number (3) and marks its multiples (9, 12, 15, ...). This continues until we have processed all numbers up to sqrt(n).</p>
+            <p>The time complexity is O(n log log n), which is nearly linear and far more efficient than testing each number individually. The sieve is one of the most practical algorithms in number theory and serves as a building block for many advanced techniques like segmented sieves and prime factorization.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Start from 2</strong><br>2 is the smallest and only even prime. All even numbers greater than 2 are composite.</div>
+                <div class="key-point"><strong>Mark Multiples</strong><br>For each prime p, start marking from p*p (smaller multiples are already marked by smaller primes).</div>
+                <div class="key-point"><strong>Stop at sqrt(n)</strong><br>If a number has no factor up to its square root, it is prime. So we only sieve up to sqrt(n).</div>
+                <div class="key-point"><strong>Nearly Linear</strong><br>O(n log log n) is effectively linear for practical inputs, making it extremely fast.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function sieveOfEratosthenes(n) {
+    var isPrime = new Array(n + 1).fill(true);
+    isPrime[0] = isPrime[1] = false;
+
+    for (var p = 2; p * p <= n; p++) {
+        if (isPrime[p]) {
+            // Mark multiples of p starting from p*p
+            for (var m = p * p; m <= n; m += p) {
+                isPrime[m] = false;
+            }
+        }
+    }
+
+    var primes = [];
+    for (var i = 2; i <= n; i++) {
+        if (isPrime[i]) primes.push(i);
+    }
+    return primes;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>204</td><td><a href="https://leetcode.com/problems/count-primes/" target="_blank">Count Primes</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1390</td><td><a href="https://leetcode.com/problems/four-divisors/" target="_blank">Four Divisors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>263</td><td><a href="https://leetcode.com/problems/ugly-number/" target="_blank">Ugly Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>507</td><td><a href="https://leetcode.com/problems/perfect-number/" target="_blank">Perfect Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2523</td><td><a href="https://leetcode.com/problems/closest-prime-numbers-in-range/" target="_blank">Closest Prime Numbers in Range</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>952</td><td><a href="https://leetcode.com/problems/largest-component-size-by-common-factor/" target="_blank">Largest Component Size by Common Factor</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "sieve-of-eratosthenes", title: "Sieve of Eratosthenes", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Grid visualization: numbers 1-50, marking composites step by step
+        function generateSteps(data) {
+            var steps = [];
+            var N = 50;
+            var COLS = 10;
+            var rows = Math.ceil(N / COLS);
+
+            var isPrime = [];
+            for (var i = 0; i <= N; i++) isPrime[i] = (i >= 2);
+
+            function buildGrid(highlight, markingPrime) {
+                var grid = [];
+                for (var r = 0; r < rows; r++) {
+                    var row = [];
+                    for (var c = 0; c < COLS; c++) {
+                        var num = r * COLS + c + 1;
+                        if (num > N) {
+                            row.push({ value: '', state: '' });
+                        } else if (num < 2) {
+                            row.push({ value: num, state: 'wall' });
+                        } else if (highlight && highlight[num] === 'marking') {
+                            row.push({ value: num, state: 'visited' });
+                        } else if (highlight && highlight[num] === 'current-prime') {
+                            row.push({ value: num, state: 'current' });
+                        } else if (!isPrime[num]) {
+                            row.push({ value: num, state: 'wall' });
+                        } else {
+                            row.push({ value: num, state: 'start' });
+                        }
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            // Initial state: all numbers 2-50 assumed prime (green)
+            steps.push({ grid: buildGrid(null), explanation: 'Numbers 1-50. Green = assumed prime. Gray = not prime (0 and 1). We start sieving from 2.' });
+
+            // Sieve
+            for (var p = 2; p * p <= N; p++) {
+                if (!isPrime[p]) continue;
+
+                // Highlight current prime
+                var h1 = {};
+                h1[p] = 'current-prime';
+                steps.push({ grid: buildGrid(h1), explanation: 'Prime ' + p + ' found. Now marking all multiples of ' + p + ' as composite.' });
+
+                // Mark multiples
+                var h2 = {};
+                h2[p] = 'current-prime';
+                for (var m = p * p; m <= N; m += p) {
+                    if (isPrime[m]) {
+                        h2[m] = 'marking';
+                    }
+                }
+                steps.push({ grid: buildGrid(h2), explanation: 'Marking multiples of ' + p + ' starting from ' + (p * p) + ' (blue = being marked).' });
+
+                // Actually mark them
+                for (var m2 = p * p; m2 <= N; m2 += p) {
+                    isPrime[m2] = false;
+                }
+
+                steps.push({ grid: buildGrid(null), explanation: 'Multiples of ' + p + ' marked as composite. Moving to next unmarked number.' });
+            }
+
+            // Final result
+            var primeCount = 0;
+            for (var f = 2; f <= N; f++) { if (isPrime[f]) primeCount++; }
+            steps.push({ grid: buildGrid(null), explanation: 'Sieve complete! Found ' + primeCount + ' primes up to ' + N + '. Green = prime, gray = composite.' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [50], stepGenerator: generateSteps, type: 'grid' });
+    })();
+    </script>
+</body>
+</html>

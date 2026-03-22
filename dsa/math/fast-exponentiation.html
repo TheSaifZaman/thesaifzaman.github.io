@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Exponentiation — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Fast Exponentiation</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(log n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Fast exponentiation (also called binary exponentiation or exponentiation by squaring) computes a^n in O(log n) multiplications instead of the naive O(n) approach. The idea is based on the binary representation of the exponent: we repeatedly square the base and multiply it into the result whenever the corresponding bit of the exponent is set.</p>
+            <p>For example, to compute 3^13: since 13 = 1101 in binary, we compute 3^1 * 3^4 * 3^8 = 3 * 81 * 6561 = 1594323. At each step we square the base (3 -> 9 -> 81 -> 6561) and multiply into the result when the current bit is 1.</p>
+            <p>This technique is essential in modular arithmetic (computing a^n mod m), which appears frequently in competitive programming, cryptography (RSA), and computing large Fibonacci numbers via matrix exponentiation. Combined with modular arithmetic, it handles astronomically large exponents efficiently.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Binary Decomposition</strong><br>Express the exponent in binary and process each bit from least to most significant.</div>
+                <div class="key-point"><strong>Square and Multiply</strong><br>Square the base at each step. If the current bit is 1, multiply the result by the current base.</div>
+                <div class="key-point"><strong>Modular Version</strong><br>Take mod at each multiplication to prevent overflow: (a * b) mod m = ((a mod m) * (b mod m)) mod m.</div>
+                <div class="key-point"><strong>O(log n) Operations</strong><br>Only log2(n) multiplications needed, making it feasible for exponents up to 10^18.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Binary exponentiation: compute base^exp
+function fastPow(base, exp) {
+    var result = 1;
+    while (exp > 0) {
+        if (exp % 2 === 1) {
+            result *= base;
+        }
+        base *= base;
+        exp = Math.floor(exp / 2);
+    }
+    return result;
+}
+
+// Modular exponentiation: compute base^exp mod m
+function modPow(base, exp, mod) {
+    var result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 === 1) {
+            result = (result * base) % mod;
+        }
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>50</td><td><a href="https://leetcode.com/problems/powx-n/" target="_blank">Pow(x, n)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>372</td><td><a href="https://leetcode.com/problems/super-pow/" target="_blank">Super Pow</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>326</td><td><a href="https://leetcode.com/problems/power-of-three/" target="_blank">Power of Three</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1922</td><td><a href="https://leetcode.com/problems/count-good-numbers/" target="_blank">Count Good Numbers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1994</td><td><a href="https://leetcode.com/problems/the-number-of-good-subsets/" target="_blank">The Number of Good Subsets</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "fast-exponentiation", title: "Fast Exponentiation", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize binary exponentiation steps as bars
+        function generateSteps(data) {
+            var steps = [];
+            var base = Math.round(data[0]) || 2;
+            var exp = Math.min(Math.round(data[1]) || 13, 20);
+
+            var bits = [];
+            var tmp = exp;
+            while (tmp > 0) {
+                bits.push(tmp % 2);
+                tmp = Math.floor(tmp / 2);
+            }
+            var binStr = bits.slice().reverse().join('');
+
+            steps.push({ array: [base, exp], highlights: { 0: 'active', 1: 'comparing' }, explanation: 'Computing ' + base + '^' + exp + '. Binary of ' + exp + ' = ' + binStr + '. We process bits right to left.' });
+
+            var result = 1;
+            var curBase = base;
+            var e = exp;
+            var stepNum = 0;
+
+            while (e > 0) {
+                var bit = e % 2;
+                var arr = [result, curBase, e];
+                var h = { 0: 'sorted', 1: 'active', 2: 'comparing' };
+
+                if (bit === 1) {
+                    result *= curBase;
+                    steps.push({ array: arr, highlights: h, explanation: 'Step ' + (stepNum + 1) + ': Bit is 1. result = ' + (result / curBase) + ' * ' + curBase + ' = ' + result + '. Then square base.' });
+                } else {
+                    steps.push({ array: arr, highlights: h, explanation: 'Step ' + (stepNum + 1) + ': Bit is 0. result stays ' + result + '. Square base.' });
+                }
+
+                curBase *= curBase;
+                e = Math.floor(e / 2);
+                stepNum++;
+            }
+
+            steps.push({ array: [result], highlights: { 0: 'sorted' }, explanation: base + '^' + exp + ' = ' + result + '. Computed in just ' + stepNum + ' steps instead of ' + exp + '!' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [2, 13], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

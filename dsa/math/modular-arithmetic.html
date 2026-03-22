@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular Arithmetic — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Modular Arithmetic</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(log m) for inverse</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Modular arithmetic is the arithmetic of remainders. When we say a ≡ b (mod m), we mean that a and b have the same remainder when divided by m. This is fundamental in competitive programming because results often need to be computed modulo a large prime (typically 10^9 + 7) to prevent integer overflow.</p>
+            <p>The key properties are: (a + b) mod m = ((a mod m) + (b mod m)) mod m, and similarly for multiplication. However, division is different — we cannot simply divide remainders. Instead, we multiply by the modular inverse: a/b mod m = a * b^(-1) mod m, where b^(-1) is computed using Fermat's little theorem (when m is prime): b^(-1) = b^(m-2) mod m.</p>
+            <p>Common applications include: counting problems with large answers, hashing, cryptography, and combinatorics (computing nCr mod p). Understanding modular arithmetic is essential for handling any problem where the answer could exceed standard integer limits.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Addition/Subtraction</strong><br>(a ± b) mod m = ((a mod m) ± (b mod m) + m) mod m. Add m before mod to handle negatives.</div>
+                <div class="key-point"><strong>Multiplication</strong><br>(a * b) mod m = ((a mod m) * (b mod m)) mod m. Safe to mod at every step.</div>
+                <div class="key-point"><strong>Modular Inverse</strong><br>b^(-1) mod p = b^(p-2) mod p (Fermat's theorem, p must be prime).</div>
+                <div class="key-point"><strong>10^9 + 7</strong><br>The most common modulus in competitive programming. It is prime and fits in 32-bit integers.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>var MOD = 1000000007;
+
+function modAdd(a, b) {
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+function modMul(a, b) {
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+// Modular exponentiation
+function modPow(base, exp, mod) {
+    var result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 === 1) result = (result * base) % mod;
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+// Modular inverse (mod must be prime)
+function modInverse(a, mod) {
+    return modPow(a, mod - 2, mod);
+}
+
+// Modular division: a / b mod p
+function modDiv(a, b, mod) {
+    return (a % mod) * modInverse(b, mod) % mod;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>50</td><td><a href="https://leetcode.com/problems/powx-n/" target="_blank">Pow(x, n)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>372</td><td><a href="https://leetcode.com/problems/super-pow/" target="_blank">Super Pow</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1922</td><td><a href="https://leetcode.com/problems/count-good-numbers/" target="_blank">Count Good Numbers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1281</td><td><a href="https://leetcode.com/problems/subtract-the-product-and-sum-of-digits-of-an-integer/" target="_blank">Subtract the Product and Sum of Digits</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2550</td><td><a href="https://leetcode.com/problems/count-collisions-of-monkeys-on-a-polygon/" target="_blank">Count Collisions of Monkeys on a Polygon</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1916</td><td><a href="https://leetcode.com/problems/count-ways-to-build-rooms-in-an-ant-colony/" target="_blank">Count Ways to Build Rooms in an Ant Colony</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "modular-arithmetic", title: "Modular Arithmetic", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize modular operations: show a mod m for a sequence of numbers
+        function generateSteps(data) {
+            var steps = [];
+            var m = Math.max(Math.round(data[0]) || 7, 2);
+            var count = Math.min(Math.max(Math.round(data[1]) || 15, 5), 25);
+
+            steps.push({ array: [m], highlights: { 0: 'active' }, explanation: 'Modular arithmetic with m = ' + m + '. We will compute n mod ' + m + ' for n = 0 to ' + (count - 1) + '.' });
+
+            var arr = [];
+            for (var i = 0; i < count; i++) {
+                var val = i % m;
+                arr.push(val);
+                var h = {};
+                // Color by remainder group
+                for (var j = 0; j <= i; j++) {
+                    if (arr[j] === 0) h[j] = 'sorted';
+                    else if (arr[j] === val && j === i) h[j] = 'comparing';
+                    else h[j] = '';
+                }
+                h[i] = 'comparing';
+                steps.push({ array: arr.slice(), highlights: h, explanation: i + ' mod ' + m + ' = ' + val + '. Values cycle with period ' + m + '.' });
+            }
+
+            // Show the cyclic pattern
+            var hFinal = {};
+            for (var k = 0; k < arr.length; k++) {
+                if (arr[k] === 0) hFinal[k] = 'sorted';
+                else hFinal[k] = 'active';
+            }
+            steps.push({ array: arr.slice(), highlights: hFinal, explanation: 'Pattern complete! Values repeat every ' + m + ' numbers. Green bars mark multiples of ' + m + ' (remainder = 0).' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [7, 15], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

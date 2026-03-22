@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Factorization — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Prime Factorization</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(sqrt(n))</span>
+            <span class="complexity-tag">Space: O(log n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Prime factorization decomposes a number into its prime factors. By the fundamental theorem of arithmetic, every integer greater than 1 has a unique prime factorization. For example, 360 = 2^3 * 3^2 * 5. Finding this decomposition is a core operation in number theory.</p>
+            <p>The simplest approach is trial division: try dividing by 2, then by odd numbers from 3 up to sqrt(n). Each time a divisor d divides n, extract all copies of d (divide n by d repeatedly) and record d as a factor. If n > 1 after processing all divisors up to sqrt(n), then n itself is a prime factor.</p>
+            <p>For factorizing many numbers, precompute a smallest prime factor (SPF) array using a modified Sieve of Eratosthenes. Then any number can be factorized in O(log n) by repeatedly dividing by its SPF. This is essential for problems requiring bulk factorization.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Trial Division</strong><br>Test divisors from 2 to sqrt(n). If d divides n, extract all copies of d.</div>
+                <div class="key-point"><strong>Uniqueness</strong><br>Every integer > 1 has exactly one prime factorization (fundamental theorem of arithmetic).</div>
+                <div class="key-point"><strong>SPF Sieve</strong><br>Precompute smallest prime factor for each number. Factorize any n in O(log n) lookups.</div>
+                <div class="key-point"><strong>Applications</strong><br>Divisor counting, Euler's totient, GCD/LCM, and multiplicative functions all rely on factorization.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Trial division — O(sqrt(n))
+function primeFactors(n) {
+    var factors = [];
+    // Extract all 2s
+    while (n % 2 === 0) {
+        factors.push(2);
+        n = Math.floor(n / 2);
+    }
+    // Try odd divisors from 3 to sqrt(n)
+    for (var d = 3; d * d <= n; d += 2) {
+        while (n % d === 0) {
+            factors.push(d);
+            n = Math.floor(n / d);
+        }
+    }
+    // If n is still > 1, it's a prime factor
+    if (n > 1) factors.push(n);
+    return factors;
+}
+
+// SPF Sieve for bulk factorization
+function buildSPF(limit) {
+    var spf = [];
+    for (var i = 0; i <= limit; i++) spf[i] = i;
+    for (var p = 2; p * p <= limit; p++) {
+        if (spf[p] === p) { // p is prime
+            for (var m = p * p; m <= limit; m += p) {
+                if (spf[m] === m) spf[m] = p;
+            }
+        }
+    }
+    return spf;
+}
+
+function factorizeWithSPF(n, spf) {
+    var factors = [];
+    while (n > 1) {
+        factors.push(spf[n]);
+        n = Math.floor(n / spf[n]);
+    }
+    return factors;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>263</td><td><a href="https://leetcode.com/problems/ugly-number/" target="_blank">Ugly Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>264</td><td><a href="https://leetcode.com/problems/ugly-number-ii/" target="_blank">Ugly Number II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>313</td><td><a href="https://leetcode.com/problems/super-ugly-number/" target="_blank">Super Ugly Number</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1390</td><td><a href="https://leetcode.com/problems/four-divisors/" target="_blank">Four Divisors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>952</td><td><a href="https://leetcode.com/problems/largest-component-size-by-common-factor/" target="_blank">Largest Component Size by Common Factor</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "prime-factorization", title: "Prime Factorization", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize factor tree using tree renderer
+        function generateSteps(data) {
+            var steps = [];
+            var N = Math.max(Math.round(data[0]) || 360, 4);
+            if (N > 1000) N = 360;
+
+            steps.push({
+                type: 'bars',
+                array: [N],
+                highlights: { 0: 'active' },
+                explanation: 'Prime factorization of ' + N + '. We divide by smallest prime factors step by step.'
+            });
+
+            var factors = [];
+            var remaining = N;
+            var arr = [N];
+
+            // Trial division
+            var d = 2;
+            while (d * d <= remaining) {
+                if (remaining % d === 0) {
+                    factors.push(d);
+                    remaining = Math.floor(remaining / d);
+                    arr.push(d);
+
+                    var h = {};
+                    for (var i = 0; i < arr.length - 1; i++) h[i] = (i === 0 ? 'active' : 'sorted');
+                    h[arr.length - 1] = 'comparing';
+
+                    steps.push({
+                        type: 'bars',
+                        array: arr.slice(),
+                        highlights: h,
+                        explanation: N + ' / ... = ' + (remaining * d) + '. Divide by ' + d + ': ' + (remaining * d) + ' / ' + d + ' = ' + remaining + '. Factor found: ' + d + '.'
+                    });
+                } else {
+                    d += (d === 2) ? 1 : 2;
+                }
+            }
+
+            if (remaining > 1) {
+                factors.push(remaining);
+                arr.push(remaining);
+                var h2 = {};
+                h2[0] = 'active';
+                for (var j = 1; j < arr.length; j++) h2[j] = 'sorted';
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h2,
+                    explanation: 'Remaining ' + remaining + ' > 1 and is prime. Add it as the last factor.'
+                });
+            }
+
+            // Show final factorization
+            var factorCounts = {};
+            for (var k = 0; k < factors.length; k++) {
+                factorCounts[factors[k]] = (factorCounts[factors[k]] || 0) + 1;
+            }
+            var parts = [];
+            for (var p in factorCounts) {
+                if (factorCounts.hasOwnProperty(p)) {
+                    parts.push(factorCounts[p] > 1 ? p + '^' + factorCounts[p] : p);
+                }
+            }
+
+            var finalArr = factors.slice();
+            var hFinal = {};
+            for (var f = 0; f < finalArr.length; f++) hFinal[f] = 'sorted';
+
+            steps.push({
+                type: 'bars',
+                array: finalArr,
+                highlights: hFinal,
+                explanation: N + ' = ' + parts.join(' * ') + '. All ' + factors.length + ' prime factors shown as bars.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [360], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>

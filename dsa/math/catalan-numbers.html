@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalan Numbers — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Catalan Numbers</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n) with formula</span>
+            <span class="complexity-tag">Space: O(n) for DP</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Catalan numbers form a sequence of natural numbers that appear in many counting problems: C(0)=1, C(1)=1, C(2)=2, C(3)=5, C(4)=14, C(5)=42, ... The n-th Catalan number can be computed using the formula C(n) = (2n)! / ((n+1)! * n!), or equivalently C(n) = C(2n, n) / (n+1) where C(2n, n) is the binomial coefficient.</p>
+            <p>Catalan numbers count an astonishing variety of combinatorial structures: the number of valid parenthesizations with n pairs, the number of distinct binary search trees with n nodes, the number of paths in a grid that don't cross the diagonal, the number of triangulations of a polygon, and many more.</p>
+            <p>The recurrence relation is C(n) = sum of C(i)*C(n-1-i) for i=0 to n-1, which can be computed in O(n^2) with DP. The closed-form formula gives O(n) computation. For modular arithmetic, precompute factorials and use modular inverses.</p>
+            <div class="key-points">
+                <div class="key-point"><strong>Recurrence</strong><br>C(n) = C(0)*C(n-1) + C(1)*C(n-2) + ... + C(n-1)*C(0). Convolution-like structure.</div>
+                <div class="key-point"><strong>Closed Form</strong><br>C(n) = (2n choose n) / (n+1). Efficient O(n) computation.</div>
+                <div class="key-point"><strong>Valid Parentheses</strong><br>C(n) = number of ways to arrange n pairs of parentheses validly.</div>
+                <div class="key-point"><strong>BST Count</strong><br>C(n) = number of structurally unique BSTs with n nodes (LeetCode #96).</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// DP approach — O(n^2)
+function catalanDP(n) {
+    var dp = new Array(n + 1).fill(0);
+    dp[0] = dp[1] = 1;
+    for (var i = 2; i <= n; i++) {
+        for (var j = 0; j < i; j++) {
+            dp[i] += dp[j] * dp[i - 1 - j];
+        }
+    }
+    return dp[n];
+}
+
+// Formula approach — O(n)
+function catalanFormula(n) {
+    var result = 1;
+    for (var i = 0; i < n; i++) {
+        result = result * (2 * n - i) / (i + 1);
+    }
+    return Math.round(result / (n + 1));
+}
+
+// Modular Catalan (for competitive programming)
+function catalanMod(n, MOD) {
+    // Precompute factorials and inverse factorials
+    var fact = [1];
+    for (var i = 1; i <= 2 * n; i++) {
+        fact[i] = (fact[i-1] * i) % MOD;
+    }
+    function modPow(b, e, m) {
+        var r = 1; b %= m;
+        while (e > 0) {
+            if (e % 2 === 1) r = (r * b) % m;
+            e = Math.floor(e / 2);
+            b = (b * b) % m;
+        }
+        return r;
+    }
+    var inv = modPow(fact[n + 1], MOD - 2, MOD);
+    var invN = modPow(fact[n], MOD - 2, MOD);
+    return (fact[2 * n] * inv % MOD) * invN % MOD;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>96</td><td><a href="https://leetcode.com/problems/unique-binary-search-trees/" target="_blank">Unique Binary Search Trees</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>22</td><td><a href="https://leetcode.com/problems/generate-parentheses/" target="_blank">Generate Parentheses</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>95</td><td><a href="https://leetcode.com/problems/unique-binary-search-trees-ii/" target="_blank">Unique Binary Search Trees II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1259</td><td><a href="https://leetcode.com/problems/handshakes-that-dont-cross/" target="_blank">Handshakes That Don't Cross</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1569</td><td><a href="https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/" target="_blank">Number of Ways to Reorder Array to Get Same BST</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "catalan-numbers", title: "Catalan Numbers", category: "Math & Number Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize Catalan sequence building with bars
+        function generateSteps(data) {
+            var steps = [];
+            var N = Math.min(Math.max(Math.round(data[0]) || 10, 3), 15);
+
+            var dp = [1, 1];
+            var arr = [1, 1];
+
+            steps.push({ array: arr.slice(), highlights: { 0: 'sorted', 1: 'sorted' }, explanation: 'Catalan numbers: C(0) = 1, C(1) = 1. We build the sequence using the recurrence.' });
+
+            for (var i = 2; i <= N; i++) {
+                dp[i] = 0;
+
+                // Show the convolution
+                var pairs = [];
+                for (var j = 0; j < i; j++) {
+                    dp[i] += dp[j] * dp[i - 1 - j];
+                    pairs.push('C(' + j + ')*C(' + (i-1-j) + ')=' + (dp[j] * dp[i-1-j]));
+                }
+
+                arr.push(dp[i]);
+                var h = {};
+                for (var k = 0; k < arr.length - 1; k++) h[k] = 'sorted';
+                h[arr.length - 1] = 'comparing';
+
+                var pairStr = pairs.length <= 4 ? pairs.join(' + ') : pairs.slice(0, 3).join(' + ') + ' + ...';
+                steps.push({ array: arr.slice(), highlights: h, explanation: 'C(' + i + ') = ' + pairStr + ' = ' + dp[i] + '.' });
+            }
+
+            var hFinal = {};
+            for (var f = 0; f < arr.length; f++) hFinal[f] = 'sorted';
+            steps.push({ array: arr.slice(), highlights: hFinal, explanation: 'Catalan sequence up to C(' + N + '): [' + arr.join(', ') + ']. Note the rapid exponential growth!' });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [10], stepGenerator: generateSteps, type: 'bars' });
+    })();
+    </script>
+</body>
+</html>
