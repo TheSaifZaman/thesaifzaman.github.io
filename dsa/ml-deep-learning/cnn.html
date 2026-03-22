@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNN — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Convolutional Neural Network (CNN)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Conv: O(n&middot;k&sup2;&middot;c)</span>
+            <span class="complexity-tag">Params: O(k&sup2;&middot;c&middot;f)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Convolutional Neural Network</strong> (CNN) is designed to process grid-structured data like images. Instead of fully connecting every neuron, CNNs use small learnable filters (kernels) that slide across the input, computing dot products at each position to produce feature maps.</p>
+            <p>Key operations include: <em>Convolution</em> (filter sliding over input), <em>Pooling</em> (downsampling to reduce spatial dimensions), and <em>Fully Connected layers</em> at the end for classification. CNNs exploit three properties: local connectivity, parameter sharing, and translation equivariance.</p>
+            <p>A typical architecture stacks multiple conv + pool layers to learn hierarchical features: edges in early layers, textures in middle layers, and objects in later layers.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Parameter Sharing:</strong> Same filter applied everywhere &mdash; far fewer parameters than MLP.</li>
+                    <li><strong>Translation Equivariance:</strong> Detecting a feature is independent of its position.</li>
+                    <li><strong>Hierarchical Features:</strong> Deep layers learn increasingly abstract representations.</li>
+                    <li><strong>Pooling:</strong> Provides spatial invariance and reduces computational cost.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function conv2d(input, kernel, stride) {
+    var inH = input.length, inW = input[0].length;
+    var kH = kernel.length, kW = kernel[0].length;
+    var outH = Math.floor((inH - kH) / stride) + 1;
+    var outW = Math.floor((inW - kW) / stride) + 1;
+    var output = [];
+
+    for (var i = 0; i < outH; i++) {
+        output[i] = [];
+        for (var j = 0; j < outW; j++) {
+            var sum = 0;
+            for (var ki = 0; ki < kH; ki++) {
+                for (var kj = 0; kj < kW; kj++) {
+                    sum += input[i * stride + ki][j * stride + kj] * kernel[ki][kj];
+                }
+            }
+            output[i][j] = Math.max(0, sum); // ReLU
+        }
+    }
+    return output;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/digit-recognizer" target="_blank">MNIST Digit Recognition (Kaggle) &mdash; CNN</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "cnn", title: "CNN", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // 6x6 input "image"
+        var input = [
+            [1, 0, 1, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0],
+            [1, 0, 0, 1, 0, 1],
+            [0, 1, 1, 0, 1, 0]
+        ];
+
+        // 3x3 edge detection kernel
+        var kernel = [[-1, -1, -1], [0, 0, 0], [1, 1, 1]];
+
+        // Step 0: show input
+        var grid0 = input.map(function(row) {
+            return row.map(function(v) { return { value: v, state: '' }; });
+        });
+        steps.push({ type: 'grid', grid: grid0, explanation: 'Input 6x6 image (binary values). A 3x3 convolution filter will slide across this grid.' });
+
+        // Slide the filter across the input
+        var outH = 4, outW = 4;
+        var output = [];
+        for (var i = 0; i < outH; i++) {
+            output[i] = [];
+            for (var j = 0; j < outW; j++) {
+                var sum = 0;
+                for (var ki = 0; ki < 3; ki++) {
+                    for (var kj = 0; kj < 3; kj++) {
+                        sum += input[i + ki][j + kj] * kernel[ki][kj];
+                    }
+                }
+                output[i][j] = sum;
+            }
+        }
+
+        // Show a few filter positions
+        var positions = [[0,0],[0,2],[1,1],[2,2],[3,3]];
+        positions.forEach(function(pos, step) {
+            var r = pos[0], c = pos[1];
+            var grid = input.map(function(row, ri) {
+                return row.map(function(v, ci) {
+                    var inFilter = (ri >= r && ri < r + 3 && ci >= c && ci < c + 3);
+                    return { value: v, state: inFilter ? 'active' : '' };
+                });
+            });
+            var convVal = output[r][c];
+            steps.push({ type: 'grid', grid: grid, explanation: 'Filter at position (' + r + ',' + c + '): sliding 3x3 kernel over highlighted region. Dot product = ' + convVal + '. ReLU output = ' + Math.max(0, convVal) + '.' });
+        });
+
+        // Show output feature map
+        var outGrid = output.map(function(row) {
+            return row.map(function(v) { return { value: Math.max(0, v), state: v > 0 ? 'active' : '' }; });
+        });
+        steps.push({ type: 'grid', grid: outGrid, explanation: 'Output 4x4 feature map after convolution + ReLU. Non-zero values indicate detected edge patterns.' });
+
+        // Pooling
+        var pooled = [];
+        for (var pi = 0; pi < 2; pi++) {
+            pooled[pi] = [];
+            for (var pj = 0; pj < 2; pj++) {
+                var maxVal = Math.max(
+                    Math.max(0, output[pi*2][pj*2]),
+                    Math.max(0, output[pi*2][pj*2+1]),
+                    Math.max(0, output[pi*2+1][pj*2]),
+                    Math.max(0, output[pi*2+1][pj*2+1])
+                );
+                pooled[pi][pj] = maxVal;
+            }
+        }
+        var poolGrid = pooled.map(function(row) {
+            return row.map(function(v) { return { value: v, state: 'visited' }; });
+        });
+        steps.push({ type: 'grid', grid: poolGrid, explanation: '2x2 Max Pooling: Reduces spatial dimensions by half. Each cell = max of its 2x2 region. Result: 2x2 feature map.' });
+
+        steps.push({ type: 'grid', grid: poolGrid, explanation: 'CNN pipeline complete: Input -> Convolution -> ReLU -> Pooling. Stack multiple such layers for hierarchical feature extraction.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

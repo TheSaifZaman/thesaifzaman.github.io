@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResNet Skip Connections — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>ResNet &amp; Skip Connections</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Depth: 50-152 layers</span>
+            <span class="complexity-tag">Key: identity shortcuts</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>ResNet</strong> (Residual Network) introduced skip connections (shortcut connections) that allow the input to a block of layers to bypass those layers and be added directly to the output. Instead of learning H(x) directly, the network learns the residual F(x) = H(x) - x, making the output H(x) = F(x) + x.</p>
+            <p>This seemingly simple change solved the degradation problem: very deep networks (50+ layers) were actually performing worse than shallower ones during training. Skip connections provide gradient highways that allow gradients to flow directly backward through the network, enabling training of networks with hundreds of layers.</p>
+            <p>If the optimal transformation is close to identity (which is common in deep networks), it is much easier for the network to learn F(x) = 0 (residual = zero) than to learn an identity mapping from scratch.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Residual Learning:</strong> Learn F(x) = H(x) - x instead of H(x) directly.</li>
+                    <li><strong>Gradient Highway:</strong> Skip connections allow unimpeded gradient flow during backprop.</li>
+                    <li><strong>Very Deep Networks:</strong> Enables training of 100+ layer networks without degradation.</li>
+                    <li><strong>Identity Shortcut:</strong> If the block learns nothing useful, it defaults to identity (no harm done).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function ResidualBlock(channels) {
+    var conv1 = Conv2d(channels, channels, 3);
+    var bn1 = BatchNorm(channels);
+    var conv2 = Conv2d(channels, channels, 3);
+    var bn2 = BatchNorm(channels);
+
+    this.forward = function(x) {
+        var identity = x;                    // Save input
+        var out = relu(bn1.forward(conv1.forward(x)));
+        out = bn2.forward(conv2.forward(out));
+        out = add(out, identity);            // Skip connection!
+        return relu(out);                    // H(x) = F(x) + x
+    };
+}
+
+function ResNet(numBlocks) {
+    var blocks = [];
+    for (var i = 0; i < numBlocks; i++) {
+        blocks.push(new ResidualBlock(64));
+    }
+    this.forward = function(x) {
+        for (var i = 0; i < blocks.length; i++) {
+            x = blocks[i].forward(x);
+        }
+        return x;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/cifar-10" target="_blank">CIFAR-10 Classification (Kaggle) &mdash; ResNet</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "resnet-skip-connections", title: "ResNet & Skip Connections", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Show network with skip connections
+        // Layer structure: Input -> Conv1 -> Conv2 (skip from input) -> Conv3 -> Conv4 (skip from Conv2) -> Output
+        var l0 = { nodes: [{ label: 'Input', state: '' }] };
+        var l1 = { nodes: [{ label: 'Conv1', state: '' }, { label: 'BN1', state: '' }] };
+        var l2 = { nodes: [{ label: 'Conv2', state: '' }, { label: 'BN2', state: '' }] };
+        var l3 = { nodes: [{ label: '+', state: '' }] };  // addition node
+        var l4 = { nodes: [{ label: 'Output', state: '' }] };
+
+        steps.push({ type: 'network', layers: [l0, l1, l2, l3, l4], explanation: 'Residual Block: Input -> Conv1 -> BN -> ReLU -> Conv2 -> BN -> (+) -> ReLU. The (+) node adds the original input (skip connection) to the block output.' });
+
+        // Forward: input enters
+        var l0a = { nodes: [{ label: 'Input', state: 'active' }] };
+        steps.push({ type: 'network', layers: [l0a, l1, l2, l3, l4], explanation: 'Forward pass: Input x enters the residual block. It takes two paths: through the conv layers AND directly to the addition node (skip path).' });
+
+        // Through conv layers
+        var l1a = { nodes: [{ label: 'Conv1', state: 'active' }, { label: 'BN1', state: 'active' }] };
+        steps.push({ type: 'network', layers: [{ nodes: [{ label: 'Input', state: 'visited' }] }, l1a, l2, l3, l4], explanation: 'Main path: x passes through Conv1 + BatchNorm + ReLU. The network is learning the residual function F(x).' });
+
+        var l2a = { nodes: [{ label: 'Conv2', state: 'active' }, { label: 'BN2', state: 'active' }] };
+        steps.push({ type: 'network', layers: [{ nodes: [{ label: 'Input', state: 'visited' }] }, { nodes: [{ label: 'Conv1', state: 'visited' }, { label: 'BN1', state: 'visited' }] }, l2a, l3, l4], explanation: 'Main path continues: Conv2 + BatchNorm produces F(x). This is the "residual" that will be added to the input.' });
+
+        // Skip connection + addition
+        var l3a = { nodes: [{ label: '+', state: 'active' }] };
+        steps.push({ type: 'network', layers: [{ nodes: [{ label: 'Input', state: 'visited' }] }, { nodes: [{ label: 'Conv1', state: 'visited' }, { label: 'BN1', state: 'visited' }] }, { nodes: [{ label: 'Conv2', state: 'visited' }, { label: 'BN2', state: 'visited' }] }, l3a, l4], explanation: 'Addition: H(x) = F(x) + x. Skip connection adds original input directly to block output. This is the key innovation of ResNet!' });
+
+        // Output
+        var l4a = { nodes: [{ label: 'Output', state: 'active' }] };
+        steps.push({ type: 'network', layers: [{ nodes: [{ label: 'Input', state: 'visited' }] }, { nodes: [{ label: 'Conv1', state: 'visited' }, { label: 'BN1', state: 'visited' }] }, { nodes: [{ label: 'Conv2', state: 'visited' }, { label: 'BN2', state: 'visited' }] }, { nodes: [{ label: '+', state: 'visited' }] }, l4a], explanation: 'Output = ReLU(F(x) + x). If F(x) learns nothing useful (all zeros), the block simply passes through the input unchanged. No degradation!' });
+
+        // Gradient flow
+        steps.push({ type: 'network', layers: [
+            { nodes: [{ label: 'Input', state: 'active' }] },
+            { nodes: [{ label: 'Conv1', state: '' }, { label: 'BN1', state: '' }] },
+            { nodes: [{ label: 'Conv2', state: '' }, { label: 'BN2', state: '' }] },
+            { nodes: [{ label: '+', state: 'active' }] },
+            { nodes: [{ label: 'Output', state: 'active' }] }
+        ], explanation: 'Gradient highway: During backprop, gradients flow directly from output to input via the skip connection (derivative of addition = 1). This prevents vanishing gradients in 100+ layer networks.' });
+
+        // Final
+        steps.push({ type: 'network', layers: [
+            { nodes: [{ label: 'Input', state: 'visited' }] },
+            { nodes: [{ label: 'Conv1', state: 'visited' }, { label: 'BN1', state: 'visited' }] },
+            { nodes: [{ label: 'Conv2', state: 'visited' }, { label: 'BN2', state: 'visited' }] },
+            { nodes: [{ label: '+', state: 'visited' }] },
+            { nodes: [{ label: 'Output', state: 'visited' }] }
+        ], explanation: 'ResNet complete. Skip connections enabled training of 152-layer networks that won ImageNet 2015. The idea is now ubiquitous in modern deep learning architectures.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

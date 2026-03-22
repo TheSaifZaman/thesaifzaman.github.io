@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Layer Perceptron — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Multi-Layer Perceptron (MLP)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Forward: O(n&middot;h)</span>
+            <span class="complexity-tag">Backprop: O(n&middot;h)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Multi-Layer Perceptron</strong> (MLP) is the foundational feedforward neural network. It consists of an input layer, one or more hidden layers, and an output layer. Each neuron computes a weighted sum of its inputs, adds a bias, and applies a non-linear activation function.</p>
+            <p>Information flows forward from input to output (forward pass). During training, the error is propagated backward through the network (backpropagation), and weights are updated using gradient descent to minimize the loss function.</p>
+            <p>MLPs are universal function approximators: given enough neurons in a single hidden layer, they can approximate any continuous function to arbitrary precision (Universal Approximation Theorem).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Feedforward:</strong> No cycles; signal flows strictly from input to output.</li>
+                    <li><strong>Fully Connected:</strong> Every neuron connects to all neurons in the next layer.</li>
+                    <li><strong>Activation Functions:</strong> ReLU, sigmoid, tanh introduce non-linearity.</li>
+                    <li><strong>Universal Approximator:</strong> Can learn any continuous function with sufficient capacity.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function MLP(layerSizes) {
+    var weights = [], biases = [];
+    for (var i = 0; i < layerSizes.length - 1; i++) {
+        weights.push(randomMatrix(layerSizes[i], layerSizes[i+1]));
+        biases.push(randomVector(layerSizes[i+1]));
+    }
+
+    function relu(x) { return Math.max(0, x); }
+
+    this.forward = function(input) {
+        var activation = input;
+        for (var i = 0; i < weights.length; i++) {
+            var z = matVecMul(weights[i], activation);
+            for (var j = 0; j < z.length; j++) z[j] += biases[i][j];
+            activation = (i < weights.length - 1)
+                ? z.map(relu)           // Hidden: ReLU
+                : z.map(sigmoid);       // Output: sigmoid
+        }
+        return activation;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://playground.tensorflow.org/" target="_blank">TensorFlow Playground &mdash; Interactive MLP</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "mlp", title: "Multi-Layer Perceptron", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var layers = [
+            { nodes: [{label:'x1',state:''},{label:'x2',state:''},{label:'x3',state:''}] },
+            { nodes: [{label:'h1',state:''},{label:'h2',state:''},{label:'h3',state:''},{label:'h4',state:''}] },
+            { nodes: [{label:'h5',state:''},{label:'h6',state:''},{label:'h7',state:''}] },
+            { nodes: [{label:'y1',state:''},{label:'y2',state:''}] }
+        ];
+
+        steps.push({ type: 'network', layers: layers, explanation: 'MLP architecture: 3 inputs, hidden layer 1 (4 neurons), hidden layer 2 (3 neurons), 2 outputs. All layers fully connected.' });
+
+        // Forward propagation step by step
+        var l1 = JSON.parse(JSON.stringify(layers));
+        l1[0].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l1, explanation: 'Forward pass: Input values x1, x2, x3 enter the network.' });
+
+        var l2 = JSON.parse(JSON.stringify(layers));
+        l2[0].nodes.forEach(function(n) { n.state = 'visited'; });
+        l2[1].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l2, explanation: 'Hidden layer 1: Each neuron computes z = w*x + b, then applies ReLU activation: a = max(0, z).' });
+
+        var l3 = JSON.parse(JSON.stringify(layers));
+        l3[0].nodes.forEach(function(n) { n.state = 'visited'; });
+        l3[1].nodes.forEach(function(n) { n.state = 'visited'; });
+        l3[2].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l3, explanation: 'Hidden layer 2: Takes activations from layer 1, computes weighted sums and applies ReLU.' });
+
+        var l4 = JSON.parse(JSON.stringify(layers));
+        l4[0].nodes.forEach(function(n) { n.state = 'visited'; });
+        l4[1].nodes.forEach(function(n) { n.state = 'visited'; });
+        l4[2].nodes.forEach(function(n) { n.state = 'visited'; });
+        l4[3].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l4, explanation: 'Output layer: Applies sigmoid/softmax to produce final predictions y1, y2.' });
+
+        // Backpropagation
+        var l5 = JSON.parse(JSON.stringify(layers));
+        l5[3].nodes.forEach(function(n) { n.state = 'active'; });
+        l5[2].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l5, explanation: 'Backpropagation: Compute loss gradient at output, propagate error backward to layer 2.' });
+
+        var l6 = JSON.parse(JSON.stringify(layers));
+        l6[2].nodes.forEach(function(n) { n.state = 'visited'; });
+        l6[1].nodes.forEach(function(n) { n.state = 'active'; });
+        steps.push({ type: 'network', layers: l6, explanation: 'Backpropagation continues: Gradients flow backward through layer 1. Weights updated using gradient descent.' });
+
+        var lFinal = JSON.parse(JSON.stringify(layers));
+        lFinal[0].nodes.forEach(function(n) { n.state = 'visited'; });
+        lFinal[1].nodes.forEach(function(n) { n.state = 'visited'; });
+        lFinal[2].nodes.forEach(function(n) { n.state = 'visited'; });
+        lFinal[3].nodes.forEach(function(n) { n.state = 'visited'; });
+        steps.push({ type: 'network', layers: lFinal, explanation: 'MLP forward + backward pass complete. Repeat for each training batch until convergence.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

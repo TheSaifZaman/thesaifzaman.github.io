@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Normalization — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Batch Normalization</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Per layer: O(n&middot;d)</span>
+            <span class="complexity-tag">Params: 2d per layer</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Batch Normalization</strong> (BatchNorm) normalizes the activations of each layer across a mini-batch during training. For each feature, it subtracts the batch mean and divides by the batch standard deviation, then scales and shifts using learnable parameters gamma and beta.</p>
+            <p>The formula is: y = gamma * (x - mu_batch) / sqrt(sigma_batch^2 + epsilon) + beta. During inference, running averages of mean and variance (computed during training) are used instead of batch statistics.</p>
+            <p>BatchNorm addresses <em>internal covariate shift</em>: the distribution of layer inputs changes during training as previous layers update, making optimization harder. By normalizing, each layer receives inputs with stable statistics, enabling higher learning rates and faster convergence.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Stabilizes Training:</strong> Reduces sensitivity to weight initialization and learning rate.</li>
+                    <li><strong>Higher Learning Rates:</strong> Normalized inputs allow more aggressive optimization.</li>
+                    <li><strong>Slight Regularization:</strong> Batch statistics add noise that has a regularizing effect.</li>
+                    <li><strong>Learnable Parameters:</strong> Gamma (scale) and beta (shift) let the network undo normalization if needed.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function BatchNorm(numFeatures) {
+    var gamma = onesVector(numFeatures);
+    var beta = zerosVector(numFeatures);
+    var runningMean = zerosVector(numFeatures);
+    var runningVar = onesVector(numFeatures);
+    var eps = 1e-5, momentum = 0.1;
+
+    this.forward = function(x, training) {
+        if (training) {
+            var mean = batchMean(x);
+            var variance = batchVariance(x, mean);
+            // Update running statistics
+            for (var i = 0; i < numFeatures; i++) {
+                runningMean[i] = (1-momentum)*runningMean[i] + momentum*mean[i];
+                runningVar[i] = (1-momentum)*runningVar[i] + momentum*variance[i];
+            }
+        } else {
+            var mean = runningMean;
+            var variance = runningVar;
+        }
+        // Normalize, scale, shift
+        return x.map(function(sample) {
+            return sample.map(function(val, i) {
+                return gamma[i] * (val - mean[i]) / Math.sqrt(variance[i] + eps) + beta[i];
+            });
+        });
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://arxiv.org/abs/1502.03167" target="_blank">Original BatchNorm Paper &mdash; Ioffe & Szegedy 2015</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "batch-normalization", title: "Batch Normalization", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Show unnormalized distribution
+        var unnorm = [12, 45, 78, 23, 95, 34, 67, 56];
+        steps.push({ type: 'bars', array: unnorm, highlights: {}, explanation: 'Layer activations before normalization: wide range of values (12 to 95). This makes training unstable and requires small learning rates.' });
+
+        // Compute mean
+        var mean = unnorm.reduce(function(a, b) { return a + b; }, 0) / unnorm.length;
+        var centered = unnorm.map(function(v) { return Math.round(v - mean); });
+        var h1 = {};
+        steps.push({ type: 'bars', array: centered, highlights: h1, explanation: 'Step 1 - Subtract batch mean (' + Math.round(mean) + '): Center activations around zero. Range is now roughly symmetric.' });
+
+        // Compute std and normalize
+        var variance = unnorm.reduce(function(s, v) { return s + (v - mean) * (v - mean); }, 0) / unnorm.length;
+        var std = Math.sqrt(variance);
+        var normalized = unnorm.map(function(v) { return Math.round((v - mean) / std * 10); });
+        steps.push({ type: 'bars', array: normalized, highlights: {}, explanation: 'Step 2 - Divide by std (' + Math.round(std) + '): Normalize to unit variance. Values now roughly between -2 and +2 (shown x10 for visibility).' });
+
+        // Scale and shift
+        var gamma = 1.5, beta = 5;
+        var scaled = normalized.map(function(v) { return Math.round(v * gamma + beta * 10); });
+        var h2 = {};
+        for (var i = 0; i < scaled.length; i++) h2[i] = 'sorted';
+        steps.push({ type: 'bars', array: scaled, highlights: h2, explanation: 'Step 3 - Scale (gamma=' + gamma + ') and shift (beta=' + beta + '): Learnable parameters allow network to recover original distribution if needed.' });
+
+        // Comparison: without vs with BN
+        steps.push({ type: 'bars', array: unnorm, highlights: {4: 'comparing'}, explanation: 'Without BatchNorm: Large activation values (like 95) cause exploding gradients. Small values (12) get vanishing gradients. Training is slow and unstable.' });
+
+        var finalNorm = [8, 12, 18, 9, 22, 11, 16, 14];
+        var h3 = {};
+        for (var i = 0; i < finalNorm.length; i++) h3[i] = 'sorted';
+        steps.push({ type: 'bars', array: finalNorm, highlights: h3, explanation: 'With BatchNorm: Activations are well-bounded. Gradients are stable. Can use 10x higher learning rate. Training converges much faster.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [12, 45, 78, 23, 95, 34, 67, 56], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

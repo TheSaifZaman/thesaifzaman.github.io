@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Long Short-Term Memory (LSTM)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;h&sup2;)</span>
+            <span class="complexity-tag">Params: 4&times; vanilla RNN</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>LSTM</strong> (Long Short-Term Memory) solves the vanishing gradient problem by introducing a <em>cell state</em> &mdash; a highway that carries information across time steps with minimal modification. Three gates control information flow:</p>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+                <li><strong>Forget Gate (f):</strong> Decides what to discard from the cell state. f = sigmoid(W_f * [h_{t-1}, x_t] + b_f)</li>
+                <li><strong>Input Gate (i):</strong> Decides what new information to store. i = sigmoid(W_i * [h_{t-1}, x_t] + b_i)</li>
+                <li><strong>Output Gate (o):</strong> Decides what to output. o = sigmoid(W_o * [h_{t-1}, x_t] + b_o)</li>
+            </ul>
+            <p>The cell state update is: C_t = f * C_{t-1} + i * tanh(W_c * [h_{t-1}, x_t] + b_c). The hidden state is: h_t = o * tanh(C_t). This gating mechanism allows gradients to flow unchanged through the cell state, enabling learning of long-range dependencies.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Cell State:</strong> Unmodified gradient highway solves vanishing gradients.</li>
+                    <li><strong>Three Gates:</strong> Forget, Input, Output gates control information flow.</li>
+                    <li><strong>Long-Range Memory:</strong> Can remember information for hundreds of time steps.</li>
+                    <li><strong>4x Parameters:</strong> Has 4 weight matrices per layer vs 1 in vanilla RNN.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function LSTMCell(inputSize, hiddenSize) {
+    // Initialize 4 gate weight matrices
+    var Wf = randomMatrix(hiddenSize, inputSize + hiddenSize); // forget
+    var Wi = randomMatrix(hiddenSize, inputSize + hiddenSize); // input
+    var Wc = randomMatrix(hiddenSize, inputSize + hiddenSize); // candidate
+    var Wo = randomMatrix(hiddenSize, inputSize + hiddenSize); // output
+
+    this.forward = function(x, hPrev, cPrev) {
+        var concat = hPrev.concat(x);
+        var f = sigmoid(matVec(Wf, concat));  // forget gate
+        var i = sigmoid(matVec(Wi, concat));  // input gate
+        var cHat = tanh(matVec(Wc, concat));  // candidate
+        var o = sigmoid(matVec(Wo, concat));  // output gate
+
+        // Cell state update
+        var c = add(multiply(f, cPrev), multiply(i, cHat));
+        // Hidden state
+        var h = multiply(o, tanh(c));
+        return { h: h, c: c };
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge" target="_blank">Toxic Comment Classification (Kaggle) &mdash; LSTM</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "lstm", title: "LSTM", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // LSTM gate visualization as network layers
+        var inputL = { nodes: [{ label: 'x_t', state: '' }, { label: 'h_{t-1}', state: '' }] };
+        var gatesL = { nodes: [{ label: 'Forget', state: '' }, { label: 'Input', state: '' }, { label: 'Cand.', state: '' }, { label: 'Output', state: '' }] };
+        var cellL = { nodes: [{ label: 'C_t', state: '' }] };
+        var outL = { nodes: [{ label: 'h_t', state: '' }] };
+
+        steps.push({ type: 'network', layers: [inputL, gatesL, cellL, outL], explanation: 'LSTM cell: Input x_t and previous hidden state h_{t-1} feed into 4 gates: Forget, Input, Candidate, and Output.' });
+
+        // Forget gate opens
+        var g1 = { nodes: [{ label: 'Forget', state: 'active' }, { label: 'Input', state: '' }, { label: 'Cand.', state: '' }, { label: 'Output', state: '' }] };
+        steps.push({ type: 'network', layers: [inputL, g1, cellL, outL], explanation: 'Forget gate (sigmoid): Decides what to discard from cell state. f=1 means keep everything, f=0 means forget everything.' });
+
+        // Input gate + candidate
+        var g2 = { nodes: [{ label: 'Forget', state: 'visited' }, { label: 'Input', state: 'active' }, { label: 'Cand.', state: 'active' }, { label: 'Output', state: '' }] };
+        steps.push({ type: 'network', layers: [inputL, g2, cellL, outL], explanation: 'Input gate (sigmoid) + Candidate (tanh): Input gate decides which values to update. Candidate creates new values to potentially add to cell state.' });
+
+        // Cell state update
+        var c1 = { nodes: [{ label: 'C_t', state: 'active' }] };
+        var g3 = { nodes: [{ label: 'Forget', state: 'visited' }, { label: 'Input', state: 'visited' }, { label: 'Cand.', state: 'visited' }, { label: 'Output', state: '' }] };
+        steps.push({ type: 'network', layers: [inputL, g3, c1, outL], explanation: 'Cell state update: C_t = f * C_{t-1} + i * candidate. Old memories are selectively forgotten, new information is selectively added.' });
+
+        // Output gate
+        var g4 = { nodes: [{ label: 'Forget', state: 'visited' }, { label: 'Input', state: 'visited' }, { label: 'Cand.', state: 'visited' }, { label: 'Output', state: 'active' }] };
+        var o1 = { nodes: [{ label: 'h_t', state: 'active' }] };
+        steps.push({ type: 'network', layers: [inputL, g4, { nodes: [{ label: 'C_t', state: 'visited' }] }, o1], explanation: 'Output gate (sigmoid): h_t = o * tanh(C_t). Decides which parts of the cell state to expose as the hidden state output.' });
+
+        // All gates complete
+        var gFinal = { nodes: [{ label: 'Forget', state: 'visited' }, { label: 'Input', state: 'visited' }, { label: 'Cand.', state: 'visited' }, { label: 'Output', state: 'visited' }] };
+        steps.push({ type: 'network', layers: [
+            { nodes: [{ label: 'x_t', state: 'visited' }, { label: 'h_{t-1}', state: 'visited' }] },
+            gFinal,
+            { nodes: [{ label: 'C_t', state: 'visited' }] },
+            { nodes: [{ label: 'h_t', state: 'visited' }] }
+        ], explanation: 'LSTM cell complete. The cell state C_t acts as a gradient highway: gradients can flow backward through time without vanishing, enabling learning of long-range dependencies.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

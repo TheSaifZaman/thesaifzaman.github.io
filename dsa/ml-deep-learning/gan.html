@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAN — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Generative Adversarial Network (GAN)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Training: adversarial</span>
+            <span class="complexity-tag">Loss: minimax</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>GAN</strong> (Generative Adversarial Network) consists of two neural networks competing against each other: a <em>Generator</em> that creates fake data and a <em>Discriminator</em> that tries to distinguish fake from real data.</p>
+            <p>The Generator takes random noise z as input and produces synthetic data G(z). The Discriminator takes both real data x and generated data G(z), outputting a probability that its input is real. Training alternates between updating the Discriminator (to better distinguish real vs fake) and the Generator (to better fool the Discriminator).</p>
+            <p>The minimax objective is: min_G max_D [E[log D(x)] + E[log(1 - D(G(z)))]]. At equilibrium, the Generator produces data indistinguishable from real, and the Discriminator outputs 0.5 for everything.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Adversarial Training:</strong> Two networks compete, driving each other to improve.</li>
+                    <li><strong>Implicit Density:</strong> Generator learns the data distribution without explicitly modeling it.</li>
+                    <li><strong>Mode Collapse:</strong> Generator may learn to produce only a few types of outputs.</li>
+                    <li><strong>Training Instability:</strong> Balancing Generator and Discriminator training is challenging.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function trainGAN(generator, discriminator, realData, epochs) {
+    for (var epoch = 0; epoch < epochs; epoch++) {
+        // 1. Train Discriminator
+        var realBatch = sampleBatch(realData);
+        var noise = randomNoise(batchSize);
+        var fakeBatch = generator.forward(noise);
+
+        var dLossReal = -mean(log(discriminator.forward(realBatch)));
+        var dLossFake = -mean(log(1 - discriminator.forward(fakeBatch)));
+        discriminator.backward(dLossReal + dLossFake);
+        discriminator.updateWeights();
+
+        // 2. Train Generator
+        noise = randomNoise(batchSize);
+        fakeBatch = generator.forward(noise);
+        var gLoss = -mean(log(discriminator.forward(fakeBatch)));
+        generator.backward(gLoss);
+        generator.updateWeights();
+    }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/generative-dog-images" target="_blank">Generative Dog Images (Kaggle) &mdash; GAN</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "gan", title: "GAN", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Network: Noise -> Generator -> Fake Data  +  Real Data -> Discriminator -> Real/Fake
+        var noiseL = { nodes: [{ label: 'z1', state: '' }, { label: 'z2', state: '' }] };
+        var genL = { nodes: [{ label: 'G1', state: '' }, { label: 'G2', state: '' }, { label: 'G3', state: '' }] };
+        var discL = { nodes: [{ label: 'D1', state: '' }, { label: 'D2', state: '' }, { label: 'D3', state: '' }] };
+        var outL = { nodes: [{ label: 'Real?', state: '' }] };
+
+        steps.push({ type: 'network', layers: [noiseL, genL, discL, outL], explanation: 'GAN architecture: Random noise z -> Generator -> Fake data -> Discriminator -> Real/Fake probability. Two networks in competition.' });
+
+        // Generator forward pass
+        var n1 = { nodes: [{ label: 'z1', state: 'active' }, { label: 'z2', state: 'active' }] };
+        var g1 = { nodes: [{ label: 'G1', state: 'active' }, { label: 'G2', state: 'active' }, { label: 'G3', state: 'active' }] };
+        steps.push({ type: 'network', layers: [n1, g1, discL, outL], explanation: 'Generator forward: Takes random noise z and transforms it through neural network layers to produce synthetic data.' });
+
+        // Discriminator evaluates fake
+        var g2 = { nodes: [{ label: 'G1', state: 'visited' }, { label: 'G2', state: 'visited' }, { label: 'G3', state: 'visited' }] };
+        var d1 = { nodes: [{ label: 'D1', state: 'active' }, { label: 'D2', state: 'active' }, { label: 'D3', state: 'active' }] };
+        steps.push({ type: 'network', layers: [n1, g2, d1, outL], explanation: 'Discriminator evaluates fake data: Tries to output 0 (fake). Initially easy because Generator output is random noise.' });
+
+        // Discriminator outputs
+        var o1 = { nodes: [{ label: '0.2', state: 'active' }] };
+        steps.push({ type: 'network', layers: [n1, g2, d1, o1], explanation: 'Discriminator outputs 0.2 (thinks 20% chance of real). Correct! This is fake data. Discriminator is learning well.' });
+
+        // Train Generator (backprop through discriminator)
+        var g3 = { nodes: [{ label: 'G1', state: 'active' }, { label: 'G2', state: 'active' }, { label: 'G3', state: 'active' }] };
+        var d2 = { nodes: [{ label: 'D1', state: '' }, { label: 'D2', state: '' }, { label: 'D3', state: '' }] };
+        steps.push({ type: 'network', layers: [noiseL, g3, d2, outL], explanation: 'Generator training: Backpropagate through frozen Discriminator. Generator updates to make its output look more "real" to the Discriminator.' });
+
+        // After several epochs
+        var gBetter = { nodes: [{ label: 'G1', state: 'visited' }, { label: 'G2', state: 'visited' }, { label: 'G3', state: 'visited' }] };
+        var dConfused = { nodes: [{ label: 'D1', state: 'active' }, { label: 'D2', state: 'active' }, { label: 'D3', state: 'active' }] };
+        var oHalf = { nodes: [{ label: '0.5', state: 'active' }] };
+        steps.push({ type: 'network', layers: [noiseL, gBetter, dConfused, oHalf], explanation: 'After many training rounds: Generator improves, Discriminator outputs ~0.5 (cannot distinguish real from fake). Nash equilibrium reached!' });
+
+        // Final
+        steps.push({ type: 'network', layers: [
+            { nodes: [{ label: 'z1', state: 'visited' }, { label: 'z2', state: 'visited' }] },
+            { nodes: [{ label: 'G1', state: 'visited' }, { label: 'G2', state: 'visited' }, { label: 'G3', state: 'visited' }] },
+            { nodes: [{ label: 'D1', state: 'visited' }, { label: 'D2', state: 'visited' }, { label: 'D3', state: 'visited' }] },
+            { nodes: [{ label: '0.5', state: 'visited' }] }
+        ], explanation: 'GAN training complete. Generator has learned to produce realistic data. Applications: image generation, style transfer, data augmentation, super-resolution.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

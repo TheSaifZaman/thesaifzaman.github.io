@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAE — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Variational Autoencoder (VAE)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Loss: Recon + KL</span>
+            <span class="complexity-tag">Latent: continuous</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Variational Autoencoder</strong> (VAE) is a generative model that learns a latent representation of data. Unlike a regular autoencoder, the VAE encodes inputs into a probability distribution (mean and variance) in latent space, then samples from this distribution to decode.</p>
+            <p>The architecture has three parts: an <em>Encoder</em> that maps input x to latent distribution parameters (mu, sigma), a <em>Sampling</em> step using the reparameterization trick (z = mu + sigma * epsilon, where epsilon ~ N(0,1)), and a <em>Decoder</em> that reconstructs x from z.</p>
+            <p>The loss function has two terms: reconstruction loss (how well the decoder rebuilds the input) and KL divergence (how close the latent distribution is to a standard normal). This encourages a smooth, continuous latent space where similar inputs are nearby.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Probabilistic Encoding:</strong> Maps to distributions, not points &mdash; enables generation.</li>
+                    <li><strong>Reparameterization Trick:</strong> Makes sampling differentiable for backpropagation.</li>
+                    <li><strong>KL Divergence:</strong> Regularizes latent space to be smooth and continuous.</li>
+                    <li><strong>Generation:</strong> Sample from N(0,1) in latent space and decode to generate new data.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function VAE(inputDim, latentDim) {
+    var encoder = buildEncoder(inputDim, latentDim);
+    var decoder = buildDecoder(latentDim, inputDim);
+
+    this.encode = function(x) {
+        var params = encoder.forward(x);
+        var mu = params.slice(0, latentDim);
+        var logVar = params.slice(latentDim);
+        return { mu: mu, logVar: logVar };
+    };
+
+    this.reparameterize = function(mu, logVar) {
+        var std = logVar.map(function(v) { return Math.exp(0.5 * v); });
+        var eps = randomNormal(latentDim);
+        return mu.map(function(m, i) { return m + std[i] * eps[i]; });
+    };
+
+    this.forward = function(x) {
+        var enc = this.encode(x);
+        var z = this.reparameterize(enc.mu, enc.logVar);
+        var recon = decoder.forward(z);
+        return { recon: recon, mu: enc.mu, logVar: enc.logVar };
+    };
+
+    // Loss = Reconstruction + KL divergence
+    this.loss = function(x, recon, mu, logVar) {
+        var reconLoss = mse(x, recon);
+        var kl = -0.5 * sum(logVar.map(function(lv, i) {
+            return 1 + lv - mu[i]*mu[i] - Math.exp(lv);
+        }));
+        return reconLoss + kl;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://keras.io/examples/generative/vae/" target="_blank">VAE on MNIST &mdash; Keras Tutorial</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "vae", title: "VAE", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Encoder -> Bottleneck (mu, sigma) -> Decoder
+        var inputL = { nodes: [{ label: 'x1', state: '' }, { label: 'x2', state: '' }, { label: 'x3', state: '' }, { label: 'x4', state: '' }] };
+        var encL = { nodes: [{ label: 'e1', state: '' }, { label: 'e2', state: '' }, { label: 'e3', state: '' }] };
+        var latentL = { nodes: [{ label: 'mu', state: '' }, { label: 'sig', state: '' }] };
+        var decL = { nodes: [{ label: 'd1', state: '' }, { label: 'd2', state: '' }, { label: 'd3', state: '' }] };
+        var outL = { nodes: [{ label: 'x1\'', state: '' }, { label: 'x2\'', state: '' }, { label: 'x3\'', state: '' }, { label: 'x4\'', state: '' }] };
+
+        steps.push({ type: 'network', layers: [inputL, encL, latentL, decL, outL], explanation: 'VAE architecture: Input -> Encoder -> Latent (mu, sigma) -> Decoder -> Reconstruction. The bottleneck forces learning a compressed representation.' });
+
+        // Encoder
+        var i1 = { nodes: inputL.nodes.map(function(n) { return { label: n.label, state: 'active' }; }) };
+        var e1 = { nodes: encL.nodes.map(function(n) { return { label: n.label, state: 'active' }; }) };
+        steps.push({ type: 'network', layers: [i1, e1, latentL, decL, outL], explanation: 'Encoder: Maps input x to hidden representation, then outputs two vectors: mu (mean) and log_var (log variance) of the latent distribution.' });
+
+        // Latent space
+        var e2 = { nodes: encL.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) };
+        var lat1 = { nodes: [{ label: 'mu', state: 'active' }, { label: 'sig', state: 'active' }] };
+        steps.push({ type: 'network', layers: [i1, e2, lat1, decL, outL], explanation: 'Latent space: Instead of encoding to a single point, VAE encodes to a distribution N(mu, sigma). This is what makes it "variational".' });
+
+        // Reparameterization trick
+        var lat2 = { nodes: [{ label: 'z', state: 'active' }, { label: 'eps', state: 'active' }] };
+        steps.push({ type: 'network', layers: [i1, e2, lat2, decL, outL], explanation: 'Reparameterization trick: z = mu + sigma * epsilon (epsilon ~ N(0,1)). This makes sampling differentiable so we can backpropagate through it.' });
+
+        // Decoder
+        var lat3 = { nodes: [{ label: 'z', state: 'visited' }, { label: 'eps', state: 'visited' }] };
+        var d1 = { nodes: decL.nodes.map(function(n) { return { label: n.label, state: 'active' }; }) };
+        steps.push({ type: 'network', layers: [i1, e2, lat3, d1, outL], explanation: 'Decoder: Takes sampled z and reconstructs the input. Must learn to generate realistic data from any point in latent space.' });
+
+        // Output
+        var d2 = { nodes: decL.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) };
+        var o1 = { nodes: outL.nodes.map(function(n) { return { label: n.label, state: 'active' }; }) };
+        steps.push({ type: 'network', layers: [i1, e2, lat3, d2, o1], explanation: 'Reconstruction: Output x\' should match input x. Loss = Reconstruction Error + KL Divergence (forces latent space to be smooth and continuous).' });
+
+        // Final
+        steps.push({ type: 'network', layers: [
+            { nodes: inputL.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) },
+            e2, lat3, d2,
+            { nodes: outL.nodes.map(function(n) { return { label: n.label, state: 'visited' }; }) }
+        ], explanation: 'VAE complete. To generate new data: sample z ~ N(0,1) from latent space and pass through decoder. The KL term ensures a smooth, navigable latent space.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

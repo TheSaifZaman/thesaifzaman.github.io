@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Transformer</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Attention: O(n&sup2;&middot;d)</span>
+            <span class="complexity-tag">FFN: O(n&middot;d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The <strong>Transformer</strong> architecture (Vaswani et al., 2017) revolutionized deep learning by replacing recurrence with self-attention. It processes all positions in parallel, computing attention weights that determine how much each position should attend to every other position.</p>
+            <p>The core mechanism is <em>Scaled Dot-Product Attention</em>: Attention(Q,K,V) = softmax(QK^T / sqrt(d_k)) * V. Each token creates a Query (what am I looking for?), Key (what do I contain?), and Value (what information do I provide?). Multi-head attention runs this process multiple times in parallel with different projections.</p>
+            <p>The full Transformer has an encoder (self-attention + feedforward) and decoder (masked self-attention + cross-attention + feedforward), with residual connections and layer normalization throughout.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Self-Attention:</strong> Every token can directly attend to every other token &mdash; no sequential bottleneck.</li>
+                    <li><strong>Parallelizable:</strong> All positions computed simultaneously, unlike RNN.</li>
+                    <li><strong>Multi-Head:</strong> Multiple attention heads capture different relationship types.</li>
+                    <li><strong>Positional Encoding:</strong> Sine/cosine functions inject position information since there is no inherent order.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function scaledDotProductAttention(Q, K, V) {
+    var dk = K[0].length;
+    var scale = Math.sqrt(dk);
+    // QK^T / sqrt(d_k)
+    var scores = matMul(Q, transpose(K));
+    for (var i = 0; i < scores.length; i++)
+        for (var j = 0; j < scores[i].length; j++)
+            scores[i][j] /= scale;
+    // Softmax each row
+    var attnWeights = scores.map(softmaxRow);
+    // Weighted sum of values
+    return matMul(attnWeights, V);
+}
+
+function multiHeadAttention(Q, K, V, numHeads) {
+    var heads = [];
+    for (var h = 0; h < numHeads; h++) {
+        var Qh = project(Q, h), Kh = project(K, h), Vh = project(V, h);
+        heads.push(scaledDotProductAttention(Qh, Kh, Vh));
+    }
+    return project(concat(heads), 'output');
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://jalammar.github.io/illustrated-transformer/" target="_blank">The Illustrated Transformer &mdash; Jay Alammar</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "transformer", title: "Transformer", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var tokens = ['The', 'cat', 'sat', 'on'];
+        var n = tokens.length;
+
+        // Step 0: show tokens as matrix header
+        var grid0 = [tokens.map(function(t) { return { value: t, state: 'active' }; })];
+        for (var i = 0; i < n; i++) {
+            var row = [];
+            for (var j = 0; j < n; j++) {
+                row.push({ value: '?', state: '' });
+            }
+            grid0.push(row);
+        }
+        steps.push({ type: 'grid', grid: grid0, explanation: 'Self-attention matrix for 4 tokens. Each cell will contain the attention weight: how much token i attends to token j.' });
+
+        // Compute fake attention weights (softmax of random-ish scores)
+        var scores = [
+            [0.5, 0.2, 0.2, 0.1],
+            [0.1, 0.6, 0.1, 0.2],
+            [0.15, 0.15, 0.5, 0.2],
+            [0.2, 0.1, 0.3, 0.4]
+        ];
+
+        // Show attention computation row by row
+        for (var qi = 0; qi < n; qi++) {
+            var grid = [tokens.map(function(t, j) { return { value: t, state: j === qi ? 'active' : '' }; })];
+            for (var i = 0; i < n; i++) {
+                var row = [];
+                for (var j = 0; j < n; j++) {
+                    if (i < qi) {
+                        row.push({ value: scores[i][j].toFixed(1), state: 'visited' });
+                    } else if (i === qi) {
+                        row.push({ value: scores[i][j].toFixed(1), state: scores[i][j] >= 0.4 ? 'active' : '' });
+                    } else {
+                        row.push({ value: '?', state: '' });
+                    }
+                }
+                grid.push(row);
+            }
+            var maxJ = scores[qi].indexOf(Math.max.apply(null, scores[qi]));
+            steps.push({ type: 'grid', grid: grid, explanation: 'Query "' + tokens[qi] + '": Q*K^T/sqrt(d) then softmax. Highest attention (' + scores[qi][maxJ].toFixed(1) + ') to "' + tokens[maxJ] + '". Each row sums to 1.' });
+        }
+
+        // Full attention matrix
+        var gridFull = [tokens.map(function(t) { return { value: t, state: 'visited' }; })];
+        for (var i = 0; i < n; i++) {
+            var row = [];
+            for (var j = 0; j < n; j++) {
+                var intensity = scores[i][j] >= 0.4 ? 'active' : (scores[i][j] >= 0.2 ? 'visited' : '');
+                row.push({ value: scores[i][j].toFixed(1), state: intensity });
+            }
+            gridFull.push(row);
+        }
+        steps.push({ type: 'grid', grid: gridFull, explanation: 'Complete attention matrix. Bright cells = strong attention. Each token can directly attend to any other token &mdash; no sequential bottleneck like RNN.' });
+
+        // Multi-head
+        steps.push({ type: 'grid', grid: gridFull, explanation: 'Multi-Head Attention: Run multiple attention heads in parallel, each learning different relationship types (syntax, semantics, coreference). Concatenate and project results.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

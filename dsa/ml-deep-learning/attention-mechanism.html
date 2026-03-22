@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention Mechanism — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Attention Mechanism</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Self-Attn: O(n&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The <strong>Attention Mechanism</strong> allows a model to dynamically focus on different parts of the input when producing each part of the output. Originally introduced for seq2seq models, attention computes a weighted average of encoder hidden states, where weights reflect the relevance of each input position to the current output position.</p>
+            <p>There are several attention variants:</p>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+                <li><strong>Additive (Bahdanau):</strong> score(s, h) = v^T * tanh(W_s * s + W_h * h)</li>
+                <li><strong>Dot-Product:</strong> score(s, h) = s^T * h</li>
+                <li><strong>Scaled Dot-Product:</strong> score(s, h) = s^T * h / sqrt(d_k)</li>
+                <li><strong>Multi-Head:</strong> Multiple attention heads capture different aspects of relationships.</li>
+            </ul>
+            <p>Self-attention (used in Transformers) computes attention of a sequence with itself, allowing every position to attend to every other position.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Dynamic Weighting:</strong> Attention weights change based on the current query.</li>
+                    <li><strong>Interpretable:</strong> Attention weights can reveal which inputs the model focuses on.</li>
+                    <li><strong>Soft Alignment:</strong> Unlike hard alignment, it considers all positions with different weights.</li>
+                    <li><strong>Foundation:</strong> The core mechanism behind Transformers, BERT, GPT, and modern AI.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function attention(query, keys, values) {
+    var dk = keys[0].length;
+    var scores = keys.map(function(key) {
+        return dotProduct(query, key) / Math.sqrt(dk);
+    });
+
+    // Softmax
+    var maxScore = Math.max.apply(null, scores);
+    var exps = scores.map(function(s) { return Math.exp(s - maxScore); });
+    var sumExps = exps.reduce(function(a, b) { return a + b; }, 0);
+    var weights = exps.map(function(e) { return e / sumExps; });
+
+    // Weighted sum of values
+    var output = new Array(values[0].length).fill(0);
+    for (var i = 0; i < values.length; i++) {
+        for (var j = 0; j < output.length; j++) {
+            output[j] += weights[i] * values[i][j];
+        }
+    }
+    return { output: output, weights: weights };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/" target="_blank">Visualizing Attention &mdash; Jay Alammar</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "attention-mechanism", title: "Attention Mechanism", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Translation attention: English -> French
+        var source = ['I', 'love', 'cats', 'very', 'much'];
+        var target = ["J'", 'adore', 'les', 'chats'];
+        var nS = source.length, nT = target.length;
+
+        // Attention weights matrix (source x target)
+        var weights = [
+            [0.8, 0.1, 0.05, 0.05],  // I -> J'
+            [0.1, 0.7, 0.1, 0.1],    // love -> adore
+            [0.05, 0.1, 0.15, 0.7],   // cats -> chats
+            [0.02, 0.05, 0.6, 0.1],   // very -> les
+            [0.03, 0.05, 0.1, 0.05]   // much
+        ];
+
+        // Step 0: show source and header
+        var headerRow = [{ value: '', state: '' }].concat(target.map(function(t) { return { value: t, state: '' }; }));
+        var grid0 = [headerRow];
+        for (var i = 0; i < nS; i++) {
+            var row = [{ value: source[i], state: '' }];
+            for (var j = 0; j < nT; j++) {
+                row.push({ value: '?', state: '' });
+            }
+            grid0.push(row);
+        }
+        steps.push({ type: 'grid', grid: grid0, explanation: 'Attention heatmap: Translating "I love cats very much" to French. Each cell will show how much the target word attends to each source word.' });
+
+        // Show attention for each target word
+        for (var tj = 0; tj < nT; tj++) {
+            var grid = [[{ value: '', state: '' }].concat(target.map(function(t, j) { return { value: t, state: j === tj ? 'active' : (j < tj ? 'visited' : '') }; }))];
+            for (var i = 0; i < nS; i++) {
+                var row = [{ value: source[i], state: '' }];
+                for (var j = 0; j < nT; j++) {
+                    if (j < tj) {
+                        var w = weights[i][j];
+                        row.push({ value: w.toFixed(1), state: w >= 0.5 ? 'active' : (w >= 0.1 ? 'visited' : '') });
+                    } else if (j === tj) {
+                        var w = weights[i][j];
+                        row.push({ value: w.toFixed(1), state: w >= 0.5 ? 'active' : (w >= 0.1 ? 'visited' : '') });
+                    } else {
+                        row.push({ value: '?', state: '' });
+                    }
+                }
+                grid.push(row);
+            }
+            var maxI = 0, maxW = 0;
+            for (var i = 0; i < nS; i++) {
+                if (weights[i][tj] > maxW) { maxW = weights[i][tj]; maxI = i; }
+            }
+            steps.push({ type: 'grid', grid: grid, explanation: 'Generating "' + target[tj] + '": Highest attention (' + maxW.toFixed(1) + ') on source word "' + source[maxI] + '". Attention creates a soft alignment between languages.' });
+        }
+
+        // Full heatmap
+        var gridFull = [[{ value: '', state: 'visited' }].concat(target.map(function(t) { return { value: t, state: 'visited' }; }))];
+        for (var i = 0; i < nS; i++) {
+            var row = [{ value: source[i], state: 'visited' }];
+            for (var j = 0; j < nT; j++) {
+                var w = weights[i][j];
+                row.push({ value: w.toFixed(1), state: w >= 0.5 ? 'active' : (w >= 0.1 ? 'visited' : '') });
+            }
+            gridFull.push(row);
+        }
+        steps.push({ type: 'grid', grid: gridFull, explanation: 'Full attention heatmap. Bright cells show strong alignment: "I"->J\', "love"->"adore", "cats"->"chats". Attention learned meaningful word correspondences.' });
+
+        steps.push({ type: 'grid', grid: gridFull, explanation: 'Attention mechanism complete. This dynamic, differentiable lookup is the foundation of all modern AI: Transformers, BERT, GPT, and beyond.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

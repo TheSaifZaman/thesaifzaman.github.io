@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNN — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Recurrent Neural Network (RNN)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;h&sup2;)</span>
+            <span class="complexity-tag">Space: O(T&middot;h)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Recurrent Neural Network</strong> (RNN) processes sequential data by maintaining a hidden state that acts as memory. At each time step, the network takes an input and the previous hidden state, computes a new hidden state, and optionally produces an output.</p>
+            <p>The key equation is: <code>h_t = tanh(W_hh * h_{t-1} + W_xh * x_t + b)</code>. The same weights are shared across all time steps (parameter sharing), making RNNs suitable for variable-length sequences.</p>
+            <p>Vanilla RNNs suffer from the <em>vanishing gradient</em> problem: gradients diminish exponentially during backpropagation through time (BPTT), making it hard to learn long-range dependencies. This motivated LSTM and GRU architectures.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Sequential Processing:</strong> Processes one element at a time, maintaining hidden state.</li>
+                    <li><strong>Parameter Sharing:</strong> Same weights used at every time step.</li>
+                    <li><strong>Vanishing Gradients:</strong> Difficult to learn long-range dependencies.</li>
+                    <li><strong>Applications:</strong> Text generation, time series, speech recognition.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function RNN(inputSize, hiddenSize, outputSize) {
+    var Wxh = randomMatrix(hiddenSize, inputSize);
+    var Whh = randomMatrix(hiddenSize, hiddenSize);
+    var Why = randomMatrix(outputSize, hiddenSize);
+
+    this.forward = function(inputs) {
+        var h = zeroVector(hiddenSize);
+        var outputs = [];
+        for (var t = 0; t < inputs.length; t++) {
+            // h_t = tanh(Wxh * x_t + Whh * h_{t-1})
+            h = tanh(add(matVec(Wxh, inputs[t]), matVec(Whh, h)));
+            // y_t = Why * h_t
+            outputs.push(matVec(Why, h));
+        }
+        return outputs;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/word2vec-nlp-tutorial" target="_blank">Sentiment Analysis (Kaggle) &mdash; RNN</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "rnn", title: "RNN", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var tokens = ['The', 'cat', 'sat', 'on', 'mat'];
+
+        // Unrolled RNN: each time step as a layer
+        // Show the hidden state looping through time steps
+        for (var t = 0; t <= tokens.length; t++) {
+            var layers = [];
+            // Input layer (current token)
+            if (t < tokens.length) {
+                var inputNodes = [];
+                for (var i = 0; i < tokens.length; i++) {
+                    inputNodes.push({ label: tokens[i], state: i === t ? 'active' : (i < t ? 'visited' : '') });
+                }
+                layers.push({ nodes: inputNodes });
+            }
+
+            // Hidden state
+            var hiddenNodes = [
+                { label: 'h1', state: t > 0 ? 'active' : '' },
+                { label: 'h2', state: t > 0 ? 'active' : '' },
+                { label: 'h3', state: t > 0 ? 'active' : '' }
+            ];
+            layers.push({ nodes: hiddenNodes });
+
+            // Output (if applicable)
+            if (t > 0) {
+                layers.push({ nodes: [{ label: 'y', state: t === tokens.length ? 'visited' : 'active' }] });
+            }
+
+            if (t === 0) {
+                steps.push({ type: 'network', layers: layers, explanation: 'RNN ready. Hidden state h initialized to zeros. Will process sequence: "' + tokens.join(' ') + '".' });
+            } else if (t < tokens.length) {
+                steps.push({ type: 'network', layers: layers, explanation: 'Time step ' + t + ': Input "' + tokens[t-1] + '" combined with previous hidden state h_{' + (t-1) + '} to compute new h_' + t + ' = tanh(W_xh * x + W_hh * h). Hidden state carries memory of all previous tokens.' });
+            } else {
+                steps.push({ type: 'network', layers: layers, explanation: 'All ' + tokens.length + ' time steps processed. Final hidden state h_' + tokens.length + ' encodes the entire sequence. Output y produced from final hidden state.' });
+            }
+        }
+
+        // Vanishing gradient illustration
+        var gradLayers = [];
+        var gradInput = tokens.map(function(tok, i) {
+            return { label: tok, state: i === 0 ? 'active' : 'visited' };
+        });
+        gradLayers.push({ nodes: gradInput });
+        gradLayers.push({ nodes: [{ label: 'h1', state: '' }, { label: 'h2', state: '' }, { label: 'h3', state: '' }] });
+        gradLayers.push({ nodes: [{ label: 'y', state: 'active' }] });
+        steps.push({ type: 'network', layers: gradLayers, explanation: 'Vanishing gradient problem: During backpropagation through time, gradients shrink exponentially. Early inputs ("The") have very weak gradient signal from the loss. This is why LSTM and GRU were invented.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

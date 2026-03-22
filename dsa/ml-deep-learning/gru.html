@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRU — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Gated Recurrent Unit (GRU)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;h&sup2;)</span>
+            <span class="complexity-tag">Params: 3&times; vanilla RNN</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>GRU</strong> (Gated Recurrent Unit) is a simplified version of LSTM that combines the forget and input gates into a single <em>update gate</em> and merges the cell state and hidden state. It achieves comparable performance to LSTM with fewer parameters.</p>
+            <p>GRU has two gates:</p>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+                <li><strong>Reset Gate (r):</strong> Controls how much of the previous hidden state to forget when computing the candidate. r = sigmoid(W_r * [h_{t-1}, x_t])</li>
+                <li><strong>Update Gate (z):</strong> Controls the balance between keeping the old hidden state and adopting the new candidate. z = sigmoid(W_z * [h_{t-1}, x_t])</li>
+            </ul>
+            <p>The update: h_t = (1 - z) * h_{t-1} + z * tanh(W * [r * h_{t-1}, x_t]). When z is close to 1, the GRU mostly uses the new candidate. When z is close to 0, it mostly keeps the old state.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Simpler than LSTM:</strong> 2 gates instead of 3, no separate cell state.</li>
+                    <li><strong>Fewer Parameters:</strong> 3x vanilla RNN parameters vs LSTM's 4x.</li>
+                    <li><strong>Comparable Performance:</strong> Often matches LSTM on many tasks.</li>
+                    <li><strong>Faster Training:</strong> Less computation per step than LSTM.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function GRUCell(inputSize, hiddenSize) {
+    var Wz = randomMatrix(hiddenSize, inputSize + hiddenSize);
+    var Wr = randomMatrix(hiddenSize, inputSize + hiddenSize);
+    var Wh = randomMatrix(hiddenSize, inputSize + hiddenSize);
+
+    this.forward = function(x, hPrev) {
+        var concat = hPrev.concat(x);
+        var z = sigmoid(matVec(Wz, concat));   // update gate
+        var r = sigmoid(matVec(Wr, concat));   // reset gate
+        var rh = multiply(r, hPrev).concat(x);
+        var hCand = tanh(matVec(Wh, rh));      // candidate
+
+        // h_t = (1-z)*h_{t-1} + z*hCand
+        var h = add(multiply(onesMinus(z), hPrev), multiply(z, hCand));
+        return h;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/c/quora-insincere-questions-classification" target="_blank">Quora Insincere Questions (Kaggle) &mdash; GRU</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "gru", title: "GRU", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        var inputL = { nodes: [{ label: 'x_t', state: '' }, { label: 'h_{t-1}', state: '' }] };
+        var gatesL = { nodes: [{ label: 'Reset', state: '' }, { label: 'Update', state: '' }, { label: 'Cand.', state: '' }] };
+        var outL = { nodes: [{ label: 'h_t', state: '' }] };
+
+        steps.push({ type: 'network', layers: [inputL, gatesL, outL], explanation: 'GRU cell: Simplified LSTM with only 2 gates (Reset and Update) plus a Candidate computation. No separate cell state.' });
+
+        // Reset gate
+        var g1 = { nodes: [{ label: 'Reset', state: 'active' }, { label: 'Update', state: '' }, { label: 'Cand.', state: '' }] };
+        steps.push({ type: 'network', layers: [inputL, g1, outL], explanation: 'Reset gate (sigmoid): r = sigma(W_r * [h_{t-1}, x_t]). Controls how much of the previous hidden state to "forget" when computing the candidate.' });
+
+        // Update gate
+        var g2 = { nodes: [{ label: 'Reset', state: 'visited' }, { label: 'Update', state: 'active' }, { label: 'Cand.', state: '' }] };
+        steps.push({ type: 'network', layers: [inputL, g2, outL], explanation: 'Update gate (sigmoid): z = sigma(W_z * [h_{t-1}, x_t]). Controls the balance between old state and new candidate. Like combined forget+input gate of LSTM.' });
+
+        // Candidate
+        var g3 = { nodes: [{ label: 'Reset', state: 'visited' }, { label: 'Update', state: 'visited' }, { label: 'Cand.', state: 'active' }] };
+        steps.push({ type: 'network', layers: [inputL, g3, outL], explanation: 'Candidate (tanh): h_cand = tanh(W * [r * h_{t-1}, x_t]). Reset gate controls how much past info the candidate sees.' });
+
+        // Output
+        var g4 = { nodes: [{ label: 'Reset', state: 'visited' }, { label: 'Update', state: 'visited' }, { label: 'Cand.', state: 'visited' }] };
+        var o1 = { nodes: [{ label: 'h_t', state: 'active' }] };
+        steps.push({ type: 'network', layers: [inputL, g4, o1], explanation: 'Output: h_t = (1-z)*h_{t-1} + z*h_cand. Update gate interpolates between keeping old state (z=0) and using new candidate (z=1).' });
+
+        // Comparison with LSTM
+        steps.push({ type: 'network', layers: [
+            { nodes: [{ label: 'x_t', state: 'visited' }, { label: 'h_{t-1}', state: 'visited' }] },
+            g4,
+            { nodes: [{ label: 'h_t', state: 'visited' }] }
+        ], explanation: 'GRU complete. Compared to LSTM: no separate cell state, 2 gates vs 3, ~25% fewer parameters. Often performs equally well, especially on smaller datasets.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>

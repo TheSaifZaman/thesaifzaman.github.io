@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusion Models — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Diffusion Models</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Steps: T=1000</span>
+            <span class="complexity-tag">Loss: MSE noise</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Diffusion Models</strong> (Denoising Diffusion Probabilistic Models, DDPM) generate data by learning to reverse a gradual noising process. The forward process adds small amounts of Gaussian noise over T steps until the data becomes pure noise. The reverse process learns to denoise step by step, starting from random noise and producing a clean sample.</p>
+            <p>The forward process is defined as: q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I). At each step, a small amount of noise beta_t is added. After T steps (typically T=1000), the data is approximately standard Gaussian noise.</p>
+            <p>A neural network (typically a U-Net) is trained to predict the noise that was added at each step. At generation time, we start with random noise and iteratively denoise using the learned model, producing realistic samples.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Forward Process:</strong> Gradually adds noise until data becomes Gaussian noise (fixed, no learning).</li>
+                    <li><strong>Reverse Process:</strong> Neural network learns to denoise step by step.</li>
+                    <li><strong>Stable Training:</strong> Simple MSE loss on noise prediction, no adversarial training.</li>
+                    <li><strong>High Quality:</strong> State-of-the-art image generation (Stable Diffusion, DALL-E, Midjourney).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function DiffusionModel(T, betaSchedule) {
+    var betas = betaSchedule; // [beta_1, ..., beta_T]
+    var alphas = betas.map(function(b) { return 1 - b; });
+    var alphaBar = cumulativeProduct(alphas);
+
+    // Training: predict noise
+    this.trainStep = function(x0) {
+        var t = Math.floor(Math.random() * T);
+        var noise = randomNormal(x0.length);
+        // x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1-alpha_bar_t) * noise
+        var sqrtAB = Math.sqrt(alphaBar[t]);
+        var sqrt1mAB = Math.sqrt(1 - alphaBar[t]);
+        var xt = x0.map(function(v, i) {
+            return sqrtAB * v + sqrt1mAB * noise[i];
+        });
+        var predictedNoise = model.forward(xt, t);
+        return mseLoss(predictedNoise, noise);
+    };
+
+    // Sampling: iterative denoising
+    this.sample = function() {
+        var x = randomNormal(dataDim); // Start from noise
+        for (var t = T - 1; t >= 0; t--) {
+            var predictedNoise = model.forward(x, t);
+            x = denoise(x, predictedNoise, t, alphas, betas);
+        }
+        return x;
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://huggingface.co/blog/annotated-diffusion" target="_blank">Annotated Diffusion &mdash; Hugging Face</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "diffusion-models", title: "Diffusion Models", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(42);
+        var SIZE = 6;
+
+        // Create a simple pattern (like a cross)
+        function makeClean() {
+            var g = [];
+            for (var r = 0; r < SIZE; r++) {
+                g[r] = [];
+                for (var c = 0; c < SIZE; c++) {
+                    var isCross = (r === 2 || r === 3 || c === 2 || c === 3);
+                    g[r][c] = isCross ? 8 : 1;
+                }
+            }
+            return g;
+        }
+
+        function addNoise(grid, level) {
+            return grid.map(function(row) {
+                return row.map(function(v) {
+                    var noise = (rand() - 0.5) * level * 2;
+                    return Math.max(0, Math.min(9, Math.round(v + noise)));
+                });
+            });
+        }
+
+        var clean = makeClean();
+
+        // Forward process: add noise progressively
+        steps.push({ type: 'grid', grid: clean.map(function(row) {
+            return row.map(function(v) { return { value: v, state: v > 5 ? 'active' : '' }; });
+        }), explanation: 'Forward process (t=0): Clean data. A cross pattern with high values (8) and low background (1). Diffusion will gradually add noise.' });
+
+        var noiseSteps = [2, 4, 6, 8];
+        noiseSteps.forEach(function(level, i) {
+            var noisy = addNoise(clean, level);
+            var grid = noisy.map(function(row) {
+                return row.map(function(v) { return { value: v, state: v > 5 ? 'active' : '' }; });
+            });
+            steps.push({ type: 'grid', grid: grid, explanation: 'Forward process (t=' + ((i + 1) * 250) + '): Adding Gaussian noise. Pattern becomes less distinguishable. noise_level=' + level + '.' });
+        });
+
+        // Pure noise
+        var pureNoise = [];
+        for (var r = 0; r < SIZE; r++) {
+            pureNoise[r] = [];
+            for (var c = 0; c < SIZE; c++) {
+                pureNoise[r][c] = Math.round(rand() * 9);
+            }
+        }
+        steps.push({ type: 'grid', grid: pureNoise.map(function(row) {
+            return row.map(function(v) { return { value: v, state: '' }; });
+        }), explanation: 'Forward process (t=1000): Pure noise. All structure is destroyed. This is the starting point for generation.' });
+
+        // Reverse process: denoise step by step
+        steps.push({ type: 'grid', grid: pureNoise.map(function(row) {
+            return row.map(function(v) { return { value: v, state: 'active' }; });
+        }), explanation: 'Reverse process begins: Starting from pure noise, the trained U-Net predicts and removes noise at each step.' });
+
+        var revLevels = [6, 4, 2, 0];
+        revLevels.forEach(function(level, i) {
+            var denoised = level === 0 ? clean : addNoise(clean, level);
+            var grid = denoised.map(function(row) {
+                return row.map(function(v) { return { value: v, state: v > 5 ? 'active' : (v > 3 ? 'visited' : '') }; });
+            });
+            var tStep = 1000 - (i + 1) * 250;
+            steps.push({ type: 'grid', grid: grid, explanation: 'Reverse process (t=' + Math.max(0, tStep) + '): Pattern gradually emerges from noise. Each step removes a small amount of predicted noise.' });
+        });
+
+        // Final clean
+        steps.push({ type: 'grid', grid: clean.map(function(row) {
+            return row.map(function(v) { return { value: v, state: 'visited' }; });
+        }), explanation: 'Diffusion complete! Clean cross pattern recovered from pure noise. This process powers Stable Diffusion, DALL-E, and Midjourney for photorealistic image generation.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

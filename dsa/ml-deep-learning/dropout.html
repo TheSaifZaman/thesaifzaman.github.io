@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropout — DSA & ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Dropout</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Overhead: minimal</span>
+            <span class="complexity-tag">Rate: typically 0.2-0.5</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p><strong>Dropout</strong> is a regularization technique where, during training, each neuron is randomly "dropped out" (set to zero) with a probability p. This forces the network to not rely on any single neuron and to learn redundant representations.</p>
+            <p>During training, each neuron's output is multiplied by a Bernoulli random variable (0 with probability p, 1 with probability 1-p). At test time, all neurons are active, but outputs are scaled by (1-p) to compensate (or equivalently, training outputs are scaled by 1/(1-p) &mdash; "inverted dropout").</p>
+            <p>Dropout can be viewed as training an exponential number of different "thinned" networks that share weights, with the full network at test time being an approximate ensemble average of all possible thinned networks.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Regularization:</strong> Prevents overfitting by reducing co-adaptation between neurons.</li>
+                    <li><strong>Implicit Ensemble:</strong> Approximates averaging over all 2^n possible sub-networks.</li>
+                    <li><strong>Simple to Implement:</strong> Just multiply activations by random 0/1 mask during training.</li>
+                    <li><strong>Scale at Test Time:</strong> Multiply by (1-p) or use inverted dropout during training.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function Dropout(rate) {
+    var p = rate; // probability of dropping
+
+    this.forward = function(x, training) {
+        if (!training) return x; // No dropout at test time
+
+        // Generate random mask
+        var mask = x.map(function(val) {
+            return Math.random() > p ? 1 : 0;
+        });
+        // Apply mask and scale (inverted dropout)
+        return x.map(function(val, i) {
+            return mask[i] ? val / (1 - p) : 0;
+        });
+    };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://arxiv.org/abs/1207.0580" target="_blank">Original Dropout Paper &mdash; Srivastava et al. 2014</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "dropout", title: "Dropout", category: "Deep Learning", section: "ml" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var rng = function(seed) { var s = seed; return function() { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; };
+        var rand = rng(42);
+
+        var layers = [
+            { nodes: [{label:'x1',state:''},{label:'x2',state:''},{label:'x3',state:''}] },
+            { nodes: [{label:'h1',state:''},{label:'h2',state:''},{label:'h3',state:''},{label:'h4',state:''}] },
+            { nodes: [{label:'h5',state:''},{label:'h6',state:''},{label:'h7',state:''},{label:'h8',state:''}] },
+            { nodes: [{label:'y1',state:''},{label:'y2',state:''}] }
+        ];
+
+        steps.push({ type: 'network', layers: layers, explanation: 'Full network: 3 inputs, two hidden layers (4 neurons each), 2 outputs. All neurons active. Dropout rate = 0.5.' });
+
+        // Training: show different dropout masks
+        for (var trial = 1; trial <= 4; trial++) {
+            var droppedLayers = JSON.parse(JSON.stringify(layers));
+            // Input layer stays
+            droppedLayers[0].nodes.forEach(function(n) { n.state = 'active'; });
+            // Drop hidden neurons
+            var dropped = [];
+            for (var li = 1; li <= 2; li++) {
+                droppedLayers[li].nodes.forEach(function(n) {
+                    if (rand() < 0.5) {
+                        n.state = 'dimmed';
+                        dropped.push(n.label);
+                    } else {
+                        n.state = 'active';
+                    }
+                });
+            }
+            droppedLayers[3].nodes.forEach(function(n) { n.state = 'active'; });
+            steps.push({ type: 'network', layers: droppedLayers, explanation: 'Training iteration ' + trial + ': Dropped neurons: ' + dropped.join(', ') + ' (dimmed). Each forward pass uses a different random subset. Network must learn redundant features.' });
+        }
+
+        // Test time: all neurons active
+        var testLayers = JSON.parse(JSON.stringify(layers));
+        testLayers.forEach(function(l) {
+            l.nodes.forEach(function(n) { n.state = 'visited'; });
+        });
+        steps.push({ type: 'network', layers: testLayers, explanation: 'Test time: ALL neurons active, outputs scaled by (1-p)=0.5. This approximates the average prediction of all 2^8 = 256 possible thinned networks.' });
+
+        steps.push({ type: 'network', layers: testLayers, explanation: 'Dropout complete. Simple but powerful regularization that prevents overfitting and reduces co-adaptation. Used in nearly all modern deep networks.' });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'network' });
+    </script>
+</body>
+</html>
