@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hungarian Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Hungarian Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&sup3;)</span>
+            <span class="complexity-tag">Space: O(n&sup2;)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Hungarian Algorithm solves the <strong>assignment problem</strong>: given n workers and n jobs with a cost matrix, find the optimal one-to-one assignment that minimizes total cost. It works on bipartite graphs where one set represents workers and the other represents jobs.
+            </p>
+            <p>
+                The algorithm works by manipulating a cost matrix through row and column reductions. <strong>Step 1</strong>: Subtract the row minimum from each row. <strong>Step 2</strong>: Subtract the column minimum from each column. <strong>Step 3</strong>: Cover all zeros with minimum number of lines. If lines equals n, an optimal assignment exists among the zeros. Otherwise, adjust the matrix and repeat.
+            </p>
+            <p>
+                The key insight is that subtracting a constant from a row or column doesn't change the optimal assignment, only the total cost. The algorithm creates enough zeros to find a perfect matching.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Row Reduction</strong><br>Subtract minimum value from each row, creating at least one zero per row.</div>
+                <div class="key-point"><strong>Column Reduction</strong><br>Subtract minimum value from each column after row reduction.</div>
+                <div class="key-point"><strong>Line Covering</strong><br>Cover all zeros with minimum lines. If count = n, assignment exists.</div>
+                <div class="key-point"><strong>Applications</strong><br>Job scheduling, resource allocation, matching problems, transportation.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Hungarian Algorithm (simplified Kuhn-Munkres)
+function hungarian(cost) {
+    var n = cost.length;
+    var u = new Array(n + 1).fill(0);
+    var v = new Array(n + 1).fill(0);
+    var p = new Array(n + 1).fill(0);
+    var way = new Array(n + 1).fill(0);
+
+    for (var i = 1; i <= n; i++) {
+        p[0] = i;
+        var j0 = 0;
+        var minv = new Array(n + 1).fill(Infinity);
+        var used = new Array(n + 1).fill(false);
+
+        do {
+            used[j0] = true;
+            var i0 = p[j0], delta = Infinity, j1;
+
+            for (var j = 1; j <= n; j++) {
+                if (!used[j]) {
+                    var cur = cost[i0-1][j-1] - u[i0] - v[j];
+                    if (cur < minv[j]) {
+                        minv[j] = cur;
+                        way[j] = j0;
+                    }
+                    if (minv[j] < delta) {
+                        delta = minv[j];
+                        j1 = j;
+                    }
+                }
+            }
+
+            for (var j = 0; j <= n; j++) {
+                if (used[j]) { u[p[j]] += delta; v[j] -= delta; }
+                else { minv[j] -= delta; }
+            }
+            j0 = j1;
+        } while (p[j0] !== 0);
+
+        do {
+            var j1 = way[j0];
+            p[j0] = p[j1];
+            j0 = j1;
+        } while (j0);
+    }
+
+    // Extract assignment
+    var result = new Array(n);
+    for (var j = 1; j <= n; j++) {
+        result[p[j] - 1] = j - 1;
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/minimum-cost-to-hire-k-workers/" target="_blank">Minimum Cost to Hire K Workers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/maximum-students-taking-exam/" target="_blank">Maximum Students Taking Exam</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/minimum-weighted-subgraph-with-the-required-paths/" target="_blank">Min Weighted Subgraph With Required Paths</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/minimum-cost-to-connect-two-groups-of-points/" target="_blank">Min Cost to Connect Two Groups of Points</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "hungarian-algorithm", title: "Hungarian Algorithm", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        // 4x4 cost matrix
+        var cost = [
+            [9, 2, 7, 8],
+            [6, 4, 3, 7],
+            [5, 8, 1, 8],
+            [7, 6, 9, 4]
+        ];
+        var workers = ['W1','W2','W3','W4'];
+        var jobs = ['J1','J2','J3','J4'];
+
+        function makeGrid(mat, highlights) {
+            var g = [];
+            for (var r = 0; r < mat.length; r++) {
+                var row = [];
+                for (var c = 0; c < mat[r].length; c++) {
+                    var st = '';
+                    if (highlights && highlights[r+','+c]) st = highlights[r+','+c];
+                    else if (mat[r][c] === 0) st = 'highlight-compare';
+                    row.push({value:mat[r][c], state:st});
+                }
+                g.push(row);
+            }
+            return g;
+        }
+
+        steps.push({type:'grid', grid:makeGrid(cost, {}),
+            explanation:'Cost matrix: rows = workers (W1-W4), columns = jobs (J1-J4). Find minimum cost assignment.'});
+
+        // Step 1: Row reduction
+        var mat = cost.map(function(r){return r.slice();});
+        for (var r = 0; r < 4; r++) {
+            var minVal = Math.min.apply(null, mat[r]);
+            for (var c = 0; c < 4; c++) mat[r][c] -= minVal;
+        }
+        steps.push({type:'grid', grid:makeGrid(mat, {}),
+            explanation:'Step 1: Row reduction — subtract row minimum from each row. Creates zeros in each row.'});
+
+        // Step 2: Column reduction
+        for (var c2 = 0; c2 < 4; c2++) {
+            var minVal2 = Infinity;
+            for (var r2 = 0; r2 < 4; r2++) minVal2 = Math.min(minVal2, mat[r2][c2]);
+            for (var r3 = 0; r3 < 4; r3++) mat[r3][c2] -= minVal2;
+        }
+        steps.push({type:'grid', grid:makeGrid(mat, {}),
+            explanation:'Step 2: Column reduction — subtract column minimum from each column. More zeros appear.'});
+
+        // Highlight assignment zeros
+        // Optimal assignment: W1→J2(0), W2→J3(0), W3→J3... find valid matching
+        var assignment = [[0,1],[1,2],[2,2],[3,3]]; // heuristic - find zeros
+        // Actually find proper zeros
+        var hl = {};
+        var assigned = [];
+        var usedCols = {};
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 4; j++) {
+                if (mat[i][j] === 0 && !usedCols[j]) {
+                    hl[i+','+j] = 'highlight-active';
+                    assigned.push([i,j]);
+                    usedCols[j] = true;
+                    break;
+                }
+            }
+        }
+
+        steps.push({type:'grid', grid:makeGrid(mat, hl),
+            explanation:'Step 3: Find assignment using zeros. Highlighted cells show selected assignments.'});
+
+        var totalCost = 0;
+        var assignStr = '';
+        for (var a = 0; a < assigned.length; a++) {
+            totalCost += cost[assigned[a][0]][assigned[a][1]];
+            assignStr += workers[assigned[a][0]] + '→' + jobs[assigned[a][1]] + '(cost=' + cost[assigned[a][0]][assigned[a][1]] + ') ';
+        }
+
+        steps.push({type:'grid', grid:makeGrid(mat, hl),
+            explanation:'Optimal assignment: ' + assignStr + '. Total cost: ' + totalCost});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[4], stepGenerator:generateSteps, type:'matrix'});
+    </script>
+</body>
+</html>

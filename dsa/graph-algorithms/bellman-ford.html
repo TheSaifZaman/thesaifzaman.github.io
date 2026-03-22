@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellman-Ford Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Bellman-Ford Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V&middot;E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Bellman-Ford algorithm finds shortest paths from a single source vertex to all other vertices, even when the graph contains <strong>negative edge weights</strong>. Unlike Dijkstra's, it can also detect <strong>negative weight cycles</strong>.
+            </p>
+            <p>
+                The algorithm performs V-1 iterations over all edges. In each iteration, it attempts to relax every edge: if dist[u] + w(u,v) &lt; dist[v], then dist[v] is updated. After V-1 iterations, all shortest paths with at most V-1 edges are found. A final V-th iteration checks for negative cycles &mdash; if any distance can still be reduced, a negative cycle exists.
+            </p>
+            <p>
+                The intuition is that the shortest path between any two vertices contains at most V-1 edges. Each iteration guarantees that paths using one more edge are correctly computed. So after V-1 iterations, all shortest paths are found.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>V-1 Iterations</strong><br>Relax all edges V-1 times. Each iteration extends shortest paths by one more edge.</div>
+                <div class="key-point"><strong>Negative Weights</strong><br>Handles negative edge weights correctly, unlike Dijkstra's algorithm.</div>
+                <div class="key-point"><strong>Cycle Detection</strong><br>An extra iteration detects negative cycles if any distance can still be reduced.</div>
+                <div class="key-point"><strong>Trade-off</strong><br>Slower than Dijkstra O(V&middot;E) vs O((V+E)log V), but more versatile.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bellmanFord(n, edges, src) {
+    var dist = new Array(n).fill(Infinity);
+    var prev = new Array(n).fill(-1);
+    dist[src] = 0;
+
+    // Relax all edges V-1 times
+    for (var i = 0; i < n - 1; i++) {
+        for (var j = 0; j < edges.length; j++) {
+            var u = edges[j][0], v = edges[j][1], w = edges[j][2];
+            if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                prev[v] = u;
+            }
+        }
+    }
+
+    // Check for negative cycles
+    for (var k = 0; k < edges.length; k++) {
+        var u = edges[k][0], v = edges[k][1], w = edges[k][2];
+        if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+            return { dist: null, hasNegativeCycle: true };
+        }
+    }
+
+    return { dist: dist, prev: prev, hasNegativeCycle: false };
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (5)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" target="_blank">Find if Path Exists in Graph</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Network Delay Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" target="_blank">Cheapest Flights Within K Stops</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/path-with-minimum-effort/" target="_blank">Path with Minimum Effort</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/" target="_blank">Number of Ways to Arrive at Destination</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/" target="_blank">Min Cost to Reach Destination in Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>7</td><td><a href="https://leetcode.com/problems/swim-in-rising-water/" target="_blank">Swim in Rising Water</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "bellman-ford", title: "Bellman-Ford Algorithm", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var edgesDef = [
+            [0,1,4], [0,3,2], [1,2,3], [1,4,1], [2,5,1], [3,4,5], [4,5,2], [3,1,-3]
+        ];
+        var vizEdges = [
+            {from:0, to:1, weight:4, state:''},
+            {from:0, to:3, weight:2, state:''},
+            {from:1, to:2, weight:3, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:3, to:4, weight:5, state:''},
+            {from:4, to:5, weight:2, state:''},
+            {from:3, to:1, weight:-3, state:''}
+        ];
+
+        var INF = 999;
+        var dist = [0, INF, INF, INF, INF, INF];
+        var labels = ['A','B','C','D','E','F'];
+
+        function distStr() {
+            return labels.map(function(l,i){return l+'='+(dist[i]>=INF?'∞':dist[i]);}).join(', ');
+        }
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Bellman-Ford from A. Note edge D→B has weight -3. Initial: ' + distStr()});
+
+        for (var iter = 0; iter < 5; iter++) {
+            var updated = false;
+            for (var j = 0; j < edgesDef.length; j++) {
+                var u = edgesDef[j][0], v = edgesDef[j][1], w = edgesDef[j][2];
+                if (dist[u] < INF && dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    updated = true;
+                    var ns = JSON.parse(JSON.stringify(nodes));
+                    var es = JSON.parse(JSON.stringify(vizEdges));
+                    ns[u].state = 'highlight-active';
+                    ns[v].state = 'highlight-compare';
+                    es[j].state = 'edge-highlight';
+                    steps.push({type:'graph', nodes:ns, edges:es,
+                        explanation:'Iter ' + (iter+1) + ': Relax ' + labels[u] + '→' + labels[v] + ' (w=' + w + '): dist[' + labels[v] + ']=' + dist[v] + '. ' + distStr()});
+                }
+            }
+            if (!updated) {
+                steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+                    explanation:'Iteration ' + (iter+1) + ': No updates — converged early.'});
+                break;
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Done! No negative cycle detected. Shortest distances: ' + distStr()});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

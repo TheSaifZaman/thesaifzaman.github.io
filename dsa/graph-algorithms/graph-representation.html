@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Representation — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Graph Representation</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: &mdash;</span>
+            <span class="complexity-tag">Space: O(V+E) list / O(V&sup2;) matrix</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Graphs can be represented in multiple ways depending on the problem requirements. The two most common representations are the <strong>adjacency matrix</strong> and the <strong>adjacency list</strong>. Each has trade-offs in terms of space, edge lookup time, and iteration efficiency.
+            </p>
+            <p>
+                An <strong>adjacency matrix</strong> is a 2D array of size V&times;V where entry (i,j) is 1 (or the edge weight) if there is an edge from vertex i to vertex j, and 0 otherwise. It provides O(1) edge lookup but uses O(V&sup2;) space, making it ideal for dense graphs.
+            </p>
+            <p>
+                An <strong>adjacency list</strong> stores, for each vertex, a list of its neighbors. It uses O(V+E) space and is preferred for sparse graphs. Iterating over neighbors is efficient, but checking if a specific edge exists takes O(degree) time.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Adjacency Matrix</strong><br>O(1) edge lookup, O(V&sup2;) space. Best for dense graphs or when frequent edge existence checks are needed.</div>
+                <div class="key-point"><strong>Adjacency List</strong><br>O(V+E) space, efficient neighbor iteration. Best for sparse graphs and most graph algorithms.</div>
+                <div class="key-point"><strong>Edge List</strong><br>Simple list of (u, v, weight) tuples. O(E) space, used in algorithms like Kruskal's MST.</div>
+                <div class="key-point"><strong>Directed vs Undirected</strong><br>Undirected graphs store each edge twice (both directions). Directed graphs store edges only in the specified direction.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Adjacency List representation
+function buildAdjList(n, edges) {
+    var adj = [];
+    for (var i = 0; i < n; i++) adj.push([]);
+    for (var e = 0; e < edges.length; e++) {
+        var u = edges[e][0], v = edges[e][1];
+        adj[u].push(v);
+        adj[v].push(u); // remove for directed
+    }
+    return adj;
+}
+
+// Adjacency Matrix representation
+function buildAdjMatrix(n, edges) {
+    var mat = [];
+    for (var i = 0; i < n; i++) {
+        mat.push(new Array(n).fill(0));
+    }
+    for (var e = 0; e < edges.length; e++) {
+        var u = edges[e][0], v = edges[e][1];
+        var w = edges[e][2] || 1;
+        mat[u][v] = w;
+        mat[v][u] = w; // remove for directed
+    }
+    return mat;
+}
+
+// Check if edge exists — Matrix: O(1)
+function hasEdgeMatrix(mat, u, v) {
+    return mat[u][v] !== 0;
+}
+
+// Check if edge exists — List: O(degree)
+function hasEdgeList(adj, u, v) {
+    return adj[u].indexOf(v) !== -1;
+}
+
+// Get all neighbors
+function neighbors(adj, u) {
+    return adj[u];
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/find-center-of-star-graph/" target="_blank">Find Center of Star Graph</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" target="_blank">Find if Path Exists in Graph</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/clone-graph/" target="_blank">Clone Graph</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/keys-and-rooms/" target="_blank">Keys and Rooms</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/reconstruct-itinerary/" target="_blank">Reconstruct Itinerary</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "graph-representation", title: "Graph Representation", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var edgeList = [
+            {from:0, to:1, weight:1, state:''},
+            {from:0, to:3, weight:1, state:''},
+            {from:1, to:2, weight:1, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:3, to:4, weight:1, state:''},
+            {from:4, to:5, weight:1, state:''}
+        ];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(edgeList)),
+            explanation:'Graph with 6 vertices (A-F) and 7 edges. We will build adjacency list and adjacency matrix representations.'});
+
+        var adj = [[],[],[],[],[],[]];
+        for (var i = 0; i < edgeList.length; i++) {
+            var e = edgeList[i];
+            adj[e.from].push(e.to);
+            adj[e.to].push(e.from);
+            var ns = JSON.parse(JSON.stringify(nodes));
+            ns[e.from].state = 'highlight-active';
+            ns[e.to].state = 'highlight-active';
+            var es = JSON.parse(JSON.stringify(edgeList));
+            es[i].state = 'edge-highlight';
+            steps.push({type:'graph', nodes:ns, edges:es,
+                explanation:'Edge ' + (i+1) + ': Add ' + nodes[e.from].label + '-' + nodes[e.to].label + '. adj[' + nodes[e.from].label + ']=[' + adj[e.from].map(function(x){return nodes[x].label;}).join(',') + '], adj[' + nodes[e.to].label + ']=[' + adj[e.to].map(function(x){return nodes[x].label;}).join(',') + ']'});
+        }
+
+        var n = 6;
+        var mat = [];
+        for (var r = 0; r < n; r++) {
+            var row = [];
+            for (var c = 0; c < n; c++) row.push({value:0, state:''});
+            mat.push(row);
+        }
+        for (var j = 0; j < edgeList.length; j++) {
+            mat[edgeList[j].from][edgeList[j].to] = {value:1, state:'highlight-active'};
+            mat[edgeList[j].to][edgeList[j].from] = {value:1, state:'highlight-active'};
+        }
+        steps.push({type:'grid', grid:mat,
+            explanation:'Adjacency Matrix: 1 indicates an edge. Rows/columns = vertices A(0) through F(5). Uses O(V²) space.'});
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var k = 0; k < finalNodes.length; k++) finalNodes[k].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:edgeList,
+            explanation:'Complete! Adjacency list uses O(V+E) space, matrix uses O(V²). Choose based on graph density.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

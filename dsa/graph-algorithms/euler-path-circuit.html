@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euler Path &amp; Circuit — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Euler Path &amp; Circuit</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(E)</span>
+            <span class="complexity-tag">Space: O(V+E)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                An <strong>Euler path</strong> visits every edge exactly once. An <strong>Euler circuit</strong> is an Euler path that starts and ends at the same vertex. These exist under specific degree conditions.
+            </p>
+            <p>
+                For an undirected graph: an Euler circuit exists if every vertex has even degree. An Euler path exists if exactly two vertices have odd degree (these are the start and end). <strong>Hierholzer's algorithm</strong> finds the circuit/path in O(E) time by following edges, backtracking when stuck, and splicing together sub-circuits.
+            </p>
+            <p>
+                Hierholzer's works by starting at a valid vertex, following unused edges until returning to the start (forming a circuit). If unvisited edges remain, it picks a vertex on the current circuit with unused edges, finds another sub-circuit, and merges them. This process repeats until all edges are used.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Euler Circuit</strong><br>All vertices even degree. Starts and ends at same vertex.</div>
+                <div class="key-point"><strong>Euler Path</strong><br>Exactly 2 vertices with odd degree. Start at one, end at the other.</div>
+                <div class="key-point"><strong>Hierholzer's</strong><br>Greedily follow edges, backtrack to splice sub-circuits. O(E) time.</div>
+                <div class="key-point"><strong>Connectivity</strong><br>Graph must be connected (ignoring isolated vertices) for Euler path/circuit to exist.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Hierholzer's Algorithm for Euler Circuit/Path
+function findEulerPath(n, adj) {
+    // Find start vertex (odd degree vertex or 0)
+    var start = 0;
+    for (var i = 0; i < n; i++) {
+        if (adj[i].length % 2 === 1) { start = i; break; }
+    }
+
+    // Deep copy adjacency lists (we remove edges as we use them)
+    var graph = [];
+    for (var i = 0; i < n; i++) graph.push(adj[i].slice());
+
+    var stack = [start];
+    var path = [];
+
+    while (stack.length > 0) {
+        var v = stack[stack.length - 1];
+        if (graph[v].length > 0) {
+            var u = graph[v].pop();
+            // Remove reverse edge for undirected graph
+            var idx = graph[u].indexOf(v);
+            if (idx !== -1) graph[u].splice(idx, 1);
+            stack.push(u);
+        } else {
+            path.push(stack.pop());
+        }
+    }
+
+    return path.reverse();
+}
+
+// Check if Euler path/circuit exists
+function hasEulerPath(n, adj) {
+    var oddCount = 0;
+    for (var i = 0; i < n; i++) {
+        if (adj[i].length % 2 === 1) oddCount++;
+    }
+    if (oddCount === 0) return "circuit";
+    if (oddCount === 2) return "path";
+    return "none";
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/valid-arrangement-of-pairs/" target="_blank">Valid Arrangement of Pairs</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/" target="_blank">Min Days to Disconnect Island</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/reconstruct-itinerary/" target="_blank">Reconstruct Itinerary</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/cracking-the-safe/" target="_blank">Cracking the Safe</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/shortest-superstring/" target="_blank">Shortest Superstring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "euler-path-circuit", title: "Euler Path & Circuit", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        // All even degree → Euler circuit exists
+        var vizEdges = [
+            {from:0, to:1, state:''},
+            {from:1, to:2, state:''},
+            {from:2, to:5, state:''},
+            {from:5, to:4, state:''},
+            {from:4, to:3, state:''},
+            {from:3, to:0, state:''},
+            {from:1, to:4, state:''},
+            {from:0, to:4, state:''}
+        ];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Undirected graph with 8 edges. Degrees: A=3, B=3, C=2, D=2, E=4, F=2. A and B have odd degree → Euler PATH exists (A to B or B to A).'});
+
+        // Simulate Hierholzer's from A
+        var path = [0, 1, 2, 5, 4, 1, 4, 3, 0]; // pre-computed Euler path
+        var usedEdges = [];
+
+        for (var i = 0; i < path.length - 1; i++) {
+            var u = path[i], v = path[i+1];
+            // Find edge index
+            var ei = -1;
+            for (var j = 0; j < vizEdges.length; j++) {
+                if (usedEdges.indexOf(j) === -1 &&
+                    ((vizEdges[j].from === u && vizEdges[j].to === v) ||
+                     (vizEdges[j].from === v && vizEdges[j].to === u))) {
+                    ei = j; break;
+                }
+            }
+            if (ei >= 0) usedEdges.push(ei);
+
+            var ns = JSON.parse(JSON.stringify(nodes));
+            var es = JSON.parse(JSON.stringify(vizEdges));
+            ns[v].state = 'highlight-active';
+            ns[u].state = 'highlight-compare';
+            for (var k = 0; k < usedEdges.length; k++) es[usedEdges[k]].state = 'edge-highlight';
+            steps.push({type:'graph', nodes:ns, edges:es,
+                explanation:'Step ' + (i+1) + ': Traverse ' + labels[u] + '→' + labels[v] + '. Path: ' + path.slice(0,i+2).map(function(x){return labels[x];}).join('→')});
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        var finalEdges = JSON.parse(JSON.stringify(vizEdges));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        for (var fe = 0; fe < usedEdges.length; fe++) finalEdges[usedEdges[fe]].state = 'edge-active';
+        steps.push({type:'graph', nodes:finalNodes, edges:finalEdges,
+            explanation:'Euler path found: ' + path.map(function(x){return labels[x];}).join('→') + '. Every edge visited exactly once!'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

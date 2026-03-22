@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimum Cut (Karger's) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Minimum Cut (Karger's)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(V&sup2; log V)</span>
+            <span class="complexity-tag">Space: O(V+E)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A <strong>minimum cut</strong> is the smallest set of edges whose removal disconnects the graph into two or more components. Karger's algorithm finds it using <strong>random edge contraction</strong>.
+            </p>
+            <p>
+                The algorithm repeatedly picks a random edge and <strong>contracts</strong> it — merging its two endpoints into a single super-node. Self-loops are removed. This continues until only two super-nodes remain. The edges between them form a cut. By repeating this process O(V&sup2; log V) times and taking the minimum, the algorithm finds the minimum cut with high probability.
+            </p>
+            <p>
+                The probability that a single run finds the minimum cut is at least 2/(V(V-1)). Running O(V&sup2; log V) times gives high success probability. The algorithm is simple to implement and is one of the most elegant randomized algorithms.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Edge Contraction</strong><br>Merge two endpoints of a random edge into one super-node. Remove self-loops.</div>
+                <div class="key-point"><strong>Randomized</strong><br>Single run has ≥ 2/(n(n-1)) success probability. Repeat for high confidence.</div>
+                <div class="key-point"><strong>Min-Cut Max-Flow</strong><br>Min cut value equals max flow (by max-flow min-cut theorem).</div>
+                <div class="key-point"><strong>Applications</strong><br>Network reliability, image segmentation, clustering, graph partitioning.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Karger's Minimum Cut Algorithm
+function kargerMinCut(n, edges) {
+    var bestCut = Infinity;
+    var trials = n * n * Math.ceil(Math.log(n));
+
+    for (var t = 0; t < trials; t++) {
+        // Initialize Union-Find
+        var parent = [];
+        for (var i = 0; i < n; i++) parent.push(i);
+
+        function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+        }
+
+        var remaining = n;
+        var edgeCopy = edges.slice();
+
+        // Shuffle edges for randomness
+        for (var i = edgeCopy.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = edgeCopy[i];
+            edgeCopy[i] = edgeCopy[j];
+            edgeCopy[j] = tmp;
+        }
+
+        var ei = 0;
+        while (remaining > 2 && ei < edgeCopy.length) {
+            var u = find(edgeCopy[ei][0]);
+            var v = find(edgeCopy[ei][1]);
+            if (u !== v) {
+                parent[u] = v;
+                remaining--;
+            }
+            ei++;
+        }
+
+        // Count crossing edges
+        var cut = 0;
+        for (var e = 0; e < edges.length; e++) {
+            if (find(edges[e][0]) !== find(edges[e][1])) cut++;
+        }
+
+        bestCut = Math.min(bestCut, cut);
+    }
+
+    return bestCut;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/number-of-operations-to-make-network-connected/" target="_blank">Num Operations to Make Network Connected</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/" target="_blank">Min Days to Disconnect Island</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/" target="_blank">Remove Max Edges to Keep Graph Traversable</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/critical-connections-in-a-network/" target="_blank">Critical Connections in a Network</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "minimum-cut", title: "Minimum Cut (Karger's)", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var vizEdges = [
+            {from:0, to:1, weight:1, state:''},
+            {from:0, to:3, weight:1, state:''},
+            {from:1, to:2, weight:1, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:3, to:4, weight:1, state:''},
+            {from:4, to:5, weight:1, state:''}
+        ];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Karger\'s algorithm: randomly contract edges until 2 super-nodes remain. Edges between them = cut.'});
+
+        // Simulate a specific contraction sequence
+        var contractions = [
+            {u:0, v:3, label:'A+D', mergeInto:0, desc:'Contract A-D → merge into super-node {A,D}'},
+            {u:1, v:4, label:'B+E', mergeInto:1, desc:'Contract B-E → merge into super-node {B,E}'},
+            {u:2, v:5, label:'C+F', mergeInto:2, desc:'Contract C-F → merge into super-node {C,F}'},
+            {u:0, v:1, label:'AD+BE', mergeInto:0, desc:'Contract {A,D}-{B,E} → merge into super-node {A,B,D,E}'}
+        ];
+
+        for (var i = 0; i < contractions.length; i++) {
+            var c = contractions[i];
+            var ns = JSON.parse(JSON.stringify(nodes));
+            ns[c.u].state = 'highlight-active';
+            ns[c.v].state = 'highlight-active';
+            steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)),
+                explanation:'Step ' + (i+1) + ': ' + c.desc});
+        }
+
+        // Show final cut
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        var finalEdges = JSON.parse(JSON.stringify(vizEdges));
+        // Partition: {A,B,D,E} and {C,F}
+        finalNodes[0].state = 'highlight-compare';
+        finalNodes[1].state = 'highlight-compare';
+        finalNodes[3].state = 'highlight-compare';
+        finalNodes[4].state = 'highlight-compare';
+        finalNodes[2].state = 'highlight-sorted';
+        finalNodes[5].state = 'highlight-sorted';
+        // Cut edges: B-C(2), E-F(6)
+        finalEdges[2].state = 'edge-highlight';
+        finalEdges[4].state = 'edge-highlight';
+
+        steps.push({type:'graph', nodes:finalNodes, edges:finalEdges,
+            explanation:'2 super-nodes remain: {A,B,D,E} and {C,F}. Cut edges: B-C, C-F → Minimum cut = 2 edges.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

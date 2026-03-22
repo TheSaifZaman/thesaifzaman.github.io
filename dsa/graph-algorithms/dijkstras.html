@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra's Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Dijkstra's Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O((V+E) log V)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Dijkstra's algorithm finds the shortest path from a single source vertex to all other vertices in a weighted graph with <strong>non-negative edge weights</strong>. It uses a greedy approach, always processing the unvisited vertex with the smallest known distance.
+            </p>
+            <p>
+                The algorithm maintains a distance array initialized to infinity (except the source which is 0) and a priority queue (min-heap). At each step, it extracts the vertex with minimum distance, then <strong>relaxes</strong> all its outgoing edges: if going through this vertex offers a shorter path to a neighbor, the distance is updated.
+            </p>
+            <p>
+                The key insight is that once a vertex is extracted from the priority queue, its shortest distance is finalized. This is because all remaining unprocessed vertices have equal or greater distance, and edge weights are non-negative, so no future path can improve the distance.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Greedy Choice</strong><br>Always process the closest unvisited vertex. This guarantees optimality with non-negative weights.</div>
+                <div class="key-point"><strong>Relaxation</strong><br>For each neighbor v of current node u: if dist[u] + w(u,v) &lt; dist[v], update dist[v].</div>
+                <div class="key-point"><strong>Priority Queue</strong><br>A min-heap enables efficient extraction of the minimum distance vertex in O(log V).</div>
+                <div class="key-point"><strong>Limitation</strong><br>Does not work with negative edge weights. Use Bellman-Ford for graphs with negative weights.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Dijkstra's Algorithm using a min-heap (priority queue)
+function dijkstra(graph, src, n) {
+    var dist = new Array(n).fill(Infinity);
+    var visited = new Array(n).fill(false);
+    var prev = new Array(n).fill(-1);
+    dist[src] = 0;
+
+    // Simple priority queue using array
+    var pq = [[0, src]]; // [distance, vertex]
+
+    while (pq.length > 0) {
+        // Extract minimum
+        pq.sort(function(a, b) { return a[0] - b[0]; });
+        var curr = pq.shift();
+        var d = curr[0], u = curr[1];
+
+        if (visited[u]) continue;
+        visited[u] = true;
+
+        // Relax neighbors
+        for (var i = 0; i < graph[u].length; i++) {
+            var v = graph[u][i][0];
+            var w = graph[u][i][1];
+            if (!visited[v] && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                prev[v] = u;
+                pq.push([dist[v], v]);
+            }
+        }
+    }
+
+    return { dist: dist, prev: prev };
+}
+
+// Reconstruct path from source to target
+function getPath(prev, target) {
+    var path = [];
+    for (var v = target; v !== -1; v = prev[v]) {
+        path.unshift(v);
+    }
+    return path;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (10)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" target="_blank">Find if Path Exists in Graph</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Network Delay Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/path-with-minimum-effort/" target="_blank">Path with Minimum Effort</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" target="_blank">Cheapest Flights Within K Stops</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/path-with-maximum-probability/" target="_blank">Path with Maximum Probability</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/" target="_blank">Number of Ways to Arrive at Destination</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/" target="_blank">Min Cost to Reach Destination in Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/swim-in-rising-water/" target="_blank">Swim in Rising Water</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>9</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>10</td><td><a href="https://leetcode.com/problems/minimum-cost-to-make-at-least-one-valid-path-in-a-grid/" target="_blank">Min Cost to Make Valid Path in Grid</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "dijkstras", title: "Dijkstra's Algorithm", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var edges = [
+            {from:0, to:1, weight:4, state:''},
+            {from:0, to:3, weight:2, state:''},
+            {from:1, to:2, weight:3, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:3, to:4, weight:5, state:''},
+            {from:4, to:5, weight:2, state:''}
+        ];
+
+        // Build adjacency list
+        var adj = [[],[],[],[],[],[]];
+        for (var i = 0; i < edges.length; i++) {
+            adj[edges[i].from].push([edges[i].to, edges[i].weight, i]);
+            adj[edges[i].to].push([edges[i].from, edges[i].weight, i]);
+        }
+
+        var INF = 999;
+        var dist = [0, INF, INF, INF, INF, INF];
+        var visited = [false, false, false, false, false, false];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(edges)),
+            explanation:'Dijkstra from A. Initial distances: A=0, B=∞, C=∞, D=∞, E=∞, F=∞'});
+
+        // Simple Dijkstra simulation
+        for (var iter = 0; iter < 6; iter++) {
+            // Find min unvisited
+            var u = -1, minD = INF + 1;
+            for (var v = 0; v < 6; v++) {
+                if (!visited[v] && dist[v] < minD) { minD = dist[v]; u = v; }
+            }
+            if (u === -1) break;
+            visited[u] = true;
+
+            var ns = JSON.parse(JSON.stringify(nodes));
+            var es = JSON.parse(JSON.stringify(edges));
+            for (var k = 0; k < 6; k++) {
+                if (visited[k]) ns[k].state = 'highlight-sorted';
+            }
+            ns[u].state = 'highlight-active';
+
+            steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(ns)), edges:es,
+                explanation:'Process ' + labels[u] + ' (dist=' + dist[u] + '). Distances: ' + labels.map(function(l,i){return l+'='+(dist[i]>=INF?'∞':dist[i]);}).join(', ')});
+
+            // Relax neighbors
+            for (var j = 0; j < adj[u].length; j++) {
+                var nb = adj[u][j][0], w = adj[u][j][1], ei = adj[u][j][2];
+                if (!visited[nb] && dist[u] + w < dist[nb]) {
+                    dist[nb] = dist[u] + w;
+                    var ns2 = JSON.parse(JSON.stringify(ns));
+                    var es2 = JSON.parse(JSON.stringify(edges));
+                    ns2[nb].state = 'highlight-compare';
+                    es2[ei].state = 'edge-highlight';
+                    steps.push({type:'graph', nodes:ns2, edges:es2,
+                        explanation:'Relax edge ' + labels[u] + '→' + labels[nb] + ' (w=' + w + '): dist[' + labels[nb] + '] = ' + dist[u] + '+' + w + ' = ' + dist[nb]});
+                }
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:edges,
+            explanation:'Done! Shortest distances from A: ' + labels.map(function(l,i){return l+'='+dist[i];}).join(', ')});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

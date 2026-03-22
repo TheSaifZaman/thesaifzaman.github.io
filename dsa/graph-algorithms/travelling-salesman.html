@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelling Salesman Problem — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Travelling Salesman Problem</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&sup2;&middot;2&#x207F;)</span>
+            <span class="complexity-tag">Space: O(n&middot;2&#x207F;)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Travelling Salesman Problem (TSP) asks: given a list of cities and distances between them, find the shortest route that visits every city exactly once and returns to the starting city. TSP is <strong>NP-hard</strong> — no polynomial-time exact algorithm is known.
+            </p>
+            <p>
+                The <strong>DP + bitmask</strong> approach solves TSP in O(n&sup2; &middot; 2^n). State dp[mask][i] = minimum cost to visit all cities in the bitmask, ending at city i. Transition: try extending from each subset by adding one more city. This is exponential but tractable for n &le; 20.
+            </p>
+            <p>
+                Brute force tries all n! permutations. Approximation algorithms (nearest neighbor, 2-opt) give reasonable solutions in polynomial time for larger instances. The nearest-neighbor heuristic always picks the closest unvisited city.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>NP-Hard</strong><br>No known polynomial exact solution. Exponential algorithms required.</div>
+                <div class="key-point"><strong>DP + Bitmask</strong><br>dp[mask][i] = min cost ending at i with visited set = mask. O(n² · 2^n).</div>
+                <div class="key-point"><strong>Nearest Neighbor</strong><br>Greedy heuristic: always go to closest unvisited city. Fast but not optimal.</div>
+                <div class="key-point"><strong>Applications</strong><br>Route optimization, circuit board drilling, DNA sequencing, logistics.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// TSP with DP + Bitmask
+function tsp(dist, n) {
+    var ALL = (1 << n) - 1;
+    var dp = [];
+    for (var m = 0; m <= ALL; m++) {
+        dp.push(new Array(n).fill(Infinity));
+    }
+    dp[1][0] = 0; // start at city 0
+
+    for (var mask = 1; mask <= ALL; mask++) {
+        for (var u = 0; u < n; u++) {
+            if (dp[mask][u] === Infinity) continue;
+            if (!(mask & (1 << u))) continue;
+
+            for (var v = 0; v < n; v++) {
+                if (mask & (1 << v)) continue; // already visited
+                var newMask = mask | (1 << v);
+                var cost = dp[mask][u] + dist[u][v];
+                if (cost < dp[newMask][v]) {
+                    dp[newMask][v] = cost;
+                }
+            }
+        }
+    }
+
+    // Find minimum cost to return to start
+    var minCost = Infinity;
+    for (var i = 1; i < n; i++) {
+        var total = dp[ALL][i] + dist[i][0];
+        minCost = Math.min(minCost, total);
+    }
+    return minCost;
+}
+
+// Nearest Neighbor Heuristic
+function nearestNeighbor(dist, n) {
+    var visited = new Array(n).fill(false);
+    var path = [0];
+    visited[0] = true;
+    var total = 0;
+
+    for (var step = 1; step < n; step++) {
+        var last = path[path.length - 1];
+        var best = -1, bestDist = Infinity;
+        for (var j = 0; j < n; j++) {
+            if (!visited[j] && dist[last][j] < bestDist) {
+                bestDist = dist[last][j];
+                best = j;
+            }
+        }
+        visited[best] = true;
+        path.push(best);
+        total += bestDist;
+    }
+    total += dist[path[path.length - 1]][0];
+    return { path: path, cost: total };
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (4)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" target="_blank">Find if Path Exists in Graph</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/shortest-superstring/" target="_blank">Shortest Superstring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/find-the-shortest-superstring/" target="_blank">Find the Shortest Superstring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/minimum-cost-to-connect-two-groups-of-points/" target="_blank">Min Cost to Connect Two Groups of Points</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "travelling-salesman", title: "Travelling Salesman Problem", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        // Complete graph (show key edges)
+        var vizEdges = [
+            {from:0, to:1, weight:4, state:''}, {from:0, to:3, weight:2, state:''},
+            {from:1, to:2, weight:3, state:''}, {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''}, {from:3, to:4, weight:5, state:''},
+            {from:4, to:5, weight:2, state:''}, {from:0, to:4, weight:6, state:''},
+            {from:1, to:3, weight:7, state:''}, {from:2, to:4, weight:4, state:''}
+        ];
+        var labels = ['A','B','C','D','E','F'];
+        var dist = [
+            [0,4,8,2,6,9],
+            [4,0,3,7,1,5],
+            [8,3,0,9,4,1],
+            [2,7,9,0,5,8],
+            [6,1,4,5,0,2],
+            [9,5,1,8,2,0]
+        ];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'TSP: Visit all 6 cities and return to start with minimum total distance. Using nearest neighbor heuristic from A.'});
+
+        // Nearest neighbor from A
+        var visited = [true,false,false,false,false,false];
+        var path = [0];
+        var totalCost = 0;
+
+        for (var step = 0; step < 5; step++) {
+            var last = path[path.length-1];
+            var best = -1, bestD = Infinity;
+            for (var j = 0; j < 6; j++) {
+                if (!visited[j] && dist[last][j] < bestD) { bestD = dist[last][j]; best = j; }
+            }
+            visited[best] = true;
+            path.push(best);
+            totalCost += bestD;
+
+            var ns = JSON.parse(JSON.stringify(nodes));
+            var es = JSON.parse(JSON.stringify(vizEdges));
+            for (var k = 0; k < path.length; k++) ns[path[k]].state = k===path.length-1 ? 'highlight-active' : 'highlight-sorted';
+            // Highlight path edges
+            for (var p = 0; p < path.length-1; p++) {
+                for (var e = 0; e < vizEdges.length; e++) {
+                    if ((vizEdges[e].from===path[p]&&vizEdges[e].to===path[p+1])||
+                        (vizEdges[e].from===path[p+1]&&vizEdges[e].to===path[p])) {
+                        es[e].state = 'edge-highlight';
+                    }
+                }
+            }
+            steps.push({type:'graph', nodes:ns, edges:es,
+                explanation:'Step ' + (step+1) + ': From ' + labels[last] + ', nearest unvisited = ' + labels[best] + ' (d=' + bestD + '). Cost so far: ' + totalCost});
+        }
+
+        // Return to start
+        totalCost += dist[path[path.length-1]][0];
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        var finalEdges = JSON.parse(JSON.stringify(vizEdges));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:finalEdges,
+            explanation:'Return to A. Total tour cost: ' + totalCost + '. Path: ' + path.map(function(x){return labels[x];}).join('→') + '→A. (Heuristic — may not be optimal)'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

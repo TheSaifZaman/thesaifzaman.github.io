@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimum Spanning Tree — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Minimum Spanning Tree (Kruskal/Prim)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(E log V)</span>
+            <span class="complexity-tag">Space: O(V+E)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A Minimum Spanning Tree (MST) connects all vertices in an undirected, weighted graph with the minimum total edge weight, using exactly V-1 edges and forming no cycles.
+            </p>
+            <p>
+                <strong>Kruskal's Algorithm</strong>: Sort all edges by weight. Iterate through edges in order; add an edge to the MST if it doesn't create a cycle (checked using Union-Find). Stop when V-1 edges are added.
+            </p>
+            <p>
+                <strong>Prim's Algorithm</strong>: Start from any vertex. Maintain a priority queue of edges connecting the MST to non-MST vertices. Repeatedly extract the minimum-weight edge and add the new vertex to the MST, pushing its edges into the queue.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Kruskal's</strong><br>Sort edges, use Union-Find. Best for sparse graphs. O(E log E) time.</div>
+                <div class="key-point"><strong>Prim's</strong><br>Grow MST from a vertex using min-heap. Best for dense graphs. O(E log V) time.</div>
+                <div class="key-point"><strong>Cut Property</strong><br>The lightest edge crossing any cut must be in the MST.</div>
+                <div class="key-point"><strong>Applications</strong><br>Network design, clustering, approximation algorithms for NP-hard problems.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Kruskal's Algorithm with Union-Find
+function kruskal(n, edges) {
+    edges.sort(function(a, b) { return a[2] - b[2]; });
+    var parent = [], rank = [];
+    for (var i = 0; i < n; i++) { parent.push(i); rank.push(0); }
+
+    function find(x) {
+        if (parent[x] !== x) parent[x] = find(parent[x]);
+        return parent[x];
+    }
+    function union(a, b) {
+        var ra = find(a), rb = find(b);
+        if (ra === rb) return false;
+        if (rank[ra] < rank[rb]) { var t = ra; ra = rb; rb = t; }
+        parent[rb] = ra;
+        if (rank[ra] === rank[rb]) rank[ra]++;
+        return true;
+    }
+
+    var mst = [], totalWeight = 0;
+    for (var e = 0; e < edges.length; e++) {
+        if (union(edges[e][0], edges[e][1])) {
+            mst.push(edges[e]);
+            totalWeight += edges[e][2];
+            if (mst.length === n - 1) break;
+        }
+    }
+    return { mst: mst, totalWeight: totalWeight };
+}
+
+// Prim's Algorithm
+function prim(n, adj) {
+    var inMST = new Array(n).fill(false);
+    var key = new Array(n).fill(Infinity);
+    key[0] = 0;
+    var pq = [[0, 0]]; // [weight, vertex]
+    var totalWeight = 0;
+
+    while (pq.length > 0) {
+        pq.sort(function(a, b) { return a[0] - b[0]; });
+        var curr = pq.shift();
+        var u = curr[1];
+        if (inMST[u]) continue;
+        inMST[u] = true;
+        totalWeight += curr[0];
+        for (var i = 0; i < adj[u].length; i++) {
+            var v = adj[u][i][0], w = adj[u][i][1];
+            if (!inMST[v] && w < key[v]) {
+                key[v] = w;
+                pq.push([w, v]);
+            }
+        }
+    }
+    return totalWeight;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (5)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">Min Cost to Connect All Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/connecting-cities-with-minimum-cost/" target="_blank">Connecting Cities With Minimum Cost</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/number-of-operations-to-make-network-connected/" target="_blank">Number of Operations to Make Network Connected</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/redundant-connection/" target="_blank">Redundant Connection</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/optimize-water-distribution-in-a-village/" target="_blank">Optimize Water Distribution in a Village</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/" target="_blank">Find Critical and Pseudo-Critical Edges in MST</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>7</td><td><a href="https://leetcode.com/problems/swim-in-rising-water/" target="_blank">Swim in Rising Water</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/" target="_blank">Min Cost to Reach Destination in Time</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "minimum-spanning-tree", title: "Minimum Spanning Tree (Kruskal/Prim)", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var labels = ['A','B','C','D','E','F'];
+        // edges: [u, v, weight, vizIndex]
+        var edgesDef = [[1,4,1,3],[0,3,2,1],[2,5,1,4],[4,5,2,6],[1,2,3,2],[0,1,4,0],[3,4,5,5]];
+        var vizEdges = [
+            {from:0, to:1, weight:4, state:''},
+            {from:0, to:3, weight:2, state:''},
+            {from:1, to:2, weight:3, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:3, to:4, weight:5, state:''},
+            {from:4, to:5, weight:2, state:''}
+        ];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Kruskal\'s: Sort edges by weight: B-E(1), A-D(2), C-F(1), E-F(2), B-C(3), A-B(4), D-E(5). Process in order.'});
+
+        var parent = [0,1,2,3,4,5];
+        function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+        function union(a,b) { var ra=find(a),rb=find(b); if(ra===rb) return false; parent[rb]=ra; return true; }
+
+        var mstEdges = [];
+        var totalW = 0;
+        for (var i = 0; i < edgesDef.length; i++) {
+            var u = edgesDef[i][0], v = edgesDef[i][1], w = edgesDef[i][2], vi = edgesDef[i][3];
+            var es = JSON.parse(JSON.stringify(vizEdges));
+            var ns = JSON.parse(JSON.stringify(nodes));
+            es[vi].state = 'edge-highlight';
+            ns[u].state = 'highlight-compare';
+            ns[v].state = 'highlight-compare';
+            for (var m = 0; m < mstEdges.length; m++) {
+                es[mstEdges[m]].state = 'edge-active';
+            }
+
+            if (union(u, v)) {
+                mstEdges.push(vi);
+                totalW += w;
+                for (var m2 = 0; m2 < mstEdges.length; m2++) es[mstEdges[m2]].state = 'edge-active';
+                steps.push({type:'graph', nodes:ns, edges:es,
+                    explanation:'Add edge ' + labels[u] + '-' + labels[v] + ' (w=' + w + '). No cycle. MST weight so far: ' + totalW});
+            } else {
+                steps.push({type:'graph', nodes:ns, edges:es,
+                    explanation:'Skip edge ' + labels[u] + '-' + labels[v] + ' (w=' + w + ') — would create a cycle.'});
+            }
+            if (mstEdges.length === 5) break;
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        var finalEdges = JSON.parse(JSON.stringify(vizEdges));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        for (var m3 = 0; m3 < mstEdges.length; m3++) finalEdges[mstEdges[m3]].state = 'edge-active';
+        steps.push({type:'graph', nodes:finalNodes, edges:finalEdges,
+            explanation:'MST complete! Total weight: ' + totalW + '. ' + mstEdges.length + ' edges connecting all 6 vertices.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

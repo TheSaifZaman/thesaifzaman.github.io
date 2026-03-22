@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortest Path in DAG — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Shortest Path in DAG</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V+E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                In a <strong>Directed Acyclic Graph (DAG)</strong>, the shortest path from a source can be found in O(V+E) time — faster than Dijkstra's or Bellman-Ford. The key insight is that topological order guarantees we process each vertex only after all vertices that can reach it.
+            </p>
+            <p>
+                <strong>Step 1</strong>: Compute topological order of the DAG. <strong>Step 2</strong>: Initialize distances to infinity (source = 0). <strong>Step 3</strong>: Process vertices in topological order. For each vertex u, relax all its outgoing edges: if dist[u] + w(u,v) &lt; dist[v], update dist[v].
+            </p>
+            <p>
+                This works because in topological order, when we process vertex u, we've already processed all vertices that can reach u, so dist[u] is already finalized. This also handles <strong>negative edge weights</strong> correctly (unlike Dijkstra), since there are no cycles in a DAG.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>O(V+E) Time</strong><br>Faster than Dijkstra's O((V+E) log V) because we exploit the DAG structure.</div>
+                <div class="key-point"><strong>Negative Weights OK</strong><br>No cycles means negative weights are safe — no negative cycle issue.</div>
+                <div class="key-point"><strong>Topological Order</strong><br>Process vertices in order so all predecessors are already finalized.</div>
+                <div class="key-point"><strong>Applications</strong><br>Critical path method, task scheduling, longest path in DAG (negate weights).</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function shortestPathDAG(n, adj, src) {
+    // Step 1: Topological sort (Kahn's)
+    var indegree = new Array(n).fill(0);
+    for (var u = 0; u < n; u++) {
+        for (var i = 0; i < adj[u].length; i++) {
+            indegree[adj[u][i][0]]++;
+        }
+    }
+    var queue = [];
+    for (var i = 0; i < n; i++) {
+        if (indegree[i] === 0) queue.push(i);
+    }
+    var topoOrder = [];
+    while (queue.length > 0) {
+        var u = queue.shift();
+        topoOrder.push(u);
+        for (var j = 0; j < adj[u].length; j++) {
+            var v = adj[u][j][0];
+            if (--indegree[v] === 0) queue.push(v);
+        }
+    }
+
+    // Step 2: Initialize distances
+    var dist = new Array(n).fill(Infinity);
+    dist[src] = 0;
+
+    // Step 3: Relax in topological order
+    for (var t = 0; t < topoOrder.length; t++) {
+        var u = topoOrder[t];
+        if (dist[u] === Infinity) continue;
+        for (var k = 0; k < adj[u].length; k++) {
+            var v = adj[u][k][0], w = adj[u][k][1];
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+
+    return dist;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/" target="_blank">Longest Increasing Path in a Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Network Delay Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/" target="_blank">Number of Ways to Arrive at Destination</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">Alien Dictionary</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "shortest-path-dag", title: "Shortest Path in DAG", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var vizEdges = [
+            {from:0, to:1, weight:4, state:''},
+            {from:0, to:3, weight:2, state:''},
+            {from:1, to:2, weight:3, state:''},
+            {from:1, to:4, weight:1, state:''},
+            {from:3, to:4, weight:5, state:''},
+            {from:2, to:5, weight:1, state:''},
+            {from:4, to:5, weight:2, state:''}
+        ];
+        var adj = [[[1,4],[3,2]],[[2,3],[4,1]],[[5,1]],[[4,5]],[[5,2]],[]];
+        var labels = ['A','B','C','D','E','F'];
+        var INF = 999;
+
+        // Topo order: A, B, D, C, E, F (or A, D, B, C, E, F)
+        var topoOrder = [0, 1, 3, 2, 4, 5];
+        var dist = [0, INF, INF, INF, INF, INF];
+
+        function distStr() {
+            return labels.map(function(l,i){return l+'='+(dist[i]>=INF?'∞':dist[i]);}).join(', ');
+        }
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'DAG shortest path from A. Step 1: Topological order = [' + topoOrder.map(function(x){return labels[x];}).join(', ') + ']'});
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Step 2: Initialize distances: ' + distStr()});
+
+        // Step 3: Relax in topo order
+        for (var t = 0; t < topoOrder.length; t++) {
+            var u = topoOrder[t];
+            if (dist[u] >= INF) continue;
+
+            var ns = JSON.parse(JSON.stringify(nodes));
+            ns[u].state = 'highlight-active';
+            for (var done = 0; done < t; done++) ns[topoOrder[done]].state = 'highlight-sorted';
+
+            steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)),
+                explanation:'Process ' + labels[u] + ' (dist=' + dist[u] + ') in topological order.'});
+
+            for (var i = 0; i < adj[u].length; i++) {
+                var v = adj[u][i][0], w = adj[u][i][1];
+                if (dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    var ns2 = JSON.parse(JSON.stringify(nodes));
+                    ns2[u].state = 'highlight-active';
+                    ns2[v].state = 'highlight-compare';
+                    // highlight the edge
+                    var es2 = JSON.parse(JSON.stringify(vizEdges));
+                    for (var e = 0; e < vizEdges.length; e++) {
+                        if (vizEdges[e].from === u && vizEdges[e].to === v) es2[e].state = 'edge-highlight';
+                    }
+                    steps.push({type:'graph', nodes:ns2, edges:es2,
+                        explanation:'Relax ' + labels[u] + '→' + labels[v] + ' (w=' + w + '): dist[' + labels[v] + '] = ' + dist[u] + '+' + w + ' = ' + dist[v]});
+                }
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Done in O(V+E)! Shortest distances: ' + distStr()});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

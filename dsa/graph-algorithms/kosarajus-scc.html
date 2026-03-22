@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kosaraju's SCC — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Kosaraju's SCC</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(V+E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Kosaraju's algorithm finds all strongly connected components using <strong>two DFS passes</strong>. It leverages the fact that a graph and its transpose have the same SCCs.
+            </p>
+            <p>
+                <strong>Pass 1</strong>: Perform DFS on the original graph, pushing vertices to a stack in order of finish time (post-order). <strong>Pass 2</strong>: Build the transpose graph (reverse all edges). Pop vertices from the stack and perform DFS on the transpose — each DFS tree forms one SCC.
+            </p>
+            <p>
+                The intuition is that the finish-time ordering ensures that in Pass 2, we process SCC roots before their descendants in the condensation DAG. In the transposed graph, we can only reach vertices in the same SCC from an SCC root, so each DFS in Pass 2 exactly captures one SCC.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Two Passes</strong><br>First DFS orders by finish time; second DFS on transpose finds SCCs.</div>
+                <div class="key-point"><strong>Transpose Graph</strong><br>Reverse all edge directions. Same SCCs, but cross-SCC edges are reversed.</div>
+                <div class="key-point"><strong>Finish Time Order</strong><br>Processing in reverse finish order ensures SCC roots are visited first.</div>
+                <div class="key-point"><strong>Conceptually Simpler</strong><br>Easier to understand than Tarjan's, but requires two full passes.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function kosarajuSCC(n, adj) {
+    var visited = new Array(n).fill(false);
+    var order = []; // finish-time order
+
+    // Pass 1: DFS on original graph
+    function dfs1(u) {
+        visited[u] = true;
+        for (var i = 0; i < adj[u].length; i++) {
+            if (!visited[adj[u][i]]) dfs1(adj[u][i]);
+        }
+        order.push(u);
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (!visited[i]) dfs1(i);
+    }
+
+    // Build transpose
+    var radj = [];
+    for (var i = 0; i < n; i++) radj.push([]);
+    for (var u = 0; u < n; u++) {
+        for (var j = 0; j < adj[u].length; j++) {
+            radj[adj[u][j]].push(u);
+        }
+    }
+
+    // Pass 2: DFS on transpose in reverse finish order
+    visited = new Array(n).fill(false);
+    var sccs = [];
+
+    function dfs2(u, scc) {
+        visited[u] = true;
+        scc.push(u);
+        for (var i = 0; i < radj[u].length; i++) {
+            if (!visited[radj[u][i]]) dfs2(radj[u][i], scc);
+        }
+    }
+
+    for (var k = n - 1; k >= 0; k--) {
+        var v = order[k];
+        if (!visited[v]) {
+            var scc = [];
+            dfs2(v, scc);
+            sccs.push(scc);
+        }
+    }
+    return sccs;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/critical-connections-in-a-network/" target="_blank">Critical Connections in a Network</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/maximum-employees-to-be-invited-to-a-meeting/" target="_blank">Maximum Employees to Be Invited to a Meeting</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/count-visited-nodes-in-a-directed-graph/" target="_blank">Count Visited Nodes in a Directed Graph</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "kosarajus-scc", title: "Kosaraju's SCC", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var vizEdges = [
+            {from:0, to:1, state:''},
+            {from:1, to:3, state:''},
+            {from:3, to:0, state:''},
+            {from:1, to:2, state:''},
+            {from:2, to:4, state:''},
+            {from:4, to:5, state:''},
+            {from:5, to:2, state:''}
+        ];
+        var adj = [[1],[3,2],[4],[0],[5],[2]];
+        var radj = [[3],[0],[1,5],[1],[2],[4]]; // transpose
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Kosaraju\'s: Two-pass algorithm. Pass 1: DFS on original graph to get finish-time order.'});
+
+        // Pass 1
+        var visited = [false,false,false,false,false,false];
+        var order = [];
+        function dfs1(u) {
+            visited[u] = true;
+            for (var i = 0; i < adj[u].length; i++) {
+                if (!visited[adj[u][i]]) dfs1(adj[u][i]);
+            }
+            order.push(u);
+            var ns = JSON.parse(JSON.stringify(nodes));
+            ns[u].state = 'highlight-active';
+            for (var j = 0; j < order.length-1; j++) ns[order[j]].state = 'highlight-done';
+            steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)),
+                explanation:'Pass 1: ' + labels[u] + ' finishes. Order so far: [' + order.map(function(x){return labels[x];}).join(',') + ']'});
+        }
+        for (var i = 0; i < 6; i++) { if (!visited[i]) dfs1(i); }
+
+        // Show transpose
+        var revEdges = vizEdges.map(function(e){return {from:e.to, to:e.from, state:''};});
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:revEdges,
+            explanation:'Pass 2: Transpose graph (all edges reversed). Process in reverse finish order: [' + order.slice().reverse().map(function(x){return labels[x];}).join(',') + ']'});
+
+        // Pass 2
+        visited = [false,false,false,false,false,false];
+        var sccs = [];
+        var sccColors = ['highlight-sorted','highlight-compare','highlight-swap'];
+        var nodeColors = ['','','','','',''];
+
+        for (var k = 5; k >= 0; k--) {
+            var v = order[k];
+            if (!visited[v]) {
+                var scc = [];
+                var stack = [v];
+                while (stack.length) {
+                    var u = stack.pop();
+                    if (visited[u]) continue;
+                    visited[u] = true;
+                    scc.push(u);
+                    nodeColors[u] = sccColors[sccs.length % 3];
+                    for (var j = 0; j < radj[u].length; j++) {
+                        if (!visited[radj[u][j]]) stack.push(radj[u][j]);
+                    }
+                }
+                sccs.push(scc);
+                var ns2 = JSON.parse(JSON.stringify(nodes));
+                for (var f = 0; f < 6; f++) if (nodeColors[f]) ns2[f].state = nodeColors[f];
+                steps.push({type:'graph', nodes:ns2, edges:revEdges,
+                    explanation:'Pass 2: DFS from ' + labels[v] + ' on transpose → SCC: {' + scc.map(function(x){return labels[x];}).join(',') + '}'});
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f2 = 0; f2 < 6; f2++) finalNodes[f2].state = nodeColors[f2] || 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Done! ' + sccs.length + ' SCCs found: ' + sccs.map(function(s){return '{'+s.map(function(x){return labels[x];}).join(',')+'}';}).join(', ')});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

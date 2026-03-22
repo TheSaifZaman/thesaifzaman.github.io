@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topological Sort — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Topological Sort</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V+E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Topological sort produces a linear ordering of vertices in a <strong>Directed Acyclic Graph (DAG)</strong> such that for every directed edge u→v, vertex u comes before v in the ordering. This is essential for scheduling tasks with dependencies.
+            </p>
+            <p>
+                <strong>Kahn's Algorithm (BFS)</strong>: Compute in-degrees for all vertices. Add all vertices with in-degree 0 to a queue. Repeatedly remove a vertex from the queue, add it to the result, and decrement in-degrees of its neighbors. If a neighbor's in-degree becomes 0, add it to the queue. If all vertices are processed, we have a valid topological order; otherwise, a cycle exists.
+            </p>
+            <p>
+                <strong>DFS approach</strong>: Run DFS, and when a vertex finishes (all descendants explored), push it onto a stack. The stack gives the topological order when popped.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>DAG Only</strong><br>Topological sort is only possible for directed acyclic graphs. Cycles make it impossible.</div>
+                <div class="key-point"><strong>Kahn's (BFS)</strong><br>Uses in-degree counting and a queue. Also detects cycles if not all vertices are processed.</div>
+                <div class="key-point"><strong>DFS Approach</strong><br>Post-order DFS traversal reversed gives topological order.</div>
+                <div class="key-point"><strong>Applications</strong><br>Build systems, course scheduling, task ordering, dependency resolution.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Kahn's Algorithm (BFS-based Topological Sort)
+function topologicalSort(n, edges) {
+    var adj = [], indegree = new Array(n).fill(0);
+    for (var i = 0; i < n; i++) adj.push([]);
+
+    for (var e = 0; e < edges.length; e++) {
+        adj[edges[e][0]].push(edges[e][1]);
+        indegree[edges[e][1]]++;
+    }
+
+    var queue = [];
+    for (var i = 0; i < n; i++) {
+        if (indegree[i] === 0) queue.push(i);
+    }
+
+    var order = [];
+    while (queue.length > 0) {
+        var u = queue.shift();
+        order.push(u);
+        for (var j = 0; j < adj[u].length; j++) {
+            var v = adj[u][j];
+            indegree[v]--;
+            if (indegree[v] === 0) queue.push(v);
+        }
+    }
+
+    if (order.length !== n) return null; // cycle detected
+    return order;
+}
+
+// DFS-based Topological Sort
+function topSortDFS(n, adj) {
+    var visited = new Array(n).fill(false);
+    var stack = [];
+
+    function dfs(u) {
+        visited[u] = true;
+        for (var i = 0; i < adj[u].length; i++) {
+            if (!visited[adj[u][i]]) dfs(adj[u][i]);
+        }
+        stack.push(u);
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (!visited[i]) dfs(i);
+    }
+    return stack.reverse();
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/" target="_blank">Find All Possible Recipes</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/parallel-courses/" target="_blank">Parallel Courses</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/minimum-height-trees/" target="_blank">Minimum Height Trees</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/" target="_blank">Longest Increasing Path in a Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>7</td><td><a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">Alien Dictionary</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/sequence-reconstruction/" target="_blank">Sequence Reconstruction</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "topological-sort", title: "Topological Sort", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        // DAG edges
+        var vizEdges = [
+            {from:0, to:1, state:''},
+            {from:0, to:3, state:''},
+            {from:1, to:2, state:''},
+            {from:1, to:4, state:''},
+            {from:3, to:4, state:''},
+            {from:2, to:5, state:''},
+            {from:4, to:5, state:''}
+        ];
+        var adj = [[1,3],[2,4],[5],[4],[5],[]];
+        var indegree = [0,1,1,1,2,2];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'DAG with 6 vertices. In-degrees: A=0, B=1, C=1, D=1, E=2, F=2. Start Kahn\'s algorithm.'});
+
+        var queue = [];
+        var inDeg = indegree.slice();
+        for (var i = 0; i < 6; i++) {
+            if (inDeg[i] === 0) queue.push(i);
+        }
+        var order = [];
+
+        var ns = JSON.parse(JSON.stringify(nodes));
+        for (var q = 0; q < queue.length; q++) ns[queue[q]].state = 'highlight-compare';
+        steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Vertices with in-degree 0: [' + queue.map(function(x){return labels[x];}).join(', ') + ']. Add to queue.'});
+
+        while (queue.length > 0) {
+            var u = queue.shift();
+            order.push(u);
+            var ns2 = JSON.parse(JSON.stringify(nodes));
+            for (var o = 0; o < order.length; o++) ns2[order[o]].state = 'highlight-sorted';
+            ns2[u].state = 'highlight-active';
+            steps.push({type:'graph', nodes:ns2, edges:JSON.parse(JSON.stringify(vizEdges)),
+                explanation:'Dequeue ' + labels[u] + '. Order so far: [' + order.map(function(x){return labels[x];}).join(', ') + ']'});
+
+            for (var j = 0; j < adj[u].length; j++) {
+                var v = adj[u][j];
+                inDeg[v]--;
+                if (inDeg[v] === 0) {
+                    queue.push(v);
+                    var ns3 = JSON.parse(JSON.stringify(nodes));
+                    for (var o2 = 0; o2 < order.length; o2++) ns3[order[o2]].state = 'highlight-sorted';
+                    ns3[v].state = 'highlight-compare';
+                    steps.push({type:'graph', nodes:ns3, edges:JSON.parse(JSON.stringify(vizEdges)),
+                        explanation:labels[v] + '\'s in-degree becomes 0 after removing edge from ' + labels[u] + '. Added to queue.'});
+                }
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Done! Topological order: [' + order.map(function(x){return labels[x];}).join(', ') + ']. All dependencies respected.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

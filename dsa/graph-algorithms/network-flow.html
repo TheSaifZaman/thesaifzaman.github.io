@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Flow (Ford-Fulkerson) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Network Flow (Ford-Fulkerson)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(V&middot;E&sup2;)</span>
+            <span class="complexity-tag">Space: O(V+E)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Ford-Fulkerson method computes the <strong>maximum flow</strong> from a source to a sink in a flow network. Each edge has a capacity, and flow along an edge cannot exceed its capacity. The algorithm repeatedly finds augmenting paths from source to sink and pushes flow along them.
+            </p>
+            <p>
+                The algorithm uses a <strong>residual graph</strong> that shows remaining capacity on each edge. For each augmenting path found (via BFS in Edmonds-Karp variant), the bottleneck (minimum residual capacity along the path) is identified, and flow is pushed. Reverse edges in the residual graph allow flow to be rerouted.
+            </p>
+            <p>
+                The process continues until no augmenting path exists in the residual graph. By the <strong>Max-Flow Min-Cut Theorem</strong>, the maximum flow equals the minimum cut capacity — the minimum total capacity of edges that, if removed, would disconnect source from sink.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Augmenting Paths</strong><br>Find paths from source to sink in residual graph. Push flow equal to the bottleneck.</div>
+                <div class="key-point"><strong>Residual Graph</strong><br>Tracks remaining capacity. Includes reverse edges for flow rerouting.</div>
+                <div class="key-point"><strong>Edmonds-Karp</strong><br>Uses BFS for augmenting paths → O(VE²) guaranteed. Ford-Fulkerson with DFS can be slower.</div>
+                <div class="key-point"><strong>Max-Flow = Min-Cut</strong><br>Maximum flow equals the minimum capacity of edges separating source from sink.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Edmonds-Karp (BFS-based Ford-Fulkerson)
+function maxFlow(n, capacity, source, sink) {
+    var flow = 0;
+
+    while (true) {
+        // BFS to find augmenting path
+        var parent = new Array(n).fill(-1);
+        parent[source] = source;
+        var queue = [[source, Infinity]];
+
+        while (queue.length > 0) {
+            var curr = queue.shift();
+            var u = curr[0], pushed = curr[1];
+
+            for (var v = 0; v < n; v++) {
+                if (parent[v] === -1 && capacity[u][v] > 0) {
+                    parent[v] = u;
+                    var newFlow = Math.min(pushed, capacity[u][v]);
+                    if (v === sink) {
+                        // Augment flow along path
+                        var node = sink;
+                        while (node !== source) {
+                            var prev = parent[node];
+                            capacity[prev][node] -= newFlow;
+                            capacity[node][prev] += newFlow;
+                            node = prev;
+                        }
+                        flow += newFlow;
+                        break;
+                    }
+                    queue.push([v, newFlow]);
+                }
+            }
+            if (parent[sink] !== -1) break;
+        }
+
+        if (parent[sink] === -1) break; // no augmenting path
+    }
+    return flow;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (4)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/maximum-number-of-accepted-invitations/" target="_blank">Maximum Number of Accepted Invitations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/path-with-maximum-probability/" target="_blank">Path with Maximum Probability</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/maximum-students-taking-exam/" target="_blank">Maximum Students Taking Exam</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/minimum-cost-to-hire-k-workers/" target="_blank">Minimum Cost to Hire K Workers</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/cut-off-trees-for-golf-event/" target="_blank">Cut Off Trees for Golf Event</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/" target="_blank">Min Days to Disconnect Island</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "network-flow", title: "Network Flow (Ford-Fulkerson)", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'S', x:80, y:125, state:''},
+            {id:1, label:'A', x:220, y:50, state:''},
+            {id:2, label:'B', x:220, y:200, state:''},
+            {id:3, label:'C', x:360, y:50, state:''},
+            {id:4, label:'D', x:360, y:200, state:''},
+            {id:5, label:'T', x:480, y:125, state:''}
+        ];
+        var labels = ['S','A','B','C','D','T'];
+        // Capacities: S→A:10, S→B:8, A→C:5, A→B:2, B→D:10, C→T:7, D→T:10, C→D:3
+        var cap = [
+            [0,10,8,0,0,0],
+            [0,0,2,5,0,0],
+            [0,0,0,0,10,0],
+            [0,0,0,0,3,7],
+            [0,0,0,0,0,10],
+            [0,0,0,0,0,0]
+        ];
+        var edgeDefs = [[0,1,10],[0,2,8],[1,3,5],[1,2,2],[2,4,10],[3,5,7],[4,5,10],[3,4,3]];
+
+        function makeEdges(c) {
+            return edgeDefs.map(function(e) {
+                return {from:e[0], to:e[1], weight:c[e[0]][e[1]]+'/'+e[2], state:''};
+            });
+        }
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:makeEdges(cap),
+            explanation:'Flow network: S=source, T=sink. Edge labels show remaining capacity / original capacity. Find max flow.'});
+
+        // Simulate augmenting paths
+        var paths = [
+            {path:[0,1,3,5], flow:5, desc:'S→A→C→T'},
+            {path:[0,2,4,5], flow:8, desc:'S→B→D→T'},
+            {path:[0,1,3,4,5], flow:2, desc:'S→A→C→D→T (reroute via residual)'},
+            {path:[0,1,2,4,5], flow:2, desc:'S→A→B→D→T'}
+        ];
+
+        var totalFlow = 0;
+        var resCap = cap.map(function(r){return r.slice();});
+
+        for (var p = 0; p < paths.length; p++) {
+            var path = paths[p].path;
+            var flow = paths[p].flow;
+
+            // Check if path is valid in residual
+            var bottleneck = Infinity;
+            for (var i = 0; i < path.length-1; i++) {
+                bottleneck = Math.min(bottleneck, resCap[path[i]][path[i+1]]);
+            }
+            if (bottleneck <= 0) continue;
+            flow = Math.min(flow, bottleneck);
+
+            var ns = JSON.parse(JSON.stringify(nodes));
+            for (var j = 0; j < path.length; j++) ns[path[j]].state = 'highlight-active';
+
+            steps.push({type:'graph', nodes:ns, edges:makeEdges(resCap),
+                explanation:'Augmenting path: ' + paths[p].desc + '. Bottleneck flow = ' + flow});
+
+            // Update residual
+            for (var i2 = 0; i2 < path.length-1; i2++) {
+                resCap[path[i2]][path[i2+1]] -= flow;
+                resCap[path[i2+1]][path[i2]] += flow;
+            }
+            totalFlow += flow;
+
+            steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:makeEdges(resCap),
+                explanation:'After pushing flow=' + flow + '. Total flow so far: ' + totalFlow});
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        finalNodes[0].state = 'highlight-active';
+        finalNodes[5].state = 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:makeEdges(resCap),
+            explanation:'Maximum Flow = ' + totalFlow + '. No more augmenting paths exist in residual graph.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bipartite Graph Check — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Bipartite Graph Check</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V+E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A graph is <strong>bipartite</strong> if its vertices can be divided into two disjoint sets such that every edge connects a vertex in one set to a vertex in the other set. Equivalently, the graph is 2-colorable — no two adjacent vertices share the same color.
+            </p>
+            <p>
+                The check uses BFS or DFS: start by coloring any uncolored vertex with color 0, then color all its neighbors with color 1. Continue this process. If we ever find a neighbor with the same color as the current vertex, the graph is <strong>not bipartite</strong> (it contains an odd-length cycle).
+            </p>
+            <p>
+                A graph is bipartite if and only if it contains no odd-length cycles. All trees, paths, and even-length cycles are bipartite. Odd-length cycles make bipartiteness impossible.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>2-Coloring</strong><br>Try to assign two colors such that no adjacent vertices share a color.</div>
+                <div class="key-point"><strong>BFS/DFS</strong><br>Start from any vertex, alternate colors layer by layer. Conflict = not bipartite.</div>
+                <div class="key-point"><strong>Odd Cycles</strong><br>A graph is bipartite iff it has no odd-length cycles.</div>
+                <div class="key-point"><strong>Applications</strong><br>Matching problems, scheduling, conflict detection, graph theory foundations.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function isBipartite(n, adj) {
+    var color = new Array(n).fill(-1);
+
+    for (var start = 0; start < n; start++) {
+        if (color[start] !== -1) continue;
+        color[start] = 0;
+        var queue = [start];
+
+        while (queue.length > 0) {
+            var u = queue.shift();
+            for (var i = 0; i < adj[u].length; i++) {
+                var v = adj[u][i];
+                if (color[v] === -1) {
+                    color[v] = 1 - color[u]; // opposite color
+                    queue.push(v);
+                } else if (color[v] === color[u]) {
+                    return false; // same color = conflict
+                }
+            }
+        }
+    }
+    return true;
+}
+
+// DFS version
+function isBipartiteDFS(n, adj) {
+    var color = new Array(n).fill(-1);
+
+    function dfs(u, c) {
+        color[u] = c;
+        for (var i = 0; i < adj[u].length; i++) {
+            var v = adj[u][i];
+            if (color[v] === -1) {
+                if (!dfs(v, 1 - c)) return false;
+            } else if (color[v] === c) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (color[i] === -1 && !dfs(i, 0)) return false;
+    }
+    return true;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/is-graph-bipartite/" target="_blank">Is Graph Bipartite?</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/possible-bipartition/" target="_blank">Possible Bipartition</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/flower-planting-with-no-adjacent/" target="_blank">Flower Planting With No Adjacent</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/odd-length-subarrays/" target="_blank">Odd Length Subarrays</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/divide-nodes-into-the-maximum-number-of-groups/" target="_blank">Divide Nodes Into Max Groups</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "bipartite-check", title: "Bipartite Graph Check", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        // Bipartite graph: top row connects to bottom row only
+        var vizEdges = [
+            {from:0, to:3, state:''},
+            {from:0, to:4, state:''},
+            {from:1, to:3, state:''},
+            {from:1, to:5, state:''},
+            {from:2, to:4, state:''},
+            {from:2, to:5, state:''}
+        ];
+        var adj = [[3,4],[3,5],[4,5],[0,1],[0,2],[1,2]];
+        var labels = ['A','B','C','D','E','F'];
+        var color = [-1,-1,-1,-1,-1,-1];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Check if graph is bipartite (2-colorable). BFS from A, alternating colors (blue=Set 0, green=Set 1).'});
+
+        // BFS
+        color[0] = 0;
+        var queue = [0];
+        var ns = JSON.parse(JSON.stringify(nodes));
+        ns[0].state = 'highlight-compare'; // blue = set 0
+        steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Color A with Set 0 (blue). Add A to BFS queue.'});
+
+        while (queue.length > 0) {
+            var u = queue.shift();
+            for (var i = 0; i < adj[u].length; i++) {
+                var v = adj[u][i];
+                if (color[v] === -1) {
+                    color[v] = 1 - color[u];
+                    queue.push(v);
+                    var ns2 = JSON.parse(JSON.stringify(nodes));
+                    for (var k = 0; k < 6; k++) {
+                        if (color[k] === 0) ns2[k].state = 'highlight-compare';
+                        else if (color[k] === 1) ns2[k].state = 'highlight-sorted';
+                    }
+                    ns2[v].state = color[v] === 0 ? 'highlight-compare' : 'highlight-sorted';
+                    steps.push({type:'graph', nodes:ns2, edges:JSON.parse(JSON.stringify(vizEdges)),
+                        explanation:'From ' + labels[u] + ' (Set ' + color[u] + '): Color ' + labels[v] + ' with Set ' + color[v] + '. No conflict.'});
+                }
+            }
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) {
+            finalNodes[f].state = color[f] === 0 ? 'highlight-compare' : 'highlight-sorted';
+        }
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Graph IS bipartite! Set 0 (blue): {' + labels.filter(function(_,i){return color[i]===0;}).join(',') + '}, Set 1 (green): {' + labels.filter(function(_,i){return color[i]===1;}).join(',') + '}'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

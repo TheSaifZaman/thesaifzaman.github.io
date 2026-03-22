@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjan's SCC — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Tarjan's SCC</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(V+E)</span>
+            <span class="complexity-tag">Space: O(V)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Tarjan's algorithm finds all <strong>strongly connected components</strong> (SCCs) in a directed graph using a single DFS pass. An SCC is a maximal set of vertices where every vertex is reachable from every other vertex in the set.
+            </p>
+            <p>
+                Each vertex is assigned a <strong>discovery index</strong> (disc) and a <strong>low-link value</strong> (low). The low-link value represents the smallest discovery index reachable from the vertex through the DFS subtree. Vertices are pushed onto a stack during DFS. When a vertex u has low[u] === disc[u], it is the root of an SCC, and all vertices above it on the stack form that SCC.
+            </p>
+            <p>
+                The key insight is that if low[u] equals disc[u], then u cannot reach any vertex discovered before it (in the current DFS path), making it the earliest vertex in its SCC. All vertices on the stack above u must be in the same SCC.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Single Pass DFS</strong><br>Finds all SCCs in one DFS traversal — more efficient than Kosaraju's two passes.</div>
+                <div class="key-point"><strong>Low-Link Values</strong><br>low[u] = min discovery index reachable from u's subtree via back/cross edges to stack vertices.</div>
+                <div class="key-point"><strong>SCC Root</strong><br>A vertex u is an SCC root when disc[u] === low[u]. Pop stack to get the SCC.</div>
+                <div class="key-point"><strong>Applications</strong><br>2-SAT, finding cycles, condensation graphs, compiler optimization.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function tarjanSCC(n, adj) {
+    var disc = new Array(n).fill(-1);
+    var low = new Array(n).fill(-1);
+    var onStack = new Array(n).fill(false);
+    var stack = [];
+    var timer = 0;
+    var sccs = [];
+
+    function dfs(u) {
+        disc[u] = low[u] = timer++;
+        stack.push(u);
+        onStack[u] = true;
+
+        for (var i = 0; i < adj[u].length; i++) {
+            var v = adj[u][i];
+            if (disc[v] === -1) {
+                dfs(v);
+                low[u] = Math.min(low[u], low[v]);
+            } else if (onStack[v]) {
+                low[u] = Math.min(low[u], disc[v]);
+            }
+        }
+
+        // If u is root of an SCC
+        if (low[u] === disc[u]) {
+            var scc = [];
+            while (true) {
+                var v = stack.pop();
+                onStack[v] = false;
+                scc.push(v);
+                if (v === u) break;
+            }
+            sccs.push(scc);
+        }
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (disc[i] === -1) dfs(i);
+    }
+    return sccs;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/redundant-connection-ii/" target="_blank">Redundant Connection II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/critical-connections-in-a-network/" target="_blank">Critical Connections in a Network</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/maximum-employees-to-be-invited-to-a-meeting/" target="_blank">Maximum Employees to Be Invited to a Meeting</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/" target="_blank">Min Days to Disconnect Island</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "tarjans-scc", title: "Tarjan's SCC", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        // Directed edges forming SCCs: {A,B,D}, {C,E,F}
+        var vizEdges = [
+            {from:0, to:1, state:''},  // A->B
+            {from:1, to:3, state:''},  // B->D
+            {from:3, to:0, state:''},  // D->A (cycle)
+            {from:1, to:2, state:''},  // B->C
+            {from:2, to:4, state:''},  // C->E
+            {from:4, to:5, state:''},  // E->F
+            {from:5, to:2, state:''}   // F->C (cycle)
+        ];
+        var adj = [[1],[3,2],[4],[0],[5],[2]];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Directed graph. Tarjan\'s finds SCCs in one DFS pass using disc[] and low[] values.'});
+
+        var disc = [-1,-1,-1,-1,-1,-1];
+        var low = [-1,-1,-1,-1,-1,-1];
+        var onStack = [false,false,false,false,false,false];
+        var stack = [];
+        var timer = 0;
+        var sccs = [];
+        var sccColors = ['highlight-sorted','highlight-compare','highlight-swap'];
+        var nodeColors = ['','','','','',''];
+
+        function snap(msg) {
+            var ns = JSON.parse(JSON.stringify(nodes));
+            for (var i = 0; i < 6; i++) {
+                if (nodeColors[i]) ns[i].state = nodeColors[i];
+            }
+            steps.push({type:'graph', nodes:ns, edges:JSON.parse(JSON.stringify(vizEdges)), explanation:msg});
+        }
+
+        function dfs(u) {
+            disc[u] = low[u] = timer++;
+            stack.push(u);
+            onStack[u] = true;
+            nodeColors[u] = 'highlight-active';
+            snap('DFS visit ' + labels[u] + ': disc=' + disc[u] + ', low=' + low[u] + '. Stack: [' + stack.map(function(x){return labels[x];}).join(',') + ']');
+
+            for (var i = 0; i < adj[u].length; i++) {
+                var v = adj[u][i];
+                if (disc[v] === -1) {
+                    dfs(v);
+                    low[u] = Math.min(low[u], low[v]);
+                } else if (onStack[v]) {
+                    low[u] = Math.min(low[u], disc[v]);
+                    snap(labels[u] + ': back edge to ' + labels[v] + ' (on stack). low[' + labels[u] + ']=' + low[u]);
+                }
+            }
+
+            if (low[u] === disc[u]) {
+                var scc = [];
+                while (true) {
+                    var v = stack.pop();
+                    onStack[v] = false;
+                    scc.push(v);
+                    nodeColors[v] = sccColors[sccs.length % 3];
+                    if (v === u) break;
+                }
+                sccs.push(scc);
+                snap('SCC found! Root=' + labels[u] + '. SCC: {' + scc.map(function(x){return labels[x];}).join(',') + '}');
+            }
+        }
+
+        for (var i = 0; i < 6; i++) {
+            if (disc[i] === -1) dfs(i);
+        }
+
+        var finalNodes = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) finalNodes[f].state = nodeColors[f] || 'highlight-sorted';
+        steps.push({type:'graph', nodes:finalNodes, edges:vizEdges,
+            explanation:'Done! Found ' + sccs.length + ' SCCs: ' + sccs.map(function(s){return '{'+s.map(function(x){return labels[x];}).join(',')+'}';}).join(', ')});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floyd-Warshall Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Floyd-Warshall Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(V&sup3;)</span>
+            <span class="complexity-tag">Space: O(V&sup2;)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Floyd-Warshall computes the shortest paths between <strong>all pairs</strong> of vertices simultaneously. It uses dynamic programming, considering each vertex as a potential intermediate node in paths between every pair.
+            </p>
+            <p>
+                The algorithm maintains a distance matrix where dist[i][j] represents the shortest known distance from i to j. For each intermediate vertex k (from 0 to V-1), it checks whether the path i→k→j is shorter than the current i→j path: <code>dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])</code>.
+            </p>
+            <p>
+                The key insight is that after considering vertices 0 through k as intermediates, dist[i][j] holds the shortest path from i to j using only vertices 0..k as intermediates. After all V iterations, all shortest paths are found.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>All-Pairs</strong><br>Computes shortest distances between every pair of vertices in one run.</div>
+                <div class="key-point"><strong>DP Recurrence</strong><br>dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]) for each intermediate k.</div>
+                <div class="key-point"><strong>Negative Cycles</strong><br>Detected when any diagonal entry dist[i][i] becomes negative.</div>
+                <div class="key-point"><strong>Use Cases</strong><br>Dense graphs, transitive closure, finding graph diameter, detecting negative cycles.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function floydWarshall(n, edges) {
+    var INF = Infinity;
+    // Initialize distance matrix
+    var dist = [];
+    for (var i = 0; i < n; i++) {
+        dist.push([]);
+        for (var j = 0; j < n; j++) {
+            dist[i].push(i === j ? 0 : INF);
+        }
+    }
+
+    // Fill in direct edges
+    for (var e = 0; e < edges.length; e++) {
+        var u = edges[e][0], v = edges[e][1], w = edges[e][2];
+        dist[u][v] = w;
+    }
+
+    // DP: consider each vertex as intermediate
+    for (var k = 0; k < n; k++) {
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < n; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+
+    // Check negative cycles
+    for (var i = 0; i < n; i++) {
+        if (dist[i][i] < 0) return null; // negative cycle
+    }
+
+    return dist;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/" target="_blank">Find the City With Smallest Neighbors</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Network Delay Time</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/course-schedule-iv/" target="_blank">Course Schedule IV</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/evaluate-division/" target="_blank">Evaluate Division</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/count-pairs-of-connectable-servers-in-a-weighted-tree-network/" target="_blank">Count Pairs of Connectable Servers</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "floyd-warshall", title: "Floyd-Warshall Algorithm", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var labels = ['A','B','C','D','E','F'];
+        var n = 6;
+        var INF = 99;
+        var edgesDef = [[0,1,4],[0,3,2],[1,2,3],[1,4,1],[2,5,1],[3,4,5],[4,5,2]];
+
+        var dist = [];
+        for (var i = 0; i < n; i++) {
+            dist.push([]);
+            for (var j = 0; j < n; j++) dist[i].push(i === j ? 0 : INF);
+        }
+        for (var e = 0; e < edgesDef.length; e++) {
+            dist[edgesDef[e][0]][edgesDef[e][1]] = edgesDef[e][2];
+            dist[edgesDef[e][1]][edgesDef[e][0]] = edgesDef[e][2];
+        }
+
+        function makeGrid(d, hi, hj) {
+            var g = [];
+            for (var r = 0; r < n; r++) {
+                var row = [];
+                for (var c = 0; c < n; c++) {
+                    var st = '';
+                    if (r === hi && c === hj) st = 'highlight-active';
+                    else if (r === hi || c === hj) st = 'highlight-compare';
+                    row.push({value: d[r][c] >= INF ? '∞' : d[r][c], state: st});
+                }
+                g.push(row);
+            }
+            return g;
+        }
+
+        steps.push({type:'grid', grid:makeGrid(dist, -1, -1),
+            explanation:'Initial distance matrix. Direct edge weights filled in; ∞ means no direct edge. Diagonal is 0.'});
+
+        for (var k = 0; k < n; k++) {
+            var changed = false;
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < n; j++) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        changed = true;
+                    }
+                }
+            }
+            steps.push({type:'grid', grid:makeGrid(dist, k, k),
+                explanation:'After considering ' + labels[k] + ' as intermediate (k=' + k + '). ' + (changed ? 'Some paths improved via ' + labels[k] + '.' : 'No improvement this round.')});
+        }
+
+        steps.push({type:'grid', grid:makeGrid(dist, -1, -1),
+            explanation:'Done! Final all-pairs shortest distance matrix. Each cell dist[i][j] is the shortest path from vertex i to j.'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'matrix'});
+    </script>
+</body>
+</html>

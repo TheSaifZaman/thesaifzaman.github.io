@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamiltonian Path &amp; Cycle — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Hamiltonian Path &amp; Cycle</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n!)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A <strong>Hamiltonian path</strong> visits every vertex exactly once. A <strong>Hamiltonian cycle</strong> is a Hamiltonian path that returns to the starting vertex. Unlike Euler paths (which visit every edge), Hamiltonian paths visit every vertex.
+            </p>
+            <p>
+                Finding a Hamiltonian path is <strong>NP-complete</strong> — no known polynomial-time algorithm exists. The brute-force approach uses <strong>backtracking</strong>: try to extend the current path by visiting an unvisited adjacent vertex. If stuck (all neighbors visited), backtrack and try a different neighbor.
+            </p>
+            <p>
+                For small n, a DP with bitmask approach can solve it in O(n&sup2; &middot; 2^n), which is faster than O(n!). The state dp[mask][i] represents whether we can reach vertex i having visited exactly the vertices in the bitmask.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>NP-Complete</strong><br>No known polynomial solution. Exponential time is unavoidable in worst case.</div>
+                <div class="key-point"><strong>Backtracking</strong><br>Try extending path with each unvisited neighbor. Backtrack on dead ends. O(n!).</div>
+                <div class="key-point"><strong>DP + Bitmask</strong><br>dp[mask][i] tracks reachability. O(n² · 2^n) — better than backtracking for n ≤ 20.</div>
+                <div class="key-point"><strong>vs Euler Path</strong><br>Euler = visit every edge once. Hamiltonian = visit every vertex once. Very different problems.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Hamiltonian Path using backtracking
+function hamiltonianPath(n, adj) {
+    var path = [];
+    var visited = new Array(n).fill(false);
+
+    function backtrack(u) {
+        path.push(u);
+        visited[u] = true;
+
+        if (path.length === n) return true; // found!
+
+        for (var i = 0; i < adj[u].length; i++) {
+            var v = adj[u][i];
+            if (!visited[v]) {
+                if (backtrack(v)) return true;
+            }
+        }
+
+        // Backtrack
+        path.pop();
+        visited[u] = false;
+        return false;
+    }
+
+    // Try each vertex as start
+    for (var start = 0; start < n; start++) {
+        if (backtrack(start)) return path;
+    }
+    return null; // no Hamiltonian path
+}
+
+// DP + Bitmask approach: O(n² · 2^n)
+function hamiltonianDP(n, adj) {
+    var ALL = (1 << n) - 1;
+    var dp = [];
+    for (var m = 0; m <= ALL; m++) dp.push(new Array(n).fill(false));
+
+    // Base: single vertices
+    for (var i = 0; i < n; i++) dp[1 << i][i] = true;
+
+    for (var mask = 1; mask <= ALL; mask++) {
+        for (var u = 0; u < n; u++) {
+            if (!dp[mask][u]) continue;
+            for (var j = 0; j < adj[u].length; j++) {
+                var v = adj[u][j];
+                if (!(mask & (1 << v))) {
+                    dp[mask | (1 << v)][v] = true;
+                }
+            }
+        }
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (dp[ALL][i]) return true;
+    }
+    return false;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (4)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/find-if-path-exists-in-graph/" target="_blank">Find if Path Exists in Graph</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/shortest-superstring/" target="_blank">Shortest Superstring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/number-of-squareful-arrays/" target="_blank">Number of Squareful Arrays</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/maximum-score-arrangement-of-array/" target="_blank">Maximum Score Arrangement</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "hamiltonian-path", title: "Hamiltonian Path & Cycle", category: "Graph Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps() {
+        var steps = [];
+        var nodes = [
+            {id:0, label:'A', x:100, y:50, state:''},
+            {id:1, label:'B', x:250, y:50, state:''},
+            {id:2, label:'C', x:400, y:50, state:''},
+            {id:3, label:'D', x:100, y:200, state:''},
+            {id:4, label:'E', x:250, y:200, state:''},
+            {id:5, label:'F', x:400, y:200, state:''}
+        ];
+        var vizEdges = [
+            {from:0, to:1, state:''}, {from:0, to:3, state:''},
+            {from:1, to:2, state:''}, {from:1, to:4, state:''},
+            {from:2, to:5, state:''}, {from:3, to:4, state:''},
+            {from:4, to:5, state:''}
+        ];
+        var adj = [[1,3],[0,2,4],[1,5],[0,4],[1,3,5],[2,4]];
+        var labels = ['A','B','C','D','E','F'];
+
+        steps.push({type:'graph', nodes:JSON.parse(JSON.stringify(nodes)), edges:JSON.parse(JSON.stringify(vizEdges)),
+            explanation:'Find a Hamiltonian path: visit every vertex exactly once. Using backtracking from vertex A.'});
+
+        // Simulate backtracking: A→B→C→F→E→D (success)
+        var attempts = [
+            {path:[0], msg:'Start at A'},
+            {path:[0,1], msg:'Try A→B'},
+            {path:[0,1,2], msg:'Try B→C'},
+            {path:[0,1,2,5], msg:'Try C→F'},
+            {path:[0,1,2,5,4], msg:'Try F→E'},
+            {path:[0,1,2,5,4,3], msg:'Try E→D — all vertices visited!'}
+        ];
+
+        for (var i = 0; i < attempts.length; i++) {
+            var p = attempts[i].path;
+            var ns = JSON.parse(JSON.stringify(nodes));
+            var es = JSON.parse(JSON.stringify(vizEdges));
+            for (var j = 0; j < p.length; j++) {
+                ns[p[j]].state = j === p.length-1 ? 'highlight-active' : 'highlight-compare';
+            }
+            // Highlight path edges
+            for (var j2 = 0; j2 < p.length-1; j2++) {
+                for (var e = 0; e < vizEdges.length; e++) {
+                    if ((vizEdges[e].from===p[j2]&&vizEdges[e].to===p[j2+1]) ||
+                        (vizEdges[e].from===p[j2+1]&&vizEdges[e].to===p[j2])) {
+                        es[e].state = 'edge-highlight';
+                    }
+                }
+            }
+            steps.push({type:'graph', nodes:ns, edges:es,
+                explanation:attempts[i].msg + '. Path: ' + p.map(function(x){return labels[x];}).join('→')});
+        }
+
+        // Check for Hamiltonian cycle
+        var ns2 = JSON.parse(JSON.stringify(nodes));
+        for (var f = 0; f < 6; f++) ns2[f].state = 'highlight-sorted';
+        var finalPath = [0,1,2,5,4,3];
+        var es2 = JSON.parse(JSON.stringify(vizEdges));
+        for (var j3 = 0; j3 < finalPath.length-1; j3++) {
+            for (var e2 = 0; e2 < vizEdges.length; e2++) {
+                if ((vizEdges[e2].from===finalPath[j3]&&vizEdges[e2].to===finalPath[j3+1]) ||
+                    (vizEdges[e2].from===finalPath[j3+1]&&vizEdges[e2].to===finalPath[j3])) {
+                    es2[e2].state = 'edge-active';
+                }
+            }
+        }
+        steps.push({type:'graph', nodes:ns2, edges:es2,
+            explanation:'Hamiltonian path found: A→B→C→F→E→D. Visits all 6 vertices exactly once. Edge D-A exists, so Hamiltonian CYCLE also exists!'});
+
+        return steps;
+    }
+
+    Visualizer.init({container:'#viz', data:[6], stepGenerator:generateSteps, type:'graph'});
+    </script>
+</body>
+</html>
