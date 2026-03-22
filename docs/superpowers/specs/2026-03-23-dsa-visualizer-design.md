@@ -6,11 +6,11 @@
 
 ## Overview
 
-An interactive Data Structures, Algorithms & ML/AI reference section for the personal website. Covers 221 topics across classical CS algorithms, interview patterns, and ML/AI algorithms — each with visualizations, complexity analysis, code implementations, and curated LeetCode/practice problem links.
+An interactive Data Structures, Algorithms & ML/AI reference section for the personal website. Covers 224 topics across classical CS algorithms, interview patterns, and ML/AI algorithms — each with visualizations, complexity analysis, code implementations, and curated LeetCode/practice problem links.
 
 ## Goals
 
-- Comprehensive SWE interview prep covering DSA + ML/AI (221 topics)
+- Comprehensive SWE interview prep covering DSA + ML/AI (224 topics)
 - Interactive step-based visualizations with mock data + custom input
 - Curated LeetCode problems per topic (Easy/Medium/Hard tagged)
 - Developer-themed UI (glass-morphism + terminal accents)
@@ -24,21 +24,25 @@ An interactive Data Structures, Algorithms & ML/AI reference section for the per
 ```
 dsa/
 ├── index.html                        → Hub page (search, filter, browse)
-├── dsa-data.js                       → Slim metadata for 221 topics
+├── dsa-data.js                       → Slim metadata for 224 topics
 ├── shared/
 │   ├── shared.css                    → Common styles
 │   ├── shared.js                     → Theme toggle, nav, UI utilities
 │   └── visualizer.js                 → Step-based visualization engine
 │
-│  ── GENERAL DSA (122 topics) ──
-├── data-structures/                  → 7 files
+│  ── GENERAL DSA (125 topics) ──
+├── foundations/                       → 2 files
+│   ├── logic-building.html
+│   └── complexity-analysis.html
+├── data-structures/                  → 8 files
 │   ├── arrays.html
 │   ├── linked-lists.html
 │   ├── stacks.html
 │   ├── queues.html
 │   ├── hash-tables.html
 │   ├── heaps.html
-│   └── tries.html
+│   ├── tries.html
+│   └── matrix-grid.html
 ├── advanced-data-structures/         → 17 files
 │   ├── segment-trees.html
 │   ├── union-find.html
@@ -101,7 +105,7 @@ dsa/
 │   ├── minimum-cut.html
 │   ├── travelling-salesman.html
 │   └── shortest-path-dag.html
-├── techniques/                       → 26 files
+├── techniques/                       → 29 files
 │   ├── two-pointers.html
 │   ├── sliding-window.html
 │   ├── divide-and-conquer.html
@@ -127,7 +131,10 @@ dsa/
 │   ├── binary-lifting.html
 │   ├── heavy-light-decomposition.html
 │   ├── mos-algorithm.html
-│   └── sqrt-decomposition.html
+│   ├── sqrt-decomposition.html
+│   ├── branch-and-bound.html
+│   ├── randomized-algorithms.html
+│   └── string-hashing.html
 ├── string-algorithms/                → 11 files
 │   ├── kmp.html
 │   ├── rabin-karp.html
@@ -293,13 +300,13 @@ var DSA_DATA = [
         href: "sorting/bubble-sort.html",
         tags: ["sorting", "comparison", "stable"]
     },
-    // ... 220 more entries
+    // ... 223 more entries
 ];
 ```
 
 ### Topic Page Data (inline per page)
 
-Each `.html` file contains its own full data — concept text, LeetCode problems, code, and visualization logic. No external data dependency beyond shared CSS/JS.
+Each `.html` file contains its own full data — concept text, LeetCode problems, code, and visualization logic. No external data dependency beyond shared CSS/JS and `dsa-data.js` (included via `<script>` tag for prev/next navigation).
 
 ```html
 <!-- Example: sorting/bubble-sort.html -->
@@ -325,8 +332,8 @@ var TOPIC = {
 
 ### Features
 
-1. **Hero section** — title "DSA & ML/AI Visualizer", tagline about 221 topics
-2. **Stats bar** — total topics (221), total problems count, category count
+1. **Hero section** — title "DSA & ML/AI Visualizer", tagline about 224 topics
+2. **Stats bar** — total topics (224), total problems count, category count
 3. **Search** — real-time filter by title, description, tags
 4. **Filter pills** — by category AND by difficulty (Easy/Medium/Hard)
 5. **Section toggle** — "All" | "DSA" | "ML/AI" top-level filter
@@ -393,7 +400,7 @@ Visualizer.init({
 | `graph` | Graph algorithms | SVG nodes + edges |
 | `tree` | Tree algorithms, decision trees | SVG hierarchical layout |
 | `grid` | Pathfinding (A*, BFS, DFS), DP tables | Table cells with states |
-| `scatter` | ML regression, clustering, classification | SVG/canvas scatter plot |
+| `scatter` | ML regression, clustering, classification | SVG scatter plot |
 | `network` | Neural networks, deep learning | Layered node diagram |
 | `matrix` | Attention, DP tables, edit distance | Colored grid cells |
 | `timeline` | Interval scheduling, line sweep | Horizontal bars |
@@ -444,7 +451,7 @@ Add to `pages/pages-data.js`:
 ```js
 {
     title: "DSA & ML/AI Visualizer",
-    description: "221 interactive algorithm visualizations with complexity analysis, code implementations, and curated LeetCode problems for SWE interview prep.",
+    description: "224 interactive algorithm visualizations with complexity analysis, code implementations, and curated LeetCode problems for SWE interview prep.",
     href: "../dsa/index.html",
     icon: "fas fa-code",
     color: "blue",
@@ -473,7 +480,7 @@ Add to `pages/pages-data.js`:
 
 ## Performance
 
-- Hub loads only slim metadata (~15KB for 221 entries)
+- Hub loads only slim metadata (~16KB for 224 entries)
 - Topic pages load only their own data + shared utilities
 - Visualizations use requestAnimationFrame for smooth animation
 - No external API calls — everything works offline
