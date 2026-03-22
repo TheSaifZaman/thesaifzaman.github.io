@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimax — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Minimax Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(b^d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Minimax is a decision-making algorithm for two-player zero-sum games (where one player's gain is the other's loss). It assumes both players play optimally: the <strong>maximizing</strong> player tries to maximize the score, while the <strong>minimizing</strong> player tries to minimize it. The algorithm explores the entire game tree to find the optimal move.</p>
+            <p>At each node, if it is the maximizer's turn, the algorithm picks the child with the highest value. If it is the minimizer's turn, it picks the child with the lowest value. Leaf nodes are evaluated using a scoring function (e.g., +10 for a win, -10 for a loss, 0 for a draw). Values propagate upward through the tree via this alternating max/min selection.</p>
+            <p>Minimax is used in chess engines, tic-tac-toe, checkers, Go, and any adversarial search scenario. The time complexity is O(b^d) where b is the branching factor and d is the depth, which is often too expensive for complex games — hence the need for pruning (alpha-beta) and evaluation function heuristics.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Optimal Play:</strong> Assumes both players play their best possible move.</li>
+                    <li><strong>Zero-Sum:</strong> One player's gain equals the other's loss.</li>
+                    <li><strong>Complete Search:</strong> Explores all possible game states (exponential cost).</li>
+                    <li><strong>Depth-Limited:</strong> In practice, search is limited with a heuristic evaluation function.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function minimax(node, depth, isMaximizing) {
+    // Base case: leaf node or depth limit
+    if (depth === 0 || isTerminal(node)) {
+        return evaluate(node);
+    }
+
+    if (isMaximizing) {
+        var maxEval = -Infinity;
+        var children = getChildren(node);
+        for (var i = 0; i < children.length; i++) {
+            var eval = minimax(children[i], depth - 1, false);
+            maxEval = Math.max(maxEval, eval);
+        }
+        return maxEval;
+    } else {
+        var minEval = Infinity;
+        var children = getChildren(node);
+        for (var i = 0; i < children.length; i++) {
+            var eval = minimax(children[i], depth - 1, true);
+            minEval = Math.min(minEval, eval);
+        }
+        return minEval;
+    }
+}
+
+// Find best move for maximizer
+function bestMove(board) {
+    var best = -Infinity;
+    var bestAction = null;
+    var moves = getAvailableMoves(board);
+    for (var i = 0; i < moves.length; i++) {
+        var newBoard = applyMove(board, moves[i]);
+        var score = minimax(newBoard, maxDepth, false);
+        if (score > best) {
+            best = score;
+            bestAction = moves[i];
+        }
+    }
+    return bestAction;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>486</td><td><a href="https://leetcode.com/problems/predict-the-winner/" target="_blank">Predict the Winner</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>877</td><td><a href="https://leetcode.com/problems/stone-game/" target="_blank">Stone Game</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>464</td><td><a href="https://leetcode.com/problems/can-i-win/" target="_blank">Can I Win</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>913</td><td><a href="https://leetcode.com/problems/cat-and-mouse/" target="_blank">Cat and Mouse</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1140</td><td><a href="https://leetcode.com/problems/stone-game-ii/" target="_blank">Stone Game II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "minimax", title: "Minimax", category: "Game Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Game tree: leaf values at bottom, propagate up
+        var leaves = [3, 5, 2, 9, 12, 5, 23, 2];
+
+        steps.push({ array: leaves, highlights: {}, explanation: "Game tree with " + leaves.length + " leaf scores. Maximizer moves first, then Minimizer, alternating." });
+
+        // Level 2 (min): pairs of leaves
+        var level2 = [];
+        for (var i = 0; i < leaves.length; i += 2) {
+            var minVal = Math.min(leaves[i], leaves[i+1]);
+            level2.push(minVal);
+            var hl = {};
+            hl[i] = 'comparing'; hl[i+1] = 'comparing';
+            steps.push({ array: leaves, highlights: hl, explanation: "Minimizer chooses min(" + leaves[i] + ", " + leaves[i+1] + ") = " + minVal + "." });
+        }
+
+        var hl2 = {};
+        for (var j = 0; j < level2.length; j++) hl2[j] = 'swapped';
+        steps.push({ array: level2, highlights: hl2, explanation: "After Minimizer's level: [" + level2.join(", ") + "]. Now Maximizer chooses." });
+
+        // Level 1 (max): pairs
+        var level1 = [];
+        for (var k = 0; k < level2.length; k += 2) {
+            var maxVal = Math.max(level2[k], level2[k+1]);
+            level1.push(maxVal);
+            var hl3 = {};
+            hl3[k] = 'comparing'; hl3[k+1] = 'comparing';
+            steps.push({ array: level2, highlights: hl3, explanation: "Maximizer chooses max(" + level2[k] + ", " + level2[k+1] + ") = " + maxVal + "." });
+        }
+
+        var hl4 = {};
+        for (var l = 0; l < level1.length; l++) hl4[l] = 'found';
+        steps.push({ array: level1, highlights: hl4, explanation: "After Maximizer's level: [" + level1.join(", ") + "]. Final Minimizer's turn." });
+
+        // Root (min)
+        var rootVal = Math.min(level1[0], level1[1]);
+        steps.push({ array: level1, highlights: { 0: 'comparing', 1: 'comparing' }, explanation: "Root (Minimizer): min(" + level1[0] + ", " + level1[1] + ") = " + rootVal + "." });
+
+        steps.push({ array: [rootVal], highlights: { 0: 'sorted' }, explanation: "Minimax value = " + rootVal + ". With optimal play from both sides, the maximizer can guarantee at least this score." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [3, 5, 2, 9, 12, 5, 23, 2], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

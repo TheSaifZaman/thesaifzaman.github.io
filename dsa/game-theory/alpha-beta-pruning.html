@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha-Beta Pruning — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Alpha-Beta Pruning</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Best: O(b^(d/2))</span>
+            <span class="complexity-tag">Worst: O(b^d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Alpha-Beta Pruning is an optimization of the Minimax algorithm that skips (prunes) branches of the game tree that cannot possibly influence the final decision. It maintains two values: <strong>alpha</strong> (the best score the maximizer can guarantee) and <strong>beta</strong> (the best score the minimizer can guarantee). When alpha &ge; beta, the current branch is pruned.</p>
+            <p>At a <strong>maximizer</strong> node, if we find a child with value &ge; beta, we can stop (beta cutoff) — the minimizer parent would never choose this path since it already has a better option. Similarly, at a <strong>minimizer</strong> node, if we find a child with value &le; alpha, we can stop (alpha cutoff) — the maximizer parent would never choose this path.</p>
+            <p>With optimal move ordering, alpha-beta pruning reduces the effective branching factor from b to &radic;b, doubling the searchable depth for the same computation time. In chess, this means searching 12 moves deep instead of 6. Move ordering heuristics (killer moves, transposition tables, iterative deepening) are critical for achieving near-optimal pruning.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Same Result:</strong> Always produces the same result as full Minimax — just faster.</li>
+                    <li><strong>Alpha:</strong> Best already-guaranteed value for maximizer (lower bound).</li>
+                    <li><strong>Beta:</strong> Best already-guaranteed value for minimizer (upper bound).</li>
+                    <li><strong>Move Ordering:</strong> Examining best moves first maximizes pruning (O(b^(d/2)) best case).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function alphaBeta(node, depth, alpha, beta, isMaximizing) {
+    if (depth === 0 || isTerminal(node)) {
+        return evaluate(node);
+    }
+
+    if (isMaximizing) {
+        var maxEval = -Infinity;
+        var children = getChildren(node);
+        for (var i = 0; i < children.length; i++) {
+            var val = alphaBeta(children[i], depth - 1, alpha, beta, false);
+            maxEval = Math.max(maxEval, val);
+            alpha = Math.max(alpha, val);
+            if (beta <= alpha) break; // Beta cutoff (prune!)
+        }
+        return maxEval;
+    } else {
+        var minEval = Infinity;
+        var children = getChildren(node);
+        for (var i = 0; i < children.length; i++) {
+            var val = alphaBeta(children[i], depth - 1, alpha, beta, true);
+            minEval = Math.min(minEval, val);
+            beta = Math.min(beta, val);
+            if (beta <= alpha) break; // Alpha cutoff (prune!)
+        }
+        return minEval;
+    }
+}
+
+// Initial call
+var bestValue = alphaBeta(root, maxDepth, -Infinity, Infinity, true);</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>486</td><td><a href="https://leetcode.com/problems/predict-the-winner/" target="_blank">Predict the Winner</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>877</td><td><a href="https://leetcode.com/problems/stone-game/" target="_blank">Stone Game</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>913</td><td><a href="https://leetcode.com/problems/cat-and-mouse/" target="_blank">Cat and Mouse</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>464</td><td><a href="https://leetcode.com/problems/can-i-win/" target="_blank">Can I Win</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1406</td><td><a href="https://leetcode.com/problems/stone-game-iii/" target="_blank">Stone Game III</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "alpha-beta-pruning", title: "Alpha-Beta Pruning", category: "Game Theory" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var leaves = [3, 5, 6, 9, 1, 2, 0, -1];
+
+        steps.push({ array: leaves, highlights: {}, explanation: "Game tree with 8 leaves. Alpha-Beta pruning will skip branches that cannot affect the outcome." });
+
+        // Simulate alpha-beta traversal
+        var alpha = -Infinity, beta = Infinity;
+
+        // Left subtree - min level
+        steps.push({ array: leaves, highlights: { 0: 'comparing', 1: 'comparing' }, explanation: "Left-left: Minimizer sees leaves 3, 5. min(3,5)=3. Alpha=-Inf, Beta=Inf." });
+
+        steps.push({ array: leaves, highlights: { 2: 'comparing', 3: 'comparing' }, explanation: "Left-right: Minimizer sees leaf 6. min so far = 6. See leaf 9. min(6,9)=6." });
+
+        // Left subtree result - max level
+        steps.push({ array: [3, 6], highlights: { 0: 'comparing', 1: 'comparing' }, explanation: "Left Maximizer: max(3, 6) = 6. Update alpha = 6." });
+        alpha = 6;
+
+        // Right subtree
+        steps.push({ array: leaves, highlights: { 4: 'comparing', 5: 'comparing' }, explanation: "Right-left: Minimizer sees leaves 1, 2. min(1,2)=1. Now alpha=6, beta=Inf." });
+
+        // Pruning check
+        steps.push({ array: [1], highlights: { 0: 'swapped' }, explanation: "Right-left returned 1. Maximizer at right node: current best = 1. Since 1 < alpha(6), the maximizer's parent already has a better option..." });
+
+        steps.push({ array: leaves, highlights: { 6: 'visited', 7: 'visited' }, explanation: "PRUNED! Right-right branch (leaves 0, -1) is skipped. The minimizer would pick <= 1, and maximizer already has 6." });
+
+        var result = 6;
+        steps.push({ array: [result], highlights: { 0: 'sorted' }, explanation: "Alpha-Beta result = " + result + " (same as full Minimax). But we evaluated only 6 of 8 leaves — 25% pruned!" });
+
+        steps.push({ array: leaves, highlights: { 0: 'sorted', 1: 'sorted', 2: 'sorted', 3: 'sorted', 4: 'sorted', 5: 'sorted', 6: 'visited', 7: 'visited' }, explanation: "Green = evaluated, gray = pruned. With good move ordering, Alpha-Beta can prune up to 50% of branches, effectively doubling search depth." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [3, 5, 6, 9, 1, 2, 0, -1], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>
