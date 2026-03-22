@@ -101,5 +101,15 @@ var PAGES_DATA = [
         color: "purple",
         category: "Community",
         tags: ["mentorship", "developers", "career", "guidance", "ummah"]
+    },
+    {
+        title: "DSA & ML/AI Visualizer",
+        description: "224 interactive algorithm visualizations with complexity analysis, code implementations, and curated LeetCode problems for SWE interview prep.",
+        href: "../dsa/index.html",
+        icon: "fas fa-code",
+        color: "blue",
+        category: "Knowledge",
+        tags: ["dsa", "algorithms", "data-structures", "leetcode", "ml", "ai", "visualization", "interview-prep"],
+        featured: true
     }
 ];
