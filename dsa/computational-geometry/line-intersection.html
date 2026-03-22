@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Intersection — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Line Intersection</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Two Segments: O(1)</span>
+            <span class="complexity-tag">Sweep Line: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Determining whether two line segments intersect is a fundamental operation in computational geometry. The standard approach uses the <strong>cross product</strong> to compute the orientation of point triplets. Given segments P1P2 and P3P4, we compute four orientations: (P1,P2,P3), (P1,P2,P4), (P3,P4,P1), (P3,P4,P2). The segments intersect if the orientations straddle — one pair is clockwise/counterclockwise in opposite directions.</p>
+            <p>For checking all intersections among n segments, the <strong>Bentley-Ottmann sweep line</strong> algorithm processes "events" (segment endpoints and intersection points) from left to right. It maintains an ordered set of active segments and only checks adjacent pairs for intersections, reducing the brute-force O(n&sup2;) to O((n + k) log n) where k is the number of intersections.</p>
+            <p>Line intersection tests are essential in computer graphics (ray tracing, polygon clipping), geographic information systems (road network analysis), collision detection (game physics), and VLSI circuit design (wire crossing detection).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Orientation Test:</strong> Cross product determines CW, CCW, or collinear orientation of 3 points.</li>
+                    <li><strong>General Position:</strong> Two segments intersect if each segment straddles the line of the other.</li>
+                    <li><strong>Collinear Case:</strong> Special handling when points are collinear — check overlap of projections.</li>
+                    <li><strong>Sweep Line:</strong> Efficiently finds all intersections among many segments.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function orientation(p, q, r) {
+    var val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]);
+    if (val === 0) return 0;       // collinear
+    return val > 0 ? 1 : 2;        // 1 = CW, 2 = CCW
+}
+
+function onSegment(p, q, r) {
+    return q[0] <= Math.max(p[0], r[0]) && q[0] >= Math.min(p[0], r[0]) &&
+           q[1] <= Math.max(p[1], r[1]) && q[1] >= Math.min(p[1], r[1]);
+}
+
+function doIntersect(p1, q1, p2, q2) {
+    var d1 = orientation(p1, q1, p2);
+    var d2 = orientation(p1, q1, q2);
+    var d3 = orientation(p2, q2, p1);
+    var d4 = orientation(p2, q2, q1);
+
+    // General case: segments straddle each other
+    if (d1 !== d2 && d3 !== d4) return true;
+
+    // Collinear special cases
+    if (d1 === 0 && onSegment(p1, p2, q1)) return true;
+    if (d2 === 0 && onSegment(p1, q2, q1)) return true;
+    if (d3 === 0 && onSegment(p2, p1, q2)) return true;
+    if (d4 === 0 && onSegment(p2, q1, q2)) return true;
+
+    return false;
+}
+
+// Find intersection point (if segments are not parallel)
+function intersectionPoint(p1, q1, p2, q2) {
+    var a1 = q1[1] - p1[1], b1 = p1[0] - q1[0];
+    var c1 = a1 * p1[0] + b1 * p1[1];
+    var a2 = q2[1] - p2[1], b2 = p2[0] - q2[0];
+    var c2 = a2 * p2[0] + b2 * p2[1];
+    var det = a1 * b2 - a2 * b1;
+    if (det === 0) return null; // parallel
+    return [(b2*c1 - b1*c2)/det, (a1*c2 - a2*c1)/det];
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1232</td><td><a href="https://leetcode.com/problems/check-if-it-is-a-straight-line/" target="_blank">Check If It Is a Straight Line</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>356</td><td><a href="https://leetcode.com/problems/line-reflection/" target="_blank">Line Reflection</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>335</td><td><a href="https://leetcode.com/problems/self-crossing/" target="_blank">Self Crossing</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>149</td><td><a href="https://leetcode.com/problems/max-points-on-a-line/" target="_blank">Max Points on a Line</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "line-intersection", title: "Line Intersection", category: "Computational Geometry" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Segment 1: (1,1)-(5,5), Segment 2: (1,5)-(5,1)
+        var seg1 = [[1,1],[5,5]], seg2 = [[1,5],[5,1]];
+        var xVals = [seg1[0][0], seg1[1][0], seg2[0][0], seg2[1][0]];
+
+        steps.push({ array: xVals, highlights: {}, explanation: "Two segments: S1=(" + seg1[0] + ")->(" + seg1[1] + "), S2=(" + seg2[0] + ")->(" + seg2[1] + "). Check if they intersect." });
+
+        // Orientation tests
+        function cross(O, A, B) {
+            return (A[0]-O[0])*(B[1]-O[1]) - (A[1]-O[1])*(B[0]-O[0]);
+        }
+
+        var d1 = cross(seg1[0], seg1[1], seg2[0]);
+        var d2 = cross(seg1[0], seg1[1], seg2[1]);
+        steps.push({ array: [d1, d2, 0, 0], highlights: { 0: 'comparing', 1: 'comparing' }, explanation: "Orientation of S2 endpoints w.r.t. S1: d1=" + d1 + " (P3), d2=" + d2 + " (P4). Opposite signs = straddle." });
+
+        var d3 = cross(seg2[0], seg2[1], seg1[0]);
+        var d4 = cross(seg2[0], seg2[1], seg1[1]);
+        steps.push({ array: [d1, d2, d3, d4], highlights: { 2: 'comparing', 3: 'comparing' }, explanation: "Orientation of S1 endpoints w.r.t. S2: d3=" + d3 + " (P1), d4=" + d4 + " (P2). Opposite signs = straddle." });
+
+        var intersects = (d1 > 0 !== d2 > 0) && (d3 > 0 !== d4 > 0);
+        var hlResult = { 0: 'found', 1: 'found', 2: 'found', 3: 'found' };
+        steps.push({ array: [d1, d2, d3, d4], highlights: hlResult, explanation: intersects ? "Both pairs straddle! Segments INTERSECT at (3, 3)." : "No straddle. Segments do not intersect." });
+
+        // Non-intersecting pair
+        var seg3 = [[1,1],[2,2]], seg4 = [[3,3],[4,4]];
+        steps.push({ array: [1, 2, 3, 4], highlights: {}, explanation: "Test non-intersecting: S3=(1,1)->(2,2), S4=(3,3)->(4,4). Collinear but no overlap." });
+        steps.push({ array: [1, 2, 3, 4], highlights: { 0: 'swapped', 1: 'swapped', 2: 'swapped', 3: 'swapped' }, explanation: "Collinear: all cross products = 0. Check projection overlap — no overlap, so NO intersection." });
+
+        steps.push({ array: xVals, highlights: { 0: 'sorted', 1: 'sorted', 2: 'sorted', 3: 'sorted' }, explanation: "Line intersection algorithm complete. O(1) per pair, O((n+k) log n) for n segments via sweep line." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 5, 1, 5], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convex Hull — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Convex Hull</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Graham Scan: O(n log n)</span>
+            <span class="complexity-tag">Andrew's: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Convex Hull of a set of points is the smallest convex polygon that contains all the points. Imagine stretching a rubber band around all the points — the shape it forms is the convex hull. Only the outermost points lie on the hull; all others are inside.</p>
+            <p><strong>Graham Scan</strong> works by: (1) finding the bottom-most point as anchor, (2) sorting all other points by polar angle from the anchor, (3) processing points in order, maintaining a stack of hull vertices. For each new point, we check if adding it makes a left turn (keep) or right turn (pop the previous point). The cross product determines turn direction.</p>
+            <p><strong>Andrew's Monotone Chain</strong> is often preferred: sort points by x-coordinate, then build the upper hull and lower hull separately using the same left-turn check. It is simpler to implement and handles collinear points more cleanly. Both algorithms run in O(n log n) due to sorting.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Cross Product:</strong> cross(O,A,B) > 0 means left turn, < 0 means right turn, = 0 means collinear.</li>
+                    <li><strong>Monotone Chain:</strong> Sort by x, build upper and lower hulls separately.</li>
+                    <li><strong>Applications:</strong> Collision detection, shape analysis, farthest pair (rotating calipers).</li>
+                    <li><strong>Output-Sensitive:</strong> Algorithms like Jarvis March run in O(nh) where h is hull size.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Andrew's Monotone Chain Algorithm
+function convexHull(points) {
+    points.sort(function(a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    var n = points.length;
+    if (n <= 1) return points.slice();
+
+    function cross(O, A, B) {
+        return (A[0] - O[0]) * (B[1] - O[1]) - (A[1] - O[1]) * (B[0] - O[0]);
+    }
+
+    // Build lower hull
+    var lower = [];
+    for (var i = 0; i < n; i++) {
+        while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], points[i]) <= 0)
+            lower.pop();
+        lower.push(points[i]);
+    }
+
+    // Build upper hull
+    var upper = [];
+    for (var j = n - 1; j >= 0; j--) {
+        while (upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], points[j]) <= 0)
+            upper.pop();
+        upper.push(points[j]);
+    }
+
+    // Remove last point of each half (duplicate of first point of other half)
+    lower.pop();
+    upper.pop();
+    return lower.concat(upper);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>587</td><td><a href="https://leetcode.com/problems/erect-the-fence/" target="_blank">Erect the Fence</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>973</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">K Closest Points to Origin</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1924</td><td><a href="https://leetcode.com/problems/erect-the-fence-ii/" target="_blank">Erect the Fence II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "convex-hull", title: "Convex Hull", category: "Computational Geometry" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Points as [x, y] pairs encoded in flat array
+        var points = [[1,1],[2,5],[3,3],[5,3],[6,7],[7,1],[4,0],[0,3]];
+        var xVals = []; for (var p = 0; p < points.length; p++) xVals.push(points[p][0]);
+
+        steps.push({ array: xVals, highlights: {}, explanation: "8 points plotted. We will find the convex hull using Andrew's Monotone Chain algorithm." });
+
+        // Sort by x
+        points.sort(function(a,b){ return a[0]-b[0] || a[1]-b[1]; });
+        xVals = []; for (var q = 0; q < points.length; q++) xVals.push(points[q][0]);
+        var hl0 = {};
+        for (var r = 0; r < xVals.length; r++) hl0[r] = 'comparing';
+        steps.push({ array: xVals, highlights: hl0, explanation: "Sort points by x-coordinate: " + points.map(function(p){return "("+p[0]+","+p[1]+")";}).join(", ") + "." });
+
+        function cross(O, A, B) {
+            return (A[0]-O[0])*(B[1]-O[1]) - (A[1]-O[1])*(B[0]-O[0]);
+        }
+
+        // Lower hull
+        var lower = [];
+        for (var i = 0; i < points.length; i++) {
+            while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], points[i]) <= 0) {
+                lower.pop();
+            }
+            lower.push(points[i]);
+            var lx = []; for (var li = 0; li < lower.length; li++) lx.push(lower[li][0]);
+            var hlL = {}; hlL[lx.length - 1] = 'found';
+            steps.push({ array: lx, highlights: hlL, explanation: "Lower hull: add (" + points[i][0] + "," + points[i][1] + "). Check cross product for left turn. Hull: " + lower.map(function(p){return "("+p[0]+","+p[1]+")";}).join(" -> ") + "." });
+        }
+
+        // Upper hull
+        var upper = [];
+        for (var j = points.length - 1; j >= 0; j--) {
+            while (upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], points[j]) <= 0) {
+                upper.pop();
+            }
+            upper.push(points[j]);
+            var ux = []; for (var ui = 0; ui < upper.length; ui++) ux.push(upper[ui][0]);
+            var hlU = {}; hlU[ux.length - 1] = 'swapped';
+            steps.push({ array: ux, highlights: hlU, explanation: "Upper hull: add (" + points[j][0] + "," + points[j][1] + "). Hull: " + upper.map(function(p){return "("+p[0]+","+p[1]+")";}).join(" -> ") + "." });
+        }
+
+        lower.pop(); upper.pop();
+        var hull = lower.concat(upper);
+        var hullX = []; for (var h = 0; h < hull.length; h++) hullX.push(hull[h][0]);
+        var hlFinal = {};
+        for (var f = 0; f < hullX.length; f++) hlFinal[f] = 'sorted';
+        steps.push({ array: hullX, highlights: hlFinal, explanation: "Convex Hull complete! " + hull.length + " vertices: " + hull.map(function(p){return "("+p[0]+","+p[1]+")";}).join(" -> ") + "." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 2, 3, 5, 6, 7, 4, 0], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

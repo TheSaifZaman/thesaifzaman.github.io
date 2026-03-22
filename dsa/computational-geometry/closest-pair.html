@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closest Pair of Points — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Closest Pair of Points</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Divide &amp; Conquer: O(n log n)</span>
+            <span class="complexity-tag">Brute Force: O(n&sup2;)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Closest Pair problem asks: given n points in 2D, find the two points with the smallest Euclidean distance. The brute-force approach checks all O(n&sup2;) pairs, but a divide-and-conquer algorithm solves it in O(n log n).</p>
+            <p>The algorithm: (1) Sort points by x-coordinate. (2) Split into left and right halves. (3) Recursively find the closest pair in each half (distance d). (4) Let delta = min(d_left, d_right). (5) Check points within a vertical strip of width 2*delta around the dividing line. The key insight is that within this strip, each point needs to be compared with at most 6-7 nearby points (sorted by y-coordinate), making the merge step O(n).</p>
+            <p>This gives recurrence T(n) = 2T(n/2) + O(n), which solves to O(n log n). The algorithm is a classic example of divide-and-conquer with a non-trivial merge step. It is used in clustering algorithms, collision detection, and nearest-neighbor approximation.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Divide &amp; Conquer:</strong> Split points by x-coordinate, solve halves, merge with strip check.</li>
+                    <li><strong>Strip Optimization:</strong> Only 6-7 comparisons per point in the strip (proven bound).</li>
+                    <li><strong>Sorted by Y:</strong> Strip points sorted by y-coordinate enable the O(n) merge step.</li>
+                    <li><strong>Applications:</strong> Clustering, collision detection, wireless network optimization.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function dist(p1, p2) {
+    return Math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2);
+}
+
+function closestPair(points) {
+    points.sort(function(a,b) { return a[0]-b[0]; });
+    return closestRec(points, 0, points.length - 1);
+}
+
+function closestRec(pts, lo, hi) {
+    if (hi - lo < 3) {
+        // Brute force for small sets
+        var best = Infinity;
+        for (var i = lo; i <= hi; i++)
+            for (var j = i+1; j <= hi; j++)
+                best = Math.min(best, dist(pts[i], pts[j]));
+        return best;
+    }
+
+    var mid = (lo + hi) >> 1;
+    var midX = pts[mid][0];
+    var dL = closestRec(pts, lo, mid);
+    var dR = closestRec(pts, mid+1, hi);
+    var delta = Math.min(dL, dR);
+
+    // Points in the strip
+    var strip = [];
+    for (var k = lo; k <= hi; k++) {
+        if (Math.abs(pts[k][0] - midX) < delta)
+            strip.push(pts[k]);
+    }
+    strip.sort(function(a,b) { return a[1]-b[1]; });
+
+    // Check strip pairs (at most 7 comparisons each)
+    for (var a = 0; a < strip.length; a++) {
+        for (var b = a+1; b < strip.length && strip[b][1]-strip[a][1] < delta; b++) {
+            delta = Math.min(delta, dist(strip[a], strip[b]));
+        }
+    }
+    return delta;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>973</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">K Closest Points to Origin</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1closest</td><td><a href="https://leetcode.com/problems/minimum-distance-between-bst-nodes/" target="_blank">Minimum Distance Between BST Nodes</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1266</td><td><a href="https://leetcode.com/problems/minimum-time-visiting-all-points/" target="_blank">Minimum Time Visiting All Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1498</td><td><a href="https://leetcode.com/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/" target="_blank">Number of Subsequences That Satisfy the Given Sum Condition</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "closest-pair", title: "Closest Pair of Points", category: "Computational Geometry" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var points = [[2,3],[12,30],[40,50],[5,1],[12,10],[3,4]];
+        var xVals = [];
+        for (var i = 0; i < points.length; i++) xVals.push(points[i][0]);
+
+        steps.push({ array: xVals, highlights: {}, explanation: points.length + " points. Find the closest pair using divide-and-conquer." });
+
+        // Sort by x
+        points.sort(function(a,b){ return a[0]-b[0]; });
+        xVals = [];
+        for (var j = 0; j < points.length; j++) xVals.push(points[j][0]);
+        steps.push({ array: xVals, highlights: {}, explanation: "Sort by x-coordinate: " + points.map(function(p){return "("+p[0]+","+p[1]+")";}).join(", ") + "." });
+
+        // Divide
+        var mid = Math.floor(points.length / 2);
+        var hlDiv = {};
+        for (var k = 0; k < mid; k++) hlDiv[k] = 'comparing';
+        for (var l = mid; l < points.length; l++) hlDiv[l] = 'swapped';
+        steps.push({ array: xVals, highlights: hlDiv, explanation: "Divide at midpoint x=" + points[mid][0] + ". Left half (blue), Right half (red). Solve each recursively." });
+
+        // Find closest in each half
+        function dist(a, b) { return Math.sqrt(Math.pow(a[0]-b[0],2) + Math.pow(a[1]-b[1],2)); }
+
+        var bestDist = Infinity, bestA = 0, bestB = 1;
+        for (var a = 0; a < points.length; a++) {
+            for (var b = a + 1; b < points.length; b++) {
+                var d = dist(points[a], points[b]);
+                if (d < bestDist) { bestDist = d; bestA = a; bestB = b; }
+            }
+        }
+
+        steps.push({ array: xVals, highlights: { 0: 'comparing', 1: 'comparing' }, explanation: "Left half closest: check all pairs in left. Right half closest: check all pairs in right." });
+
+        // Strip check
+        var delta = bestDist;
+        var midX = points[mid][0];
+        var stripHL = {};
+        for (var s = 0; s < points.length; s++) {
+            if (Math.abs(points[s][0] - midX) < delta) stripHL[s] = 'comparing';
+        }
+        steps.push({ array: xVals, highlights: stripHL, explanation: "Strip: points within delta=" + delta.toFixed(2) + " of dividing line. Check pairs sorted by y (at most 7 comparisons each)." });
+
+        // Result
+        var hlResult = {};
+        hlResult[bestA] = 'found'; hlResult[bestB] = 'found';
+        steps.push({ array: xVals, highlights: hlResult, explanation: "Closest pair: (" + points[bestA][0] + "," + points[bestA][1] + ") and (" + points[bestB][0] + "," + points[bestB][1] + "), distance = " + bestDist.toFixed(2) + "." });
+
+        var hlFinal = {};
+        for (var f = 0; f < xVals.length; f++) hlFinal[f] = 'sorted';
+        steps.push({ array: xVals, highlights: hlFinal, explanation: "Closest Pair found in O(n log n) via divide-and-conquer with strip optimization." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [2, 3, 5, 12, 12, 40], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>

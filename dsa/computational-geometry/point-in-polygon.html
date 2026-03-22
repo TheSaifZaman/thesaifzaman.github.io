@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point in Polygon — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Point in Polygon</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Ray Casting: O(n)</span>
+            <span class="complexity-tag">Winding Number: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Point-in-Polygon problem determines whether a given point lies inside, outside, or on the boundary of a polygon. The most popular solution is the <strong>Ray Casting algorithm</strong> (also called the even-odd rule): cast a ray from the point in any direction (typically rightward) and count how many polygon edges it crosses. An odd count means inside; even means outside.</p>
+            <p>The <strong>Winding Number</strong> algorithm is more robust, especially for complex (self-intersecting) polygons. It counts how many times the polygon winds around the point. A non-zero winding number means the point is inside. This correctly handles polygons with holes and self-intersections.</p>
+            <p>Point-in-polygon tests are fundamental in GIS (geofencing), computer graphics (hit testing, rendering), games (collision detection with complex shapes), and computational geometry (polygon operations like union, intersection, and containment).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Ray Casting:</strong> Count edge crossings — odd = inside, even = outside.</li>
+                    <li><strong>Edge Cases:</strong> Ray through vertex or along edge requires careful handling.</li>
+                    <li><strong>Winding Number:</strong> More robust for self-intersecting polygons.</li>
+                    <li><strong>Preprocessing:</strong> For many queries, triangulation or trapezoidal decomposition enables O(log n) per query.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Ray Casting Algorithm
+function pointInPolygon(point, polygon) {
+    var x = point[0], y = point[1];
+    var n = polygon.length;
+    var inside = false;
+
+    for (var i = 0, j = n - 1; i < n; j = i++) {
+        var xi = polygon[i][0], yi = polygon[i][1];
+        var xj = polygon[j][0], yj = polygon[j][1];
+
+        // Check if ray from (x,y) rightward crosses edge (i,j)
+        var intersects = ((yi > y) !== (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersects) inside = !inside;
+    }
+    return inside;
+}
+
+// Winding Number Algorithm
+function windingNumber(point, polygon) {
+    var wn = 0;
+    var n = polygon.length;
+
+    for (var i = 0; i < n; i++) {
+        var j = (i + 1) % n;
+        if (polygon[i][1] <= point[1]) {
+            if (polygon[j][1] > point[1]) {
+                if (isLeft(polygon[i], polygon[j], point) > 0) wn++;
+            }
+        } else {
+            if (polygon[j][1] <= point[1]) {
+                if (isLeft(polygon[i], polygon[j], point) < 0) wn--;
+            }
+        }
+    }
+    return wn; // 0 = outside, nonzero = inside
+}
+
+function isLeft(p0, p1, p2) {
+    return (p1[0]-p0[0]) * (p2[1]-p0[1]) - (p2[0]-p0[0]) * (p1[1]-p0[1]);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1453</td><td><a href="https://leetcode.com/problems/maximum-number-of-darts-inside-of-a-circular-dartboard/" target="_blank">Maximum Number of Darts Inside of a Circular Dartboard</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>223</td><td><a href="https://leetcode.com/problems/rectangle-area/" target="_blank">Rectangle Area</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>836</td><td><a href="https://leetcode.com/problems/rectangle-overlap/" target="_blank">Rectangle Overlap</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>587</td><td><a href="https://leetcode.com/problems/erect-the-fence/" target="_blank">Erect the Fence</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "point-in-polygon", title: "Point in Polygon", category: "Computational Geometry" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Pentagon polygon
+        var polygon = [[1,1],[5,0],[7,3],[4,6],[0,4]];
+        var testInside = [3, 3];
+        var testOutside = [8, 8];
+
+        var polyX = [];
+        for (var p = 0; p < polygon.length; p++) polyX.push(polygon[p][0]);
+
+        steps.push({ array: polyX, highlights: {}, explanation: "Polygon with " + polygon.length + " vertices: " + polygon.map(function(p){return "("+p[0]+","+p[1]+")";}).join(", ") + ". Test points using ray casting." });
+
+        // Test inside point
+        steps.push({ array: polyX, highlights: {}, explanation: "Test point (" + testInside[0] + "," + testInside[1] + "): cast ray rightward and count edge crossings." });
+
+        var crossCount = 0;
+        for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            var yi = polygon[i][1], yj = polygon[j][1];
+            var xi = polygon[i][0], xj = polygon[j][0];
+            var crosses = ((yi > testInside[1]) !== (yj > testInside[1])) &&
+                (testInside[0] < (xj - xi) * (testInside[1] - yi) / (yj - yi) + xi);
+
+            var hl = {};
+            hl[i] = 'comparing'; hl[j] = 'comparing';
+            steps.push({ array: polyX, highlights: hl, explanation: "Edge (" + polygon[j][0] + "," + polygon[j][1] + ")->(" + polygon[i][0] + "," + polygon[i][1] + "): " + (crosses ? "CROSSES ray! Count=" + (crossCount+1) : "No crossing.") });
+            if (crosses) crossCount++;
+        }
+
+        var hlInside = {};
+        for (var k = 0; k < polyX.length; k++) hlInside[k] = 'found';
+        steps.push({ array: polyX, highlights: hlInside, explanation: "Point (" + testInside[0] + "," + testInside[1] + "): " + crossCount + " crossings (odd) = INSIDE the polygon." });
+
+        // Test outside point
+        steps.push({ array: polyX, highlights: {}, explanation: "Test point (" + testOutside[0] + "," + testOutside[1] + "): cast ray and count crossings." });
+
+        var crossCount2 = 0;
+        for (var a = 0, b = polygon.length - 1; a < polygon.length; b = a++) {
+            var yia = polygon[a][1], yja = polygon[b][1];
+            var xia = polygon[a][0], xja = polygon[b][0];
+            var crosses2 = ((yia > testOutside[1]) !== (yja > testOutside[1])) &&
+                (testOutside[0] < (xja - xia) * (testOutside[1] - yia) / (yja - yia) + xia);
+            if (crosses2) crossCount2++;
+        }
+
+        var hlOut = {};
+        for (var m = 0; m < polyX.length; m++) hlOut[m] = 'swapped';
+        steps.push({ array: polyX, highlights: hlOut, explanation: "Point (" + testOutside[0] + "," + testOutside[1] + "): " + crossCount2 + " crossings (even) = OUTSIDE the polygon." });
+
+        var hlFinal = {};
+        for (var f = 0; f < polyX.length; f++) hlFinal[f] = 'sorted';
+        steps.push({ array: polyX, highlights: hlFinal, explanation: "Point-in-Polygon complete. Ray casting: O(n) per query. Odd crossings = inside, even = outside." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 5, 7, 4, 0], stepGenerator: generateSteps, type: 'scatter' });
+    </script>
+</body>
+</html>
