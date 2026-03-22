@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Depth-First Search — DSA Visualizer</title>
+  <link rel="stylesheet" href="../shared/shared.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand"><i class="fas fa-code"></i> DSA Visualizer</a>
+  <div class="nav-links">
+    <a href="../index.html">Hub</a>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+  </div>
+</nav>
+
+<!-- ── Breadcrumb ─────────────────────────────────────── -->
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<!-- ── Topic Header ───────────────────────────────────── -->
+<header class="topic-header">
+  <div class="topic-badge medium">Medium</div>
+  <h1>Depth-First Search</h1>
+  <p class="topic-subtitle">Explores as deep as possible before backtracking — O(V+E)</p>
+</header>
+
+<!-- ── Main Content ───────────────────────────────────── -->
+<main class="topic-content">
+
+  <!-- Concept Section -->
+  <section class="content-card" id="concept">
+    <h2><i class="fas fa-lightbulb"></i> Concept</h2>
+    <p><strong>Depth-First Search (DFS)</strong> starts at a source node and explores each branch as far as possible before backtracking. It uses a stack (or recursion) to track which node to visit next.</p>
+    <ul>
+      <li><strong>Time Complexity:</strong> O(V + E)</li>
+      <li><strong>Space Complexity:</strong> O(V) for the visited set and recursion stack</li>
+      <li><strong>Uses:</strong> Cycle detection, topological sort, path finding, connected components</li>
+      <li><strong>Traversal order:</strong> Goes deep into one branch before exploring siblings</li>
+    </ul>
+  </section>
+
+  <!-- Visualization Section -->
+  <section class="content-card" id="visualization">
+    <h2><i class="fas fa-project-diagram"></i> Visualization</h2>
+    <div id="vizContainer"></div>
+  </section>
+
+  <!-- Code Section -->
+  <section class="content-card" id="code">
+    <h2><i class="fas fa-code"></i> Implementation</h2>
+    <pre class="code-block"><code>function dfs(graph, start) {
+  const visited = new Set();
+  const result = [];
+
+  function traverse(node) {
+    if (visited.has(node)) return;
+    visited.add(node);
+    result.push(node);
+
+    for (const neighbor of graph[node]) {
+      traverse(neighbor);
+    }
+  }
+
+  traverse(start);
+  return result;
+}
+
+// Iterative version using explicit stack
+function dfsIterative(graph, start) {
+  const visited = new Set();
+  const stack = [start];
+  const result = [];
+
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (visited.has(node)) continue;
+
+    visited.add(node);
+    result.push(node);
+
+    // Push neighbors in reverse for left-to-right order
+    for (let i = graph[node].length - 1; i >= 0; i--) {
+      stack.push(graph[node][i]);
+    }
+  }
+  return result;
+}</code></pre>
+  </section>
+
+  <!-- Problems Section -->
+  <section class="content-card" id="problems">
+    <h2><i class="fas fa-trophy"></i> Practice Problems</h2>
+    <div class="problems-tabs">
+      <button class="problems-tab active" data-filter="all">All (12)</button>
+      <button class="problems-tab" data-filter="easy">Easy</button>
+      <button class="problems-tab" data-filter="medium">Medium</button>
+      <button class="problems-tab" data-filter="hard">Hard</button>
+    </div>
+    <table class="problems-table">
+      <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr data-difficulty="easy"><td>104</td><td>Maximum Depth of Binary Tree</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="easy"><td>112</td><td>Path Sum</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/path-sum/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="easy"><td>100</td><td>Same Tree</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/same-tree/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>200</td><td>Number of Islands</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>133</td><td>Clone Graph</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/clone-graph/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>695</td><td>Max Area of Island</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/max-area-of-island/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>547</td><td>Number of Provinces</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>130</td><td>Surrounded Regions</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/surrounded-regions/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>417</td><td>Pacific Atlantic Water Flow</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/pacific-atlantic-water-flow/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>124</td><td>Binary Tree Maximum Path Sum</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>332</td><td>Reconstruct Itinerary</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/reconstruct-itinerary/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>329</td><td>Longest Increasing Path in a Matrix</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="topic-nav" id="topicNav"></nav>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer class="footer">
+  <p>DSA & ML/AI Visualizer &mdash; built for learning.</p>
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────────── -->
+<script src="../dsa-data.js"></script>
+<script>
+var TOPIC = {
+  id: 'dfs',
+  title: 'Depth-First Search',
+  category: 'Searching',
+  difficulty: 'Medium'
+};
+</script>
+<script src="../shared/shared.js"></script>
+<script src="../shared/visualizer.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var sampleNodes = [
+    {id:0, label:'A', x:200, y:40},
+    {id:1, label:'B', x:100, y:120},
+    {id:2, label:'C', x:300, y:120},
+    {id:3, label:'D', x:50, y:200},
+    {id:4, label:'E', x:150, y:200},
+    {id:5, label:'F', x:250, y:200},
+    {id:6, label:'G', x:350, y:200}
+  ];
+  var sampleEdges = [
+    {from:0, to:1},
+    {from:0, to:2},
+    {from:1, to:3},
+    {from:1, to:4},
+    {from:2, to:5},
+    {from:2, to:6}
+  ];
+
+  // DFS order: A -> B -> D -> E -> C -> F -> G
+  var dfsOrder = [0, 1, 3, 4, 2, 5, 6];
+  // Edges traversed in DFS order
+  var dfsEdgeOrder = [
+    {from:0, to:1},
+    {from:1, to:3},
+    {from:1, to:4},
+    {from:0, to:2},
+    {from:2, to:5},
+    {from:2, to:6}
+  ];
+
+  function generateSteps() {
+    var steps = [];
+    var visited = [];
+    var visitedSet = {};
+    var edgesVisited = [];
+
+    // Initial state
+    steps.push({
+      type: 'graph',
+      nodes: cloneNodes(sampleNodes, {}, {}),
+      edges: cloneEdges(sampleEdges, []),
+      explanation: 'DFS starting from node A. Uses a stack (or recursion) — explores depth-first.'
+    });
+
+    for (var i = 0; i < dfsOrder.length; i++) {
+      var nodeId = dfsOrder[i];
+      visited.push(nodeId);
+      visitedSet[nodeId] = true;
+
+      // Add the edge that led here
+      if (i > 0) {
+        edgesVisited.push(dfsEdgeOrder[i - 1]);
+      }
+
+      var nodeStates = {};
+      var currentNode = {};
+      for (var v = 0; v < visited.length - 1; v++) {
+        nodeStates[visited[v]] = 'visited';
+      }
+      currentNode[nodeId] = true;
+
+      steps.push({
+        type: 'graph',
+        nodes: cloneNodes(sampleNodes, nodeStates, currentNode),
+        edges: cloneEdges(sampleEdges, edgesVisited),
+        explanation: 'Visit node ' + sampleNodes[nodeId].label + '. Stack path: [' + visited.map(function (id) { return sampleNodes[id].label; }).join(', ') + ']'
+      });
+    }
+
+    // Final state — all visited
+    var finalStates = {};
+    for (var f = 0; f < dfsOrder.length; f++) {
+      finalStates[dfsOrder[f]] = 'visited';
+    }
+    steps.push({
+      type: 'graph',
+      nodes: cloneNodes(sampleNodes, finalStates, {}),
+      edges: cloneEdges(sampleEdges, dfsEdgeOrder),
+      explanation: 'DFS complete! Traversal order: A -> B -> D -> E -> C -> F -> G'
+    });
+
+    return steps;
+  }
+
+  function cloneNodes(nodes, stateMap, currentMap) {
+    return nodes.map(function (n) {
+      var state = '';
+      if (currentMap[n.id]) state = 'current';
+      else if (stateMap[n.id]) state = stateMap[n.id];
+      return {id: n.id, label: n.label, x: n.x, y: n.y, state: state};
+    });
+  }
+
+  function cloneEdges(edges, visitedEdges) {
+    return edges.map(function (e) {
+      var state = '';
+      for (var i = 0; i < visitedEdges.length; i++) {
+        if (visitedEdges[i].from === e.from && visitedEdges[i].to === e.to) {
+          state = 'active';
+          break;
+        }
+      }
+      return {from: e.from, to: e.to, state: state};
+    });
+  }
+
+  Visualizer.init({
+    container: '#vizContainer',
+    data: [0],
+    type: 'graph',
+    stepGenerator: generateSteps
+  });
+})();
+</script>
+
+</body>
+</html>

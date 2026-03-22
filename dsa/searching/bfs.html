@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breadth-First Search — DSA Visualizer</title>
+  <link rel="stylesheet" href="../shared/shared.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand"><i class="fas fa-code"></i> DSA Visualizer</a>
+  <div class="nav-links">
+    <a href="../index.html">Hub</a>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+  </div>
+</nav>
+
+<!-- ── Breadcrumb ─────────────────────────────────────── -->
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<!-- ── Topic Header ───────────────────────────────────── -->
+<header class="topic-header">
+  <div class="topic-badge medium">Medium</div>
+  <h1>Breadth-First Search</h1>
+  <p class="topic-subtitle">Explores all neighbors at current depth before going deeper — O(V+E)</p>
+</header>
+
+<!-- ── Main Content ───────────────────────────────────── -->
+<main class="topic-content">
+
+  <!-- Concept Section -->
+  <section class="content-card" id="concept">
+    <h2><i class="fas fa-lightbulb"></i> Concept</h2>
+    <p><strong>Breadth-First Search (BFS)</strong> starts at a source node and explores all neighbors at the current depth level before moving to nodes at the next level. It uses a queue to maintain the frontier.</p>
+    <ul>
+      <li><strong>Time Complexity:</strong> O(V + E)</li>
+      <li><strong>Space Complexity:</strong> O(V) for the queue and visited set</li>
+      <li><strong>Uses:</strong> Shortest path (unweighted), level-order traversal, connected components</li>
+      <li><strong>Key property:</strong> Visits nodes in order of their distance from the source</li>
+    </ul>
+  </section>
+
+  <!-- Visualization Section -->
+  <section class="content-card" id="visualization">
+    <h2><i class="fas fa-project-diagram"></i> Visualization</h2>
+    <div id="vizContainer"></div>
+  </section>
+
+  <!-- Code Section -->
+  <section class="content-card" id="code">
+    <h2><i class="fas fa-code"></i> Implementation</h2>
+    <pre class="code-block"><code>function bfs(graph, start) {
+  const visited = new Set([start]);
+  const queue = [start];
+  const result = [];
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+    result.push(node);
+
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  return result;
+}
+
+// BFS with level tracking
+function bfsLevels(graph, start) {
+  const visited = new Set([start]);
+  let currentLevel = [start];
+  const levels = [];
+
+  while (currentLevel.length > 0) {
+    levels.push([...currentLevel]);
+    const nextLevel = [];
+
+    for (const node of currentLevel) {
+      for (const neighbor of graph[node]) {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          nextLevel.push(neighbor);
+        }
+      }
+    }
+    currentLevel = nextLevel;
+  }
+  return levels;
+}</code></pre>
+  </section>
+
+  <!-- Problems Section -->
+  <section class="content-card" id="problems">
+    <h2><i class="fas fa-trophy"></i> Practice Problems</h2>
+    <div class="problems-tabs">
+      <button class="problems-tab active" data-filter="all">All (12)</button>
+      <button class="problems-tab" data-filter="easy">Easy</button>
+      <button class="problems-tab" data-filter="medium">Medium</button>
+      <button class="problems-tab" data-filter="hard">Hard</button>
+    </div>
+    <table class="problems-table">
+      <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr data-difficulty="easy"><td>111</td><td>Minimum Depth of Binary Tree</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/minimum-depth-of-binary-tree/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="easy"><td>637</td><td>Average of Levels in Binary Tree</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/average-of-levels-in-binary-tree/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>102</td><td>Binary Tree Level Order Traversal</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>994</td><td>Rotting Oranges</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>200</td><td>Number of Islands</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>1091</td><td>Shortest Path in Binary Matrix</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>752</td><td>Open the Lock</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/open-the-lock/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>429</td><td>N-ary Tree Level Order Traversal</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/n-ary-tree-level-order-traversal/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>133</td><td>Clone Graph</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/clone-graph/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>127</td><td>Word Ladder</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/word-ladder/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>815</td><td>Bus Routes</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/bus-routes/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="hard"><td>773</td><td>Sliding Puzzle</td><td><span class="diff-badge hard">Hard</span></td><td><a href="https://leetcode.com/problems/sliding-puzzle/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="topic-nav" id="topicNav"></nav>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer class="footer">
+  <p>DSA & ML/AI Visualizer &mdash; built for learning.</p>
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────────── -->
+<script src="../dsa-data.js"></script>
+<script>
+var TOPIC = {
+  id: 'bfs',
+  title: 'Breadth-First Search',
+  category: 'Searching',
+  difficulty: 'Medium'
+};
+</script>
+<script src="../shared/shared.js"></script>
+<script src="../shared/visualizer.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var sampleNodes = [
+    {id:0, label:'A', x:200, y:40},
+    {id:1, label:'B', x:100, y:120},
+    {id:2, label:'C', x:300, y:120},
+    {id:3, label:'D', x:50, y:200},
+    {id:4, label:'E', x:150, y:200},
+    {id:5, label:'F', x:250, y:200},
+    {id:6, label:'G', x:350, y:200}
+  ];
+  var sampleEdges = [
+    {from:0, to:1},
+    {from:0, to:2},
+    {from:1, to:3},
+    {from:1, to:4},
+    {from:2, to:5},
+    {from:2, to:6}
+  ];
+
+  // BFS levels: Level 0: [A], Level 1: [B,C], Level 2: [D,E,F,G]
+  var bfsLevels = [
+    [0],
+    [1, 2],
+    [3, 4, 5, 6]
+  ];
+  var bfsEdgeOrder = [
+    {from:0, to:1},
+    {from:0, to:2},
+    {from:1, to:3},
+    {from:1, to:4},
+    {from:2, to:5},
+    {from:2, to:6}
+  ];
+
+  function generateSteps() {
+    var steps = [];
+    var visited = [];
+    var visitedSet = {};
+    var edgesVisited = [];
+
+    // Initial state
+    steps.push({
+      type: 'graph',
+      nodes: cloneNodes(sampleNodes, {}, {}),
+      edges: cloneEdges(sampleEdges, []),
+      explanation: 'BFS starting from node A. Uses a queue — explores level by level.'
+    });
+
+    var edgeIdx = 0;
+
+    for (var level = 0; level < bfsLevels.length; level++) {
+      var levelNodes = bfsLevels[level];
+
+      // Show discovering this entire level
+      for (var n = 0; n < levelNodes.length; n++) {
+        var nodeId = levelNodes[n];
+        visited.push(nodeId);
+        visitedSet[nodeId] = true;
+
+        // Add the edge that led to this node (skip root)
+        if (level > 0 || n > 0) {
+          if (edgeIdx < bfsEdgeOrder.length && !(level === 0 && n === 0)) {
+            edgesVisited.push(bfsEdgeOrder[edgeIdx]);
+            edgeIdx++;
+          }
+        }
+
+        var nodeStates = {};
+        var currentNodes = {};
+        for (var v = 0; v < visited.length - 1; v++) {
+          nodeStates[visited[v]] = 'visited';
+        }
+        currentNodes[nodeId] = true;
+
+        var queueContent = [];
+        // Remaining nodes in this level + next level nodes already discovered
+        for (var q = n + 1; q < levelNodes.length; q++) {
+          queueContent.push(sampleNodes[levelNodes[q]].label);
+        }
+
+        steps.push({
+          type: 'graph',
+          nodes: cloneNodes(sampleNodes, nodeStates, currentNodes),
+          edges: cloneEdges(sampleEdges, edgesVisited),
+          explanation: 'Level ' + level + ': Visit node ' + sampleNodes[nodeId].label + '. Queue: [' + queueContent.join(', ') + ']'
+        });
+      }
+    }
+
+    // Final state
+    var finalStates = {};
+    for (var f = 0; f < sampleNodes.length; f++) {
+      finalStates[f] = 'visited';
+    }
+    steps.push({
+      type: 'graph',
+      nodes: cloneNodes(sampleNodes, finalStates, {}),
+      edges: cloneEdges(sampleEdges, bfsEdgeOrder),
+      explanation: 'BFS complete! Level order: A | B, C | D, E, F, G'
+    });
+
+    return steps;
+  }
+
+  function cloneNodes(nodes, stateMap, currentMap) {
+    return nodes.map(function (n) {
+      var state = '';
+      if (currentMap[n.id]) state = 'current';
+      else if (stateMap[n.id]) state = stateMap[n.id];
+      return {id: n.id, label: n.label, x: n.x, y: n.y, state: state};
+    });
+  }
+
+  function cloneEdges(edges, visitedEdges) {
+    return edges.map(function (e) {
+      var state = '';
+      for (var i = 0; i < visitedEdges.length; i++) {
+        if (visitedEdges[i].from === e.from && visitedEdges[i].to === e.to) {
+          state = 'active';
+          break;
+        }
+      }
+      return {from: e.from, to: e.to, state: state};
+    });
+  }
+
+  Visualizer.init({
+    container: '#vizContainer',
+    data: [0],
+    type: 'graph',
+    stepGenerator: generateSteps
+  });
+})();
+</script>
+
+</body>
+</html>

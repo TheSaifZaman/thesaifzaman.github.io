@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exponential Search — DSA Visualizer</title>
+  <link rel="stylesheet" href="../shared/shared.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand"><i class="fas fa-code"></i> DSA Visualizer</a>
+  <div class="nav-links">
+    <a href="../index.html">Hub</a>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+  </div>
+</nav>
+
+<!-- ── Breadcrumb ─────────────────────────────────────── -->
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<!-- ── Topic Header ───────────────────────────────────── -->
+<header class="topic-header">
+  <div class="topic-badge easy">Easy</div>
+  <h1>Exponential Search</h1>
+  <p class="topic-subtitle">Doubles bound to find range, then binary searches within — O(log n)</p>
+</header>
+
+<!-- ── Main Content ───────────────────────────────────── -->
+<main class="topic-content">
+
+  <!-- Concept Section -->
+  <section class="content-card" id="concept">
+    <h2><i class="fas fa-lightbulb"></i> Concept</h2>
+    <p><strong>Exponential Search</strong> works in two phases. First, it finds a range where the target might exist by doubling the bound (1, 2, 4, 8, ...) until the bound exceeds the target. Then it performs a binary search within that range.</p>
+    <ul>
+      <li><strong>Time Complexity:</strong> O(log n)</li>
+      <li><strong>Space Complexity:</strong> O(1)</li>
+      <li><strong>Precondition:</strong> Sorted array</li>
+      <li><strong>Best for:</strong> Unbounded or very large sorted lists where the target is near the beginning</li>
+    </ul>
+  </section>
+
+  <!-- Visualization Section -->
+  <section class="content-card" id="visualization">
+    <h2><i class="fas fa-chart-bar"></i> Visualization</h2>
+    <div id="vizContainer"></div>
+  </section>
+
+  <!-- Code Section -->
+  <section class="content-card" id="code">
+    <h2><i class="fas fa-code"></i> Implementation</h2>
+    <pre class="code-block"><code>function exponentialSearch(arr, target) {
+  const n = arr.length;
+  if (n === 0) return -1;
+
+  // Check first element
+  if (arr[0] === target) return 0;
+
+  // Find range by doubling bound
+  let bound = 1;
+  while (bound < n && arr[bound] <= target) {
+    bound *= 2;
+  }
+
+  // Binary search in range [bound/2, min(bound, n-1)]
+  let left = Math.floor(bound / 2);
+  let right = Math.min(bound, n - 1);
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) return mid;
+    else if (arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+
+  return -1;
+}</code></pre>
+  </section>
+
+  <!-- Problems Section -->
+  <section class="content-card" id="problems">
+    <h2><i class="fas fa-trophy"></i> Practice Problems</h2>
+    <div class="problems-tabs">
+      <button class="problems-tab active" data-filter="all">All (4)</button>
+      <button class="problems-tab" data-filter="easy">Easy</button>
+      <button class="problems-tab" data-filter="medium">Medium</button>
+    </div>
+    <table class="problems-table">
+      <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr data-difficulty="easy"><td>704</td><td>Binary Search</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/binary-search/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="easy"><td>278</td><td>First Bad Version</td><td><span class="diff-badge easy">Easy</span></td><td><a href="https://leetcode.com/problems/first-bad-version/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>34</td><td>Find First and Last Position of Element in Sorted Array</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+        <tr data-difficulty="medium"><td>33</td><td>Search in Rotated Sorted Array</td><td><span class="diff-badge medium">Medium</span></td><td><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank">Solve <i class="fas fa-external-link-alt"></i></a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="topic-nav" id="topicNav"></nav>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer class="footer">
+  <p>DSA & ML/AI Visualizer &mdash; built for learning.</p>
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────────── -->
+<script src="../dsa-data.js"></script>
+<script>
+var TOPIC = {
+  id: 'exponential-search',
+  title: 'Exponential Search',
+  category: 'Searching',
+  difficulty: 'Easy'
+};
+</script>
+<script src="../shared/shared.js"></script>
+<script src="../shared/visualizer.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var defaultData = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+  var target = 23;
+
+  function generateSteps(arr) {
+    var steps = [];
+    var n = arr.length;
+
+    // Initial state
+    var h0 = {};
+    for (var i = 0; i < n; i++) h0[i] = 'active';
+    steps.push({
+      type: 'bars',
+      array: arr.slice(),
+      highlights: h0,
+      explanation: 'Sorted array. Target = ' + target + '. Phase 1: find range by doubling bound.'
+    });
+
+    if (n === 0) {
+      steps.push({ type: 'bars', array: [], highlights: {}, explanation: 'Empty array. Not found.' });
+      return steps;
+    }
+
+    // Check first element
+    var hFirst = {};
+    hFirst[0] = 'current';
+    if (arr[0] === target) {
+      steps.push({ type: 'bars', array: arr.slice(), highlights: hFirst, explanation: 'arr[0]=' + arr[0] + ' == ' + target + '. Found at index 0!' });
+      var hf = {}; hf[0] = 'sorted';
+      steps.push({ type: 'bars', array: arr.slice(), highlights: hf, explanation: 'Target found at index 0!' });
+      return steps;
+    }
+    steps.push({ type: 'bars', array: arr.slice(), highlights: hFirst, explanation: 'arr[0]=' + arr[0] + ' != ' + target + '. Start doubling bound.' });
+
+    // Exponential phase: find bound
+    var bound = 1;
+    while (bound < n && arr[bound] <= target) {
+      var hBound = {};
+      hBound[bound] = 'current';
+      for (var b = 0; b < n; b++) {
+        if (b !== bound) hBound[b] = '';
+      }
+      steps.push({
+        type: 'bars',
+        array: arr.slice(),
+        highlights: hBound,
+        explanation: 'Bound=' + bound + ', arr[' + bound + ']=' + arr[bound] + (arr[bound] <= target ? ' <= ' + target + '. Double bound.' : ' > ' + target + '. Range found.')
+      });
+      bound *= 2;
+    }
+
+    if (bound >= n || arr[Math.min(bound, n - 1)] > target) {
+      var hRange = {};
+      var rangeLeft = Math.floor(bound / 2);
+      var rangeRight = Math.min(bound, n - 1);
+      for (var r = rangeLeft; r <= rangeRight; r++) hRange[r] = 'active';
+      steps.push({
+        type: 'bars',
+        array: arr.slice(),
+        highlights: hRange,
+        explanation: 'Phase 2: Binary search in range [' + rangeLeft + '..' + rangeRight + '].'
+      });
+    }
+
+    // Binary search phase
+    var left = Math.floor(bound / 2);
+    var right = Math.min(bound, n - 1);
+
+    while (left <= right) {
+      var mid = Math.floor((left + right) / 2);
+      var highlights = {};
+      for (var j = 0; j < n; j++) {
+        if (j >= left && j <= right) highlights[j] = 'active';
+      }
+      highlights[mid] = 'current';
+
+      if (arr[mid] === target) {
+        steps.push({
+          type: 'bars',
+          array: arr.slice(),
+          highlights: highlights,
+          explanation: 'Binary search: mid=' + mid + ', arr[' + mid + ']=' + arr[mid] + ' == ' + target + '. Found!'
+        });
+        var hDone = {};
+        hDone[mid] = 'sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: hDone, explanation: 'Target ' + target + ' found at index ' + mid + '!' });
+        return steps;
+      } else if (arr[mid] < target) {
+        steps.push({
+          type: 'bars',
+          array: arr.slice(),
+          highlights: highlights,
+          explanation: 'Binary search: mid=' + mid + ', arr[' + mid + ']=' + arr[mid] + ' < ' + target + '. Move left to ' + (mid + 1) + '.'
+        });
+        left = mid + 1;
+      } else {
+        steps.push({
+          type: 'bars',
+          array: arr.slice(),
+          highlights: highlights,
+          explanation: 'Binary search: mid=' + mid + ', arr[' + mid + ']=' + arr[mid] + ' > ' + target + '. Move right to ' + (mid - 1) + '.'
+        });
+        right = mid - 1;
+      }
+    }
+
+    steps.push({ type: 'bars', array: arr.slice(), highlights: {}, explanation: 'Target ' + target + ' not found.' });
+    return steps;
+  }
+
+  Visualizer.init({
+    container: '#vizContainer',
+    data: defaultData,
+    type: 'bars',
+    stepGenerator: generateSteps
+  });
+})();
+</script>
+
+</body>
+</html>
