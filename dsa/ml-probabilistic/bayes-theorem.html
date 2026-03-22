@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayes' Theorem — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bayes' Theorem</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(1)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Bayes' Theorem describes how to update the probability of a hypothesis when given new evidence. It relates the posterior probability P(H|E) to the prior P(H), the likelihood P(E|H), and the marginal probability of evidence P(E).</p>
+            <p>The formula is: <strong>P(H|E) = P(E|H) &middot; P(H) / P(E)</strong>. This is the foundation of Bayesian inference, spam filtering, medical diagnosis, and all probabilistic machine learning.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Prior P(H):</strong> Our belief before seeing evidence.</li>
+                    <li><strong>Likelihood P(E|H):</strong> Probability of evidence given hypothesis is true.</li>
+                    <li><strong>Posterior P(H|E):</strong> Updated belief after seeing evidence.</li>
+                    <li><strong>Normalization:</strong> P(E) = P(E|H)P(H) + P(E|&not;H)P(&not;H) ensures probabilities sum to 1.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bayesTheorem(priorH, likelihoodEgivenH, likelihoodEgivenNotH) {
+    var priorNotH = 1 - priorH;
+    var evidenceP = likelihoodEgivenH * priorH +
+                    likelihoodEgivenNotH * priorNotH;
+    var posterior = (likelihoodEgivenH * priorH) / evidenceP;
+    return posterior;
+}
+
+// Example: medical test
+// P(Disease) = 0.01, P(+|Disease) = 0.95, P(+|Healthy) = 0.05
+var result = bayesTheorem(0.01, 0.95, 0.05);
+// result = 0.161 — only 16.1% chance of disease given positive test!</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-3/problem" target="_blank">HackerRank: Bayes' Theorem</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="easy"><td>2</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-4/problem" target="_blank">HackerRank: Binomial Distribution</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/spaceship-titanic" target="_blank">Kaggle: Spaceship Titanic (Naive Bayes)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://www.kaggle.com/competitions/nlp-getting-started" target="_blank">Kaggle: NLP Disaster Tweets</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="easy"><td>5</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-2/problem" target="_blank">HackerRank: Conditional Probability</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bayes-theorem", title: "Bayes' Theorem", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Medical test example
+        var prior = 0.01;        // P(Disease)
+        var sensitivity = 0.95;  // P(+|Disease)
+        var falsePos = 0.05;     // P(+|Healthy)
+
+        // Step 1: show prior
+        steps.push({
+            array: [1, 99],
+            highlights: {0: 'swapped', 1: 'sorted'},
+            explanation: "Prior: P(Disease)=0.01 (1%), P(Healthy)=0.99 (99%). Before any test, disease is rare."
+        });
+
+        // Step 2: show likelihoods
+        steps.push({
+            array: [95, 5],
+            highlights: {0: 'swapped', 1: 'comparing'},
+            explanation: "Likelihood: P(+|Disease)=0.95 (sensitivity). Of 100 sick people, 95 test positive. P(\u2212|Disease)=0.05."
+        });
+
+        // Step 3: false positive rate
+        steps.push({
+            array: [5, 95],
+            highlights: {0: 'swapped', 1: 'sorted'},
+            explanation: "False positive: P(+|Healthy)=0.05. Of 100 healthy people, 5 test positive. This is key to the surprise!"
+        });
+
+        // Step 4: compute numerator & denominator
+        var numerator = sensitivity * prior;
+        var denominator = sensitivity * prior + falsePos * (1 - prior);
+        steps.push({
+            array: [Math.round(numerator * 1000), Math.round((falsePos * (1-prior)) * 1000)],
+            highlights: {0: 'swapped', 1: 'comparing'},
+            explanation: "P(E)=P(+|D)\u00b7P(D) + P(+|H)\u00b7P(H) = " + (numerator).toFixed(4) + " + " + (falsePos*(1-prior)).toFixed(4) + " = " + denominator.toFixed(4)
+        });
+
+        // Step 5: posterior
+        var posterior = numerator / denominator;
+        var postPct = Math.round(posterior * 100);
+        var healthyPct = 100 - postPct;
+        steps.push({
+            array: [postPct, healthyPct],
+            highlights: {0: 'swapped', 1: 'sorted'},
+            explanation: "Posterior: P(Disease|+) = " + posterior.toFixed(3) + " (" + postPct + "%). Despite a positive test, only ~16% chance of disease! Most positives are false positives from the large healthy population."
+        });
+
+        // Step 6: second test
+        var prior2 = posterior;
+        var num2 = sensitivity * prior2;
+        var den2 = sensitivity * prior2 + falsePos * (1 - prior2);
+        var post2 = num2 / den2;
+        var post2Pct = Math.round(post2 * 100);
+        steps.push({
+            array: [post2Pct, 100 - post2Pct],
+            highlights: {0: 'swapped', 1: 'sorted'},
+            explanation: "Second positive test: prior is now " + posterior.toFixed(3) + ". P(D|++) = " + post2.toFixed(3) + " (" + post2Pct + "%). Bayesian updating \u2014 evidence accumulates!"
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

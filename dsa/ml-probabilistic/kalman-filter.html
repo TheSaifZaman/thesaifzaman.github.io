@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalman Filter — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Kalman Filter</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(d&sup3;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Kalman Filter is an optimal recursive state estimator for linear-Gaussian systems. It maintains a belief about the system state as a Gaussian distribution (mean and covariance), and updates it in two phases: <strong>Predict</strong> (propagate state forward using the motion model) and <strong>Update</strong> (correct using a new measurement).</p>
+            <p>The filter balances trust between the model prediction and the noisy measurement based on their respective uncertainties. When measurement noise is high, it trusts the prediction more; when process noise is high, it trusts the measurement more.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Predict:</strong> x&#770; = Fx + Bu, P = FPF<sup>T</sup> + Q (process model).</li>
+                    <li><strong>Update:</strong> K = PH<sup>T</sup>(HPH<sup>T</sup> + R)<sup>-1</sup> (Kalman gain).</li>
+                    <li><strong>Optimal:</strong> Minimizes mean squared error for linear-Gaussian systems.</li>
+                    <li><strong>Applications:</strong> GPS, robotics, tracking, sensor fusion, finance.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function kalmanFilter1D(measurements, processNoise, measureNoise) {
+    var x = 0;      // initial state estimate
+    var P = 1;      // initial uncertainty
+    var Q = processNoise;
+    var R = measureNoise;
+    var estimates = [];
+    for (var i = 0; i < measurements.length; i++) {
+        // Predict
+        var xPred = x;        // assume constant model
+        var PPred = P + Q;
+        // Update
+        var K = PPred / (PPred + R);  // Kalman gain
+        x = xPred + K * (measurements[i] - xPred);
+        P = (1 - K) * PPred;
+        estimates.push({x: x, P: P, K: K});
+    }
+    return estimates;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-jan-2022" target="_blank">Kaggle: Tabular Playground (Time Series)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/jane-street-market-prediction" target="_blank">Kaggle: Jane Street Market Prediction</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://www.kaggle.com/competitions/google-smartphone-decimeter-challenge" target="_blank">Kaggle: Smartphone Decimeter Challenge (GPS)</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "kalman-filter", title: "Kalman Filter", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // 1D tracking: true position moves linearly, noisy measurements
+        var truePos = [1, 2, 3, 4, 5, 6, 7, 8];
+        var measurements = [1.2, 2.5, 2.8, 4.3, 5.1, 5.8, 7.3, 8.1];
+        var Q = 0.1, R = 0.5;
+
+        // Step 1: show true trajectory and noisy measurements
+        var truePts = truePos.map(function(v, i) { return {x: i + 1, y: v, r: 4, color: '#22c55e'}; });
+        var measPts = measurements.map(function(v, i) { return {x: i + 1, y: v, r: 5, color: '#ef4444'}; });
+        steps.push({
+            points: truePts.concat(measPts),
+            lines: [{x1:1,y1:1,x2:8,y2:8,color:'#22c55e',dash:'4'}],
+            explanation: "Green = true position (linear motion). Red = noisy measurements. Goal: estimate true position from noisy data."
+        });
+
+        // Run Kalman filter step by step
+        var x = 0, P = 2;
+        var estimates = [];
+        for (var t = 0; t < measurements.length; t++) {
+            // Predict
+            var xPred = x + 1;  // constant velocity model
+            var PPred = P + Q;
+
+            // Update
+            var K = PPred / (PPred + R);
+            x = xPred + K * (measurements[t] - xPred);
+            P = (1 - K) * PPred;
+            estimates.push({x: x, P: P, K: K});
+
+            var estPts = estimates.map(function(e, i) { return {x: i + 1, y: e.x, r: 5, color: '#3b82f6'}; });
+            var allPts = truePts.slice(0, t + 1).concat(measPts.slice(0, t + 1)).concat(estPts);
+
+            steps.push({
+                points: allPts,
+                lines: [{x1:1,y1:1,x2:8,y2:8,color:'#22c55e',dash:'4'}],
+                explanation: "t=" + (t + 1) + ": Predict=" + xPred.toFixed(2) + ", Measure=" + measurements[t].toFixed(1) +
+                    ", K=" + K.toFixed(3) + ", Estimate=" + x.toFixed(2) + " (blue). Uncertainty P=" + P.toFixed(3)
+            });
+        }
+
+        // Final comparison
+        var finalEst = estimates.map(function(e, i) { return {x: i + 1, y: e.x, r: 6, color: '#3b82f6'}; });
+        steps.push({
+            points: truePts.concat(measPts).concat(finalEst),
+            lines: [{x1:1,y1:1,x2:8,y2:8,color:'#22c55e',dash:'4'}],
+            explanation: "Complete! Blue estimates track the green truth much better than red measurements. Kalman filter optimally fuses prediction and observation."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 9, minY: 0, maxY: 10} });
+    </script>
+</body>
+</html>

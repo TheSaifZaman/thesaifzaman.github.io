@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Markov Models — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Hidden Markov Models</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Viterbi: O(T&middot;S&sup2;)</span>
+            <span class="complexity-tag">Space: O(T&middot;S)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Hidden Markov Model (HMM) models a system with hidden states that produce observable outputs. At each time step, the system transitions from one hidden state to another according to transition probabilities, and emits an observation from the new state according to emission probabilities.</p>
+            <p>The three fundamental problems are: (1) <strong>Evaluation</strong> &mdash; compute P(observations | model) using the Forward algorithm; (2) <strong>Decoding</strong> &mdash; find the most likely hidden state sequence using the Viterbi algorithm; (3) <strong>Learning</strong> &mdash; estimate model parameters using Baum-Welch (EM).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Markov property:</strong> Next state depends only on current state, not history.</li>
+                    <li><strong>Hidden states:</strong> Not directly observable; inferred from emissions.</li>
+                    <li><strong>Parameters:</strong> Initial &pi;, transition A, emission B matrices.</li>
+                    <li><strong>Applications:</strong> Speech recognition, POS tagging, gene finding, gesture recognition.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function viterbi(obs, states, startP, transP, emitP) {
+    var T = obs.length, N = states.length;
+    var dp = [], path = [];
+    // Initialize
+    dp[0] = [];
+    path[0] = [];
+    for (var s = 0; s < N; s++) {
+        dp[0][s] = startP[s] * emitP[s][obs[0]];
+        path[0][s] = s;
+    }
+    // Recurse
+    for (var t = 1; t < T; t++) {
+        dp[t] = []; path[t] = [];
+        for (var j = 0; j < N; j++) {
+            var maxP = -1, bestS = 0;
+            for (var i = 0; i < N; i++) {
+                var p = dp[t-1][i] * transP[i][j] * emitP[j][obs[t]];
+                if (p > maxP) { maxP = p; bestS = i; }
+            }
+            dp[t][j] = maxP;
+            path[t][j] = bestS;
+        }
+    }
+    // Backtrack
+    return backtrack(dp, path, T, N);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.hackerrank.com/challenges/ctci-coin-change/problem" target="_blank">HackerRank: DP Coin Change (state transitions)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/" target="_blank">Buy/Sell Stock with Cooldown (state machine)</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://www.kaggle.com/competitions/jane-street-market-prediction" target="_blank">Kaggle: Jane Street Market Prediction</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://leetcode.com/problems/decode-ways/" target="_blank">Decode Ways</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "hidden-markov-models", title: "Hidden Markov Models", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Weather HMM: hidden states = Sunny/Rainy, observations = Walk/Shop/Clean
+        // Layout: two rows — hidden states on top, observations on bottom
+        var stateY = 80, obsY = 260;
+
+        // Step 1: show hidden states
+        steps.push({
+            nodes: [
+                {id: 0, label: 'Sunny', x: 180, y: stateY, state: ''},
+                {id: 1, label: 'Rainy', x: 420, y: stateY, state: ''}
+            ],
+            edges: [
+                {from: 0, to: 0, weight: 0.7},
+                {from: 0, to: 1, weight: 0.3},
+                {from: 1, to: 0, weight: 0.4},
+                {from: 1, to: 1, weight: 0.6}
+            ],
+            explanation: "Hidden states: Sunny and Rainy with transition probabilities. P(Sunny\u2192Sunny)=0.7, P(Sunny\u2192Rainy)=0.3, etc."
+        });
+
+        // Step 2: show observations
+        steps.push({
+            nodes: [
+                {id: 0, label: 'Sunny', x: 180, y: stateY, state: ''},
+                {id: 1, label: 'Rainy', x: 420, y: stateY, state: ''},
+                {id: 2, label: 'Walk',  x: 100, y: obsY, state: 'comparing'},
+                {id: 3, label: 'Shop',  x: 300, y: obsY, state: 'comparing'},
+                {id: 4, label: 'Clean', x: 500, y: obsY, state: 'comparing'}
+            ],
+            edges: [
+                {from: 0, to: 0, weight: 0.7},
+                {from: 0, to: 1, weight: 0.3},
+                {from: 1, to: 0, weight: 0.4},
+                {from: 1, to: 1, weight: 0.6},
+                {from: 0, to: 2, weight: 0.6},
+                {from: 0, to: 3, weight: 0.3},
+                {from: 1, to: 4, weight: 0.5}
+            ],
+            explanation: "Emissions: Sunny emits Walk(0.6), Shop(0.3), Clean(0.1). Rainy emits Walk(0.1), Shop(0.4), Clean(0.5)."
+        });
+
+        // Step 3: Viterbi — observe Walk
+        steps.push({
+            nodes: [
+                {id: 0, label: 'S:0.36', x: 180, y: stateY, state: 'sorted'},
+                {id: 1, label: 'R:0.04', x: 420, y: stateY, state: ''},
+                {id: 2, label: 'Walk',   x: 300, y: obsY, state: 'swapped'}
+            ],
+            edges: [
+                {from: 0, to: 2, weight: null, state: 'sorted'},
+                {from: 1, to: 2, weight: null}
+            ],
+            explanation: "t=1, observe Walk. V(Sunny)=\u03c0(S)\u00d7B(S,Walk)=0.6\u00d70.6=0.36. V(Rainy)=0.4\u00d70.1=0.04. Sunny most likely."
+        });
+
+        // Step 4: observe Shop
+        steps.push({
+            nodes: [
+                {id: 0, label: 'S:0.076', x: 180, y: stateY, state: 'sorted'},
+                {id: 1, label: 'R:0.043', x: 420, y: stateY, state: ''},
+                {id: 2, label: 'Shop',    x: 300, y: obsY, state: 'swapped'}
+            ],
+            edges: [
+                {from: 0, to: 2, weight: null, state: 'sorted'},
+                {from: 1, to: 2, weight: null}
+            ],
+            explanation: "t=2, observe Shop. V(S)=max(0.36\u00d70.7, 0.04\u00d70.4)\u00d70.3=0.076. V(R)=max(0.36\u00d70.3, 0.04\u00d70.6)\u00d70.4=0.043. Still Sunny."
+        });
+
+        // Step 5: observe Clean
+        steps.push({
+            nodes: [
+                {id: 0, label: 'S:0.005', x: 180, y: stateY, state: ''},
+                {id: 1, label: 'R:0.011', x: 420, y: stateY, state: 'swapped'},
+                {id: 2, label: 'Clean',   x: 300, y: obsY, state: 'swapped'}
+            ],
+            edges: [
+                {from: 0, to: 2, weight: null},
+                {from: 1, to: 2, weight: null, state: 'swapped'}
+            ],
+            explanation: "t=3, observe Clean. V(S)=0.005, V(R)=0.011. Rainy now most likely! Clean activity suggests rain."
+        });
+
+        // Step 6: backtrack
+        steps.push({
+            nodes: [
+                {id: 0, label: 'Sunny',  x: 120, y: stateY, state: 'sorted'},
+                {id: 1, label: 'Sunny',  x: 250, y: stateY, state: 'sorted'},
+                {id: 2, label: 'Rainy',  x: 380, y: stateY, state: 'swapped'},
+                {id: 3, label: 'Walk',   x: 120, y: obsY, state: 'comparing'},
+                {id: 4, label: 'Shop',   x: 250, y: obsY, state: 'comparing'},
+                {id: 5, label: 'Clean',  x: 380, y: obsY, state: 'comparing'}
+            ],
+            edges: [
+                {from: 0, to: 1},
+                {from: 1, to: 2},
+                {from: 0, to: 3},
+                {from: 1, to: 4},
+                {from: 2, to: 5}
+            ],
+            explanation: "Viterbi path: Sunny \u2192 Sunny \u2192 Rainy. Most likely hidden state sequence given observations [Walk, Shop, Clean]."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'graph' });
+    </script>
+</body>
+</html>

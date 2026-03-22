@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayesian Networks — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bayesian Networks</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Inference: O(2<sup>k</sup>)</span>
+            <span class="complexity-tag">Space: O(n&middot;2<sup>k</sup>)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Bayesian Network is a directed acyclic graph (DAG) where each node represents a random variable and edges represent probabilistic dependencies. Each node has a conditional probability table (CPT) encoding P(node | parents). The joint distribution factorizes as the product of all conditional probabilities.</p>
+            <p>Inference computes the posterior probability of query variables given evidence. Exact inference (variable elimination) is NP-hard in general, but tractable for tree-structured networks. Approximate methods like loopy belief propagation and MCMC are used for complex networks.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>DAG structure:</strong> No cycles; edges encode causal or correlational relationships.</li>
+                    <li><strong>Conditional independence:</strong> d-separation determines which variables are independent given evidence.</li>
+                    <li><strong>Factorization:</strong> P(X<sub>1</sub>,...,X<sub>n</sub>) = &prod; P(X<sub>i</sub> | Parents(X<sub>i</sub>)).</li>
+                    <li><strong>Learning:</strong> Structure learning (finding DAG) + parameter learning (fitting CPTs).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function bayesianInference(network, query, evidence) {
+    // Variable elimination (simplified)
+    var factors = network.nodes.map(function(n) {
+        return n.cpt; // conditional probability table
+    });
+    // Eliminate hidden variables one by one
+    var hidden = network.nodes.filter(function(n) {
+        return n.id !== query && !evidence[n.id];
+    });
+    for (var i = 0; i < hidden.length; i++) {
+        factors = sumOut(factors, hidden[i].id);
+    }
+    // Normalize remaining factor
+    var result = multiplyFactors(factors);
+    return normalize(result);
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-3/problem" target="_blank">HackerRank: Bayes' Theorem</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-aug-2022" target="_blank">Kaggle: Tabular Playground (Bayesian)</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://pgmpy.org/examples.html" target="_blank">pgmpy: Bayesian Network Examples</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bayesian-networks", title: "Bayesian Networks", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var w = 500, h = 350;
+
+        // DAG: Rain -> Sprinkler, Rain -> WetGrass, Sprinkler -> WetGrass
+        var nodes = [
+            {id: 0, label: 'Rain',      x: 250, y: 50,  state: ''},
+            {id: 1, label: 'Sprinkler', x: 120, y: 170, state: ''},
+            {id: 2, label: 'WetGrass',  x: 380, y: 170, state: ''},
+            {id: 3, label: 'SlipperyRd',x: 250, y: 290, state: ''}
+        ];
+        var edges = [
+            {from: 0, to: 1, weight: null},
+            {from: 0, to: 2, weight: null},
+            {from: 1, to: 2, weight: null},
+            {from: 2, to: 3, weight: null}
+        ];
+
+        // Step 1: show DAG structure
+        steps.push({
+            nodes: nodes.map(function(n) { return {id:n.id, label:n.label, x:n.x, y:n.y, state:''}; }),
+            edges: edges.map(function(e) { return {from:e.from, to:e.to}; }),
+            explanation: "Bayesian Network DAG: Rain influences Sprinkler and WetGrass. Sprinkler also affects WetGrass. WetGrass causes SlipperyRoad."
+        });
+
+        // Step 2: show prior probabilities
+        steps.push({
+            nodes: [
+                {id:0, label:'Rain 0.2', x:250, y:50, state:'comparing'},
+                {id:1, label:'Spr 0.4',  x:120, y:170, state:''},
+                {id:2, label:'Wet 0.7',  x:380, y:170, state:''},
+                {id:3, label:'Slip 0.5', x:250, y:290, state:''}
+            ],
+            edges: edges.map(function(e) { return {from:e.from, to:e.to}; }),
+            explanation: "Prior: P(Rain)=0.2. CPTs define P(Sprinkler|Rain), P(WetGrass|Rain,Sprinkler), P(Slippery|WetGrass)."
+        });
+
+        // Step 3: observe evidence
+        steps.push({
+            nodes: [
+                {id:0, label:'Rain ?',   x:250, y:50, state:'comparing'},
+                {id:1, label:'Spr=No',   x:120, y:170, state:'sorted'},
+                {id:2, label:'Wet=Yes',  x:380, y:170, state:'swapped'},
+                {id:3, label:'Slip ?',   x:250, y:290, state:'comparing'}
+            ],
+            edges: edges.map(function(e) { return {from:e.from, to:e.to}; }),
+            explanation: "Evidence: Sprinkler=No (green), WetGrass=Yes (red). Query: P(Rain | evidence)? Information flows through the graph."
+        });
+
+        // Step 4: propagate beliefs
+        steps.push({
+            nodes: [
+                {id:0, label:'Rain 0.71', x:250, y:50, state:'swapped'},
+                {id:1, label:'Spr=No',    x:120, y:170, state:'sorted'},
+                {id:2, label:'Wet=Yes',   x:380, y:170, state:'swapped'},
+                {id:3, label:'Slip 0.82', x:250, y:290, state:'comparing'}
+            ],
+            edges: edges.map(function(e) { return {from:e.from, to:e.to}; }),
+            explanation: "Inference: P(Rain|Spr=No,Wet=Yes) = 0.71. Grass is wet and sprinkler is off, so rain is likely. P(Slippery) also increases."
+        });
+
+        // Step 5: final posterior
+        steps.push({
+            nodes: [
+                {id:0, label:'Rain 0.71', x:250, y:50, state:'sorted'},
+                {id:1, label:'Spr=No',    x:120, y:170, state:'sorted'},
+                {id:2, label:'Wet=Yes',   x:380, y:170, state:'sorted'},
+                {id:3, label:'Slip 0.82', x:250, y:290, state:'sorted'}
+            ],
+            edges: edges.map(function(e) { return {from:e.from, to:e.to}; }),
+            explanation: "Complete posterior: Rain went from 0.2 (prior) to 0.71 (posterior). Evidence propagated through the DAG via Bayes' theorem."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'graph' });
+    </script>
+</body>
+</html>

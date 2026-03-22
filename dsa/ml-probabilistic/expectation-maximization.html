@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expectation-Maximization — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Expectation-Maximization</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;k&middot;d)</span>
+            <span class="complexity-tag">Space: O(n&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Expectation-Maximization (EM) algorithm is an iterative method for finding maximum likelihood estimates when the model has latent (hidden) variables. It alternates between two steps: the <strong>E-step</strong> computes the expected value of the latent variables given current parameters, and the <strong>M-step</strong> updates parameters to maximize the expected log-likelihood.</p>
+            <p>EM is guaranteed to increase the log-likelihood at each iteration and converge to a local maximum. It is the standard algorithm for fitting Gaussian Mixture Models, and is also used in HMM training (Baum-Welch), topic models, and missing data imputation.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>E-step:</strong> Compute responsibilities (soft assignments of points to clusters).</li>
+                    <li><strong>M-step:</strong> Update means, covariances, and mixing weights.</li>
+                    <li><strong>Convergence:</strong> Monotonically increases likelihood; converges to local maximum.</li>
+                    <li><strong>Initialization:</strong> Sensitive to starting parameters; often run multiple times.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function emGMM(data, k, maxIter) {
+    // Initialize means randomly
+    var means = randomSample(data, k);
+    var weights = new Array(k).fill(1.0 / k);
+    var vars = new Array(k).fill(1.0);
+
+    for (var iter = 0; iter < maxIter; iter++) {
+        // E-step: compute responsibilities
+        var resp = [];
+        for (var i = 0; i < data.length; i++) {
+            var row = [];
+            var total = 0;
+            for (var j = 0; j < k; j++) {
+                var p = weights[j] * gaussian(data[i], means[j], vars[j]);
+                row.push(p);
+                total += p;
+            }
+            resp.push(row.map(function(r) { return r / total; }));
+        }
+        // M-step: update parameters
+        for (var j2 = 0; j2 < k; j2++) {
+            var nk = resp.reduce(function(s, r) { return s + r[j2]; }, 0);
+            means[j2] = resp.reduce(function(s, r, i) {
+                return s + r[j2] * data[i]; }, 0) / nk;
+            weights[j2] = nk / data.length;
+        }
+    }
+    return { means: means, weights: weights };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/competitions/tabular-playground-series-jul-2022" target="_blank">Kaggle: Tabular Playground (Clustering)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/lish-moa" target="_blank">Kaggle: Mechanisms of Action Prediction</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="hard"><td>3</td><td><a href="https://scikit-learn.org/stable/modules/mixture.html" target="_blank">sklearn: Gaussian Mixture Models</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>4</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-6/problem" target="_blank">HackerRank: Statistics Day 6</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "expectation-maximization", title: "Expectation-Maximization", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // 2D Gaussian mixture with 2 clusters
+        var cluster1 = [{x:1,y:2},{x:1.5,y:1.8},{x:2,y:2.5},{x:1.2,y:3},{x:2.5,y:2.2}];
+        var cluster2 = [{x:6,y:7},{x:7,y:6.5},{x:6.5,y:7.5},{x:7.5,y:7},{x:6.8,y:6}];
+        var allPts = cluster1.concat(cluster2);
+
+        // Step 1: show unlabeled data
+        steps.push({
+            points: allPts.map(function(p) { return {x:p.x, y:p.y, r:5, color:'#94a3b8'}; }),
+            lines: [],
+            explanation: "10 unlabeled data points from two unknown Gaussian clusters. EM will discover the clusters."
+        });
+
+        // Step 2: random initialization
+        var mu1 = {x:3, y:4}, mu2 = {x:5, y:5};
+        steps.push({
+            points: allPts.map(function(p) { return {x:p.x, y:p.y, r:5, color:'#94a3b8'}; })
+                .concat([{x:mu1.x, y:mu1.y, r:10, color:'#3b82f6'}, {x:mu2.x, y:mu2.y, r:10, color:'#ef4444'}]),
+            lines: [],
+            explanation: "Initialize: \u03bc\u2081=(3,4) blue, \u03bc\u2082=(5,5) red. These are initial guesses for cluster centers."
+        });
+
+        // Step 3: E-step — soft assignments
+        function dist(a, b) { return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)); }
+        var colors3 = allPts.map(function(p) {
+            var d1 = dist(p, mu1), d2 = dist(p, mu2);
+            return d1 < d2 ? '#3b82f6' : '#ef4444';
+        });
+        steps.push({
+            points: allPts.map(function(p, i) { return {x:p.x, y:p.y, r:5, color:colors3[i]}; })
+                .concat([{x:mu1.x, y:mu1.y, r:10, color:'#3b82f6'}, {x:mu2.x, y:mu2.y, r:10, color:'#ef4444'}]),
+            lines: [],
+            explanation: "E-step: compute responsibilities. Each point assigned to nearest center (hard assignment shown for clarity)."
+        });
+
+        // Step 4: M-step — update means
+        mu1 = {x:1.64, y:2.3};
+        mu2 = {x:6.76, y:6.8};
+        var colors4 = allPts.map(function(p) {
+            return dist(p, mu1) < dist(p, mu2) ? '#3b82f6' : '#ef4444';
+        });
+        steps.push({
+            points: allPts.map(function(p, i) { return {x:p.x, y:p.y, r:5, color:colors4[i]}; })
+                .concat([{x:mu1.x, y:mu1.y, r:10, color:'#3b82f6'}, {x:mu2.x, y:mu2.y, r:10, color:'#ef4444'}]),
+            lines: [],
+            explanation: "M-step: \u03bc\u2081 \u2192 (1.64, 2.30), \u03bc\u2082 \u2192 (6.76, 6.80). Means moved toward their assigned points."
+        });
+
+        // Step 5: converged
+        mu1 = {x:1.64, y:2.3};
+        mu2 = {x:6.76, y:6.8};
+        steps.push({
+            points: allPts.map(function(p, i) {
+                var c = i < 5 ? '#3b82f6' : '#ef4444';
+                return {x:p.x, y:p.y, r:5, color:c};
+            }).concat([{x:mu1.x, y:mu1.y, r:10, color:'#22c55e'}, {x:mu2.x, y:mu2.y, r:10, color:'#22c55e'}]),
+            lines: [],
+            explanation: "Converged! EM found both clusters. Blue cluster centered at (1.64, 2.30), red at (6.76, 6.80). Log-likelihood maximized."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 9, minY: 0, maxY: 9} });
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markov Chain Monte Carlo — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Markov Chain Monte Carlo</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;T)</span>
+            <span class="complexity-tag">Space: O(T)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Markov Chain Monte Carlo (MCMC) generates samples from a target probability distribution by constructing a Markov chain whose stationary distribution equals the target. The <strong>Metropolis-Hastings</strong> algorithm proposes a move from the current state, then accepts or rejects it based on the acceptance ratio.</p>
+            <p>After a burn-in period, the chain samples approximate the target distribution. MCMC is essential for Bayesian inference where direct sampling is intractable, enabling computation of posterior expectations, credible intervals, and model comparison.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Proposal:</strong> Random walk, Gaussian, or problem-specific proposal distributions.</li>
+                    <li><strong>Acceptance ratio:</strong> &alpha; = min(1, P(x')/P(x) &middot; q(x|x')/q(x'|x)).</li>
+                    <li><strong>Burn-in:</strong> Initial samples discarded before the chain converges.</li>
+                    <li><strong>Diagnostics:</strong> Trace plots, autocorrelation, R-hat for convergence checks.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function metropolisHastings(targetPDF, proposal, x0, nSamples) {
+    var samples = [x0];
+    var current = x0;
+    for (var i = 0; i < nSamples; i++) {
+        var candidate = proposal(current);
+        var alpha = Math.min(1, targetPDF(candidate) / targetPDF(current));
+        if (Math.random() < alpha) {
+            current = candidate; // Accept
+        }
+        // else: stay at current (reject)
+        samples.push(current);
+    }
+    return samples;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>470</td><td><a href="https://leetcode.com/problems/implement-rand10-using-rand7/" target="_blank">Implement Rand10() Using Rand7()</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>1</td><td><a href="https://www.kaggle.com/competitions/m5-forecasting-uncertainty" target="_blank">Kaggle: M5 Forecasting Uncertainty</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.hackerrank.com/challenges/s10-mcq-1/problem" target="_blank">HackerRank: Statistics Random Variables</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "mcmc", title: "Markov Chain Monte Carlo", category: "Probabilistic" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Simulate MH sampling from a 2D distribution centered at (5,5)
+        var targetMu = {x: 5, y: 5};
+
+        function targetPDF(x, y) {
+            var dx = x - targetMu.x, dy = y - targetMu.y;
+            return Math.exp(-0.5 * (dx * dx + dy * dy));
+        }
+
+        // Pre-generate a random walk chain
+        var chain = [{x: 1, y: 1}];
+        var proposals = [
+            {x:2.2,y:1.8,acc:true},{x:3.1,y:2.5,acc:true},{x:2.5,y:3.8,acc:false},
+            {x:3.8,y:3.2,acc:true},{x:4.5,y:4.1,acc:true},{x:5.2,y:4.8,acc:true},
+            {x:4.8,y:5.5,acc:true},{x:6.1,y:5.2,acc:true},{x:5.5,y:5.8,acc:true},
+            {x:5.0,y:5.3,acc:true},{x:4.6,y:5.1,acc:true},{x:5.3,y:4.7,acc:true}
+        ];
+
+        // Step 1: starting point
+        steps.push({
+            points: [{x: 1, y: 1, r: 6, color: '#3b82f6'}],
+            lines: [],
+            explanation: "Start at x\u2080 = (1, 1). Target distribution is a 2D Gaussian centered at (5, 5). Chain will explore toward it."
+        });
+
+        // Build up chain step by step
+        var current = {x: 1, y: 1};
+        var accepted = [current];
+        for (var i = 0; i < proposals.length; i++) {
+            var prop = proposals[i];
+            var pts = accepted.map(function(p, idx) {
+                return {x: p.x, y: p.y, r: 4, color: idx < 3 ? '#94a3b8' : '#3b82f6'};
+            });
+            // Show proposal
+            pts.push({x: prop.x, y: prop.y, r: 6, color: prop.acc ? '#22c55e' : '#ef4444'});
+
+            var lns = [];
+            lns.push({x1: current.x, y1: current.y, x2: prop.x, y2: prop.y, color: prop.acc ? '#22c55e' : '#ef4444', dash: prop.acc ? '' : '4'});
+
+            var status = prop.acc ? 'Accepted' : 'Rejected';
+            steps.push({
+                points: pts,
+                lines: lns,
+                explanation: "Step " + (i + 1) + ": Propose (" + prop.x.toFixed(1) + ", " + prop.y.toFixed(1) + "). " + status + ". " +
+                    (prop.acc ? "Moved to new position." : "Stay at current position.")
+            });
+
+            if (prop.acc) {
+                current = {x: prop.x, y: prop.y};
+            }
+            accepted.push({x: current.x, y: current.y});
+        }
+
+        // Final: show all samples
+        steps.push({
+            points: accepted.map(function(p, i) {
+                var c = i < 3 ? '#94a3b8' : '#22c55e';
+                return {x: p.x, y: p.y, r: 4, color: c};
+            }).concat([{x: targetMu.x, y: targetMu.y, r: 10, color: '#a855f766'}]),
+            lines: [],
+            explanation: "Chain converged near target (5,5). Gray = burn-in samples (discarded). Green = valid samples approximating the posterior."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 8, minY: 0, maxY: 8} });
+    </script>
+</body>
+</html>
