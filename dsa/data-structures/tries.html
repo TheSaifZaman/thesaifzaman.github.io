@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tries — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Tries</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(m) per operation (m = key length)</span>
+            <span class="complexity-tag">Space: O(n * m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A trie (pronounced "try") is a tree-like data structure used for efficient storage and retrieval of strings. Each node represents a single character, and paths from the root to marked nodes form complete words. Unlike a hash table, a trie allows prefix-based operations: you can find all words starting with a given prefix in O(p + k) time, where p is the prefix length and k is the number of matching words.</p>
+            <p>Each node in a trie typically has an array or map of children (one per possible character) and a boolean flag indicating whether the path from root to this node forms a complete word. Insertion and lookup both take O(m) time, where m is the length of the string — independent of how many strings are stored. This makes tries excellent for autocomplete systems, spell checkers, and IP routing tables.</p>
+            <p>The main trade-off is space: a trie can use significant memory since each node may have up to 26 (or more) child pointers. Compressed tries (radix trees) mitigate this by merging single-child chains into one node. In interviews, tries appear in problems like implementing autocomplete, word search in grids, and finding the longest common prefix.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-search"></i>
+                    <h4>Prefix Search</h4>
+                    <p>Find all words with a given prefix efficiently — ideal for autocomplete.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-clock"></i>
+                    <h4>O(m) Operations</h4>
+                    <p>Insert and search depend only on string length, not dataset size.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    <h4>Shared Prefixes</h4>
+                    <p>Common prefixes are stored once, saving space for similar strings.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-spell-check"></i>
+                    <h4>Applications</h4>
+                    <p>Autocomplete, spell check, IP routing, and word games.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEnd = false;
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  // O(m)
+  insert(word) {
+    let node = this.root;
+    for (const ch of word) {
+      if (!node.children[ch]) {
+        node.children[ch] = new TrieNode();
+      }
+      node = node.children[ch];
+    }
+    node.isEnd = true;
+  }
+
+  // O(m)
+  search(word) {
+    const node = this._traverse(word);
+    return node !== null && node.isEnd;
+  }
+
+  // O(m)
+  startsWith(prefix) {
+    return this._traverse(prefix) !== null;
+  }
+
+  _traverse(str) {
+    let node = this.root;
+    for (const ch of str) {
+      if (!node.children[ch]) return null;
+      node = node.children[ch];
+    }
+    return node;
+  }
+
+  // Collect all words with given prefix
+  autocomplete(prefix) {
+    const node = this._traverse(prefix);
+    if (!node) return [];
+    const results = [];
+    this._dfs(node, prefix, results);
+    return results;
+  }
+
+  _dfs(node, path, results) {
+    if (node.isEnd) results.push(path);
+    for (const ch in node.children) {
+      this._dfs(node.children[ch], path + ch, results);
+    }
+  }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>208</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Implement Trie (Prefix Tree)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>211</td><td><a href="https://leetcode.com/problems/design-add-and-search-words-data-structure/" target="_blank">Design Add and Search Words Data Structure</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>14</td><td><a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank">Longest Common Prefix</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>648</td><td><a href="https://leetcode.com/problems/replace-words/" target="_blank">Replace Words</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>677</td><td><a href="https://leetcode.com/problems/map-sum-pairs/" target="_blank">Map Sum Pairs</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>720</td><td><a href="https://leetcode.com/problems/longest-word-in-dictionary/" target="_blank">Longest Word in Dictionary</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1268</td><td><a href="https://leetcode.com/problems/search-suggestions-system/" target="_blank">Search Suggestions System</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>212</td><td><a href="https://leetcode.com/problems/word-search-ii/" target="_blank">Word Search II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>336</td><td><a href="https://leetcode.com/problems/palindrome-pairs/" target="_blank">Palindrome Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>472</td><td><a href="https://leetcode.com/problems/concatenated-words/" target="_blank">Concatenated Words</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "tries", title: "Tries", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var WORDS = ['cat', 'car', 'card', 'care', 'do', 'dog', 'dot'];
+
+        function generateSteps() {
+            var steps = [];
+
+            // Build trie structure in memory
+            var trie = { ch: 'root', children: {}, isEnd: false, id: 0 };
+            var nextId = 1;
+
+            function layoutTree(root) {
+                // BFS to assign positions
+                var levels = [];
+                var queue = [{ node: root, depth: 0 }];
+                while (queue.length) {
+                    var item = queue.shift();
+                    if (!levels[item.depth]) levels[item.depth] = [];
+                    levels[item.depth].push(item.node);
+                    var keys = Object.keys(item.node.children).sort();
+                    for (var k = 0; k < keys.length; k++) {
+                        queue.push({ node: item.node.children[keys[k]], depth: item.depth + 1 });
+                    }
+                }
+
+                var w = 600;
+                var nodes = [];
+                var edges = [];
+                var posMap = {};
+
+                for (var d = 0; d < levels.length; d++) {
+                    var count = levels[d].length;
+                    var spacing = w / (count + 1);
+                    for (var i = 0; i < count; i++) {
+                        var n = levels[d][i];
+                        var x = spacing * (i + 1);
+                        var y = 35 + d * 55;
+                        posMap[n.id] = { x: x, y: y };
+                        nodes.push({
+                            id: n.id,
+                            label: n.ch + (n.isEnd ? '*' : ''),
+                            x: x,
+                            y: y,
+                            state: n.state || ''
+                        });
+                    }
+                }
+
+                // Build edges
+                function addEdges(node) {
+                    var keys = Object.keys(node.children).sort();
+                    for (var k = 0; k < keys.length; k++) {
+                        var child = node.children[keys[k]];
+                        edges.push({ from: node.id, to: child.id });
+                        addEdges(child);
+                    }
+                }
+                addEdges(root);
+
+                return { nodes: nodes, edges: edges };
+            }
+
+            // Clear all states
+            function clearStates(node) {
+                node.state = '';
+                var keys = Object.keys(node.children);
+                for (var k = 0; k < keys.length; k++) {
+                    clearStates(node.children[keys[k]]);
+                }
+            }
+
+            var t0 = layoutTree(trie);
+            steps.push({
+                type: 'tree',
+                nodes: t0.nodes,
+                edges: t0.edges,
+                explanation: 'Empty trie with root node. We will insert words: ' + WORDS.join(', ') + '.'
+            });
+
+            // Insert each word
+            for (var w = 0; w < WORDS.length; w++) {
+                var word = WORDS[w];
+                var node = trie;
+                clearStates(trie);
+
+                for (var c = 0; c < word.length; c++) {
+                    var ch = word[c];
+                    var isNew = !node.children[ch];
+
+                    if (isNew) {
+                        node.children[ch] = { ch: ch, children: {}, isEnd: false, id: nextId++, state: 'found' };
+                    } else {
+                        node.children[ch].state = 'comparing';
+                    }
+
+                    node = node.children[ch];
+
+                    if (c === word.length - 1) {
+                        node.isEnd = true;
+                        node.state = 'found';
+                    }
+
+                    var tree = layoutTree(trie);
+                    steps.push({
+                        type: 'tree',
+                        nodes: tree.nodes,
+                        edges: tree.edges,
+                        explanation: 'Insert "' + word + '": ' + (isNew ? 'create' : 'traverse') + ' node \'' + ch + '\'' +
+                            (c === word.length - 1 ? '. Mark as end of word.' : '. Continue to next character.')
+                    });
+                }
+
+                clearStates(trie);
+                var tSnap = layoutTree(trie);
+                steps.push({
+                    type: 'tree',
+                    nodes: tSnap.nodes,
+                    edges: tSnap.edges,
+                    explanation: 'Word "' + word + '" inserted. (* marks end-of-word nodes.)'
+                });
+            }
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1],
+            type: 'tree',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

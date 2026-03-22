@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queues — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Queues</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(1) enqueue/dequeue</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A queue is a First-In-First-Out (FIFO) data structure. Elements are added at the back (enqueue) and removed from the front (dequeue), just like a line of people waiting. The element that has been in the queue the longest is always the first to be served. Both enqueue and dequeue operations run in O(1) time when implemented with a linked list or circular buffer.</p>
+            <p>Queues are essential for Breadth-First Search (BFS), level-order tree traversal, task scheduling, and buffering. In BFS, each node's neighbors are enqueued and processed in the order they were discovered, guaranteeing shortest-path exploration in unweighted graphs.</p>
+            <p>Common variants include the double-ended queue (deque), which allows insertion and deletion at both ends, and the priority queue, which dequeues elements based on priority rather than arrival order. In JavaScript, queues are often implemented with arrays, but for performance-critical code, a linked-list-based queue avoids the O(n) shift operation of <code>Array.shift()</code>.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-stream"></i>
+                    <h4>FIFO Order</h4>
+                    <p>First element enqueued is the first dequeued.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h4>BFS Foundation</h4>
+                    <p>Queues drive breadth-first graph and tree traversal.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-sync-alt"></i>
+                    <h4>Circular Buffer</h4>
+                    <p>Fixed-size implementation wraps around, reusing freed slots.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tasks"></i>
+                    <h4>Task Scheduling</h4>
+                    <p>OS process scheduling and event loops rely on queue semantics.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class QueueNode {
+  constructor(val) {
+    this.val = val;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  // O(1) — add to back
+  enqueue(val) {
+    const node = new QueueNode(val);
+    if (this.tail) {
+      this.tail.next = node;
+    } else {
+      this.head = node;
+    }
+    this.tail = node;
+    this.length++;
+  }
+
+  // O(1) — remove from front
+  dequeue() {
+    if (!this.head) return undefined;
+    const val = this.head.val;
+    this.head = this.head.next;
+    if (!this.head) this.tail = null;
+    this.length--;
+    return val;
+  }
+
+  // O(1)
+  peek() {
+    return this.head ? this.head.val : undefined;
+  }
+
+  isEmpty() {
+    return this.length === 0;
+  }
+}
+
+// BFS using a queue
+function bfs(graph, start) {
+  const visited = new Set([start]);
+  const queue = new Queue();
+  queue.enqueue(start);
+
+  while (!queue.isEmpty()) {
+    const node = queue.dequeue();
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.enqueue(neighbor);
+      }
+    }
+  }
+  return visited;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>232</td><td><a href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank">Implement Queue using Stacks</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>933</td><td><a href="https://leetcode.com/problems/number-of-recent-calls/" target="_blank">Number of Recent Calls</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>622</td><td><a href="https://leetcode.com/problems/design-circular-queue/" target="_blank">Design Circular Queue</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>641</td><td><a href="https://leetcode.com/problems/design-circular-deque/" target="_blank">Design Circular Deque</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>950</td><td><a href="https://leetcode.com/problems/reveal-cards-in-increasing-order/" target="_blank">Reveal Cards In Increasing Order</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>649</td><td><a href="https://leetcode.com/problems/dota2-senate/" target="_blank">Dota2 Senate</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>362</td><td><a href="https://leetcode.com/problems/design-hit-counter/" target="_blank">Design Hit Counter</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>346</td><td><a href="https://leetcode.com/problems/moving-average-from-data-stream/" target="_blank">Moving Average from Data Stream</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>239</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>363</td><td><a href="https://leetcode.com/problems/max-sum-of-rectangle-no-larger-than-k/" target="_blank">Max Sum of Rectangle No Larger Than K</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "queues", title: "Queues", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps(data) {
+            var steps = [];
+            var queue = [];
+
+            steps.push({
+                array: [],
+                highlights: {},
+                explanation: 'Empty queue. Front is on the left, back is on the right. We will enqueue elements, then dequeue them.'
+            });
+
+            // Enqueue phase
+            for (var i = 0; i < data.length; i++) {
+                queue.push(data[i]);
+                var hl = {};
+                hl[queue.length - 1] = 'found';
+                hl[0] = queue.length > 1 ? 'comparing' : 'found';
+                steps.push({
+                    array: queue.slice(),
+                    highlights: hl,
+                    explanation: 'Enqueue ' + data[i] + ' at the back. Queue size: ' + queue.length + '. Front = ' + queue[0] + ', Back = ' + queue[queue.length - 1] + '.'
+                });
+            }
+
+            steps.push({
+                array: queue.slice(),
+                highlights: {},
+                explanation: 'All elements enqueued: [' + queue.join(', ') + ']. Now dequeuing from the front.'
+            });
+
+            // Dequeue phase
+            while (queue.length > 0) {
+                var hl2 = {};
+                hl2[0] = 'comparing';
+                steps.push({
+                    array: queue.slice(),
+                    highlights: hl2,
+                    explanation: 'Front element is ' + queue[0] + '. Dequeuing it.'
+                });
+
+                var removed = queue.shift();
+                steps.push({
+                    array: queue.slice(),
+                    highlights: {},
+                    explanation: 'Dequeued ' + removed + '. Queue size: ' + queue.length + (queue.length > 0 ? '. New front: ' + queue[0] : '. Queue is empty') + '.'
+                });
+            }
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [20, 45, 12, 67, 33, 8],
+            type: 'bars',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

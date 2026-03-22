@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix / Grid — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Matrix / Grid</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(m x n) traversal</span>
+            <span class="complexity-tag">Space: O(m x n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A matrix (or grid) is a 2D array organized in rows and columns. Each cell is accessed by its row index and column index: <code>matrix[row][col]</code>. Matrices are used to represent game boards, images, graphs (adjacency matrices), and many mathematical concepts. Traversal runs in O(m x n) where m is the number of rows and n is the number of columns.</p>
+            <p>Common matrix patterns include row-by-row traversal, column-by-column traversal, diagonal traversal, and spiral order traversal. The spiral pattern moves right along the top row, down the right column, left along the bottom row, and up the left column, progressively shrinking the boundaries. This technique is useful for problems like spiral matrix printing and rotating images.</p>
+            <p>Matrix problems often combine with BFS/DFS for flood fill, island counting, and shortest path in grids. In-place modifications (like rotating a matrix 90 degrees) require careful understanding of index transformations. For sorted matrices, binary search can find elements in O(log(m*n)) or O(m + n) time depending on the search strategy.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-th"></i>
+                    <h4>2D Indexing</h4>
+                    <p>Access any cell in O(1) using row and column indices.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-route"></i>
+                    <h4>Traversal Patterns</h4>
+                    <p>Row-wise, column-wise, diagonal, spiral, and boundary traversals.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-sync"></i>
+                    <h4>In-Place Rotation</h4>
+                    <p>Transpose + reverse to rotate 90 degrees without extra space.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-water"></i>
+                    <h4>BFS/DFS on Grids</h4>
+                    <p>Flood fill, island counting, and shortest path via 4-directional moves.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Spiral Order Traversal
+function spiralOrder(matrix) {
+  const result = [];
+  if (!matrix.length) return result;
+
+  let top = 0, bottom = matrix.length - 1;
+  let left = 0, right = matrix[0].length - 1;
+
+  while (top <= bottom && left <= right) {
+    // Traverse right
+    for (let i = left; i <= right; i++)
+      result.push(matrix[top][i]);
+    top++;
+
+    // Traverse down
+    for (let i = top; i <= bottom; i++)
+      result.push(matrix[i][right]);
+    right--;
+
+    // Traverse left
+    if (top <= bottom) {
+      for (let i = right; i >= left; i--)
+        result.push(matrix[bottom][i]);
+      bottom--;
+    }
+
+    // Traverse up
+    if (left <= right) {
+      for (let i = bottom; i >= top; i--)
+        result.push(matrix[i][left]);
+      left++;
+    }
+  }
+  return result;
+}
+
+// Rotate 90 degrees clockwise (in-place)
+function rotate(matrix) {
+  const n = matrix.length;
+  // Transpose
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+    }
+  }
+  // Reverse each row
+  for (let i = 0; i < n; i++) {
+    matrix[i].reverse();
+  }
+}
+
+// Search in row-wise & column-wise sorted matrix
+function searchMatrix(matrix, target) {
+  let row = 0, col = matrix[0].length - 1;
+  while (row < matrix.length && col >= 0) {
+    if (matrix[row][col] === target) return true;
+    if (matrix[row][col] > target) col--;
+    else row++;
+  }
+  return false;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>48</td><td><a href="https://leetcode.com/problems/rotate-image/" target="_blank">Rotate Image</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>54</td><td><a href="https://leetcode.com/problems/spiral-matrix/" target="_blank">Spiral Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>73</td><td><a href="https://leetcode.com/problems/set-matrix-zeroes/" target="_blank">Set Matrix Zeroes</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>74</td><td><a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank">Search a 2D Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>200</td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>240</td><td><a href="https://leetcode.com/problems/search-a-2d-matrix-ii/" target="_blank">Search a 2D Matrix II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>867</td><td><a href="https://leetcode.com/problems/transpose-matrix/" target="_blank">Transpose Matrix</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>59</td><td><a href="https://leetcode.com/problems/spiral-matrix-ii/" target="_blank">Spiral Matrix II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>130</td><td><a href="https://leetcode.com/problems/surrounded-regions/" target="_blank">Surrounded Regions</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>695</td><td><a href="https://leetcode.com/problems/max-area-of-island/" target="_blank">Max Area of Island</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>994</td><td><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank">Rotting Oranges</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>37</td><td><a href="https://leetcode.com/problems/sudoku-solver/" target="_blank">Sudoku Solver</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "matrix-grid", title: "Matrix / Grid", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var SIZE = 4;
+            var counter = 1;
+            var matrix = [];
+            for (var r = 0; r < SIZE; r++) {
+                matrix[r] = [];
+                for (var c = 0; c < SIZE; c++) {
+                    matrix[r][c] = counter++;
+                }
+            }
+
+            function toGrid(mat, visited) {
+                var grid = [];
+                for (var r = 0; r < mat.length; r++) {
+                    var row = [];
+                    for (var c = 0; c < mat[r].length; c++) {
+                        var key = r + ',' + c;
+                        var state = '';
+                        if (visited && visited.current === key) state = 'found';
+                        else if (visited && visited.set && visited.set[key]) state = 'visited';
+                        row.push({ value: mat[r][c], state: state });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            // Initial grid
+            steps.push({
+                type: 'grid',
+                grid: toGrid(matrix),
+                explanation: 'A ' + SIZE + 'x' + SIZE + ' matrix with values 1 to ' + (SIZE * SIZE) + '. We will demonstrate spiral order traversal.'
+            });
+
+            // Spiral traversal
+            var top = 0, bottom = SIZE - 1, left = 0, right = SIZE - 1;
+            var visitedSet = {};
+            var result = [];
+
+            while (top <= bottom && left <= right) {
+                // Right
+                for (var i = left; i <= right; i++) {
+                    visitedSet[top + ',' + i] = true;
+                    result.push(matrix[top][i]);
+                    steps.push({
+                        type: 'grid',
+                        grid: toGrid(matrix, { set: visitedSet, current: top + ',' + i }),
+                        explanation: 'Spiral right: visit (' + top + ',' + i + ') = ' + matrix[top][i] + '. Order: [' + result.join(', ') + ']'
+                    });
+                }
+                top++;
+
+                // Down
+                for (var i2 = top; i2 <= bottom; i2++) {
+                    visitedSet[i2 + ',' + right] = true;
+                    result.push(matrix[i2][right]);
+                    steps.push({
+                        type: 'grid',
+                        grid: toGrid(matrix, { set: visitedSet, current: i2 + ',' + right }),
+                        explanation: 'Spiral down: visit (' + i2 + ',' + right + ') = ' + matrix[i2][right] + '. Order: [' + result.join(', ') + ']'
+                    });
+                }
+                right--;
+
+                // Left
+                if (top <= bottom) {
+                    for (var i3 = right; i3 >= left; i3--) {
+                        visitedSet[bottom + ',' + i3] = true;
+                        result.push(matrix[bottom][i3]);
+                        steps.push({
+                            type: 'grid',
+                            grid: toGrid(matrix, { set: visitedSet, current: bottom + ',' + i3 }),
+                            explanation: 'Spiral left: visit (' + bottom + ',' + i3 + ') = ' + matrix[bottom][i3] + '. Order: [' + result.join(', ') + ']'
+                        });
+                    }
+                    bottom--;
+                }
+
+                // Up
+                if (left <= right) {
+                    for (var i4 = bottom; i4 >= top; i4--) {
+                        visitedSet[i4 + ',' + left] = true;
+                        result.push(matrix[i4][left]);
+                        steps.push({
+                            type: 'grid',
+                            grid: toGrid(matrix, { set: visitedSet, current: i4 + ',' + left }),
+                            explanation: 'Spiral up: visit (' + i4 + ',' + left + ') = ' + matrix[i4][left] + '. Order: [' + result.join(', ') + ']'
+                        });
+                    }
+                    left++;
+                }
+            }
+
+            steps.push({
+                type: 'grid',
+                grid: toGrid(matrix, { set: visitedSet }),
+                explanation: 'Spiral traversal complete! Result: [' + result.join(', ') + '].'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1],
+            type: 'grid',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

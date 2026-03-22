@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrays — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Arrays</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(1) access, O(n) search</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>An array is a contiguous block of memory that stores elements of the same type sequentially. Each element is identified by its numerical index, starting from zero. Because elements are stored in adjacent memory locations, accessing any element by index takes constant time O(1) — the memory address is calculated directly as <code>base + index * elementSize</code>.</p>
+            <p>Insertion and deletion at the end of a dynamic array are amortized O(1), but inserting or removing elements in the middle requires shifting subsequent elements, making those operations O(n). This trade-off between fast random access and costly middle insertions makes arrays ideal for scenarios where you need frequent lookups and append operations.</p>
+            <p>Arrays form the foundation for many other data structures and algorithms. Techniques like the two-pointer approach, sliding window, prefix sums, and binary search all exploit the array's O(1) index access. Understanding arrays deeply is essential for solving a wide range of interview problems efficiently.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>O(1) Random Access</h4>
+                    <p>Direct index calculation enables instant element retrieval.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-memory"></i>
+                    <h4>Contiguous Memory</h4>
+                    <p>Cache-friendly layout leads to fast sequential traversal.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    <h4>Dynamic Resizing</h4>
+                    <p>Dynamic arrays double capacity when full, giving amortized O(1) appends.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h4>In-place Operations</h4>
+                    <p>Many problems can be solved with O(1) extra space using swaps and pointers.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Dynamic Array (simplified)
+class DynamicArray {
+  constructor() {
+    this.data = [];
+    this.length = 0;
+  }
+
+  // O(1)
+  get(index) {
+    if (index < 0 || index >= this.length) return undefined;
+    return this.data[index];
+  }
+
+  // Amortized O(1)
+  push(value) {
+    this.data[this.length] = value;
+    this.length++;
+  }
+
+  // O(1)
+  pop() {
+    if (this.length === 0) return undefined;
+    this.length--;
+    const val = this.data[this.length];
+    delete this.data[this.length];
+    return val;
+  }
+
+  // O(n) — shift elements right
+  insertAt(index, value) {
+    for (let i = this.length; i > index; i--) {
+      this.data[i] = this.data[i - 1];
+    }
+    this.data[index] = value;
+    this.length++;
+  }
+
+  // O(n) — shift elements left
+  deleteAt(index) {
+    const val = this.data[index];
+    for (let i = index; i < this.length - 1; i++) {
+      this.data[i] = this.data[i + 1];
+    }
+    delete this.data[this.length - 1];
+    this.length--;
+    return val;
+  }
+
+  // O(n) — linear search
+  indexOf(value) {
+    for (let i = 0; i < this.length; i++) {
+      if (this.data[i] === value) return i;
+    }
+    return -1;
+  }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>121</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank">Best Time to Buy and Sell Stock</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>217</td><td><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Contains Duplicate</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>53</td><td><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank">Maximum Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>238</td><td><a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank">Product of Array Except Self</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>15</td><td><a href="https://leetcode.com/problems/3sum/" target="_blank">3Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>11</td><td><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">Container With Most Water</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>26</td><td><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank">Remove Duplicates from Sorted Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>88</td><td><a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank">Merge Sorted Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>56</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>33</td><td><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank">Search in Rotated Sorted Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>152</td><td><a href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank">Maximum Product Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>169</td><td><a href="https://leetcode.com/problems/majority-element/" target="_blank">Majority Element</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>189</td><td><a href="https://leetcode.com/problems/rotate-array/" target="_blank">Rotate Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>42</td><td><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank">Trapping Rain Water</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "arrays", title: "Arrays", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps(data) {
+            var steps = [];
+            var arr = data.slice();
+
+            // Step 1: Show initial array
+            steps.push({
+                array: arr.slice(),
+                highlights: {},
+                explanation: 'Initial array: [' + arr.join(', ') + ']. We will demonstrate linear search for value ' + arr[Math.floor(arr.length / 2)] + '.'
+            });
+
+            var target = arr[Math.floor(arr.length / 2)];
+
+            // Linear search animation
+            for (var i = 0; i < arr.length; i++) {
+                var hl = {};
+                for (var j = 0; j < i; j++) hl[j] = 'visited';
+                hl[i] = 'comparing';
+                if (arr[i] === target) hl[i] = 'found';
+                steps.push({
+                    array: arr.slice(),
+                    highlights: hl,
+                    explanation: arr[i] === target
+                        ? 'Found target ' + target + ' at index ' + i + '!'
+                        : 'Checking index ' + i + ': value ' + arr[i] + ' ≠ ' + target + '. Move to next.'
+                });
+                if (arr[i] === target) break;
+            }
+
+            // Demonstrate insertion
+            var insertVal = Math.floor(Math.random() * 50) + 1;
+            var insertIdx = Math.floor(arr.length / 2);
+            steps.push({
+                array: arr.slice(),
+                highlights: {},
+                explanation: 'Now inserting value ' + insertVal + ' at index ' + insertIdx + '. Elements must shift right.'
+            });
+
+            for (var k = arr.length; k > insertIdx; k--) {
+                var shifted = arr.slice();
+                shifted.splice(insertIdx, 0, undefined);
+                for (var m = shifted.length - 1; m > insertIdx; m--) {
+                    shifted[m] = shifted[m - 1];
+                }
+                var hlShift = {};
+                hlShift[k] = 'swapping';
+                hlShift[k - 1] = 'swapping';
+                steps.push({
+                    array: arr.slice(),
+                    highlights: hlShift,
+                    explanation: 'Shifting element at index ' + (k - 1) + ' to index ' + k + '.'
+                });
+            }
+
+            arr.splice(insertIdx, 0, insertVal);
+            var hlInsert = {};
+            hlInsert[insertIdx] = 'found';
+            steps.push({
+                array: arr.slice(),
+                highlights: hlInsert,
+                explanation: 'Inserted ' + insertVal + ' at index ' + insertIdx + '. Array length is now ' + arr.length + '.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [38, 27, 43, 3, 9, 82, 10, 55, 21, 64],
+            type: 'bars',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

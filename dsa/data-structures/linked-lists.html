@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked Lists — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Linked Lists</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n) access, O(1) insert/delete</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A linked list is a linear data structure where each element (node) contains a value and a pointer (reference) to the next node. Unlike arrays, linked list nodes are not stored in contiguous memory — each node can exist anywhere in the heap. This means you cannot access the i-th element directly; you must traverse from the head, following pointers one by one.</p>
+            <p>The key advantage of linked lists is O(1) insertion and deletion at a known position. If you have a reference to a node, you can insert a new node after it or remove it by simply rewiring pointers — no shifting of elements is needed. This makes linked lists ideal for implementing queues, stacks, and LRU caches.</p>
+            <p>There are several variants: singly linked lists (each node points to next), doubly linked lists (each node has next and prev pointers), and circular linked lists (the tail points back to the head). Many classic interview problems involve pointer manipulation techniques like the fast/slow pointer approach for cycle detection and finding the middle node.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-link"></i>
+                    <h4>Pointer-Based</h4>
+                    <p>Nodes connected via references; no contiguous memory required.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-plus-circle"></i>
+                    <h4>O(1) Insert/Delete</h4>
+                    <p>Rewire pointers at known positions without shifting elements.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-running"></i>
+                    <h4>Fast/Slow Pointers</h4>
+                    <p>Two-pointer technique detects cycles and finds midpoints in O(n).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-undo-alt"></i>
+                    <h4>Reversal Pattern</h4>
+                    <p>In-place reversal by flipping next pointers is a fundamental technique.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class ListNode {
+  constructor(val) {
+    this.val = val;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.size = 0;
+  }
+
+  // O(1) — prepend
+  addFirst(val) {
+    const node = new ListNode(val);
+    node.next = this.head;
+    this.head = node;
+    this.size++;
+  }
+
+  // O(n) — append
+  addLast(val) {
+    const node = new ListNode(val);
+    if (!this.head) { this.head = node; }
+    else {
+      let curr = this.head;
+      while (curr.next) curr = curr.next;
+      curr.next = node;
+    }
+    this.size++;
+  }
+
+  // O(1) — remove head
+  removeFirst() {
+    if (!this.head) return null;
+    const val = this.head.val;
+    this.head = this.head.next;
+    this.size--;
+    return val;
+  }
+
+  // O(n) — reverse in place
+  reverse() {
+    let prev = null, curr = this.head;
+    while (curr) {
+      const next = curr.next;
+      curr.next = prev;
+      prev = curr;
+      curr = next;
+    }
+    this.head = prev;
+  }
+
+  // O(n) — detect cycle (Floyd's)
+  hasCycle() {
+    let slow = this.head, fast = this.head;
+    while (fast && fast.next) {
+      slow = slow.next;
+      fast = fast.next.next;
+      if (slow === fast) return true;
+    }
+    return false;
+  }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>206</td><td><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse Linked List</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>21</td><td><a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Merge Two Sorted Lists</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>141</td><td><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked List Cycle</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>19</td><td><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank">Remove Nth Node From End of List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>143</td><td><a href="https://leetcode.com/problems/reorder-list/" target="_blank">Reorder List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>234</td><td><a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank">Palindrome Linked List</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>160</td><td><a href="https://leetcode.com/problems/intersection-of-two-linked-lists/" target="_blank">Intersection of Two Linked Lists</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>142</td><td><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank">Linked List Cycle II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>148</td><td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/add-two-numbers/" target="_blank">Add Two Numbers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>138</td><td><a href="https://leetcode.com/problems/copy-list-with-random-pointer/" target="_blank">Copy List with Random Pointer</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>24</td><td><a href="https://leetcode.com/problems/swap-nodes-in-pairs/" target="_blank">Swap Nodes in Pairs</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>328</td><td><a href="https://leetcode.com/problems/odd-even-linked-list/" target="_blank">Odd Even Linked List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>23</td><td><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge k Sorted Lists</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>25</td><td><a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank">Reverse Nodes in k-Group</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "linked-lists", title: "Linked Lists", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps(data) {
+            var steps = [];
+            var nodes = data.slice();
+
+            // Helper: build node chain rendering
+            function renderChain(nodeArr, highlights, label) {
+                return {
+                    type: 'bars',
+                    array: nodeArr.slice(),
+                    highlights: highlights || {},
+                    explanation: label || ''
+                };
+            }
+
+            // Show initial list
+            steps.push(renderChain(nodes, {}, 'Initial linked list: ' + nodes.join(' → ') + ' → null'));
+
+            // Demonstrate reversal step by step
+            steps.push(renderChain(nodes, {}, 'Reversing the linked list in-place. We use three pointers: prev, curr, next.'));
+
+            var prev = [];
+            var remaining = nodes.slice();
+
+            for (var i = 0; i < nodes.length; i++) {
+                var hl = {};
+                hl[i] = 'comparing';
+                if (i > 0) hl[i - 1] = 'swapping';
+                steps.push({
+                    type: 'bars',
+                    array: nodes.slice(),
+                    highlights: hl,
+                    explanation: 'curr = ' + nodes[i] + '. Set curr.next = prev (' + (i > 0 ? nodes[i - 1] : 'null') + '). Advance pointers.'
+                });
+
+                prev.unshift(remaining.shift());
+
+                var display = prev.concat(remaining);
+                var hl2 = {};
+                for (var p = 0; p < prev.length; p++) hl2[p] = 'found';
+                steps.push({
+                    type: 'bars',
+                    array: display,
+                    highlights: hl2,
+                    explanation: 'Reversed so far: ' + prev.join(' → ') + ' → null. Remaining: ' + (remaining.length ? remaining.join(' → ') : 'none') + '.'
+                });
+            }
+
+            steps.push({
+                type: 'bars',
+                array: prev.slice(),
+                highlights: {},
+                explanation: 'Reversal complete: ' + prev.join(' → ') + ' → null'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1, 2, 3, 4, 5, 6, 7],
+            type: 'bars',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

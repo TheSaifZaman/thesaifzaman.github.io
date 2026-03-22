@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heaps / Priority Queues — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Heaps / Priority Queues</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(log n) insert/extract</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A heap is a complete binary tree that satisfies the heap property: in a min-heap, every parent node is smaller than or equal to its children; in a max-heap, every parent is greater than or equal to its children. The root always contains the minimum (or maximum) element, enabling O(1) access to the extreme value.</p>
+            <p>Heaps are typically stored as arrays. For a node at index i, its left child is at 2i+1, its right child at 2i+2, and its parent at floor((i-1)/2). Insertion appends the element and "bubbles up" (sift up) to restore the heap property in O(log n). Extraction removes the root, replaces it with the last element, and "sinks down" (sift down) in O(log n).</p>
+            <p>The priority queue abstract data type is almost always implemented as a heap. It is essential for algorithms like Dijkstra's shortest path, Prim's MST, Huffman coding, and the "top K elements" pattern. Building a heap from n elements can be done in O(n) time using the bottom-up heapify approach, which is faster than inserting elements one by one.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-sort-amount-up"></i>
+                    <h4>Heap Property</h4>
+                    <p>Parent is always smaller (min-heap) or larger (max-heap) than children.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-sitemap"></i>
+                    <h4>Array-Based Tree</h4>
+                    <p>Complete binary tree stored in an array with index arithmetic.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-arrow-up"></i>
+                    <h4>Bubble Up / Sink Down</h4>
+                    <p>Restore heap property after insert (up) or extract (down) in O(log n).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-trophy"></i>
+                    <h4>Top K Pattern</h4>
+                    <p>Maintain a heap of size K to find K largest/smallest in O(n log k).</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class MinHeap {
+  constructor() {
+    this.heap = [];
+  }
+
+  // O(log n)
+  insert(val) {
+    this.heap.push(val);
+    this._bubbleUp(this.heap.length - 1);
+  }
+
+  // O(log n)
+  extractMin() {
+    if (!this.heap.length) return undefined;
+    const min = this.heap[0];
+    const last = this.heap.pop();
+    if (this.heap.length) {
+      this.heap[0] = last;
+      this._sinkDown(0);
+    }
+    return min;
+  }
+
+  // O(1)
+  peek() {
+    return this.heap[0];
+  }
+
+  _bubbleUp(i) {
+    while (i > 0) {
+      const parent = Math.floor((i - 1) / 2);
+      if (this.heap[i] >= this.heap[parent]) break;
+      [this.heap[i], this.heap[parent]] = [this.heap[parent], this.heap[i]];
+      i = parent;
+    }
+  }
+
+  _sinkDown(i) {
+    const n = this.heap.length;
+    while (true) {
+      let smallest = i;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+      if (left < n && this.heap[left] < this.heap[smallest]) smallest = left;
+      if (right < n && this.heap[right] < this.heap[smallest]) smallest = right;
+      if (smallest === i) break;
+      [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
+      i = smallest;
+    }
+  }
+
+  get size() {
+    return this.heap.length;
+  }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>215</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Kth Largest Element in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>347</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>703</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/" target="_blank">Kth Largest Element in a Stream</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1046</td><td><a href="https://leetcode.com/problems/last-stone-weight/" target="_blank">Last Stone Weight</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>973</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">K Closest Points to Origin</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>621</td><td><a href="https://leetcode.com/problems/task-scheduler/" target="_blank">Task Scheduler</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>355</td><td><a href="https://leetcode.com/problems/design-twitter/" target="_blank">Design Twitter</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>378</td><td><a href="https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/" target="_blank">Kth Smallest Element in a Sorted Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>23</td><td><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge k Sorted Lists</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>295</td><td><a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank">Find Median from Data Stream</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>502</td><td><a href="https://leetcode.com/problems/ipo/" target="_blank">IPO</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>632</td><td><a href="https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/" target="_blank">Smallest Range Covering Elements from K Lists</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "heaps", title: "Heaps / Priority Queues", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps(data) {
+            var steps = [];
+            var heap = [];
+
+            // Helper: build tree layout from heap array
+            function heapToTree(arr, highlightIdx, highlightState) {
+                if (!arr.length) return { nodes: [], edges: [] };
+                var nodes = [];
+                var edges = [];
+                var depth = Math.floor(Math.log2(arr.length)) + 1;
+                var w = 600;
+
+                for (var i = 0; i < arr.length; i++) {
+                    var level = Math.floor(Math.log2(i + 1));
+                    var posInLevel = i - (Math.pow(2, level) - 1);
+                    var nodesInLevel = Math.pow(2, level);
+                    var spacing = w / (nodesInLevel + 1);
+                    var x = spacing * (posInLevel + 1);
+                    var y = 40 + level * 60;
+
+                    var state = '';
+                    if (highlightIdx !== undefined) {
+                        if (i === highlightIdx) state = highlightState || 'comparing';
+                    }
+
+                    nodes.push({ id: i, label: arr[i], x: x, y: y, state: state });
+
+                    if (i > 0) {
+                        var parent = Math.floor((i - 1) / 2);
+                        edges.push({ from: parent, to: i });
+                    }
+                }
+                return { nodes: nodes, edges: edges };
+            }
+
+            steps.push({
+                type: 'tree',
+                nodes: [],
+                edges: [],
+                explanation: 'Empty min-heap. We will insert elements one by one and bubble up to maintain the heap property.'
+            });
+
+            // Insert elements with bubble-up animation
+            for (var i = 0; i < data.length; i++) {
+                heap.push(data[i]);
+                var idx = heap.length - 1;
+
+                var tree = heapToTree(heap, idx, 'found');
+                steps.push({
+                    type: 'tree',
+                    nodes: tree.nodes,
+                    edges: tree.edges,
+                    explanation: 'Insert ' + data[i] + ' at index ' + idx + ' (end of array).'
+                });
+
+                // Bubble up
+                while (idx > 0) {
+                    var parent = Math.floor((idx - 1) / 2);
+                    if (heap[idx] < heap[parent]) {
+                        var t1 = heapToTree(heap, idx, 'swapping');
+                        t1.nodes[parent].state = 'swapping';
+                        steps.push({
+                            type: 'tree',
+                            nodes: t1.nodes,
+                            edges: t1.edges,
+                            explanation: 'Bubble up: ' + heap[idx] + ' < ' + heap[parent] + '. Swap index ' + idx + ' with parent ' + parent + '.'
+                        });
+
+                        var tmp = heap[idx];
+                        heap[idx] = heap[parent];
+                        heap[parent] = tmp;
+                        idx = parent;
+
+                        var t2 = heapToTree(heap, idx, 'found');
+                        steps.push({
+                            type: 'tree',
+                            nodes: t2.nodes,
+                            edges: t2.edges,
+                            explanation: 'After swap. Element ' + heap[idx] + ' is now at index ' + idx + '.'
+                        });
+                    } else {
+                        var t3 = heapToTree(heap, idx, 'found');
+                        steps.push({
+                            type: 'tree',
+                            nodes: t3.nodes,
+                            edges: t3.edges,
+                            explanation: heap[idx] + ' >= parent ' + heap[parent] + '. Heap property satisfied.'
+                        });
+                        break;
+                    }
+                }
+
+                if (idx === 0 && heap.length > 1) {
+                    var t4 = heapToTree(heap);
+                    steps.push({
+                        type: 'tree',
+                        nodes: t4.nodes,
+                        edges: t4.edges,
+                        explanation: heap[0] + ' reached the root. Min-heap property restored.'
+                    });
+                }
+            }
+
+            var tFinal = heapToTree(heap);
+            steps.push({
+                type: 'tree',
+                nodes: tFinal.nodes,
+                edges: tFinal.edges,
+                explanation: 'Min-heap complete. Root (minimum) = ' + heap[0] + '. Array: [' + heap.join(', ') + '].'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [35, 15, 45, 10, 25, 50, 5, 40],
+            type: 'tree',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

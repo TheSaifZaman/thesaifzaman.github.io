@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Tables — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Hash Tables</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(1) avg lookup/insert</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A hash table (also called a hash map or dictionary) stores key-value pairs and provides average O(1) time for insertions, deletions, and lookups. It works by applying a hash function to each key, producing a numeric index into an underlying array of "buckets." The element is then stored in (or retrieved from) that bucket.</p>
+            <p>When two different keys produce the same hash index, a collision occurs. The two most common collision resolution strategies are chaining (each bucket holds a linked list of entries) and open addressing (probing for the next empty slot). A good hash function distributes keys uniformly across buckets, minimizing collisions and keeping operations close to O(1).</p>
+            <p>Hash tables are among the most frequently used data structures in real-world software and interviews. They underpin JavaScript objects, Python dictionaries, and Java HashMaps. Common interview patterns include frequency counting, two-sum lookups, grouping anagrams, and detecting duplicates — all leveraging the hash table's constant-time access.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-hashtag"></i>
+                    <h4>Hash Function</h4>
+                    <p>Maps keys to array indices; good distribution minimizes collisions.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>O(1) Average</h4>
+                    <p>Insert, delete, and lookup run in amortized constant time.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-link"></i>
+                    <h4>Collision Handling</h4>
+                    <p>Chaining (linked lists) or open addressing (linear/quadratic probing).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>Load Factor</h4>
+                    <p>Resize when load factor exceeds threshold to maintain performance.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class HashTable {
+  constructor(size = 16) {
+    this.buckets = new Array(size).fill(null).map(() => []);
+    this.size = size;
+    this.count = 0;
+  }
+
+  _hash(key) {
+    let hash = 0;
+    const str = String(key);
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) % this.size;
+    }
+    return hash;
+  }
+
+  // O(1) average
+  set(key, value) {
+    const idx = this._hash(key);
+    const bucket = this.buckets[idx];
+    for (let i = 0; i < bucket.length; i++) {
+      if (bucket[i][0] === key) {
+        bucket[i][1] = value;
+        return;
+      }
+    }
+    bucket.push([key, value]);
+    this.count++;
+    if (this.count / this.size > 0.75) this._resize();
+  }
+
+  // O(1) average
+  get(key) {
+    const idx = this._hash(key);
+    const bucket = this.buckets[idx];
+    for (const [k, v] of bucket) {
+      if (k === key) return v;
+    }
+    return undefined;
+  }
+
+  // O(1) average
+  delete(key) {
+    const idx = this._hash(key);
+    const bucket = this.buckets[idx];
+    for (let i = 0; i < bucket.length; i++) {
+      if (bucket[i][0] === key) {
+        bucket.splice(i, 1);
+        this.count--;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  _resize() {
+    const old = this.buckets;
+    this.size *= 2;
+    this.buckets = new Array(this.size).fill(null).map(() => []);
+    this.count = 0;
+    for (const bucket of old) {
+      for (const [k, v] of bucket) {
+        this.set(k, v);
+      }
+    }
+  }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>242</td><td><a href="https://leetcode.com/problems/valid-anagram/" target="_blank">Valid Anagram</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>49</td><td><a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group Anagrams</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>217</td><td><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Contains Duplicate</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>383</td><td><a href="https://leetcode.com/problems/ransom-note/" target="_blank">Ransom Note</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>205</td><td><a href="https://leetcode.com/problems/isomorphic-strings/" target="_blank">Isomorphic Strings</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>290</td><td><a href="https://leetcode.com/problems/word-pattern/" target="_blank">Word Pattern</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>347</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>128</td><td><a href="https://leetcode.com/problems/longest-consecutive-sequence/" target="_blank">Longest Consecutive Sequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>560</td><td><a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank">Subarray Sum Equals K</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>36</td><td><a href="https://leetcode.com/problems/valid-sudoku/" target="_blank">Valid Sudoku</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>438</td><td><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank">Find All Anagrams in a String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>706</td><td><a href="https://leetcode.com/problems/design-hashmap/" target="_blank">Design HashMap</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>76</td><td><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank">Minimum Window Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>30</td><td><a href="https://leetcode.com/problems/substring-with-concatenation-of-all-words/" target="_blank">Substring with Concatenation of All Words</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "hash-tables", title: "Hash Tables", category: "Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps(data) {
+            var steps = [];
+            var TABLE_SIZE = 8;
+            var buckets = [];
+            for (var b = 0; b < TABLE_SIZE; b++) buckets.push([]);
+
+            function hashFn(val) {
+                return Math.abs(val) % TABLE_SIZE;
+            }
+
+            function bucketsToGrid() {
+                var maxLen = 1;
+                for (var i = 0; i < buckets.length; i++) {
+                    if (buckets[i].length > maxLen) maxLen = buckets[i].length;
+                }
+                maxLen = Math.max(maxLen, 1);
+
+                var grid = [];
+                // Header row (bucket indices)
+                var header = [];
+                for (var c = 0; c < TABLE_SIZE; c++) {
+                    header.push({ value: 'B' + c, state: 'visited' });
+                }
+                grid.push(header);
+
+                // Data rows
+                for (var r = 0; r < maxLen; r++) {
+                    var row = [];
+                    for (var c2 = 0; c2 < TABLE_SIZE; c2++) {
+                        if (r < buckets[c2].length) {
+                            row.push({ value: buckets[c2][r].val, state: buckets[c2][r].state || '' });
+                        } else {
+                            row.push({ value: '', state: '' });
+                        }
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            // Initial empty table
+            steps.push({
+                type: 'grid',
+                grid: bucketsToGrid(),
+                explanation: 'Empty hash table with ' + TABLE_SIZE + ' buckets. Hash function: key % ' + TABLE_SIZE + '.'
+            });
+
+            // Insert each value
+            for (var i = 0; i < data.length; i++) {
+                var val = data[i];
+                var idx = hashFn(val);
+
+                // Clear previous highlights
+                for (var b2 = 0; b2 < TABLE_SIZE; b2++) {
+                    for (var j = 0; j < buckets[b2].length; j++) {
+                        buckets[b2][j].state = '';
+                    }
+                }
+
+                var collision = buckets[idx].length > 0;
+                buckets[idx].push({ val: val, state: 'found' });
+
+                steps.push({
+                    type: 'grid',
+                    grid: bucketsToGrid(),
+                    explanation: 'Insert ' + val + ': hash(' + val + ') = ' + val + ' % ' + TABLE_SIZE + ' = ' + idx + '.' +
+                        (collision ? ' Collision! Chaining with existing element(s) in bucket ' + idx + '.' : ' Placed in bucket ' + idx + '.')
+                });
+            }
+
+            // Clear highlights
+            for (var b3 = 0; b3 < TABLE_SIZE; b3++) {
+                for (var k = 0; k < buckets[b3].length; k++) {
+                    buckets[b3][k].state = '';
+                }
+            }
+
+            steps.push({
+                type: 'grid',
+                grid: bucketsToGrid(),
+                explanation: 'All ' + data.length + ' elements inserted. Load factor = ' + data.length + '/' + TABLE_SIZE + ' = ' + (data.length / TABLE_SIZE).toFixed(2) + '.'
+            });
+
+            // Lookup demo
+            var lookupVal = data[Math.floor(data.length / 2)];
+            var lookupIdx = hashFn(lookupVal);
+
+            // Highlight the bucket
+            for (var m = 0; m < buckets[lookupIdx].length; m++) {
+                buckets[lookupIdx][m].state = buckets[lookupIdx][m].val === lookupVal ? 'found' : 'comparing';
+            }
+
+            steps.push({
+                type: 'grid',
+                grid: bucketsToGrid(),
+                explanation: 'Lookup ' + lookupVal + ': hash = ' + lookupIdx + '. Search bucket ' + lookupIdx + ' — found in ' + (buckets[lookupIdx].length > 1 ? 'chain (scanned ' + buckets[lookupIdx].length + ' entries)' : 'O(1)') + '.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [15, 7, 23, 31, 8, 42, 4, 16, 55, 27],
+            type: 'grid',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>
