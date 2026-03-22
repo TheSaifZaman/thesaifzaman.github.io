@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL &amp; Red-Black Trees — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>AVL &amp; Red-Black Trees</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                <strong>AVL trees</strong> and <strong>Red-Black trees</strong> are self-balancing binary search trees that guarantee O(log n) height. They achieve this by performing <em>rotations</em> after insertions and deletions to restore balance invariants.
+            </p>
+            <p>
+                An <strong>AVL tree</strong> (Adelson-Velsky and Landis) maintains the invariant that for every node, the heights of its left and right subtrees differ by at most 1. When an insertion or deletion violates this, one of four rotation types restores balance:
+            </p>
+            <ul style="margin: 0.5rem 0 1rem 1.5rem; line-height: 2;">
+                <li><strong>Left Rotation (LL)</strong> &mdash; right-heavy subtree; rotate left around the unbalanced node.</li>
+                <li><strong>Right Rotation (RR)</strong> &mdash; left-heavy subtree; rotate right around the unbalanced node.</li>
+                <li><strong>Left-Right (LR)</strong> &mdash; left child is right-heavy; left rotate child, then right rotate node.</li>
+                <li><strong>Right-Left (RL)</strong> &mdash; right child is left-heavy; right rotate child, then left rotate node.</li>
+            </ul>
+            <p>
+                A <strong>Red-Black tree</strong> uses node coloring (red or black) with five properties to ensure the longest path is at most twice the shortest. Red-Black trees are used in many standard library implementations (e.g., Java TreeMap, C++ std::map) because they require fewer rotations on average than AVL trees.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>AVL Balance Factor</strong><br>balance(node) = height(left) - height(right). Must be in {-1, 0, 1} for every node.</div>
+                <div class="key-point"><strong>Rotation Types</strong><br>Single rotations (LL, RR) and double rotations (LR, RL) restore the balance invariant in O(1).</div>
+                <div class="key-point"><strong>Red-Black Properties</strong><br>Root is black, red nodes have black children, every path has equal black-height.</div>
+                <div class="key-point"><strong>Trade-offs</strong><br>AVL is more strictly balanced (faster lookups), Red-Black has fewer rotations (faster inserts/deletes).</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// AVL Tree Node
+function AVLNode(val) {
+    this.val = val;
+    this.left = null;
+    this.right = null;
+    this.height = 1;
+}
+
+function height(node) {
+    return node ? node.height : 0;
+}
+
+function updateHeight(node) {
+    node.height = 1 + Math.max(height(node.left), height(node.right));
+}
+
+function getBalance(node) {
+    return node ? height(node.left) - height(node.right) : 0;
+}
+
+// Right Rotation
+function rightRotate(y) {
+    var x = y.left;
+    var T2 = x.right;
+    x.right = y;
+    y.left = T2;
+    updateHeight(y);
+    updateHeight(x);
+    return x; // new root
+}
+
+// Left Rotation
+function leftRotate(x) {
+    var y = x.right;
+    var T2 = y.left;
+    y.left = x;
+    x.right = T2;
+    updateHeight(x);
+    updateHeight(y);
+    return y; // new root
+}
+
+// AVL Insert
+function avlInsert(node, val) {
+    // Standard BST insert
+    if (!node) return new AVLNode(val);
+    if (val < node.val) {
+        node.left = avlInsert(node.left, val);
+    } else if (val > node.val) {
+        node.right = avlInsert(node.right, val);
+    } else {
+        return node; // no duplicates
+    }
+
+    updateHeight(node);
+    var balance = getBalance(node);
+
+    // Left Left Case
+    if (balance > 1 && val < node.left.val)
+        return rightRotate(node);
+    // Right Right Case
+    if (balance < -1 && val > node.right.val)
+        return leftRotate(node);
+    // Left Right Case
+    if (balance > 1 && val > node.left.val) {
+        node.left = leftRotate(node.left);
+        return rightRotate(node);
+    }
+    // Right Left Case
+    if (balance < -1 && val < node.right.val) {
+        node.right = rightRotate(node.right);
+        return leftRotate(node);
+    }
+
+    return node;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (3)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>110</td><td><a href="https://leetcode.com/problems/balanced-binary-tree/" target="_blank">Balanced Binary Tree</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>108</td><td><a href="https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/" target="_blank">Convert Sorted Array to BST</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>222</td><td><a href="https://leetcode.com/problems/count-complete-tree-nodes/" target="_blank">Count Complete Tree Nodes</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1382</td><td><a href="https://leetcode.com/problems/balance-a-binary-search-tree/" target="_blank">Balance a Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>109</td><td><a href="https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/" target="_blank">Convert Sorted List to BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>449</td><td><a href="https://leetcode.com/problems/serialize-and-deserialize-bst/" target="_blank">Serialize and Deserialize BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1361</td><td><a href="https://leetcode.com/problems/validate-binary-tree-nodes/" target="_blank">Validate Binary Tree Nodes</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1569</td><td><a href="https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/" target="_blank">Number of Ways to Reorder Array to Get Same BST</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "avl-red-black-trees", title: "AVL & Red-Black Trees", category: "Tree Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // AVL Tree — Insertion with rotations visualization
+    // Inserts values into an AVL tree, showing balance factors and rotations.
+
+    function generateSteps(data) {
+        var steps = [];
+        var values = data.length ? data : [30, 20, 10, 25, 40, 35, 50, 5];
+        var W = 420;
+
+        // AVL Node
+        function AVLNode(val) {
+            return { val: val, left: null, right: null, height: 1, id: nodeId++ };
+        }
+        var nodeId = 0;
+
+        function h(node) { return node ? node.height : 0; }
+        function updateH(node) { node.height = 1 + Math.max(h(node.left), h(node.right)); }
+        function bf(node) { return node ? h(node.left) - h(node.right) : 0; }
+
+        // Rotations
+        function rightRotate(y) {
+            var x = y.left;
+            var T2 = x.right;
+            x.right = y;
+            y.left = T2;
+            updateH(y);
+            updateH(x);
+            return x;
+        }
+
+        function leftRotate(x) {
+            var y = x.right;
+            var T2 = y.left;
+            y.left = x;
+            x.right = T2;
+            updateH(x);
+            updateH(y);
+            return y;
+        }
+
+        var root = null;
+
+        // Compute tree layout positions
+        function computeLayout() {
+            var positions = [];
+            var edgeList = [];
+
+            function layout(node, xMin, xMax, depth) {
+                if (!node) return;
+                var x = (xMin + xMax) / 2;
+                var y = 40 + depth * 65;
+                var balance = bf(node);
+                positions.push({
+                    id: node.id,
+                    label: node.val,
+                    x: x,
+                    y: y,
+                    balance: balance
+                });
+                if (node.left) {
+                    edgeList.push({ from: node.id, to: node.left.id });
+                    layout(node.left, xMin, x, depth + 1);
+                }
+                if (node.right) {
+                    edgeList.push({ from: node.id, to: node.right.id });
+                    layout(node.right, x, xMax, depth + 1);
+                }
+            }
+
+            layout(root, 10, W - 10, 0);
+            return { positions: positions, edges: edgeList };
+        }
+
+        function makeStep(explanation, nodeStates, edgeStates) {
+            var lay = computeLayout();
+            var nodes = lay.positions.map(function (p) {
+                var lbl = p.label + ' (' + (p.balance >= 0 ? '+' : '') + p.balance + ')';
+                return { id: p.id, label: lbl, x: p.x, y: p.y, state: nodeStates[p.id] || '' };
+            });
+            var edges = lay.edges.map(function (e) {
+                var key = e.from + '-' + e.to;
+                return { from: e.from, to: e.to, state: edgeStates[key] || '' };
+            });
+            steps.push({ type: 'tree', nodes: nodes, edges: edges, explanation: explanation });
+        }
+
+        // Initial
+        steps.push({
+            type: 'tree', nodes: [], edges: [],
+            explanation: 'AVL Tree: insert values [' + values.join(', ') + '] with automatic balancing via rotations. Node labels show value and (balance factor).'
+        });
+
+        // Insert with rotation tracking
+        function avlInsert(node, val, insertSteps) {
+            if (!node) {
+                return AVLNode(val);
+            }
+            if (val < node.val) {
+                node.left = avlInsert(node.left, val, insertSteps);
+            } else if (val > node.val) {
+                node.right = avlInsert(node.right, val, insertSteps);
+            } else {
+                return node;
+            }
+
+            updateH(node);
+            var balance = bf(node);
+
+            // Check for imbalance
+            if (balance > 1 && node.left && val < node.left.val) {
+                // LL case — Right Rotation
+                insertSteps.push({ type: 'RR', pivot: node.val });
+                return rightRotate(node);
+            }
+            if (balance < -1 && node.right && val > node.right.val) {
+                // RR case — Left Rotation
+                insertSteps.push({ type: 'LL', pivot: node.val });
+                return leftRotate(node);
+            }
+            if (balance > 1 && node.left && val > node.left.val) {
+                // LR case
+                insertSteps.push({ type: 'LR', pivot: node.val });
+                node.left = leftRotate(node.left);
+                return rightRotate(node);
+            }
+            if (balance < -1 && node.right && val < node.right.val) {
+                // RL case
+                insertSteps.push({ type: 'RL', pivot: node.val });
+                node.right = rightRotate(node.right);
+                return leftRotate(node);
+            }
+
+            return node;
+        }
+
+        for (var i = 0; i < values.length; i++) {
+            var val = values[i];
+            var rotations = [];
+
+            // Show pre-insert state
+            if (root) {
+                makeStep('Inserting ' + val + ' into the AVL tree...', {}, {});
+            }
+
+            root = avlInsert(root, val, rotations);
+
+            // Find the newly inserted node id
+            var newNodeId = -1;
+            function findNode(node, v) {
+                if (!node) return;
+                if (node.val === v) { newNodeId = node.id; return; }
+                findNode(node.left, v);
+                findNode(node.right, v);
+            }
+            findNode(root, val);
+
+            if (rotations.length === 0) {
+                var ns = {};
+                if (newNodeId >= 0) ns[newNodeId] = 'current';
+                makeStep(
+                    'Inserted ' + val + '. No rotation needed — tree is balanced.',
+                    ns, {}
+                );
+            } else {
+                for (var r = 0; r < rotations.length; r++) {
+                    var rot = rotations[r];
+                    var rotName = '';
+                    if (rot.type === 'RR') rotName = 'Right Rotation (LL case)';
+                    else if (rot.type === 'LL') rotName = 'Left Rotation (RR case)';
+                    else if (rot.type === 'LR') rotName = 'Left-Right Double Rotation (LR case)';
+                    else if (rot.type === 'RL') rotName = 'Right-Left Double Rotation (RL case)';
+
+                    var ns2 = {};
+                    if (newNodeId >= 0) ns2[newNodeId] = 'current';
+                    makeStep(
+                        'Inserted ' + val + '. Imbalance detected at node ' + rot.pivot + ' → ' + rotName + ' applied.',
+                        ns2, {}
+                    );
+                }
+            }
+
+            // Show clean state
+            makeStep(
+                'Tree after inserting ' + val + '. (' + (i + 1) + '/' + values.length + ' inserted)',
+                {}, {}
+            );
+        }
+
+        // Final summary
+        var allIds = {};
+        function collectIds(node) {
+            if (!node) return;
+            allIds[node.id] = 'visited';
+            collectIds(node.left);
+            collectIds(node.right);
+        }
+        collectIds(root);
+
+        var inorder = [];
+        function getInorder(node) {
+            if (!node) return;
+            getInorder(node.left);
+            inorder.push(node.val);
+            getInorder(node.right);
+        }
+        getInorder(root);
+
+        makeStep(
+            'AVL tree complete! Height: ' + (root ? root.height : 0) + '. Inorder: [' + inorder.join(', ') + ']. All balance factors are in {-1, 0, +1}.',
+            allIds, {}
+        );
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [30, 20, 10, 25, 40, 35, 50, 5],
+        stepGenerator: generateSteps,
+        type: 'tree'
+    });
+    </script>
+</body>
+</html>

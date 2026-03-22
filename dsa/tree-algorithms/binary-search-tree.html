@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Tree — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Binary Search Tree</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(log n) avg</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A <strong>Binary Search Tree (BST)</strong> is a binary tree where for every node, all values in its left subtree are <em>less than</em> the node's value, and all values in its right subtree are <em>greater than</em> the node's value. This ordering property enables efficient search, insertion, and deletion in O(log n) average time.
+            </p>
+            <p>
+                <strong>Insertion</strong> starts at the root and compares the new value with the current node: go left if smaller, right if larger, until reaching a null position where the new node is placed. <strong>Search</strong> follows the same path. <strong>Deletion</strong> has three cases: leaf node (simply remove), one child (replace with child), or two children (replace with inorder successor or predecessor).
+            </p>
+            <p>
+                The efficiency of a BST depends on its <strong>balance</strong>. In the worst case (inserting sorted data), the tree degenerates into a linked list with O(n) operations. This motivates self-balancing trees like AVL and Red-Black trees.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>BST Property</strong><br>Left subtree values &lt; node value &lt; right subtree values. This invariant must hold for every node.</div>
+                <div class="key-point"><strong>Search: O(log n) avg</strong><br>Each comparison eliminates half the remaining tree, similar to binary search on arrays.</div>
+                <div class="key-point"><strong>Insertion</strong><br>Follow the search path until a null link is found, then attach the new node there.</div>
+                <div class="key-point"><strong>Inorder = Sorted</strong><br>An inorder traversal of a BST always produces values in ascending order.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// BST Node
+function TreeNode(val) {
+    this.val = val;
+    this.left = null;
+    this.right = null;
+}
+
+// Insert into BST
+function insertIntoBST(root, val) {
+    if (!root) return new TreeNode(val);
+    if (val < root.val) {
+        root.left = insertIntoBST(root.left, val);
+    } else {
+        root.right = insertIntoBST(root.right, val);
+    }
+    return root;
+}
+
+// Search in BST
+function searchBST(root, val) {
+    if (!root || root.val === val) return root;
+    if (val < root.val) return searchBST(root.left, val);
+    return searchBST(root.right, val);
+}
+
+// Delete from BST
+function deleteNode(root, key) {
+    if (!root) return null;
+    if (key < root.val) {
+        root.left = deleteNode(root.left, key);
+    } else if (key > root.val) {
+        root.right = deleteNode(root.right, key);
+    } else {
+        // Found node to delete
+        if (!root.left) return root.right;
+        if (!root.right) return root.left;
+        // Two children: find inorder successor
+        var successor = root.right;
+        while (successor.left) successor = successor.left;
+        root.val = successor.val;
+        root.right = deleteNode(root.right, successor.val);
+    }
+    return root;
+}
+
+// Validate BST
+function isValidBST(root, min, max) {
+    if (min === undefined) min = -Infinity;
+    if (max === undefined) max = Infinity;
+    if (!root) return true;
+    if (root.val <= min || root.val >= max) return false;
+    return isValidBST(root.left, min, root.val) &&
+           isValidBST(root.right, root.val, max);
+}
+
+// Kth Smallest Element
+function kthSmallest(root, k) {
+    var count = 0;
+    var result = null;
+    function inorder(node) {
+        if (!node || result !== null) return;
+        inorder(node.left);
+        count++;
+        if (count === k) { result = node.val; return; }
+        inorder(node.right);
+    }
+    inorder(root);
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (12)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (3)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (8)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>98</td><td><a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank">Validate Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>230</td><td><a href="https://leetcode.com/problems/kth-smallest-element-in-a-bst/" target="_blank">Kth Smallest Element in a BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>235</td><td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" target="_blank">Lowest Common Ancestor of a BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>701</td><td><a href="https://leetcode.com/problems/insert-into-a-binary-search-tree/" target="_blank">Insert into a Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>450</td><td><a href="https://leetcode.com/problems/delete-node-in-a-bst/" target="_blank">Delete Node in a BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>700</td><td><a href="https://leetcode.com/problems/search-in-a-binary-search-tree/" target="_blank">Search in a Binary Search Tree</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>108</td><td><a href="https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/" target="_blank">Convert Sorted Array to BST</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>173</td><td><a href="https://leetcode.com/problems/binary-search-tree-iterator/" target="_blank">Binary Search Tree Iterator</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>96</td><td><a href="https://leetcode.com/problems/unique-binary-search-trees/" target="_blank">Unique Binary Search Trees</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>99</td><td><a href="https://leetcode.com/problems/recover-binary-search-tree/" target="_blank">Recover Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>653</td><td><a href="https://leetcode.com/problems/two-sum-iv-input-is-a-bst/" target="_blank">Two Sum IV - Input is a BST</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>272</td><td><a href="https://leetcode.com/problems/closest-binary-search-tree-value-ii/" target="_blank">Closest Binary Search Tree Value II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "binary-search-tree", title: "Binary Search Tree", category: "Tree Algorithms" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // BST — Step-by-step insertion visualization
+    // Inserts each value from the input array into a BST, showing the path taken.
+
+    function generateSteps(data) {
+        var steps = [];
+        var values = data.length ? data : [8, 3, 10, 1, 6, 14, 4, 7, 13];
+        var W = 420;
+
+        // Internal BST representation
+        // Each node: { val, left, right, id }
+        var nextId = 0;
+        var root = null;
+        var allNodes = []; // flat list of all nodes by id
+
+        function makeNode(val) {
+            var node = { val: val, left: null, right: null, id: nextId++ };
+            allNodes.push(node);
+            return node;
+        }
+
+        // Compute positions by walking the tree (recursive layout)
+        function computePositions() {
+            var positions = [];
+            var edgeList = [];
+
+            function layout(node, xMin, xMax, depth) {
+                if (!node) return;
+                var x = (xMin + xMax) / 2;
+                var y = 40 + depth * 65;
+                positions.push({ id: node.id, label: node.val, x: x, y: y });
+
+                if (node.left) {
+                    edgeList.push({ from: node.id, to: node.left.id });
+                    layout(node.left, xMin, x, depth + 1);
+                }
+                if (node.right) {
+                    edgeList.push({ from: node.id, to: node.right.id });
+                    layout(node.right, x, xMax, depth + 1);
+                }
+            }
+
+            layout(root, 10, W - 10, 0);
+            return { positions: positions, edges: edgeList };
+        }
+
+        function makeStep(explanation, nodeStates, edgeStates) {
+            var layout = computePositions();
+            var nodes = layout.positions.map(function (p) {
+                return { id: p.id, label: p.label, x: p.x, y: p.y, state: nodeStates[p.id] || '' };
+            });
+            var edges = layout.edges.map(function (e) {
+                var key = e.from + '-' + e.to;
+                return { from: e.from, to: e.to, state: edgeStates[key] || '' };
+            });
+            steps.push({ type: 'tree', nodes: nodes, edges: edges, explanation: explanation });
+        }
+
+        // Initial step
+        steps.push({
+            type: 'tree',
+            nodes: [],
+            edges: [],
+            explanation: 'BST Insertion: we will insert values [' + values.join(', ') + '] one by one.'
+        });
+
+        for (var i = 0; i < values.length; i++) {
+            var val = values[i];
+
+            if (!root) {
+                root = makeNode(val);
+                var ns = {};
+                ns[root.id] = 'current';
+                makeStep('Insert ' + val + ' as root node.', ns, {});
+                ns[root.id] = '';
+                makeStep('Node ' + val + ' placed as root.', {}, {});
+                continue;
+            }
+
+            // Walk the tree to find insertion point, generating steps
+            var current = root;
+            var path = [];
+
+            while (current) {
+                path.push(current.id);
+                var nodeStates = {};
+                var edgeStates = {};
+                // Mark path
+                for (var p = 0; p < path.length; p++) {
+                    nodeStates[path[p]] = 'visited';
+                }
+                nodeStates[current.id] = 'current';
+
+                if (val < current.val) {
+                    makeStep(
+                        'Insert ' + val + ': compare with ' + current.val + '. ' + val + ' < ' + current.val + ' → go left.',
+                        nodeStates, edgeStates
+                    );
+                    if (!current.left) {
+                        current.left = makeNode(val);
+                        var ns2 = {};
+                        for (var p = 0; p < path.length; p++) ns2[path[p]] = 'visited';
+                        ns2[current.left.id] = 'current';
+                        var es2 = {};
+                        es2[current.id + '-' + current.left.id] = 'active';
+                        makeStep('Insert ' + val + ' as left child of ' + current.val + '.', ns2, es2);
+                        break;
+                    }
+                    current = current.left;
+                } else {
+                    makeStep(
+                        'Insert ' + val + ': compare with ' + current.val + '. ' + val + ' >= ' + current.val + ' → go right.',
+                        nodeStates, edgeStates
+                    );
+                    if (!current.right) {
+                        current.right = makeNode(val);
+                        var ns3 = {};
+                        for (var p = 0; p < path.length; p++) ns3[path[p]] = 'visited';
+                        ns3[current.right.id] = 'current';
+                        var es3 = {};
+                        es3[current.id + '-' + current.right.id] = 'active';
+                        makeStep('Insert ' + val + ' as right child of ' + current.val + '.', ns3, es3);
+                        break;
+                    }
+                    current = current.right;
+                }
+            }
+
+            // Show clean tree after insertion
+            makeStep('Tree after inserting ' + val + '. (' + (i + 1) + '/' + values.length + ' inserted)', {}, {});
+        }
+
+        // Final: show inorder traversal result
+        var inorder = [];
+        function getInorder(node) {
+            if (!node) return;
+            getInorder(node.left);
+            inorder.push(node.val);
+            getInorder(node.right);
+        }
+        getInorder(root);
+
+        var finalStates = {};
+        allNodes.forEach(function (n) { finalStates[n.id] = 'visited'; });
+        makeStep('BST complete! Inorder traversal (sorted): [' + inorder.join(', ') + ']', finalStates, {});
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [8, 3, 10, 1, 6, 14, 4, 7, 13],
+        stepGenerator: generateSteps,
+        type: 'tree'
+    });
+    </script>
+</body>
+</html>
