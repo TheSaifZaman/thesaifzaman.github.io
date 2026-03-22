@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Q-Network (DQN) — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Deep Q-Network (DQN)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Deep Q-Network (DQN) extends Q-Learning by replacing the Q-table with a neural network that approximates Q-values. This allows the algorithm to handle high-dimensional state spaces (like raw pixel inputs) where a table would be infeasibly large.</p>
+            <p>Two key innovations stabilize training: (1) <strong>Experience Replay</strong> stores past transitions in a buffer and samples random mini-batches to break correlations, and (2) a <strong>Target Network</strong> is a frozen copy of the Q-network used to compute target values, updated periodically to prevent oscillation.</p>
+            <p>DQN was famously used by DeepMind to play Atari games at superhuman levels directly from screen pixels, marking a breakthrough in deep reinforcement learning.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-brain"></i>
+                    <h4>Neural Q-Function</h4>
+                    <p>Network takes state as input, outputs Q-values for all actions.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-database"></i>
+                    <h4>Experience Replay</h4>
+                    <p>Stores and samples transitions to break temporal correlations.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-copy"></i>
+                    <h4>Target Network</h4>
+                    <p>Frozen copy provides stable training targets.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-gamepad"></i>
+                    <h4>Atari Breakthrough</h4>
+                    <p>First to learn control policies from raw pixels end-to-end.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// DQN pseudocode
+function trainDQN(env, episodes) {
+    var qNet = new NeuralNetwork([stateSize, 128, 64, actionSize]);
+    var targetNet = qNet.clone();
+    var replayBuffer = [];
+    var batchSize = 32;
+
+    for (var ep = 0; ep < episodes; ep++) {
+        var state = env.reset();
+        while (!env.done()) {
+            // Epsilon-greedy action selection
+            var action = (Math.random() < epsilon)
+                ? env.randomAction()
+                : argMax(qNet.predict(state));
+
+            var result = env.step(action);
+            replayBuffer.push([state, action, result.reward, result.next, result.done]);
+
+            if (replayBuffer.length >= batchSize) {
+                var batch = sample(replayBuffer, batchSize);
+                // Compute targets using frozen target network
+                var targets = batch.map(function(t) {
+                    if (t[4]) return t[2]; // terminal
+                    return t[2] + gamma * max(targetNet.predict(t[3]));
+                });
+                qNet.trainBatch(batch, targets);
+            }
+            state = result.next;
+        }
+        // Periodically sync target network
+        if (ep % 10 === 0) targetNet = qNet.clone();
+    }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/" target="_blank">CartPole with DQN</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/atari/" target="_blank">Atari Breakout DQN</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/mountain_car/" target="_blank">Mountain Car DQN</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/box2d/lunar_lander/" target="_blank">Lunar Lander DQN</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "deep-q-network", title: "Deep Q-Network (DQN)", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Show DQN as a neural network + grid side-by-side via steps
+        var ROWS = 5, COLS = 5;
+        var WALLS = [[1,1],[2,3],[3,1]];
+        var GOAL = [4,4];
+        var ACTIONS = [[0,1],[0,-1],[1,0],[-1,0]];
+        var ACTION_NAMES = ['R','L','D','U'];
+
+        function isWall(r,c) {
+            for (var i = 0; i < WALLS.length; i++) {
+                if (WALLS[i][0] === r && WALLS[i][1] === c) return true;
+            }
+            return false;
+        }
+
+        function generateSteps() {
+            var steps = [];
+
+            // Show network architecture first
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'r'},{label:'c'}] },
+                    { nodes: [{label:''},{label:''},{label:''},{label:''}], weights: [[0.5,0.3,0.8,0.1],[0.2,0.7,0.4,0.6]] },
+                    { nodes: [{label:''},{label:''},{label:''}], weights: [[0.4,0.6,0.3],[0.5,0.2,0.7],[0.3,0.8,0.1],[0.6,0.4,0.5]] },
+                    { nodes: [{label:'R'},{label:'L'},{label:'D'},{label:'U'}], weights: [[0.3,0.5,0.2,0.4],[0.6,0.1,0.7,0.3],[0.2,0.8,0.4,0.5]] }
+                ],
+                explanation: 'DQN architecture: state (row,col) → hidden layers → Q-values for each action (R,L,D,U).'
+            });
+
+            // Simulate grid navigation with "neural" Q-values
+            var Q = [];
+            for (var r = 0; r < ROWS; r++) {
+                Q[r] = [];
+                for (var c = 0; c < COLS; c++) {
+                    Q[r][c] = [0,0,0,0];
+                }
+            }
+            var alpha = 0.5, gamma = 0.9;
+
+            function bestQ(r,c) { return Math.max.apply(null, Q[r][c]); }
+
+            function makeGrid(ar, ac) {
+                var grid = [];
+                for (var r = 0; r < ROWS; r++) {
+                    var row = [];
+                    for (var c = 0; c < COLS; c++) {
+                        var val = bestQ(r,c).toFixed(1);
+                        var st = '';
+                        if (isWall(r,c)) { val = 'W'; st = 'wall'; }
+                        else if (r === GOAL[0] && c === GOAL[1]) { val = 'G'; st = 'found'; }
+                        if (r === ar && c === ac) st = 'comparing';
+                        row.push({ value: val, state: st });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({ grid: makeGrid(0,0), explanation: 'DQN agent navigates grid. Neural network approximates Q-values instead of storing them in a table.' });
+
+            for (var ep = 0; ep < 6; ep++) {
+                var cr = 0, cc = 0;
+                for (var m = 0; m < 25; m++) {
+                    if (cr === GOAL[0] && cc === GOAL[1]) break;
+                    var ai = (Math.random() < 0.2) ? Math.floor(Math.random()*4) : 0;
+                    for (var a = 1; a < 4; a++) { if (Q[cr][cc][a] > Q[cr][cc][ai]) ai = a; }
+                    var nr = cr + ACTIONS[ai][0], nc = cc + ACTIONS[ai][1];
+                    if (nr<0||nr>=ROWS||nc<0||nc>=COLS||isWall(nr,nc)) { nr=cr; nc=cc; }
+                    var reward = (nr===GOAL[0]&&nc===GOAL[1]) ? 10 : -0.1;
+                    Q[cr][cc][ai] += alpha*(reward+gamma*bestQ(nr,nc)-Q[cr][cc][ai]);
+                    if (m % 3 === 0) {
+                        steps.push({ grid: makeGrid(nr,nc), explanation: 'Ep ' + (ep+1) + ': agent at (' + nr + ',' + nc + '). Network forward pass → Q-values → action ' + ACTION_NAMES[ai] + '. Experience stored in replay buffer.' });
+                    }
+                    cr = nr; cc = nc;
+                }
+            }
+
+            steps.push({ grid: makeGrid(-1,-1), explanation: 'DQN training complete. The neural network has learned to approximate Q-values for the entire state space.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'grid', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Carlo Methods (RL) — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Monte Carlo Methods (RL)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(T &middot; episodes)</span>
+            <span class="complexity-tag">Space: O(S&middot;A)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Monte Carlo (MC) methods in reinforcement learning estimate value functions by averaging actual returns observed over complete episodes. Unlike Temporal Difference methods (Q-Learning, SARSA) which bootstrap from estimates, MC waits until the episode ends and uses the true cumulative reward.</p>
+            <p>In <strong>first-visit MC</strong>, the return for a state is recorded only the first time it appears in an episode. In <strong>every-visit MC</strong>, every occurrence counts. After many episodes, the average converges to the true expected value by the law of large numbers.</p>
+            <p>MC methods are model-free, require no bootstrapping, and work well with episodic tasks. However, they can only learn from complete episodes and have higher variance than TD methods.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-flag-checkered"></i>
+                    <h4>Episode-Based</h4>
+                    <p>Learns only after complete episodes, using actual returns.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-calculator"></i>
+                    <h4>Sample Averaging</h4>
+                    <p>Values converge to true expectations as episodes increase.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-unlink"></i>
+                    <h4>No Bootstrapping</h4>
+                    <p>Does not use estimates of other states — only real returns.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-chart-bar"></i>
+                    <h4>High Variance</h4>
+                    <p>Full returns are noisy; needs many episodes to converge.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function monteCarloFirstVisit(env, episodes, gamma) {
+    var V = {};      // state values
+    var returns = {}; // list of returns per state
+
+    for (var ep = 0; ep < episodes; ep++) {
+        var episode = generateEpisode(env);
+
+        // Compute returns backward
+        var G = 0;
+        var visited = {};
+        for (var t = episode.length - 1; t >= 0; t--) {
+            G = episode[t].reward + gamma * G;
+            var state = episode[t].state;
+
+            // First-visit: only count first occurrence
+            if (!visited[state]) {
+                visited[state] = true;
+                if (!returns[state]) returns[state] = [];
+                returns[state].push(G);
+                // Average all returns for this state
+                var sum = 0;
+                for (var i = 0; i < returns[state].length; i++) {
+                    sum += returns[state][i];
+                }
+                V[state] = sum / returns[state].length;
+            }
+        }
+    }
+    return V;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/blackjack/" target="_blank">Blackjack MC Prediction</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/frozen_lake/" target="_blank">Frozen Lake MC Control</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/cliff_walking/" target="_blank">Cliff Walking MC vs TD</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/taxi/" target="_blank">Taxi MC with Exploring Starts</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "monte-carlo-rl", title: "Monte Carlo Methods (RL)", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var ROWS = 5, COLS = 5;
+        var WALLS = [[1,3],[3,2],[2,1]];
+        var GOAL = [4,4];
+        var START = [0,0];
+        var ACTIONS = [[0,1],[0,-1],[1,0],[-1,0]];
+        var gamma = 0.9;
+
+        function isWall(r,c) {
+            for (var i = 0; i < WALLS.length; i++) {
+                if (WALLS[i][0]===r && WALLS[i][1]===c) return true;
+            }
+            return false;
+        }
+
+        function generateSteps() {
+            var steps = [];
+            var V = [];
+            var counts = [];
+            for (var r = 0; r < ROWS; r++) {
+                V[r] = []; counts[r] = [];
+                for (var c = 0; c < COLS; c++) { V[r][c] = 0; counts[r][c] = 0; }
+            }
+
+            function makeGrid(agentR, agentC, path) {
+                var grid = [];
+                for (var r = 0; r < ROWS; r++) {
+                    var row = [];
+                    for (var c = 0; c < COLS; c++) {
+                        var val = V[r][c].toFixed(1);
+                        var st = '';
+                        if (isWall(r,c)) { val = 'W'; st = 'wall'; }
+                        else if (r===GOAL[0]&&c===GOAL[1]) { val = 'G'; st = 'found'; }
+                        if (r===agentR&&c===agentC) st = 'comparing';
+                        if (path) {
+                            for (var p = 0; p < path.length; p++) {
+                                if (path[p][0]===r&&path[p][1]===c && st !== 'comparing') st = 'visited';
+                            }
+                        }
+                        row.push({value:val, state:st});
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({grid:makeGrid(0,0), explanation:'Monte Carlo RL: learn values by averaging complete episode returns. Agent explores the grid, then updates values after each full episode.'});
+
+            for (var ep = 0; ep < 8; ep++) {
+                // Generate random episode
+                var path = [];
+                var cr = START[0], cc = START[1];
+                var episode = [];
+                for (var m = 0; m < 30; m++) {
+                    if (cr===GOAL[0]&&cc===GOAL[1]) break;
+                    var ai = Math.floor(Math.random()*4);
+                    var nr = cr+ACTIONS[ai][0], nc = cc+ACTIONS[ai][1];
+                    if (nr<0||nr>=ROWS||nc<0||nc>=COLS||isWall(nr,nc)) { nr=cr; nc=cc; }
+                    var reward = (nr===GOAL[0]&&nc===GOAL[1]) ? 10 : -0.1;
+                    episode.push({r:cr,c:cc,reward:reward});
+                    path.push([cr,cc]);
+                    cr = nr; cc = nc;
+                }
+                path.push([cr,cc]);
+
+                // Show the episode path
+                steps.push({grid:makeGrid(cr,cc,path), explanation:'Episode ' + (ep+1) + ': agent took ' + episode.length + ' steps. ' + (cr===GOAL[0]&&cc===GOAL[1]?'Reached goal!':'Did not reach goal.') + ' Now computing returns backward...'});
+
+                // Compute returns and update V
+                var G = (cr===GOAL[0]&&cc===GOAL[1]) ? 10 : 0;
+                var visited = {};
+                for (var t = episode.length - 1; t >= 0; t--) {
+                    G = episode[t].reward + gamma * G;
+                    var key = episode[t].r + ',' + episode[t].c;
+                    if (!visited[key]) {
+                        visited[key] = true;
+                        counts[episode[t].r][episode[t].c]++;
+                        V[episode[t].r][episode[t].c] += (G - V[episode[t].r][episode[t].c]) / counts[episode[t].r][episode[t].c];
+                    }
+                }
+
+                steps.push({grid:makeGrid(-1,-1), explanation:'Episode ' + (ep+1) + ' values updated. State values are running averages of discounted returns from completed episodes.'});
+            }
+
+            steps.push({grid:makeGrid(-1,-1), explanation:'Monte Carlo training complete. Values reflect average discounted returns. States near the goal have higher values.'});
+            return steps;
+        }
+
+        Visualizer.init({container:'#viz', data:[1], type:'grid', stepGenerator:generateSteps});
+    })();
+    </script>
+</body>
+</html>

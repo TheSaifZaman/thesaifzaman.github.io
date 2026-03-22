@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Armed Bandit — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Multi-Armed Bandit</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(k &middot; rounds)</span>
+            <span class="complexity-tag">Space: O(k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Multi-Armed Bandit problem is the simplest form of reinforcement learning. You face k slot machines (arms), each with an unknown reward distribution. At each round, you pull one arm and receive a reward. The goal is to maximize total reward over many rounds.</p>
+            <p>The core challenge is the <strong>exploration-exploitation dilemma</strong>: should you try new arms to discover their rewards (explore), or should you keep pulling the arm that has given the best rewards so far (exploit)?</p>
+            <p>Common strategies include &epsilon;-greedy (random exploration with probability &epsilon;), Upper Confidence Bound (UCB, which favors uncertain arms), and Thompson Sampling (Bayesian approach using posterior distributions).</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-dice"></i>
+                    <h4>Exploration</h4>
+                    <p>Try unknown arms to learn their reward distributions.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-trophy"></i>
+                    <h4>Exploitation</h4>
+                    <p>Pull the best-known arm to maximize immediate reward.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>UCB Strategy</h4>
+                    <p>Adds confidence bonus favoring less-explored arms.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-ad"></i>
+                    <h4>Applications</h4>
+                    <p>A/B testing, ad placement, recommendation systems.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function epsilonGreedyBandit(k, rounds, epsilon) {
+    var Q = new Array(k).fill(0);     // estimated values
+    var N = new Array(k).fill(0);     // pull counts
+    var totalReward = 0;
+
+    for (var t = 0; t < rounds; t++) {
+        var arm;
+        if (Math.random() < epsilon) {
+            arm = Math.floor(Math.random() * k); // explore
+        } else {
+            arm = argMax(Q);                       // exploit
+        }
+
+        var reward = pullArm(arm); // sample from arm's distribution
+        N[arm]++;
+        // Incremental mean update
+        Q[arm] += (reward - Q[arm]) / N[arm];
+        totalReward += reward;
+    }
+    return { Q: Q, totalReward: totalReward };
+}
+
+function ucbBandit(k, rounds, c) {
+    var Q = new Array(k).fill(0);
+    var N = new Array(k).fill(0);
+
+    for (var t = 0; t < rounds; t++) {
+        var arm;
+        // Pull each arm once first
+        if (t < k) {
+            arm = t;
+        } else {
+            // UCB selection
+            var best = -Infinity;
+            for (var i = 0; i < k; i++) {
+                var ucb = Q[i] + c * Math.sqrt(Math.log(t) / N[i]);
+                if (ucb > best) { best = ucb; arm = i; }
+            }
+        }
+        var reward = pullArm(arm);
+        N[arm]++;
+        Q[arm] += (reward - Q[arm]) / N[arm];
+    }
+    return Q;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://banditalgs.com/" target="_blank">10-Armed Testbed</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://banditalgs.com/" target="_blank">Epsilon-Greedy vs UCB Comparison</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://banditalgs.com/" target="_blank">Non-Stationary Bandit</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://banditalgs.com/" target="_blank">Thompson Sampling Implementation</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://banditalgs.com/" target="_blank">Contextual Bandit for Recommendations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "multi-armed-bandit", title: "Multi-Armed Bandit", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // 5 arms with different true mean rewards
+        var trueMeans = [2.0, 3.5, 1.5, 4.0, 2.8];
+        var armNames = ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4', 'Arm 5'];
+        var k = trueMeans.length;
+
+        function generateSteps() {
+            var steps = [];
+            var Q = [0,0,0,0,0];
+            var N = [0,0,0,0,0];
+            var epsilon = 0.2;
+
+            // Show true distributions as initial
+            steps.push({
+                array: trueMeans.slice(),
+                highlights: {},
+                explanation: 'Multi-Armed Bandit: 5 arms with unknown reward distributions. Bar heights show TRUE mean rewards (hidden from agent). Agent must discover the best arm.'
+            });
+
+            // Show initial estimates
+            steps.push({
+                array: Q.slice(),
+                highlights: {},
+                explanation: 'Agent starts with Q-estimates all at 0. It knows nothing about the arms yet.'
+            });
+
+            for (var t = 0; t < 20; t++) {
+                var arm;
+                if (Math.random() < epsilon) {
+                    arm = Math.floor(Math.random() * k);
+                } else {
+                    arm = 0;
+                    for (var a = 1; a < k; a++) { if (Q[a] > Q[arm]) arm = a; }
+                }
+
+                // Sample reward with noise
+                var reward = trueMeans[arm] + (Math.random() - 0.5) * 2;
+                N[arm]++;
+                Q[arm] += (reward - Q[arm]) / N[arm];
+
+                var hl = {};
+                hl[arm] = 'comparing';
+                var best = 0;
+                for (var b = 1; b < k; b++) { if (Q[b] > Q[best]) best = b; }
+                hl[best] = 'found';
+
+                steps.push({
+                    array: Q.map(function(v) { return Math.round(v * 10) / 10; }),
+                    highlights: hl,
+                    explanation: 'Round ' + (t+1) + ': pulled arm ' + (arm+1) + (t < 5 || Math.random() < epsilon ? ' (explore)' : ' (exploit)') + ', got reward ' + reward.toFixed(1) + '. Estimates updating. Best so far: arm ' + (best+1) + '.'
+                });
+            }
+
+            var bestArm = 0;
+            for (var f = 1; f < k; f++) { if (Q[f] > Q[bestArm]) bestArm = f; }
+            var hlFinal = {}; hlFinal[bestArm] = 'sorted';
+            steps.push({
+                array: Q.map(function(v) { return Math.round(v * 10) / 10; }),
+                highlights: hlFinal,
+                explanation: 'After 20 rounds, agent estimates arm ' + (bestArm+1) + ' is best (Q=' + Q[bestArm].toFixed(1) + '). True best is arm 4 (mean=4.0). More rounds would improve accuracy.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [0,0,0,0,0], type: 'bars', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

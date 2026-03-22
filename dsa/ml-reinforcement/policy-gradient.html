@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Gradient (REINFORCE) — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Policy Gradient (REINFORCE)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;d)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Policy Gradient methods directly optimize a parameterized policy &pi;(a|s;&theta;) by computing the gradient of expected reward with respect to the policy parameters &theta;. Instead of learning value functions and deriving a policy, we directly learn which actions to take.</p>
+            <p>The REINFORCE algorithm collects complete episodes, then updates parameters using: <code>&theta; &larr; &theta; + &alpha; &nabla; log &pi;(a|s;&theta;) &middot; G_t</code>, where G_t is the discounted return from time t. Actions that led to high returns get reinforced (higher probability), while poor actions get suppressed.</p>
+            <p>The policy surface visualization shows how the policy parameters move across the reward landscape, seeking the peak of expected return.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Direct Optimization</h4>
+                    <p>Optimizes policy parameters directly via gradient ascent on expected reward.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-dice"></i>
+                    <h4>Stochastic Policy</h4>
+                    <p>Outputs action probabilities, enabling natural exploration.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-chart-area"></i>
+                    <h4>High Variance</h4>
+                    <p>Monte Carlo returns are noisy; baselines help reduce variance.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-infinity"></i>
+                    <h4>Continuous Actions</h4>
+                    <p>Naturally handles continuous action spaces unlike Q-Learning.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function reinforce(env, episodes, alpha, gamma) {
+    var theta = randomParams();
+
+    for (var ep = 0; ep < episodes; ep++) {
+        var trajectory = [];
+        var state = env.reset();
+
+        // Collect full episode
+        while (!env.done()) {
+            var probs = policy(state, theta); // softmax over actions
+            var action = sampleFromDistribution(probs);
+            var result = env.step(action);
+            trajectory.push({ state: state, action: action, reward: result.reward });
+            state = result.nextState;
+        }
+
+        // Compute discounted returns
+        var G = 0;
+        for (var t = trajectory.length - 1; t >= 0; t--) {
+            G = trajectory[t].reward + gamma * G;
+            trajectory[t].G = G;
+        }
+
+        // Update policy parameters
+        for (var t = 0; t < trajectory.length; t++) {
+            var grad = logPolicyGradient(trajectory[t].state, trajectory[t].action, theta);
+            theta = addVectors(theta, scaleVector(grad, alpha * trajectory[t].G));
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/" target="_blank">CartPole with REINFORCE</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/box2d/lunar_lander/" target="_blank">Lunar Lander Policy Gradient</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/mountain_car/" target="_blank">Continuous Mountain Car</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/pendulum/" target="_blank">Pendulum Control</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "policy-gradient", title: "Policy Gradient (REINFORCE)", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Visualize policy parameters moving on a reward surface (scatter)
+        function generateSteps() {
+            var steps = [];
+            // Simulate 2D policy parameter space with a reward peak at (5,5)
+            var cx = 5, cy = 5;
+            var px = 9, py = 1; // start far from optimum
+            var lr = 0.15;
+            var trail = [];
+
+            steps.push({
+                points: [{x: px, y: py, r: 8, color: 'var(--accent-red)'},
+                         {x: cx, y: cy, r: 10, color: 'var(--accent-green)'}],
+                explanation: 'Policy Gradient: red dot = current policy parameters (&theta;1, &theta;2). Green = optimal policy region. We ascend the expected reward surface.'
+            });
+
+            for (var i = 0; i < 20; i++) {
+                // Gradient toward center + noise (high variance of REINFORCE)
+                var gx = (cx - px) * 0.2 + (Math.random() - 0.5) * 1.5;
+                var gy = (cy - py) * 0.2 + (Math.random() - 0.5) * 1.5;
+                px += lr * gx;
+                py += lr * gy;
+                trail.push({x: px, y: py, r: 3, color: 'var(--accent-amber)'});
+
+                var pts = trail.map(function(p) { return {x:p.x, y:p.y, r:p.r, color:p.color}; });
+                pts.push({x: px, y: py, r: 8, color: 'var(--accent-red)'});
+                pts.push({x: cx, y: cy, r: 10, color: 'var(--accent-green)'});
+
+                var dist = Math.sqrt((px-cx)*(px-cx)+(py-cy)*(py-cy));
+                steps.push({
+                    points: pts,
+                    explanation: 'Episode ' + (i+1) + ': &theta; updated via REINFORCE gradient. Notice the noisy path (high variance). Distance to optimum: ' + dist.toFixed(2)
+                });
+            }
+
+            steps.push({
+                points: trail.map(function(p) { return {x:p.x,y:p.y,r:3,color:p.color}; }).concat([
+                    {x: px, y: py, r: 8, color: 'var(--accent-red)'},
+                    {x: cx, y: cy, r: 10, color: 'var(--accent-green)'}
+                ]),
+                explanation: 'Policy gradient converged near optimum. The noisy trajectory is characteristic of REINFORCE — variance reduction via baselines helps.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1],
+            type: 'scatter',
+            renderOptions: { minX: -1, maxX: 11, minY: -1, maxY: 11 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

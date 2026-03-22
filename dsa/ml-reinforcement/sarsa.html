@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SARSA — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>SARSA</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(S&middot;A&middot;episodes)</span>
+            <span class="complexity-tag">Space: O(S&middot;A)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>SARSA (State-Action-Reward-State-Action) is an on-policy reinforcement learning algorithm. Unlike Q-Learning which uses the max Q-value of the next state, SARSA updates using the Q-value of the action <em>actually taken</em> in the next state:</p>
+            <p><code>Q(s, a) &larr; Q(s, a) + &alpha; [r + &gamma; Q(s', a') - Q(s, a)]</code></p>
+            <p>Because SARSA follows and improves the policy it is actually using (including exploration), it tends to learn safer, more conservative paths. Near cliffs or penalties, SARSA avoids risky edges that Q-Learning might exploit, making it better suited for situations where the exploration policy matters during training.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-route"></i>
+                    <h4>On-Policy</h4>
+                    <p>Updates Q using the action the agent actually takes next.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Conservative</h4>
+                    <p>Learns safer paths by accounting for exploration noise.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-sync-alt"></i>
+                    <h4>Tuple Update</h4>
+                    <p>Uses (S, A, R, S', A') — hence the name SARSA.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>vs Q-Learning</h4>
+                    <p>Same convergence guarantees but with different path characteristics.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function sarsa(env, episodes, alpha, gamma, epsilon) {
+    var Q = {};
+    for (var ep = 0; ep < episodes; ep++) {
+        var state = env.reset();
+        var action = epsilonGreedy(Q, state, epsilon);
+
+        while (!env.done(state)) {
+            var result = env.step(state, action);
+            var nextState = result.nextState;
+            var reward = result.reward;
+            var nextAction = epsilonGreedy(Q, nextState, epsilon);
+
+            if (!Q[state]) Q[state] = {};
+            if (!Q[state][action]) Q[state][action] = 0;
+            var nextQ = (Q[nextState] && Q[nextState][nextAction]) || 0;
+
+            // On-policy update: use actual next action
+            Q[state][action] += alpha * (reward + gamma * nextQ - Q[state][action]);
+
+            state = nextState;
+            action = nextAction;
+        }
+    }
+    return Q;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/frozen_lake/" target="_blank">Frozen Lake with SARSA</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/cliff_walking/" target="_blank">Cliff Walking — SARSA vs Q-Learning</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/taxi/" target="_blank">Taxi-v3 On-Policy</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/mountain_car/" target="_blank">Mountain Car with SARSA</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "sarsa", title: "SARSA", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        var ROWS = 5, COLS = 5;
+        var WALLS = [[1,2],[3,3],[2,1]];
+        var GOAL = [4,4];
+        var START = [0,0];
+        var ACTIONS = [[0,1],[0,-1],[1,0],[-1,0]];
+        var ACTION_NAMES = ['R','L','D','U'];
+        var alpha = 0.5, gamma = 0.9, epsilon = 0.3;
+
+        function isWall(r,c) {
+            for (var i = 0; i < WALLS.length; i++) {
+                if (WALLS[i][0] === r && WALLS[i][1] === c) return true;
+            }
+            return false;
+        }
+
+        function generateSteps() {
+            var steps = [];
+            var Q = [];
+            for (var r = 0; r < ROWS; r++) {
+                Q[r] = [];
+                for (var c = 0; c < COLS; c++) {
+                    Q[r][c] = [0,0,0,0];
+                }
+            }
+
+            function bestQ(r,c) { return Math.max.apply(null, Q[r][c]); }
+
+            function epsGreedy(r,c) {
+                if (Math.random() < epsilon) return Math.floor(Math.random() * 4);
+                var best = 0;
+                for (var a = 1; a < 4; a++) { if (Q[r][c][a] > Q[r][c][best]) best = a; }
+                return best;
+            }
+
+            function makeGrid(agentR, agentC) {
+                var grid = [];
+                for (var r = 0; r < ROWS; r++) {
+                    var row = [];
+                    for (var c = 0; c < COLS; c++) {
+                        var val = bestQ(r,c).toFixed(1);
+                        var st = '';
+                        if (isWall(r,c)) { val = 'W'; st = 'wall'; }
+                        else if (r === GOAL[0] && c === GOAL[1]) { val = 'G'; st = 'found'; }
+                        if (r === agentR && c === agentC) st = 'comparing';
+                        row.push({ value: val, state: st });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({ grid: makeGrid(0,0), explanation: 'SARSA on 5x5 grid. On-policy: updates use the action actually chosen next (including exploratory moves).' });
+
+            for (var ep = 0; ep < 8; ep++) {
+                var cr = START[0], cc = START[1];
+                var ai = epsGreedy(cr, cc);
+                for (var m = 0; m < 30; m++) {
+                    if (cr === GOAL[0] && cc === GOAL[1]) break;
+                    var nr = cr + ACTIONS[ai][0], nc = cc + ACTIONS[ai][1];
+                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || isWall(nr,nc)) { nr = cr; nc = cc; }
+                    var reward = (nr === GOAL[0] && nc === GOAL[1]) ? 10 : -0.1;
+                    var nai = epsGreedy(nr, nc);
+                    Q[cr][cc][ai] += alpha * (reward + gamma * Q[nr][nc][nai] - Q[cr][cc][ai]);
+                    steps.push({ grid: makeGrid(nr, nc), explanation: 'Ep ' + (ep+1) + ', step ' + (m+1) + ': took ' + ACTION_NAMES[ai] + ' to (' + nr + ',' + nc + '). Next action: ' + ACTION_NAMES[nai] + '. On-policy Q update.' });
+                    cr = nr; cc = nc; ai = nai;
+                }
+            }
+
+            steps.push({ grid: makeGrid(-1,-1), explanation: 'Training complete. SARSA learns a safer, more conservative policy compared to Q-Learning.' });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'grid', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

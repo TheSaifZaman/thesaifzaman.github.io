@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-Learning — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Q-Learning</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(S&middot;A&middot;episodes)</span>
+            <span class="complexity-tag">Space: O(S&middot;A)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Q-Learning is a model-free reinforcement learning algorithm that learns the value of taking an action in a particular state. It maintains a Q-table mapping every (state, action) pair to an expected cumulative reward. The agent explores the environment, and after each action it updates the Q-value using the Bellman equation:</p>
+            <p><code>Q(s, a) &larr; Q(s, a) + &alpha; [r + &gamma; max Q(s', a') - Q(s, a)]</code></p>
+            <p>Because Q-Learning uses the maximum Q-value of the next state (regardless of the action actually taken), it is an <strong>off-policy</strong> algorithm. Over many episodes the Q-values converge to the optimal action-value function, allowing the agent to derive an optimal policy by always choosing the action with the highest Q-value in each state.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-table"></i>
+                    <h4>Q-Table</h4>
+                    <p>Stores expected rewards for every state-action pair.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-random"></i>
+                    <h4>&epsilon;-Greedy</h4>
+                    <p>Balances exploration (random) and exploitation (best Q).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h4>Off-Policy</h4>
+                    <p>Updates use max future Q regardless of action taken.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-infinity"></i>
+                    <h4>Convergence</h4>
+                    <p>Guaranteed to converge with sufficient exploration and decaying &epsilon;.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function qLearning(env, episodes, alpha, gamma, epsilon) {
+    var Q = {};  // Q[state][action] = value
+    for (var ep = 0; ep < episodes; ep++) {
+        var state = env.reset();
+        while (!env.done(state)) {
+            var action;
+            if (Math.random() < epsilon) {
+                action = env.randomAction(state);
+            } else {
+                action = argMax(Q[state]);
+            }
+            var result = env.step(state, action);
+            var reward = result.reward;
+            var next = result.nextState;
+
+            if (!Q[state]) Q[state] = {};
+            if (!Q[state][action]) Q[state][action] = 0;
+            if (!Q[next]) Q[next] = {};
+
+            var maxNext = Math.max.apply(null,
+                env.actions(next).map(function(a) {
+                    return Q[next][a] || 0;
+                }));
+            Q[state][action] += alpha * (reward + gamma * maxNext - Q[state][action]);
+            state = next;
+        }
+    }
+    return Q;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/frozen_lake/" target="_blank">Frozen Lake (OpenAI Gym)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/taxi/" target="_blank">Taxi-v3 (OpenAI Gym)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/cliff_walking/" target="_blank">Cliff Walking (OpenAI Gym)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/mountain_car/" target="_blank">Mountain Car (Discretized)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/" target="_blank">CartPole with Q-Table</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://www.gymlibrary.dev/environments/toy_text/frozen_lake/" target="_blank">Grid World Navigation</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "q-learning", title: "Q-Learning", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // 5x5 Grid World: agent at (0,0), goal at (4,4), walls at (1,1),(2,3),(3,1)
+        var ROWS = 5, COLS = 5;
+        var WALLS = [[1,1],[2,3],[3,1]];
+        var GOAL = [4,4];
+        var START = [0,0];
+        var ACTIONS = [[0,1],[0,-1],[1,0],[-1,0]]; // right,left,down,up
+        var ACTION_NAMES = ['R','L','D','U'];
+        var alpha = 0.5, gamma = 0.9;
+
+        function isWall(r,c) {
+            for (var i = 0; i < WALLS.length; i++) {
+                if (WALLS[i][0] === r && WALLS[i][1] === c) return true;
+            }
+            return false;
+        }
+
+        function generateSteps() {
+            var steps = [];
+            // Initialize Q-table to zeros
+            var Q = [];
+            for (var r = 0; r < ROWS; r++) {
+                Q[r] = [];
+                for (var c = 0; c < COLS; c++) {
+                    Q[r][c] = [0,0,0,0];
+                }
+            }
+
+            function bestQ(r,c) {
+                return Math.max.apply(null, Q[r][c]);
+            }
+
+            function makeGrid(agentR, agentC, info) {
+                var grid = [];
+                for (var r = 0; r < ROWS; r++) {
+                    var row = [];
+                    for (var c = 0; c < COLS; c++) {
+                        var val = bestQ(r,c).toFixed(1);
+                        var st = '';
+                        if (isWall(r,c)) { val = 'W'; st = 'wall'; }
+                        else if (r === GOAL[0] && c === GOAL[1]) { val = 'G'; st = 'found'; }
+                        if (r === agentR && c === agentC) st = 'comparing';
+                        row.push({ value: val, state: st });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            steps.push({ grid: makeGrid(0,0), explanation: 'Q-Learning on a 5x5 grid. Agent starts at (0,0), goal at (4,4). W = wall. Values show max Q.' });
+
+            // Run several episodes
+            var episodes = 8;
+            for (var ep = 0; ep < episodes; ep++) {
+                var cr = START[0], cc = START[1];
+                var maxMoves = 30;
+                for (var m = 0; m < maxMoves; m++) {
+                    if (cr === GOAL[0] && cc === GOAL[1]) break;
+                    // epsilon-greedy
+                    var ai;
+                    if (Math.random() < 0.3) {
+                        ai = Math.floor(Math.random() * 4);
+                    } else {
+                        ai = 0;
+                        for (var a = 1; a < 4; a++) {
+                            if (Q[cr][cc][a] > Q[cr][cc][ai]) ai = a;
+                        }
+                    }
+                    var nr = cr + ACTIONS[ai][0], nc = cc + ACTIONS[ai][1];
+                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || isWall(nr,nc)) {
+                        nr = cr; nc = cc;
+                    }
+                    var reward = (nr === GOAL[0] && nc === GOAL[1]) ? 10 : -0.1;
+                    var maxNextQ = bestQ(nr, nc);
+                    Q[cr][cc][ai] += alpha * (reward + gamma * maxNextQ - Q[cr][cc][ai]);
+
+                    steps.push({ grid: makeGrid(nr, nc), explanation: 'Episode ' + (ep+1) + ', step ' + (m+1) + ': moved ' + ACTION_NAMES[ai] + ' to (' + nr + ',' + nc + '). Reward: ' + reward.toFixed(1) + '. Q updated.' });
+                    cr = nr; cc = nc;
+                }
+                steps.push({ grid: makeGrid(cr, cc), explanation: 'Episode ' + (ep+1) + ' complete. Agent ' + (cr === GOAL[0] && cc === GOAL[1] ? 'reached the goal!' : 'ran out of moves.') });
+            }
+
+            steps.push({ grid: makeGrid(-1,-1), explanation: 'Training complete. Q-values show learned state values. Higher values indicate states closer to the goal on the optimal path.' });
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1],
+            type: 'grid',
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

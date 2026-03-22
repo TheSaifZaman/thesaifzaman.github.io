@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proximal Policy Optimization — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Proximal Policy Optimization (PPO)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Proximal Policy Optimization (PPO) is a policy gradient method that prevents destructively large policy updates by clipping the objective function. It computes the ratio r(&theta;) = &pi;_new(a|s) / &pi;_old(a|s) and clips it to stay within [1-&epsilon;, 1+&epsilon;].</p>
+            <p>The clipped objective is: <code>L = min(r(&theta;) &middot; A, clip(r(&theta;), 1-&epsilon;, 1+&epsilon;) &middot; A)</code></p>
+            <p>This keeps updates "proximal" (close) to the previous policy, ensuring stable and monotonic improvement. PPO is the algorithm behind RLHF (Reinforcement Learning from Human Feedback) used to fine-tune large language models like ChatGPT, making it one of the most impactful RL algorithms in practice.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-cut"></i>
+                    <h4>Clipped Objective</h4>
+                    <p>Prevents policy from changing too much in one update.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Stable Training</h4>
+                    <p>Monotonic improvement without trust region constraints.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-robot"></i>
+                    <h4>RLHF Backbone</h4>
+                    <p>Core algorithm for aligning LLMs with human preferences.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-cogs"></i>
+                    <h4>Practical</h4>
+                    <p>Simpler than TRPO with comparable or better performance.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function ppoUpdate(trajectories, policy, valueFn, clipEpsilon, epochs) {
+    // Compute advantages using GAE
+    var advantages = computeGAE(trajectories, valueFn);
+
+    // Store old policy probabilities
+    var oldProbs = trajectories.map(function(t) {
+        return policy.prob(t.state, t.action);
+    });
+
+    for (var epoch = 0; epoch < epochs; epoch++) {
+        for (var i = 0; i < trajectories.length; i++) {
+            var t = trajectories[i];
+            var newProb = policy.prob(t.state, t.action);
+            var ratio = newProb / oldProbs[i];
+
+            // Clipped surrogate objective
+            var unclipped = ratio * advantages[i];
+            var clipped = Math.min(
+                Math.max(ratio, 1 - clipEpsilon),
+                1 + clipEpsilon
+            ) * advantages[i];
+
+            var policyLoss = -Math.min(unclipped, clipped);
+            var valueLoss = Math.pow(valueFn(t.state) - t.returns, 2);
+
+            // Update both networks
+            policy.update(policyLoss);
+            valueFn.update(valueLoss);
+        }
+    }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/" target="_blank">CartPole with PPO</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/box2d/lunar_lander/" target="_blank">Lunar Lander PPO</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/mujoco/" target="_blank">MuJoCo Continuous Control</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://huggingface.co/docs/trl/main/en/ppo_trainer" target="_blank">RLHF with PPO (TRL)</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "ppo", title: "Proximal Policy Optimization", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Scatter: show clipped policy updates on a 2D parameter space
+        function generateSteps() {
+            var steps = [];
+            var cx = 5, cy = 5; // optimal
+            var px = 8.5, py = 1.5;
+            var clipEps = 0.2;
+            var trail = [];
+
+            steps.push({
+                points: [
+                    {x:px, y:py, r:8, color:'var(--accent-red)'},
+                    {x:cx, y:cy, r:10, color:'var(--accent-green)'}
+                ],
+                explanation: 'PPO: red = current policy, green = optimal. PPO clips updates to prevent the policy from moving too far in one step.'
+            });
+
+            for (var i = 0; i < 25; i++) {
+                // Compute unclipped gradient
+                var gx = (cx - px) * 0.3 + (Math.random()-0.5)*0.8;
+                var gy = (cy - py) * 0.3 + (Math.random()-0.5)*0.8;
+
+                // Clip the update magnitude (PPO's key idea)
+                var mag = Math.sqrt(gx*gx + gy*gy);
+                var maxStep = 0.6; // clip radius
+                if (mag > maxStep) {
+                    gx = gx / mag * maxStep;
+                    gy = gy / mag * maxStep;
+                }
+
+                px += gx;
+                py += gy;
+                trail.push({x:px, y:py, r:3, color:'var(--accent-amber)'});
+
+                var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                pts.push({x:px, y:py, r:8, color:'var(--accent-red)'});
+                pts.push({x:cx, y:cy, r:10, color:'var(--accent-green)'});
+
+                var dist = Math.sqrt((px-cx)*(px-cx)+(py-cy)*(py-cy));
+                steps.push({
+                    points: pts,
+                    explanation: 'Epoch ' + (i+1) + ': policy ratio clipped to [' + (1-clipEps).toFixed(1) + ', ' + (1+clipEps).toFixed(1) + ']. Update magnitude: ' + mag.toFixed(2) + (mag > maxStep ? ' (CLIPPED)' : '') + '. Distance: ' + dist.toFixed(2)
+                });
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:3,color:p.color};});
+            finalPts.push({x:px, y:py, r:8, color:'var(--accent-red)'});
+            finalPts.push({x:cx, y:cy, r:10, color:'var(--accent-green)'});
+            steps.push({
+                points: finalPts,
+                explanation: 'PPO converged near optimum. Notice the smoother, more controlled path compared to vanilla policy gradient — this is the benefit of clipping.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz',
+            data: [1],
+            type: 'scatter',
+            renderOptions: { minX: -1, maxX: 11, minY: -1, maxY: 11 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

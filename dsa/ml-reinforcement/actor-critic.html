@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actor-Critic — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Actor-Critic</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(T&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Actor-Critic methods combine two neural networks: the <strong>Actor</strong> learns a policy &pi;(a|s) that decides which action to take, and the <strong>Critic</strong> learns a value function V(s) that evaluates how good the current state is. The critic provides a lower-variance baseline for the actor's gradient updates.</p>
+            <p>The advantage function A(s,a) = r + &gamma;V(s') - V(s) tells the actor whether the action was better or worse than expected. This dramatically reduces the variance problem of pure policy gradient methods while maintaining the ability to handle continuous action spaces.</p>
+            <p>Modern variants like A2C (synchronous) and A3C (asynchronous) use parallel workers for faster and more stable training.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-theater-masks"></i>
+                    <h4>Actor (Policy)</h4>
+                    <p>Learns which actions to take in each state.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-glasses"></i>
+                    <h4>Critic (Value)</h4>
+                    <p>Evaluates states to provide a baseline for the actor.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    <h4>Lower Variance</h4>
+                    <p>Advantage function reduces variance vs pure REINFORCE.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h4>A2C / A3C</h4>
+                    <p>Parallel workers for faster, more stable training.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function actorCritic(env, episodes, alphaActor, alphaCritic, gamma) {
+    var actorParams = randomParams();  // policy network
+    var criticParams = randomParams(); // value network
+
+    for (var ep = 0; ep < episodes; ep++) {
+        var state = env.reset();
+
+        while (!env.done()) {
+            var probs = actorForward(state, actorParams);
+            var action = sampleFromDistribution(probs);
+            var result = env.step(action);
+            var nextState = result.nextState;
+
+            // Critic evaluates current and next state
+            var V = criticForward(state, criticParams);
+            var Vnext = env.done() ? 0 : criticForward(nextState, criticParams);
+
+            // Temporal Difference error (advantage)
+            var advantage = result.reward + gamma * Vnext - V;
+
+            // Update critic: minimize TD error
+            var criticGrad = criticBackward(state, criticParams);
+            criticParams = addVectors(criticParams,
+                scaleVector(criticGrad, alphaCritic * advantage));
+
+            // Update actor: reinforce with advantage
+            var actorGrad = logPolicyGradient(state, action, actorParams);
+            actorParams = addVectors(actorParams,
+                scaleVector(actorGrad, alphaActor * advantage));
+
+            state = nextState;
+        }
+    }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/" target="_blank">CartPole with A2C</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://www.gymlibrary.dev/environments/box2d/lunar_lander/" target="_blank">Lunar Lander Actor-Critic</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://www.gymlibrary.dev/environments/classic_control/pendulum/" target="_blank">Pendulum Continuous A2C</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://www.gymlibrary.dev/environments/mujoco/" target="_blank">MuJoCo Walker A3C</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "actor-critic", title: "Actor-Critic", category: "Reinforcement Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+
+            // Actor network
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'s1'},{label:'s2'}] },
+                    { nodes: [{label:''},{label:''},{label:''}], weights: [[0.5,0.3,0.7],[0.4,0.8,0.2]] },
+                    { nodes: [{label:'a1'},{label:'a2'}], weights: [[0.6,0.4],[0.3,0.7],[0.5,0.5]] }
+                ],
+                explanation: 'ACTOR network: takes state → outputs action probabilities. This network learns WHAT to do.'
+            });
+
+            // Critic network
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'s1'},{label:'s2'}] },
+                    { nodes: [{label:''},{label:''},{label:''}], weights: [[0.6,0.2,0.5],[0.3,0.7,0.4]] },
+                    { nodes: [{label:'V(s)'}], weights: [[0.8],[0.4],[0.6]] }
+                ],
+                explanation: 'CRITIC network: takes state → outputs state value V(s). This network learns HOW GOOD the state is.'
+            });
+
+            // Training loop visualization
+            var reward = 0;
+            for (var ep = 0; ep < 12; ep++) {
+                var advantage = (Math.random() - 0.3) * 5;
+                reward += advantage * 0.3;
+                var actorW = 0.3 + Math.random() * 0.5;
+                var criticW = 0.3 + Math.random() * 0.5;
+
+                steps.push({
+                    type: 'network',
+                    layers: [
+                        { nodes: [{label:'s1'},{label:'s2'}] },
+                        { nodes: [{label:''},{label:''},{label:''}], weights: [[actorW,0.3,0.7],[0.4,criticW,0.2]] },
+                        { nodes: [{label:'a1',state:advantage>0?'active':''},{label:'a2',state:advantage<=0?'active':''}], weights: [[0.6,0.4],[0.3,0.7],[0.5,0.5]] }
+                    ],
+                    explanation: 'Step ' + (ep+1) + ': Advantage = ' + advantage.toFixed(2) + (advantage > 0 ? ' (action was better than expected → reinforce)' : ' (action was worse than expected → suppress)') + '. Cumulative reward: ' + reward.toFixed(1)
+                });
+            }
+
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'s1'},{label:'s2'}] },
+                    { nodes: [{label:''},{label:''},{label:'',state:'active'},{label:''}], weights: [[0.8,0.1,0.9,0.2],[0.1,0.7,0.8,0.3]] },
+                    { nodes: [{label:'a1',state:'active'},{label:'a2'}], weights: [[0.9,0.1],[0.2,0.8],[0.7,0.3],[0.4,0.6]] }
+                ],
+                explanation: 'Training complete. Actor has learned a strong policy. Critic provides stable value estimates reducing variance of policy updates.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'network', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>
