@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isomap — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Isomap</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&sup2;&middot;log n)</span>
+            <span class="complexity-tag">Space: O(n&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Isomap (Isometric Mapping) is a nonlinear dimensionality reduction method that preserves geodesic distances rather than Euclidean distances. It extends classical Multidimensional Scaling (MDS) by estimating geodesic distances through a neighborhood graph.</p>
+            <p>The algorithm: (1) Build a k-nearest neighbor graph, (2) Compute shortest path distances between all pairs (geodesic distances) using Dijkstra's or Floyd-Warshall, (3) Apply classical MDS on the geodesic distance matrix to find the low-dimensional embedding. This allows Isomap to "unfold" curved manifolds like the Swiss Roll.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Geodesic:</strong> Preserves distances along the manifold, not through it.</li>
+                    <li><strong>Global structure:</strong> Maintains large-scale geometry.</li>
+                    <li><strong>Manifold learning:</strong> Can unfold curved surfaces (Swiss Roll).</li>
+                    <li><strong>Sensitive to:</strong> Choice of k and short-circuit edges.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function isomap(points, k, nComponents) {
+    var n = points.length;
+
+    // 1. Build k-NN graph
+    var graph = buildKNNGraph(points, k);
+
+    // 2. Compute geodesic distances (shortest paths)
+    var dist = floydWarshall(graph);
+
+    // 3. Apply classical MDS
+    // Center the squared distance matrix
+    var D2 = dist.map(function(row) {
+        return row.map(function(d) { return d * d; });
+    });
+
+    // Double centering: B = -0.5 * H * D2 * H
+    var H = centeringMatrix(n);
+    var B = matMul(matMul(H, D2), H);
+    for (var i = 0; i < n; i++)
+        for (var j = 0; j < n; j++)
+            B[i][j] *= -0.5;
+
+    // 4. Eigendecompose B, take top nComponents
+    var eigen = eigenDecompose(B);
+    var embedding = [];
+    for (var i2 = 0; i2 < n; i2++) {
+        var coord = [];
+        for (var c = 0; c < nComponents; c++) {
+            coord.push(
+                Math.sqrt(eigen.values[c]) *
+                eigen.vectors[c][i2]
+            );
+        }
+        embedding.push(coord);
+    }
+
+    return embedding;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1334</td><td><a href="https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/" target="_blank">Find City With Smallest Neighbors</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "isomap", title: "Isomap", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Points on a curved manifold (S-shape) in 2D
+    var manifoldPoints = [
+        {x:1,y:8},{x:1.5,y:7.5},{x:2,y:7},{x:2.5,y:6.5},{x:3,y:6},
+        {x:3.5,y:5.5},{x:4,y:5},{x:4.5,y:5},{x:5,y:5.5},{x:5.5,y:6},
+        {x:6,y:6.5},{x:6.5,y:7},{x:7,y:7.5},{x:7.5,y:8},{x:8,y:8.5}
+    ];
+    var COLORS_GRADIENT = manifoldPoints.map(function(p, i) {
+        var t = i / (manifoldPoints.length - 1);
+        var r = Math.round(231 * (1-t) + 46 * t);
+        var g = Math.round(76 * (1-t) + 204 * t);
+        var b = Math.round(60 * (1-t) + 113 * t);
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+    });
+
+    function pdist(a,b) { return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)); }
+
+    function generateSteps(data) {
+        var steps = [];
+        var n = manifoldPoints.length;
+
+        steps.push({
+            points: manifoldPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS_GRADIENT[i]};}),
+            explanation: "Data points on a curved manifold. Color gradient shows the true ordering along the curve. Euclidean distances between endpoints are short, but geodesic distances are long."
+        });
+
+        // Build k-NN graph (k=3)
+        var knnLines = [];
+        manifoldPoints.forEach(function(p, i) {
+            var dists = manifoldPoints.map(function(q,j){return {j:j,d:pdist(p,q)};});
+            dists.sort(function(a,b){return a.d-b.d;});
+            for (var k = 1; k <= 3; k++) {
+                knnLines.push({x1:p.x,y1:p.y,x2:manifoldPoints[dists[k].j].x,y2:manifoldPoints[dists[k].j].y,color:'rgba(100,100,100,0.4)'});
+            }
+        });
+
+        steps.push({
+            points: manifoldPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS_GRADIENT[i]};}),
+            lines: knnLines,
+            explanation: "Step 1: Build k-NN graph (k=3). Each point connects to its 3 nearest neighbors. The graph follows the manifold structure."
+        });
+
+        // Highlight geodesic path between endpoints
+        var pathLines = [];
+        for (var i = 0; i < n-1; i++) {
+            pathLines.push({x1:manifoldPoints[i].x,y1:manifoldPoints[i].y,x2:manifoldPoints[i+1].x,y2:manifoldPoints[i+1].y,color:'#e74c3c'});
+        }
+        var directLine = [{x1:manifoldPoints[0].x,y1:manifoldPoints[0].y,x2:manifoldPoints[n-1].x,y2:manifoldPoints[n-1].y,color:'#3498db',dash:'5,5'}];
+
+        steps.push({
+            points: manifoldPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS_GRADIENT[i]};}),
+            lines: pathLines.concat(directLine),
+            explanation: "Step 2: Geodesic distance (red path along manifold) vs Euclidean distance (blue dashed line). Isomap preserves the geodesic distance."
+        });
+
+        steps.push({
+            points: manifoldPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS_GRADIENT[i]};}),
+            explanation: "Step 3: Compute all-pairs shortest paths using Floyd-Warshall on the k-NN graph. This gives the geodesic distance matrix."
+        });
+
+        // Unfolded embedding (points spread along a line)
+        var unfolded = manifoldPoints.map(function(p, i) {
+            var t = i / (n - 1);
+            return {x: 1 + t * 8, y: 5};
+        });
+
+        steps.push({
+            points: unfolded.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS_GRADIENT[i]};}),
+            explanation: "Step 4: Apply MDS on geodesic distances. The manifold is 'unfolded' — points are now evenly spaced, preserving their true ordering along the curve."
+        });
+
+        steps.push({
+            points: unfolded.map(function(p,i){return {x:p.x,y:p.y,r:6,color:COLORS_GRADIENT[i]};}),
+            explanation: "Isomap complete! The 1D embedding preserves geodesic distances. Points that were far apart along the manifold remain far apart in the embedding."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: 0, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

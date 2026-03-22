@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMAP — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>UMAP</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n^1.14)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>UMAP (Uniform Manifold Approximation and Projection) is a dimensionality reduction technique based on manifold learning and topological data analysis. It constructs a high-dimensional graph representation of the data, then optimizes a low-dimensional layout to be as structurally similar as possible.</p>
+            <p>Unlike t-SNE, UMAP preserves more of the global structure and is significantly faster. It uses a fuzzy simplicial set representation of the data manifold: (1) Build a k-nearest-neighbor graph, (2) Convert distances to fuzzy membership strengths, (3) Optimize a low-dimensional embedding using cross-entropy loss.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Preserves global structure:</strong> Better than t-SNE at maintaining distances between clusters.</li>
+                    <li><strong>Fast:</strong> Scales much better than t-SNE for large datasets.</li>
+                    <li><strong>Topological:</strong> Based on Riemannian geometry and algebraic topology.</li>
+                    <li><strong>n_neighbors:</strong> Key parameter controlling local vs global focus.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function umap(data, nNeighbors, minDist, nComponents) {
+    var n = data.length;
+
+    // 1. Build k-NN graph
+    var knnGraph = buildKNNGraph(data, nNeighbors);
+
+    // 2. Compute fuzzy simplicial set
+    // Convert distances to membership strengths
+    var graph = computeFuzzySimplicialSet(
+        knnGraph, nNeighbors
+    );
+
+    // 3. Initialize low-dim embedding (spectral init)
+    var Y = spectralInitialize(graph, nComponents);
+
+    // 4. Optimize layout with SGD
+    var nEpochs = 200;
+    for (var epoch = 0; epoch < nEpochs; epoch++) {
+        var lr = 1.0 * (1.0 - epoch / nEpochs);
+
+        // Attractive forces (connected points)
+        graph.edges.forEach(function(edge) {
+            var grad = attractiveGrad(
+                Y[edge.from], Y[edge.to], minDist
+            );
+            Y[edge.from] = addVec(Y[edge.from],
+                scaleVec(grad, lr));
+        });
+
+        // Repulsive forces (negative sampling)
+        for (var i = 0; i < n; i++) {
+            var j = Math.floor(Math.random() * n);
+            if (i === j) continue;
+            var repGrad = repulsiveGrad(
+                Y[i], Y[j], minDist
+            );
+            Y[i] = addVec(Y[i], scaleVec(repGrad, lr));
+        }
+    }
+
+    return Y;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1515</td><td><a href="https://leetcode.com/problems/best-position-for-a-service-centre/" target="_blank">Best Position for Service Centre</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "umap", title: "UMAP", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var COLORS = ['#e74c3c','#e74c3c','#e74c3c','#e74c3c','#e74c3c',
+                  '#3498db','#3498db','#3498db','#3498db','#3498db',
+                  '#2ecc71','#2ecc71','#2ecc71','#2ecc71','#2ecc71'];
+
+    function generateSteps(data) {
+        var steps = [];
+        var n = allPoints.length;
+
+        steps.push({
+            points: allPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS[i]};}),
+            explanation: "Original data: 3 clusters in the input space. UMAP will find a topology-preserving 2D embedding."
+        });
+
+        // Show k-NN graph
+        var knnLines = [];
+        allPoints.forEach(function(p, i) {
+            var dists = allPoints.map(function(q,j){return {j:j,d:Math.sqrt(Math.pow(p.x-q.x,2)+Math.pow(p.y-q.y,2))};});
+            dists.sort(function(a,b){return a.d-b.d;});
+            for (var k = 1; k <= 3; k++) {
+                var nb = dists[k];
+                knnLines.push({x1:p.x,y1:p.y,x2:allPoints[nb.j].x,y2:allPoints[nb.j].y,color:'rgba(100,100,100,0.3)'});
+            }
+        });
+
+        steps.push({
+            points: allPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS[i]};}),
+            lines: knnLines,
+            explanation: "Step 1: Build k-nearest neighbor graph (k=3). Edges connect each point to its 3 closest neighbors."
+        });
+
+        steps.push({
+            points: allPoints.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS[i]};}),
+            lines: knnLines,
+            explanation: "Step 2: Convert to fuzzy simplicial set — edge weights represent membership strength based on distance and local connectivity."
+        });
+
+        // Simulate UMAP iterations
+        var Y = allPoints.map(function(){ return {x:4+(Math.random()-0.5)*5, y:5+(Math.random()-0.5)*5}; });
+        var targets = [
+            {x:2,y:8},{x:2.5,y:8.5},{x:1.5,y:8},{x:2,y:7.5},{x:2.5,y:7},
+            {x:8,y:8},{x:8.5,y:8.5},{x:8,y:7.5},{x:7.5,y:8},{x:7.5,y:7.5},
+            {x:5,y:2},{x:5.5,y:2.5},{x:4.5,y:2},{x:5,y:1.5},{x:5.5,y:1}
+        ];
+
+        steps.push({
+            points: Y.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS[i]};}),
+            explanation: "Step 3: Initialize random 2D embedding. Optimize with SGD to match the topological structure."
+        });
+
+        var numIters = 5;
+        for (var iter = 1; iter <= numIters; iter++) {
+            var t = iter / numIters;
+            var ease = t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
+
+            var current = Y.map(function(p,i){
+                return {x: p.x+(targets[i].x-p.x)*ease, y: p.y+(targets[i].y-p.y)*ease};
+            });
+
+            steps.push({
+                points: current.map(function(p,i){return {x:p.x,y:p.y,r:5,color:COLORS[i]};}),
+                explanation: "Epoch " + (iter*40) + ": Attractive forces pull neighbors together, repulsive forces push non-neighbors apart."
+            });
+        }
+
+        steps.push({
+            points: targets.map(function(p,i){return {x:p.x,y:p.y,r:6,color:COLORS[i]};}),
+            explanation: "UMAP complete! Embedding preserves both local neighborhoods and relative cluster positions (global structure)."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: 0, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

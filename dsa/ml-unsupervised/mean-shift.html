@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mean Shift — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Mean Shift</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&sup2;)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Mean Shift is a non-parametric clustering algorithm that does not require specifying the number of clusters. It works by iteratively shifting each data point toward the mean of points within its bandwidth (kernel window), effectively moving points toward density peaks.</p>
+            <p>Each point is treated as a candidate centroid. At each iteration, the algorithm computes the mean of all points within the bandwidth radius and shifts the candidate toward that mean. Points that converge to the same peak are assigned to the same cluster.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>No k required:</strong> Number of clusters determined automatically.</li>
+                    <li><strong>Mode seeking:</strong> Finds peaks in the density function.</li>
+                    <li><strong>Bandwidth:</strong> Single parameter controlling kernel size.</li>
+                    <li><strong>Convergence:</strong> Guaranteed to converge to local density maxima.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function meanShift(points, bandwidth, maxIter) {
+    var shifted = points.map(function(p) {
+        return { x: p.x, y: p.y };
+    });
+
+    for (var iter = 0; iter < maxIter; iter++) {
+        var moved = false;
+        shifted.forEach(function(s) {
+            var sumX = 0, sumY = 0, count = 0;
+            points.forEach(function(p) {
+                var d = Math.sqrt(
+                    Math.pow(s.x - p.x, 2) +
+                    Math.pow(s.y - p.y, 2)
+                );
+                if (d <= bandwidth) {
+                    // Gaussian kernel weight
+                    var w = Math.exp(-(d * d) /
+                        (2 * bandwidth * bandwidth));
+                    sumX += w * p.x;
+                    sumY += w * p.y;
+                    count += w;
+                }
+            });
+            if (count > 0) {
+                var newX = sumX / count;
+                var newY = sumY / count;
+                if (Math.abs(newX-s.x) > 0.01 ||
+                    Math.abs(newY-s.y) > 0.01) moved = true;
+                s.x = newX;
+                s.y = newY;
+            }
+        });
+        if (!moved) break;
+    }
+    return shifted; // cluster by proximity of converged points
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1515</td><td><a href="https://leetcode.com/problems/best-position-for-a-service-centre/" target="_blank">Best Position for Service Centre</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "mean-shift", title: "Mean Shift", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var BANDWIDTH = 2.0;
+    var COLORS = ['#e74c3c','#3498db','#2ecc71'];
+
+    function generateSteps(data) {
+        var steps = [];
+        var shifted = allPoints.map(function(p) { return {x:p.x,y:p.y}; });
+
+        steps.push({
+            points: shifted.map(function(s) { return {x:s.x,y:s.y,r:5,color:'#888'}; }),
+            explanation: "Initial state: 15 points. Mean Shift will move each point toward the nearest density peak (bandwidth=" + BANDWIDTH + ")."
+        });
+
+        for (var iter = 0; iter < 10; iter++) {
+            var moved = false;
+            shifted.forEach(function(s) {
+                var sumX = 0, sumY = 0, wSum = 0;
+                allPoints.forEach(function(p) {
+                    var d = Math.sqrt(Math.pow(s.x-p.x,2)+Math.pow(s.y-p.y,2));
+                    if (d <= BANDWIDTH) {
+                        var w = Math.exp(-(d*d)/(2*BANDWIDTH*BANDWIDTH));
+                        sumX += w*p.x; sumY += w*p.y; wSum += w;
+                    }
+                });
+                if (wSum > 0) {
+                    var nx = sumX/wSum, ny = sumY/wSum;
+                    if (Math.abs(nx-s.x)>0.01 || Math.abs(ny-s.y)>0.01) moved = true;
+                    s.x = nx; s.y = ny;
+                }
+            });
+
+            // Color by proximity to peaks
+            var peaks = [];
+            shifted.forEach(function(s) {
+                var found = false;
+                for (var pi = 0; pi < peaks.length; pi++) {
+                    if (Math.sqrt(Math.pow(s.x-peaks[pi].x,2)+Math.pow(s.y-peaks[pi].y,2)) < 1.0) {
+                        found = true; break;
+                    }
+                }
+                if (!found) peaks.push({x:s.x,y:s.y});
+            });
+
+            var vizPts = shifted.map(function(s) {
+                var best = 0, minD = Infinity;
+                peaks.forEach(function(pk,pi) {
+                    var d = Math.sqrt(Math.pow(s.x-pk.x,2)+Math.pow(s.y-pk.y,2));
+                    if (d < minD) { minD = d; best = pi; }
+                });
+                return {x:s.x,y:s.y,r:5,color:COLORS[best % COLORS.length]};
+            });
+
+            steps.push({
+                points: vizPts,
+                explanation: "Iteration " + (iter+1) + ": points shifted toward density peaks. " + peaks.length + " convergence region(s) detected."
+            });
+
+            if (!moved) {
+                steps.push({ points: vizPts, explanation: "Converged! Points have drifted to " + peaks.length + " density peaks. Mean Shift complete." });
+                break;
+            }
+        }
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPTICS — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>OPTICS</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>OPTICS (Ordering Points To Identify the Clustering Structure) is an extension of DBSCAN that handles varying density clusters. Instead of producing a flat clustering, it creates an ordering of points augmented with reachability distances that can be used to extract clusters at multiple density levels.</p>
+            <p>The algorithm maintains a reachability distance for each point, which is the maximum of its core distance and its distance to the point from which it was reached. The resulting reachability plot shows valleys for dense clusters and peaks for cluster boundaries.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Varying density:</strong> Handles clusters of different densities.</li>
+                    <li><strong>Reachability plot:</strong> Visual representation of cluster structure.</li>
+                    <li><strong>Extends DBSCAN:</strong> DBSCAN is a special case of OPTICS.</li>
+                    <li><strong>Parameter:</strong> minPts and max epsilon (less sensitive than DBSCAN).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function optics(points, eps, minPts) {
+    var n = points.length;
+    var processed = new Array(n).fill(false);
+    var reachability = new Array(n).fill(Infinity);
+    var ordering = [];
+
+    function dist(a, b) {
+        return Math.sqrt(
+            Math.pow(a.x-b.x,2) + Math.pow(a.y-b.y,2)
+        );
+    }
+
+    function getNeighbors(idx) {
+        var neighbors = [];
+        for (var i = 0; i < n; i++) {
+            if (dist(points[idx], points[i]) <= eps) {
+                neighbors.push(i);
+            }
+        }
+        return neighbors;
+    }
+
+    function coreDist(idx, neighbors) {
+        if (neighbors.length < minPts) return Infinity;
+        var dists = neighbors.map(function(ni) {
+            return dist(points[idx], points[ni]);
+        }).sort(function(a,b){return a-b;});
+        return dists[minPts - 1];
+    }
+
+    for (var i = 0; i < n; i++) {
+        if (processed[i]) continue;
+        var neighbors = getNeighbors(i);
+        processed[i] = true;
+        ordering.push(i);
+        var cd = coreDist(i, neighbors);
+
+        if (cd !== Infinity) {
+            // Update reachability of unprocessed neighbors
+            var seeds = [];
+            neighbors.forEach(function(ni) {
+                if (processed[ni]) return;
+                var newReach = Math.max(cd,
+                    dist(points[i], points[ni]));
+                if (newReach < reachability[ni]) {
+                    reachability[ni] = newReach;
+                }
+                seeds.push(ni);
+            });
+            // Process seeds by reachability order
+            seeds.sort(function(a,b) {
+                return reachability[a] - reachability[b];
+            });
+            // ... expand similarly
+        }
+    }
+    return { ordering: ordering, reachability: reachability };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1584</td><td><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">Min Cost to Connect All Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "optics", title: "OPTICS", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var COLORS = ['#e74c3c','#3498db','#2ecc71'];
+    var EPS = 2.5;
+    var MIN_PTS = 3;
+
+    function ddist(a,b) { return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)); }
+
+    function generateSteps(data) {
+        var steps = [];
+        var n = allPoints.length;
+        var processed = new Array(n).fill(false);
+        var reachability = new Array(n).fill(Infinity);
+        var ordering = [];
+
+        steps.push({
+            points: allPoints.map(function(p){return {x:p.x,y:p.y,r:5,color:'#888'};}),
+            explanation: "Initial state: " + n + " points. OPTICS will compute a density-based ordering with reachability distances (eps=" + EPS + ", minPts=" + MIN_PTS + ")."
+        });
+
+        function getNeighbors(idx) {
+            var nb = [];
+            for (var i = 0; i < n; i++) {
+                if (ddist(allPoints[idx], allPoints[i]) <= EPS) nb.push(i);
+            }
+            return nb;
+        }
+
+        function coreDist(idx, neighbors) {
+            if (neighbors.length < MIN_PTS) return Infinity;
+            var dists = neighbors.map(function(ni){ return ddist(allPoints[idx], allPoints[ni]); }).sort(function(a,b){return a-b;});
+            return dists[MIN_PTS - 1];
+        }
+
+        function makeViz(highlightIdx) {
+            return allPoints.map(function(p, i) {
+                var c = '#888';
+                if (processed[i]) {
+                    if (i < 5) c = COLORS[0];
+                    else if (i < 10) c = COLORS[1];
+                    else c = COLORS[2];
+                }
+                var r = (i === highlightIdx) ? 8 : 5;
+                return {x:p.x, y:p.y, r:r, color:c};
+            });
+        }
+
+        // Simplified OPTICS traversal for visualization
+        var queue = [];
+        for (var start = 0; start < n; start++) {
+            if (processed[start]) continue;
+            var nb = getNeighbors(start);
+            processed[start] = true;
+            ordering.push(start);
+            var cd = coreDist(start, nb);
+
+            steps.push({
+                points: makeViz(start),
+                explanation: "Processing point " + start + " at (" + allPoints[start].x + "," + allPoints[start].y + "). Core distance: " + (cd === Infinity ? "Inf" : cd.toFixed(2)) + ". " + ordering.length + " points ordered so far."
+            });
+
+            if (cd !== Infinity) {
+                var seeds = [];
+                nb.forEach(function(ni) {
+                    if (!processed[ni]) {
+                        var nr = Math.max(cd, ddist(allPoints[start], allPoints[ni]));
+                        if (nr < reachability[ni]) reachability[ni] = nr;
+                        seeds.push(ni);
+                    }
+                });
+                seeds.sort(function(a,b){ return reachability[a]-reachability[b]; });
+
+                for (var si = 0; si < seeds.length; si++) {
+                    var q = seeds[si];
+                    if (processed[q]) continue;
+                    processed[q] = true;
+                    ordering.push(q);
+                    var qnb = getNeighbors(q);
+                    var qcd = coreDist(q, qnb);
+
+                    if (ordering.length % 3 === 0 || si === seeds.length - 1) {
+                        steps.push({
+                            points: makeViz(q),
+                            explanation: "Point " + q + " reached with reachability " + reachability[q].toFixed(2) + ". " + ordering.length + "/" + n + " points ordered."
+                        });
+                    }
+
+                    if (qcd !== Infinity) {
+                        qnb.forEach(function(ni) {
+                            if (!processed[ni]) {
+                                var nr = Math.max(qcd, ddist(allPoints[q], allPoints[ni]));
+                                if (nr < reachability[ni]) reachability[ni] = nr;
+                                if (seeds.indexOf(ni) === -1) seeds.push(ni);
+                            }
+                        });
+                        seeds.sort(function(a,b){ return reachability[a]-reachability[b]; });
+                    }
+                }
+            }
+        }
+
+        steps.push({
+            points: makeViz(-1),
+            explanation: "OPTICS complete! Ordering of " + n + " points computed. Valleys in the reachability plot correspond to dense clusters."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

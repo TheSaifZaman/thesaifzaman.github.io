@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBSCAN — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>DBSCAN</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>DBSCAN (Density-Based Spatial Clustering of Applications with Noise) groups points that are closely packed together, marking points in low-density regions as outliers. Unlike K-Means, it does not require specifying the number of clusters and can find arbitrarily shaped clusters.</p>
+            <p>The algorithm uses two parameters: epsilon (neighborhood radius) and minPts (minimum points to form a dense region). A point is a core point if it has at least minPts within its epsilon neighborhood. Border points are within epsilon of a core point but have fewer than minPts neighbors. All other points are noise.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>No k required:</strong> Automatically determines number of clusters.</li>
+                    <li><strong>Handles noise:</strong> Identifies outliers as noise points.</li>
+                    <li><strong>Arbitrary shapes:</strong> Can find non-spherical clusters.</li>
+                    <li><strong>Sensitive to:</strong> Epsilon and minPts parameters.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function dbscan(points, eps, minPts) {
+    var labels = new Array(points.length).fill(-1);
+    var cluster = 0;
+
+    function regionQuery(idx) {
+        var neighbors = [];
+        for (var i = 0; i < points.length; i++) {
+            var d = Math.sqrt(
+                Math.pow(points[i].x - points[idx].x, 2) +
+                Math.pow(points[i].y - points[idx].y, 2)
+            );
+            if (d <= eps) neighbors.push(i);
+        }
+        return neighbors;
+    }
+
+    for (var i = 0; i < points.length; i++) {
+        if (labels[i] !== -1) continue;
+        var neighbors = regionQuery(i);
+        if (neighbors.length < minPts) {
+            labels[i] = 0; // noise
+            continue;
+        }
+        cluster++;
+        labels[i] = cluster;
+        var seed = neighbors.slice();
+        for (var j = 0; j < seed.length; j++) {
+            var q = seed[j];
+            if (labels[q] === 0) labels[q] = cluster;
+            if (labels[q] !== -1) continue;
+            labels[q] = cluster;
+            var qNeighbors = regionQuery(q);
+            if (qNeighbors.length >= minPts) {
+                seed = seed.concat(qNeighbors);
+            }
+        }
+    }
+    return labels;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1584</td><td><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">Min Cost to Connect All Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>1697</td><td><a href="https://leetcode.com/problems/checking-existence-of-edge-length-limited-paths/" target="_blank">Edge Length Limited Paths</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "dbscan", title: "DBSCAN", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var noisePoints = [{x:0,y:7},{x:9,y:3}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3).concat(noisePoints);
+    var COLORS = ['#888','#e74c3c','#3498db','#2ecc71'];
+    var EPS = 1.8;
+    var MIN_PTS = 3;
+
+    function dist(a,b) { return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)); }
+
+    function generateSteps(data) {
+        var steps = [];
+        var labels = new Array(allPoints.length).fill(-1);
+        var cluster = 0;
+
+        steps.push({
+            points: allPoints.map(function(p) { return {x:p.x,y:p.y,r:5,color:'#888'}; }),
+            explanation: "Initial state: 17 points (15 in clusters + 2 noise). DBSCAN with eps=" + EPS + ", minPts=" + MIN_PTS + "."
+        });
+
+        function regionQuery(idx) {
+            var neighbors = [];
+            for (var i = 0; i < allPoints.length; i++) {
+                if (dist(allPoints[i], allPoints[idx]) <= EPS) neighbors.push(i);
+            }
+            return neighbors;
+        }
+
+        function makeViz(highlightIdx, radiusIdx) {
+            var pts = allPoints.map(function(p, i) {
+                var c = labels[i] <= 0 ? '#888' : COLORS[labels[i]] || '#f39c12';
+                var r = 5;
+                if (i === highlightIdx) { r = 8; }
+                return {x:p.x, y:p.y, r:r, color:c};
+            });
+            return pts;
+        }
+
+        for (var i = 0; i < allPoints.length; i++) {
+            if (labels[i] !== -1) continue;
+            var neighbors = regionQuery(i);
+
+            steps.push({
+                points: makeViz(i),
+                explanation: "Checking point " + i + " at (" + allPoints[i].x + "," + allPoints[i].y + "): found " + neighbors.length + " neighbors within eps=" + EPS + "."
+            });
+
+            if (neighbors.length < MIN_PTS) {
+                labels[i] = 0;
+                steps.push({
+                    points: makeViz(i),
+                    explanation: "Point " + i + " has only " + neighbors.length + " neighbors (< minPts=" + MIN_PTS + "). Marked as NOISE."
+                });
+                continue;
+            }
+
+            cluster++;
+            labels[i] = cluster;
+            var seed = neighbors.slice();
+
+            steps.push({
+                points: makeViz(i),
+                explanation: "Point " + i + " is a core point! Starting cluster " + cluster + ". Expanding neighborhood..."
+            });
+
+            for (var j = 0; j < seed.length; j++) {
+                var q = seed[j];
+                if (labels[q] === 0) labels[q] = cluster;
+                if (labels[q] !== -1) continue;
+                labels[q] = cluster;
+                var qN = regionQuery(q);
+                if (qN.length >= MIN_PTS) {
+                    seed = seed.concat(qN);
+                }
+            }
+
+            steps.push({
+                points: makeViz(-1),
+                explanation: "Cluster " + cluster + " fully expanded. " + labels.filter(function(l){return l===cluster;}).length + " points assigned."
+            });
+        }
+
+        steps.push({
+            points: makeViz(-1),
+            explanation: "DBSCAN complete! Found " + cluster + " clusters. Noise points remain gray."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: -1, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

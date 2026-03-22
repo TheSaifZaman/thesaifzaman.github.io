@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principal Component Analysis — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Principal Component Analysis</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(d&sup2;&middot;n)</span>
+            <span class="complexity-tag">Space: O(d&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>PCA finds the directions (principal components) along which data varies the most. It projects high-dimensional data onto a lower-dimensional subspace while preserving maximum variance. The first principal component captures the most variance, the second captures the next most (orthogonal to the first), and so on.</p>
+            <p>The algorithm: (1) Center the data by subtracting the mean, (2) Compute the covariance matrix, (3) Find eigenvalues and eigenvectors, (4) Sort by eigenvalue (descending), (5) Project data onto the top k eigenvectors. In 2D, PCA finds the axis of maximum spread and rotates the coordinate system.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Linear:</strong> Only captures linear relationships.</li>
+                    <li><strong>Orthogonal:</strong> Principal components are mutually perpendicular.</li>
+                    <li><strong>Variance-based:</strong> Maximizes retained variance.</li>
+                    <li><strong>Deterministic:</strong> Same input always gives same result (up to sign).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function pca(data, numComponents) {
+    var n = data.length, d = data[0].length;
+
+    // 1. Compute mean
+    var mean = new Array(d).fill(0);
+    data.forEach(function(row) {
+        for (var j = 0; j < d; j++) mean[j] += row[j];
+    });
+    for (var j = 0; j < d; j++) mean[j] /= n;
+
+    // 2. Center data
+    var centered = data.map(function(row) {
+        return row.map(function(v, j) { return v - mean[j]; });
+    });
+
+    // 3. Covariance matrix (d x d)
+    var cov = [];
+    for (var i = 0; i < d; i++) {
+        cov[i] = [];
+        for (var j2 = 0; j2 < d; j2++) {
+            var s = 0;
+            for (var k = 0; k < n; k++) {
+                s += centered[k][i] * centered[k][j2];
+            }
+            cov[i][j2] = s / (n - 1);
+        }
+    }
+
+    // 4. Eigendecomposition (power iteration for 2D)
+    // Returns eigenvectors sorted by eigenvalue
+    var eigenvectors = eigenDecompose(cov);
+
+    // 5. Project onto top numComponents
+    var projected = centered.map(function(row) {
+        var result = [];
+        for (var c = 0; c < numComponents; c++) {
+            var dot = 0;
+            for (var j3 = 0; j3 < d; j3++) {
+                dot += row[j3] * eigenvectors[c][j3];
+            }
+            result.push(dot);
+        }
+        return result;
+    });
+
+    return { projected: projected, components: eigenvectors };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>48</td><td><a href="https://leetcode.com/problems/rotate-image/" target="_blank">Rotate Image</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>54</td><td><a href="https://leetcode.com/problems/spiral-matrix/" target="_blank">Spiral Matrix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "pca", title: "Principal Component Analysis", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Points with a clear linear correlation (diagonal spread)
+    var rawPoints = [
+        {x:1,y:1.2},{x:1.5,y:2},{x:2,y:2.5},{x:2.5,y:3.2},{x:3,y:3},
+        {x:3.5,y:4},{x:4,y:4.5},{x:4.5,y:5},{x:5,y:5.8},{x:5.5,y:6},
+        {x:6,y:6.2},{x:6.5,y:7},{x:7,y:7.5},{x:7.5,y:8},{x:8,y:8.5}
+    ];
+
+    function generateSteps(data) {
+        var steps = [];
+        var pts = rawPoints.slice();
+        var n = pts.length;
+
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,r:5,color:'#3498db'};}),
+            explanation: "Step 1: Original 2D data with visible correlation. PCA will find the axis of maximum variance."
+        });
+
+        // Compute mean
+        var mx = 0, my = 0;
+        pts.forEach(function(p){ mx+=p.x; my+=p.y; });
+        mx /= n; my /= n;
+
+        // Show mean
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,r:5,color:'#3498db'};})
+                .concat([{x:mx,y:my,r:8,color:'#e74c3c'}]),
+            explanation: "Step 2: Compute mean (" + mx.toFixed(1) + ", " + my.toFixed(1) + ") shown in red. Data will be centered around the mean."
+        });
+
+        // Center data
+        var centered = pts.map(function(p){ return {x:p.x-mx, y:p.y-my}; });
+
+        // Covariance matrix
+        var cxx = 0, cxy = 0, cyy = 0;
+        centered.forEach(function(p){ cxx+=p.x*p.x; cxy+=p.x*p.y; cyy+=p.y*p.y; });
+        cxx /= (n-1); cxy /= (n-1); cyy /= (n-1);
+
+        // Eigenvalues via quadratic formula
+        var trace = cxx + cyy;
+        var det = cxx*cyy - cxy*cxy;
+        var disc = Math.sqrt(trace*trace/4 - det);
+        var e1 = trace/2 + disc;
+        var e2 = trace/2 - disc;
+
+        // Eigenvectors
+        var v1x, v1y, v2x, v2y;
+        if (cxy !== 0) {
+            v1x = e1 - cyy; v1y = cxy;
+            v2x = e2 - cyy; v2y = cxy;
+        } else {
+            v1x = 1; v1y = 0; v2x = 0; v2y = 1;
+        }
+        var len1 = Math.sqrt(v1x*v1x+v1y*v1y);
+        var len2 = Math.sqrt(v2x*v2x+v2y*v2y);
+        v1x/=len1; v1y/=len1; v2x/=len2; v2y/=len2;
+
+        // Scale for display
+        var scale = 3;
+
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,r:5,color:'#3498db'};})
+                .concat([{x:mx,y:my,r:8,color:'#e74c3c'}]),
+            lines: [
+                {x1:mx-v1x*scale,y1:my-v1y*scale,x2:mx+v1x*scale,y2:my+v1y*scale,color:'#e74c3c'},
+                {x1:mx-v2x*scale,y1:my-v2y*scale,x2:mx+v2x*scale,y2:my+v2y*scale,color:'#2ecc71',dash:'5,5'}
+            ],
+            explanation: "Step 3: Covariance matrix computed. PC1 (red, eigenvalue " + e1.toFixed(2) + ") captures maximum variance. PC2 (green dashed, eigenvalue " + e2.toFixed(2) + ") is orthogonal."
+        });
+
+        // Project onto PC1
+        var projected = pts.map(function(p) {
+            var cx = p.x - mx, cy = p.y - my;
+            var dot = cx*v1x + cy*v1y;
+            return {x: mx + dot*v1x, y: my + dot*v1y};
+        });
+
+        steps.push({
+            points: pts.map(function(p){return {x:p.x,y:p.y,r:4,color:'rgba(52,152,219,0.4)'};})
+                .concat(projected.map(function(p){return {x:p.x,y:p.y,r:5,color:'#e74c3c'};})),
+            lines: [
+                {x1:mx-v1x*scale,y1:my-v1y*scale,x2:mx+v1x*scale,y2:my+v1y*scale,color:'#e74c3c'}
+            ],
+            explanation: "Step 4: Data projected onto PC1 (red points on the line). This 1D projection retains " + (100*e1/(e1+e2)).toFixed(1) + "% of total variance."
+        });
+
+        steps.push({
+            points: projected.map(function(p){return {x:p.x,y:p.y,r:5,color:'#e74c3c'};}),
+            lines: [{x1:mx-v1x*scale,y1:my-v1y*scale,x2:mx+v1x*scale,y2:my+v1y*scale,color:'#e74c3c'}],
+            explanation: "PCA complete! Dimensionality reduced from 2D to 1D along the principal component. Variance explained: " + (100*e1/(e1+e2)).toFixed(1) + "%."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: -1, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

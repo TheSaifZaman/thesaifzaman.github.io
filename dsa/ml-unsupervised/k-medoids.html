@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Medoids (PAM) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>K-Medoids (PAM)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&sup2;&middot;k)</span>
+            <span class="complexity-tag">Space: O(n&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>K-Medoids is similar to K-Means but uses actual data points as cluster centers (medoids) instead of computed means. The PAM (Partitioning Around Medoids) algorithm selects k data points as medoids, assigns each point to its nearest medoid, then tries swapping medoids with non-medoid points to minimize total dissimilarity.</p>
+            <p>Unlike K-Means, K-Medoids is more robust to outliers because medoids are actual data points. The swap step evaluates whether replacing a current medoid with another point reduces the total cost, making it more computationally expensive but producing more interpretable centers.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Robust:</strong> Less sensitive to outliers than K-Means.</li>
+                    <li><strong>Interpretable:</strong> Centers are actual data points.</li>
+                    <li><strong>Any metric:</strong> Works with any distance function, not just Euclidean.</li>
+                    <li><strong>Slower:</strong> O(n^2*k) vs O(n*k*i) for K-Means.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function kMedoids(points, k, maxIter) {
+    var n = points.length;
+    // Initialize: pick k random points as medoids
+    var medoids = [0, 5, 10]; // indices
+
+    function totalCost(medoids) {
+        var cost = 0;
+        points.forEach(function(p, i) {
+            var minD = Infinity;
+            medoids.forEach(function(m) {
+                var d = Math.sqrt(
+                    Math.pow(p.x-points[m].x,2) +
+                    Math.pow(p.y-points[m].y,2)
+                );
+                if (d < minD) minD = d;
+            });
+            cost += minD;
+        });
+        return cost;
+    }
+
+    for (var iter = 0; iter < maxIter; iter++) {
+        var improved = false;
+        var bestCost = totalCost(medoids);
+
+        // Try swapping each medoid with each non-medoid
+        for (var mi = 0; mi < k; mi++) {
+            for (var pi = 0; pi < n; pi++) {
+                if (medoids.indexOf(pi) >= 0) continue;
+                var newMedoids = medoids.slice();
+                newMedoids[mi] = pi;
+                var newCost = totalCost(newMedoids);
+                if (newCost < bestCost) {
+                    bestCost = newCost;
+                    medoids = newMedoids;
+                    improved = true;
+                }
+            }
+        }
+        if (!improved) break;
+    }
+    return medoids;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>973</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">K Closest Points to Origin</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "k-medoids", title: "K-Medoids (PAM)", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var COLORS = ['#e74c3c','#3498db','#2ecc71'];
+    var K = 3;
+
+    function pdist(a,b) { return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)); }
+
+    function generateSteps(data) {
+        var steps = [];
+        var n = allPoints.length;
+        var medoids = [0, 6, 11]; // initial medoid indices
+
+        function assign() {
+            var labels = [];
+            for (var i = 0; i < n; i++) {
+                var minD = Infinity, best = 0;
+                medoids.forEach(function(m, mi) {
+                    var d = pdist(allPoints[i], allPoints[m]);
+                    if (d < minD) { minD = d; best = mi; }
+                });
+                labels.push(best);
+            }
+            return labels;
+        }
+
+        function totalCost(meds) {
+            var cost = 0;
+            for (var i = 0; i < n; i++) {
+                var minD = Infinity;
+                meds.forEach(function(m) { var d = pdist(allPoints[i], allPoints[m]); if (d < minD) minD = d; });
+                cost += minD;
+            }
+            return cost;
+        }
+
+        function makeViz(labels) {
+            return allPoints.map(function(p, i) {
+                var isMedoid = medoids.indexOf(i) >= 0;
+                return {x:p.x, y:p.y, r: isMedoid ? 10 : 5, color: COLORS[labels[i]]};
+            });
+        }
+
+        steps.push({
+            points: allPoints.map(function(p,i) {
+                var isMedoid = medoids.indexOf(i) >= 0;
+                return {x:p.x, y:p.y, r: isMedoid ? 10 : 5, color: isMedoid ? '#f39c12' : '#888'};
+            }),
+            explanation: "Initial state: 3 medoids selected (large circles). Unlike K-Means, medoids are actual data points."
+        });
+
+        for (var iter = 0; iter < 5; iter++) {
+            var labels = assign();
+            var cost = totalCost(medoids);
+
+            steps.push({
+                points: makeViz(labels),
+                explanation: "Iteration " + (iter+1) + " — Assignment: points assigned to nearest medoid. Total cost: " + cost.toFixed(2) + "."
+            });
+
+            // Try swaps
+            var improved = false;
+            var bestCost = cost;
+            var bestMedoids = medoids.slice();
+
+            for (var mi = 0; mi < K; mi++) {
+                for (var pi = 0; pi < n; pi++) {
+                    if (medoids.indexOf(pi) >= 0) continue;
+                    var newMeds = medoids.slice();
+                    newMeds[mi] = pi;
+                    var nc = totalCost(newMeds);
+                    if (nc < bestCost) {
+                        bestCost = nc;
+                        bestMedoids = newMeds.slice();
+                        improved = true;
+                    }
+                }
+            }
+
+            if (improved) {
+                medoids = bestMedoids;
+                labels = assign();
+                steps.push({
+                    points: makeViz(labels),
+                    explanation: "Iteration " + (iter+1) + " — Swap: found better medoids! New cost: " + bestCost.toFixed(2) + ". Medoids at indices [" + medoids.join(",") + "]."
+                });
+            } else {
+                steps.push({
+                    points: makeViz(labels),
+                    explanation: "No beneficial swap found. K-Medoids converged! Final cost: " + cost.toFixed(2) + "."
+                });
+                break;
+            }
+        }
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

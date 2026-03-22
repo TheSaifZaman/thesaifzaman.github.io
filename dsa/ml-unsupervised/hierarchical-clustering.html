@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Clustering — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Hierarchical Clustering</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&sup3;)</span>
+            <span class="complexity-tag">Space: O(n&sup2;)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Hierarchical Clustering builds a hierarchy of clusters using either a bottom-up (agglomerative) or top-down (divisive) approach. The agglomerative method starts with each point as its own cluster and repeatedly merges the two closest clusters until only one remains.</p>
+            <p>The distance between clusters can be measured using single linkage (minimum distance), complete linkage (maximum distance), or average linkage. The result is a dendrogram showing the merge history, which can be cut at any level to produce the desired number of clusters.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>No k required upfront:</strong> Dendrogram can be cut at any level.</li>
+                    <li><strong>Deterministic:</strong> Same input always produces same dendrogram.</li>
+                    <li><strong>Linkage choice:</strong> Single, complete, average, or Ward's method.</li>
+                    <li><strong>Not scalable:</strong> O(n^3) time makes it slow for large datasets.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function agglomerativeClustering(points) {
+    // Start: each point is its own cluster
+    var clusters = points.map(function(p, i) {
+        return { id: i, points: [p] };
+    });
+    var history = [];
+
+    while (clusters.length > 1) {
+        var minDist = Infinity, mergeA = 0, mergeB = 1;
+
+        // Find closest pair (single linkage)
+        for (var i = 0; i < clusters.length; i++) {
+            for (var j = i + 1; j < clusters.length; j++) {
+                var d = clusterDist(clusters[i], clusters[j]);
+                if (d < minDist) {
+                    minDist = d; mergeA = i; mergeB = j;
+                }
+            }
+        }
+
+        // Merge
+        var merged = {
+            id: clusters[mergeA].id + '+' + clusters[mergeB].id,
+            points: clusters[mergeA].points.concat(
+                clusters[mergeB].points
+            )
+        };
+        history.push({ a: mergeA, b: mergeB, dist: minDist });
+        clusters.splice(mergeB, 1);
+        clusters.splice(mergeA, 1, merged);
+    }
+    return history;
+}
+
+function clusterDist(a, b) {
+    var min = Infinity;
+    a.points.forEach(function(p1) {
+        b.points.forEach(function(p2) {
+            var d = Math.sqrt(
+                Math.pow(p1.x-p2.x,2) + Math.pow(p1.y-p2.y,2)
+            );
+            if (d < min) min = d;
+        });
+    });
+    return min;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1584</td><td><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">Min Cost to Connect All Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>947</td><td><a href="https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/" target="_blank">Most Stones Removed</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "hierarchical-clustering", title: "Hierarchical Clustering", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var COLORS = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4','#8bc34a','#ff5722','#607d8b','#795548','#673ab7'];
+
+    function dist(a,b) { return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)); }
+
+    function generateSteps(data) {
+        var steps = [];
+        var clusters = allPoints.map(function(p,i) { return { points: [i] }; });
+
+        function clusterColor(i) { return COLORS[i % COLORS.length]; }
+
+        function makeViz() {
+            var pts = [];
+            clusters.forEach(function(cl, ci) {
+                cl.points.forEach(function(pi) {
+                    pts.push({x:allPoints[pi].x, y:allPoints[pi].y, r:5, color:clusterColor(ci)});
+                });
+            });
+            return pts;
+        }
+
+        steps.push({ points: makeViz(), explanation: "Initial: each of the 15 points is its own cluster (15 clusters)." });
+
+        function clusterDist(a, b) {
+            var min = Infinity;
+            a.points.forEach(function(pi) {
+                b.points.forEach(function(pj) {
+                    var d = dist(allPoints[pi], allPoints[pj]);
+                    if (d < min) min = d;
+                });
+            });
+            return min;
+        }
+
+        while (clusters.length > 3) {
+            var minD = Infinity, mA = 0, mB = 1;
+            for (var i = 0; i < clusters.length; i++) {
+                for (var j = i+1; j < clusters.length; j++) {
+                    var d = clusterDist(clusters[i], clusters[j]);
+                    if (d < minD) { minD = d; mA = i; mB = j; }
+                }
+            }
+            var merged = { points: clusters[mA].points.concat(clusters[mB].points) };
+            clusters.splice(mB, 1);
+            clusters.splice(mA, 1, merged);
+
+            if (clusters.length <= 12 || clusters.length % 3 === 0) {
+                steps.push({
+                    points: makeViz(),
+                    explanation: "Merged two closest clusters (distance " + minD.toFixed(2) + "). Now " + clusters.length + " clusters remain."
+                });
+            }
+        }
+
+        steps.push({ points: makeViz(), explanation: "Agglomerative clustering complete! 3 final clusters found." });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

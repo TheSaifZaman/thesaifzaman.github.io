@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaussian Mixture Models — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Gaussian Mixture Models</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;k&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(n&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Gaussian Mixture Models (GMM) assume data is generated from a mixture of several Gaussian distributions with unknown parameters. Unlike K-Means which makes hard assignments, GMM provides soft (probabilistic) cluster assignments using the Expectation-Maximization (EM) algorithm.</p>
+            <p>The EM algorithm alternates between two steps: the E-step computes the probability (responsibility) that each Gaussian generated each point, and the M-step updates the Gaussian parameters (mean, covariance, mixing weight) to maximize the likelihood given those responsibilities.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Soft assignment:</strong> Each point has a probability of belonging to each cluster.</li>
+                    <li><strong>Flexible shapes:</strong> Elliptical clusters via covariance matrices.</li>
+                    <li><strong>Generative model:</strong> Can generate new data points.</li>
+                    <li><strong>Sensitive to:</strong> Initialization and number of components k.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function gmmEM(points, k, maxIter) {
+    // Initialize means, covariances, weights
+    var means = points.slice(0, k).map(function(p) {
+        return { x: p.x, y: p.y };
+    });
+    var weights = new Array(k).fill(1 / k);
+    var sigmas = new Array(k).fill(1.0);
+
+    for (var iter = 0; iter < maxIter; iter++) {
+        // E-step: compute responsibilities
+        var resp = points.map(function(p) {
+            var probs = means.map(function(m, j) {
+                var dx = p.x - m.x, dy = p.y - m.y;
+                var exponent = -(dx*dx + dy*dy) /
+                    (2 * sigmas[j] * sigmas[j]);
+                return weights[j] *
+                    Math.exp(exponent) / sigmas[j];
+            });
+            var sum = probs.reduce(function(a,b){return a+b;},0);
+            return probs.map(function(v){return v/sum;});
+        });
+
+        // M-step: update parameters
+        for (var j = 0; j < k; j++) {
+            var nk = 0, mx = 0, my = 0;
+            for (var i = 0; i < points.length; i++) {
+                nk += resp[i][j];
+                mx += resp[i][j] * points[i].x;
+                my += resp[i][j] * points[i].y;
+            }
+            means[j] = { x: mx/nk, y: my/nk };
+            weights[j] = nk / points.length;
+            var variance = 0;
+            for (var i2 = 0; i2 < points.length; i2++) {
+                var dx = points[i2].x - means[j].x;
+                var dy = points[i2].y - means[j].y;
+                variance += resp[i2][j] * (dx*dx + dy*dy);
+            }
+            sigmas[j] = Math.sqrt(variance / nk);
+        }
+    }
+    return { means: means, sigmas: sigmas, weights: weights };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="hard"><td>1515</td><td><a href="https://leetcode.com/problems/best-position-for-a-service-centre/" target="_blank">Best Position for Service Centre</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "gaussian-mixture-models", title: "Gaussian Mixture Models", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    var cluster1 = [{x:2,y:3},{x:2.5,y:2.5},{x:3,y:3.5},{x:1.5,y:3},{x:2,y:2}];
+    var cluster2 = [{x:7,y:8},{x:7.5,y:7.5},{x:8,y:8.5},{x:6.5,y:8},{x:7,y:7}];
+    var cluster3 = [{x:5,y:1},{x:5.5,y:1.5},{x:4.5,y:0.5},{x:5,y:2},{x:6,y:1}];
+    var allPoints = cluster1.concat(cluster2).concat(cluster3);
+    var COLORS = ['#e74c3c','#3498db','#2ecc71'];
+    var K = 3;
+
+    function generateSteps(data) {
+        var steps = [];
+        var means = [{x:3,y:5},{x:5,y:5},{x:7,y:5}];
+        var sigmas = [2.0, 2.0, 2.0];
+        var weights = [1/3, 1/3, 1/3];
+
+        steps.push({
+            points: allPoints.map(function(p){return {x:p.x,y:p.y,r:5,color:'#888'};})
+                .concat(means.map(function(m,i){return {x:m.x,y:m.y,r:12,color:COLORS[i]};})),
+            explanation: "Initial state: 15 points with 3 Gaussian components (large circles = means). Starting EM algorithm."
+        });
+
+        for (var iter = 0; iter < 6; iter++) {
+            // E-step
+            var resp = allPoints.map(function(p) {
+                var probs = means.map(function(m, j) {
+                    var dx = p.x - m.x, dy = p.y - m.y;
+                    var exponent = -(dx*dx + dy*dy) / (2 * sigmas[j] * sigmas[j]);
+                    return weights[j] * Math.exp(exponent) / (sigmas[j] + 0.001);
+                });
+                var sum = probs.reduce(function(a,b){return a+b;}, 0.0001);
+                return probs.map(function(v){return v/sum;});
+            });
+
+            // Color by highest responsibility
+            var vizPts = allPoints.map(function(p, i) {
+                var maxR = 0, best = 0;
+                resp[i].forEach(function(r, j) { if (r > maxR) { maxR = r; best = j; } });
+                return {x:p.x, y:p.y, r:5, color:COLORS[best]};
+            }).concat(means.map(function(m,i){return {x:m.x,y:m.y,r:Math.max(5, sigmas[i]*4),color:COLORS[i]};}));
+
+            steps.push({
+                points: vizPts,
+                explanation: "Iteration " + (iter+1) + " E-step: computed soft responsibilities. Points colored by most likely Gaussian. Ellipse size ~ sigma."
+            });
+
+            // M-step
+            for (var j = 0; j < K; j++) {
+                var nk = 0, mx = 0, my = 0;
+                for (var ii = 0; ii < allPoints.length; ii++) {
+                    nk += resp[ii][j];
+                    mx += resp[ii][j] * allPoints[ii].x;
+                    my += resp[ii][j] * allPoints[ii].y;
+                }
+                means[j] = {x: mx/(nk+0.001), y: my/(nk+0.001)};
+                weights[j] = nk / allPoints.length;
+                var variance = 0;
+                for (var ii2 = 0; ii2 < allPoints.length; ii2++) {
+                    var dx = allPoints[ii2].x - means[j].x;
+                    var dy = allPoints[ii2].y - means[j].y;
+                    variance += resp[ii2][j] * (dx*dx + dy*dy);
+                }
+                sigmas[j] = Math.sqrt(variance / (nk + 0.001));
+            }
+
+            var vizPts2 = allPoints.map(function(p, i) {
+                var maxR = 0, best = 0;
+                resp[i].forEach(function(r, j) { if (r > maxR) { maxR = r; best = j; } });
+                return {x:p.x, y:p.y, r:5, color:COLORS[best]};
+            }).concat(means.map(function(m,i){return {x:m.x,y:m.y,r:Math.max(5, sigmas[i]*4),color:COLORS[i]};}));
+
+            steps.push({
+                points: vizPts2,
+                explanation: "Iteration " + (iter+1) + " M-step: updated means to (" + means.map(function(m){return m.x.toFixed(1)+","+m.y.toFixed(1);}).join("), (") + "). Sigmas: " + sigmas.map(function(s){return s.toFixed(2);}).join(", ") + "."
+            });
+        }
+
+        steps.push({
+            points: vizPts2,
+            explanation: "GMM converged! Each Gaussian component captures one natural cluster. Large circles represent component means and spread."
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'scatter',
+        renderOptions: { minX: 0, maxX: 10, minY: -1, maxY: 10 }
+    });
+    </script>
+</body>
+</html>

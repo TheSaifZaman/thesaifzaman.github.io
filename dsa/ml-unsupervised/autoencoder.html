@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoder — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Autoencoder</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;d)</span>
+            <span class="complexity-tag">Space: O(d&middot;h)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>An autoencoder is a neural network trained to reconstruct its input through a bottleneck layer. The encoder compresses the input into a lower-dimensional latent representation, and the decoder reconstructs the original input from this compressed form. The network learns to capture the most important features in the bottleneck.</p>
+            <p>The architecture is symmetric: input layer &rarr; encoder layers &rarr; bottleneck (latent space) &rarr; decoder layers &rarr; output layer. Training minimizes reconstruction error (MSE between input and output). The bottleneck forces the network to learn a compressed representation, making autoencoders useful for dimensionality reduction, denoising, and anomaly detection.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Unsupervised:</strong> Learns from unlabeled data (input = target).</li>
+                    <li><strong>Nonlinear:</strong> Can capture nonlinear relationships (unlike PCA).</li>
+                    <li><strong>Bottleneck:</strong> Forces compression of essential features.</li>
+                    <li><strong>Variants:</strong> Denoising, variational (VAE), sparse, contractive.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function Autoencoder(inputDim, hiddenDim, latentDim) {
+    // Encoder weights
+    this.W1 = randomMatrix(inputDim, hiddenDim);
+    this.W2 = randomMatrix(hiddenDim, latentDim);
+    // Decoder weights
+    this.W3 = randomMatrix(latentDim, hiddenDim);
+    this.W4 = randomMatrix(hiddenDim, inputDim);
+}
+
+Autoencoder.prototype.encode = function(x) {
+    var h = relu(matVecMul(this.W1, x));
+    return relu(matVecMul(this.W2, h));
+};
+
+Autoencoder.prototype.decode = function(z) {
+    var h = relu(matVecMul(this.W3, z));
+    return sigmoid(matVecMul(this.W4, h));
+};
+
+Autoencoder.prototype.forward = function(x) {
+    var z = this.encode(x);  // Latent representation
+    var xHat = this.decode(z); // Reconstruction
+    return { latent: z, output: xHat };
+};
+
+Autoencoder.prototype.loss = function(x, xHat) {
+    // Mean Squared Error
+    var sum = 0;
+    for (var i = 0; i < x.length; i++) {
+        sum += Math.pow(x[i] - xHat[i], 2);
+    }
+    return sum / x.length;
+};</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>535</td><td><a href="https://leetcode.com/problems/encode-and-decode-tinyurl/" target="_blank">Encode and Decode TinyURL</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "autoencoder", title: "Autoencoder", category: "Unsupervised Learning" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Network architecture: 6 -> 4 -> 2 -> 4 -> 6
+        var layerSizes = [6, 4, 2, 4, 6];
+        var layerNames = ['Input (6)', 'Encoder (4)', 'Latent (2)', 'Decoder (4)', 'Output (6)'];
+
+        function makeNetworkStep(activeLayer, explanation, nodeStates) {
+            var layers = layerSizes.map(function(size, li) {
+                var nodes = [];
+                for (var ni = 0; ni < size; ni++) {
+                    var state = '';
+                    if (nodeStates && nodeStates[li]) state = nodeStates[li];
+                    else if (li === activeLayer) state = 'active';
+                    nodes.push({ label: '', state: state });
+                }
+                return { nodes: nodes };
+            });
+            return { layers: layers, explanation: explanation };
+        }
+
+        steps.push(makeNetworkStep(-1,
+            "Autoencoder architecture: Input(6) -> Encoder(4) -> Bottleneck(2) -> Decoder(4) -> Output(6). The bottleneck forces compression."
+        ));
+
+        steps.push(makeNetworkStep(0,
+            "Forward pass: Input data enters the network (6 features). Example: [0.8, 0.3, 0.9, 0.1, 0.7, 0.5].",
+            {0: 'active'}
+        ));
+
+        steps.push(makeNetworkStep(1,
+            "Encoder hidden layer: Reduces from 6 to 4 dimensions using weights + ReLU activation.",
+            {0: 'sorted', 1: 'active'}
+        ));
+
+        steps.push(makeNetworkStep(2,
+            "Bottleneck (latent space): Only 2 neurons! The network must compress all essential information here. This IS the learned representation.",
+            {0: 'sorted', 1: 'sorted', 2: 'comparing'}
+        ));
+
+        steps.push(makeNetworkStep(3,
+            "Decoder hidden layer: Expands from 2 back to 4 dimensions, reconstructing features.",
+            {2: 'comparing', 3: 'active'}
+        ));
+
+        steps.push(makeNetworkStep(4,
+            "Output layer: Reconstructed input with 6 features. Compare with original to compute reconstruction loss (MSE).",
+            {2: 'comparing', 4: 'active'}
+        ));
+
+        // Training progression
+        steps.push(makeNetworkStep(-1,
+            "Epoch 1: Loss = 0.42. Reconstruction is poor — the network hasn't learned good features yet.",
+            {0: 'swapped', 4: 'swapped'}
+        ));
+
+        steps.push(makeNetworkStep(-1,
+            "Epoch 50: Loss = 0.12. The bottleneck is learning to capture key patterns in the data.",
+            {0: 'comparing', 2: 'active', 4: 'comparing'}
+        ));
+
+        steps.push(makeNetworkStep(-1,
+            "Epoch 200: Loss = 0.02. Converged! The 2D latent space captures the essential structure. Output closely matches input.",
+            {0: 'sorted', 2: 'active', 4: 'sorted'}
+        ));
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1],
+        stepGenerator: generateSteps,
+        type: 'network'
+    });
+    </script>
+</body>
+</html>
