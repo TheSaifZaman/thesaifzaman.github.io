@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stochastic Gradient Descent — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Stochastic Gradient Descent</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(d) per update</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Stochastic Gradient Descent (SGD) updates parameters using the gradient from a single random sample (or small mini-batch) rather than the entire dataset. This makes each update much faster but noisier.</p>
+            <p>The noisy path has a surprising benefit: it can help escape local minima and saddle points that trap batch gradient descent. The noise acts as implicit regularization, often leading to better generalization.</p>
+            <p>Mini-batch SGD (the practical standard) uses batches of 32-256 samples, balancing computation efficiency with gradient quality. Most deep learning training uses some form of SGD.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Fast Updates</h4>
+                    <p>Each step uses one sample — much faster per iteration.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-random"></i>
+                    <h4>Noisy Gradients</h4>
+                    <p>Random sampling adds noise that helps escape local minima.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-layer-group"></i>
+                    <h4>Mini-Batch</h4>
+                    <p>Practical compromise: batch of 32-256 for stable GPU utilization.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Implicit Regularization</h4>
+                    <p>Noise prevents overfitting, improving generalization.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function sgd(X, y, learningRate, epochs) {
+    var theta = new Array(X[0].length).fill(0);
+    var m = X.length;
+
+    for (var epoch = 0; epoch < epochs; epoch++) {
+        // Shuffle data each epoch
+        var indices = shuffle(range(m));
+
+        for (var i = 0; i < m; i++) {
+            var idx = indices[i];
+            var prediction = dotProduct(X[idx], theta);
+            var error = prediction - y[idx];
+
+            // Update using single sample gradient
+            for (var j = 0; j < theta.length; j++) {
+                theta[j] -= learningRate * error * X[idx][j];
+            }
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://scikit-learn.org/stable/modules/sgd.html" target="_blank">SGD Classifier in Sklearn</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">SGD vs Batch GD Comparison</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Mini-batch SGD for Neural Networks</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">SGD with Learning Rate Decay</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Convergence Analysis: Batch Size Effects</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "sgd", title: "Stochastic Gradient Descent", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var px = 8, py = 8;
+            var lr = 0.12;
+            var trail = [];
+
+            steps.push({
+                points: [{x:px,y:py,r:8,color:'var(--accent-red)'},{x:0,y:0,r:6,color:'var(--accent-green)'}],
+                explanation: 'SGD: starts at (8,8). Unlike batch GD, each step uses a noisy gradient from one sample. The path will be jagged but still converges.'
+            });
+
+            for (var i = 0; i < 30; i++) {
+                // True gradient + noise (SGD characteristic)
+                var gx = 2*px + (Math.random()-0.5)*6;
+                var gy = 2*py + (Math.random()-0.5)*6;
+                px -= lr * gx;
+                py -= lr * gy;
+                trail.push({x:px,y:py,r:3,color:'var(--accent-amber)'});
+
+                var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                pts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+                pts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+
+                if (i % 3 === 0 || i === 29) {
+                    steps.push({
+                        points: pts,
+                        explanation: 'Step ' + (i+1) + ': noisy gradient → jagged path. Position: (' + px.toFixed(2) + ', ' + py.toFixed(2) + '). Loss: ' + (px*px+py*py).toFixed(2) + '. Noise helps escape local minima!'
+                    });
+                }
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+            finalPts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+            finalPts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+            steps.push({
+                points: finalPts,
+                explanation: 'SGD converged near minimum despite noisy path. Compare to batch GD: SGD is faster per step but noisier. The zigzag pattern is characteristic of stochastic optimization.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -10, maxX: 10, minY: -10, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

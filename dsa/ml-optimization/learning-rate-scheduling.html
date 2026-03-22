@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Rate Scheduling — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Learning Rate Scheduling</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(1) per step</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Learning Rate Scheduling dynamically adjusts the learning rate during training. Starting with a larger learning rate helps the optimizer explore broadly, while reducing it over time enables fine convergence near the minimum.</p>
+            <p>Common schedules include: <strong>Step decay</strong> (reduce by factor every N epochs), <strong>Exponential decay</strong> (&alpha; = &alpha;_0 &middot; e^{-kt}), <strong>Cosine annealing</strong> (smooth cosine curve from high to low), and <strong>Warmup</strong> (start small, ramp up, then decay — used in Transformers).</p>
+            <p>The visualization shows how different schedules change the learning rate over training epochs, and their effect on convergence behavior.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Step Decay</h4>
+                    <p>Drop LR by a factor (e.g., 0.1) every N epochs.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-wave-square"></i>
+                    <h4>Cosine Annealing</h4>
+                    <p>Smooth cosine curve from initial LR to near-zero.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-fire"></i>
+                    <h4>Warmup</h4>
+                    <p>Gradually increase LR at start to stabilize early training.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-sync"></i>
+                    <h4>Cosine Restart</h4>
+                    <p>Periodically reset LR to escape local minima.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Step Decay
+function stepDecay(initialLR, epoch, dropEvery, dropFactor) {
+    return initialLR * Math.pow(dropFactor, Math.floor(epoch / dropEvery));
+}
+
+// Exponential Decay
+function exponentialDecay(initialLR, epoch, decayRate) {
+    return initialLR * Math.exp(-decayRate * epoch);
+}
+
+// Cosine Annealing
+function cosineAnnealing(initialLR, epoch, totalEpochs) {
+    return initialLR * 0.5 * (1 + Math.cos(Math.PI * epoch / totalEpochs));
+}
+
+// Warmup + Cosine
+function warmupCosine(initialLR, epoch, warmupEpochs, totalEpochs) {
+    if (epoch < warmupEpochs) {
+        return initialLR * (epoch / warmupEpochs); // linear warmup
+    }
+    var progress = (epoch - warmupEpochs) / (totalEpochs - warmupEpochs);
+    return initialLR * 0.5 * (1 + Math.cos(Math.PI * progress));
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate" target="_blank">PyTorch LR Schedulers</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Compare Step vs Cosine Decay</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://arxiv.org/abs/1706.03762" target="_blank">Warmup Schedule for Transformers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://arxiv.org/abs/1608.03983" target="_blank">Cosine Annealing with Warm Restarts</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "learning-rate-scheduling", title: "Learning Rate Scheduling", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var totalEpochs = 50;
+            var initLR = 0.1;
+
+            // Show all 4 schedules as they evolve
+            var schedules = {
+                step: [], cosine: [], exponential: [], warmup: []
+            };
+
+            for (var e = 0; e <= totalEpochs; e++) {
+                schedules.step.push({x:e, y: initLR * Math.pow(0.5, Math.floor(e/15))});
+                schedules.cosine.push({x:e, y: initLR * 0.5 * (1 + Math.cos(Math.PI * e / totalEpochs))});
+                schedules.exponential.push({x:e, y: initLR * Math.exp(-0.05 * e)});
+                var wlr = e < 5 ? initLR * (e/5) : initLR * 0.5 * (1+Math.cos(Math.PI*(e-5)/(totalEpochs-5)));
+                schedules.warmup.push({x:e, y:wlr});
+            }
+
+            steps.push({
+                points: [{x:0, y:initLR, r:6, color:'var(--accent)'}],
+                explanation: 'Learning Rate Scheduling: start with LR=0.1 and change it over 50 epochs. We will compare 4 common strategies.'
+            });
+
+            // Show step decay
+            for (var i = 0; i <= totalEpochs; i += 5) {
+                var pts = [];
+                for (var j = 0; j <= i; j++) {
+                    pts.push({x:schedules.step[j].x, y:schedules.step[j].y*50, r:3, color:'var(--accent-red)'});
+                }
+                if (i % 15 === 0 || i === totalEpochs) {
+                    steps.push({ points: pts, explanation: 'Step Decay (red): LR drops by 0.5 every 15 epochs. Epoch ' + i + ', LR=' + schedules.step[i].y.toFixed(4) + '. Sharp drops can cause training instability.' });
+                }
+            }
+
+            // Show cosine
+            var cosPts = schedules.cosine.map(function(p){return{x:p.x,y:p.y*50,r:3,color:'var(--accent-cyan)'};});
+            steps.push({ points: cosPts, explanation: 'Cosine Annealing (cyan): smooth curve from LR=0.1 to ~0. Final LR=' + schedules.cosine[totalEpochs].y.toFixed(4) + '. Smooth decay avoids sharp transitions.' });
+
+            // Show exponential
+            var expPts = schedules.exponential.map(function(p){return{x:p.x,y:p.y*50,r:3,color:'var(--accent-amber)'};});
+            steps.push({ points: expPts, explanation: 'Exponential Decay (amber): LR = 0.1 * e^(-0.05t). Decays quickly at first, then slowly. Final LR=' + schedules.exponential[totalEpochs].y.toFixed(4) });
+
+            // Show warmup+cosine
+            var wPts = schedules.warmup.map(function(p){return{x:p.x,y:p.y*50,r:3,color:'var(--accent-green)'};});
+            steps.push({ points: wPts, explanation: 'Warmup+Cosine (green): 5-epoch warmup ramp, then cosine decay. Used in Transformers (BERT, GPT). Stabilizes early training when gradients are large.' });
+
+            // All together
+            var allPts = [];
+            schedules.step.forEach(function(p){allPts.push({x:p.x,y:p.y*50,r:2,color:'var(--accent-red)'});});
+            schedules.cosine.forEach(function(p){allPts.push({x:p.x,y:p.y*50,r:2,color:'var(--accent-cyan)'});});
+            schedules.exponential.forEach(function(p){allPts.push({x:p.x,y:p.y*50,r:2,color:'var(--accent-amber)'});});
+            schedules.warmup.forEach(function(p){allPts.push({x:p.x,y:p.y*50,r:2,color:'var(--accent-green)'});});
+            steps.push({ points: allPts, explanation: 'All 4 schedules compared. Red=step, cyan=cosine, amber=exponential, green=warmup+cosine. Choice depends on model and task — cosine and warmup+cosine are most popular today.' });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -2, maxX: 52, minY: -0.5, maxY: 6 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

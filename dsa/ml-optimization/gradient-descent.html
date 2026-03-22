@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Gradient Descent</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n&middot;d&middot;iterations)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Gradient Descent is the foundational optimization algorithm in machine learning. It iteratively adjusts parameters by moving in the direction of steepest decrease of the loss function. The update rule is:</p>
+            <p><code>&theta; &larr; &theta; - &alpha; &middot; &nabla;L(&theta;)</code></p>
+            <p>where &alpha; is the learning rate and &nabla;L is the gradient of the loss function. The gradient points in the direction of steepest ascent, so we subtract it to descend toward the minimum. Think of it as a ball rolling downhill on a loss surface — it naturally moves toward the lowest point.</p>
+            <p>In <strong>Batch Gradient Descent</strong>, the gradient is computed over the entire dataset at each step, giving a smooth but potentially slow path. The learning rate &alpha; controls step size: too large and it overshoots, too small and convergence is slow.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-arrow-down"></i>
+                    <h4>Steepest Descent</h4>
+                    <p>Always moves in the direction that reduces loss fastest locally.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Learning Rate</h4>
+                    <p>Controls step size — critical hyperparameter for convergence.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h4>Convex Guarantee</h4>
+                    <p>Converges to global minimum for convex loss functions.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-mountain"></i>
+                    <h4>Local Minima</h4>
+                    <p>May get stuck in local minima for non-convex functions.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function gradientDescent(X, y, learningRate, iterations) {
+    var m = X.length;
+    var theta = new Array(X[0].length).fill(0);
+
+    for (var iter = 0; iter < iterations; iter++) {
+        // Compute gradient over entire dataset
+        var gradient = new Array(theta.length).fill(0);
+        for (var i = 0; i < m; i++) {
+            var prediction = dotProduct(X[i], theta);
+            var error = prediction - y[i];
+            for (var j = 0; j < theta.length; j++) {
+                gradient[j] += (error * X[i][j]) / m;
+            }
+        }
+
+        // Update parameters
+        for (var j = 0; j < theta.length; j++) {
+            theta[j] -= learningRate * gradient[j];
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://scikit-learn.org/stable/modules/sgd.html" target="_blank">Linear Regression with GD</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">1D Function Minimization</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">Learning Rate Sensitivity Analysis</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">Gradient Descent for Logistic Regression</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">Batch vs Mini-batch Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">Contour Plot Gradient Visualization</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "gradient-descent", title: "Gradient Descent", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Loss surface as concentric circles, point starts at edge and moves toward center (0,0)
+        function generateSteps() {
+            var steps = [];
+            var px = 8, py = 8; // starting point
+            var lr = 0.15;
+            var trail = [];
+
+            // Draw contour-like rings as reference points
+            var contours = [];
+            for (var ring = 1; ring <= 4; ring++) {
+                var r = ring * 2;
+                for (var a = 0; a < 12; a++) {
+                    var angle = (a / 12) * 2 * Math.PI;
+                    contours.push({x: r * Math.cos(angle), y: r * Math.sin(angle), r: 2, color: 'rgba(59,130,246,0.1)'});
+                }
+            }
+
+            var startPts = contours.slice();
+            startPts.push({x: px, y: py, r: 8, color: 'var(--accent-red)'});
+            startPts.push({x: 0, y: 0, r: 6, color: 'var(--accent-green)'});
+            steps.push({ points: startPts, explanation: 'Gradient Descent: red dot starts at (' + px + ',' + py + ') on the loss surface. Green dot at (0,0) is the minimum. Faint blue dots show loss contours (concentric circles).' });
+
+            for (var i = 0; i < 20; i++) {
+                // Gradient of L = x^2 + y^2 is [2x, 2y]
+                var gx = 2 * px;
+                var gy = 2 * py;
+                px -= lr * gx;
+                py -= lr * gy;
+                trail.push({x: px, y: py, r: 3, color: 'var(--accent-amber)'});
+
+                var pts = contours.slice();
+                pts = pts.concat(trail.map(function(p) { return {x:p.x, y:p.y, r:p.r, color:p.color}; }));
+                pts.push({x: px, y: py, r: 8, color: 'var(--accent-red)'});
+                pts.push({x: 0, y: 0, r: 6, color: 'var(--accent-green)'});
+
+                var loss = (px*px + py*py).toFixed(2);
+                steps.push({ points: pts, explanation: 'Step ' + (i+1) + ': gradient = [' + gx.toFixed(2) + ', ' + gy.toFixed(2) + ']. New position: (' + px.toFixed(2) + ', ' + py.toFixed(2) + '). Loss = ' + loss });
+            }
+
+            var finalPts = contours.slice();
+            finalPts = finalPts.concat(trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};}));
+            finalPts.push({x: px, y: py, r: 8, color: 'var(--accent-red)'});
+            finalPts.push({x: 0, y: 0, r: 6, color: 'var(--accent-green)'});
+            steps.push({ points: finalPts, explanation: 'Gradient Descent converged to minimum. The straight-line path is characteristic of batch GD on a symmetric loss surface. Loss: ' + (px*px+py*py).toFixed(4) });
+
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -10, maxX: 10, minY: -10, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

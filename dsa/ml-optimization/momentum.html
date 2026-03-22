@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Momentum</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(d) per update</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Momentum adds a "velocity" term to gradient descent, accumulating past gradients to push through flat regions and dampen oscillations. Like a ball rolling downhill, it builds up speed in consistent gradient directions and reduces jitter in oscillating directions.</p>
+            <p>Update rule: <code>v = &beta; &middot; v + &alpha; &middot; &nabla;L(&theta;)</code>, then <code>&theta; -= v</code></p>
+            <p>The momentum coefficient &beta; (typically 0.9) controls how much past velocity is retained. With &beta;=0, it reduces to standard gradient descent. Higher &beta; means more inertia — faster traversal of plateaus but risk of overshooting.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-bowling-ball"></i>
+                    <h4>Ball Rolling</h4>
+                    <p>Accumulates velocity like a ball rolling downhill.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Accelerated</h4>
+                    <p>Pushes through flat regions and saddle points faster.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-wave-square"></i>
+                    <h4>Dampens Oscillation</h4>
+                    <p>Cancels out oscillations in high-curvature directions.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-forward"></i>
+                    <h4>Nesterov Variant</h4>
+                    <p>Look-ahead gradient for even better convergence.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function momentumGD(gradFn, theta, lr, beta, iterations) {
+    var velocity = new Array(theta.length).fill(0);
+    beta = beta || 0.9;
+
+    for (var t = 0; t < iterations; t++) {
+        var grad = gradFn(theta);
+        for (var i = 0; i < theta.length; i++) {
+            velocity[i] = beta * velocity[i] + lr * grad[i];
+            theta[i] -= velocity[i];
+        }
+    }
+    return theta;
+}
+
+// Nesterov Accelerated Gradient (NAG)
+function nesterovMomentum(gradFn, theta, lr, beta, iterations) {
+    var velocity = new Array(theta.length).fill(0);
+    for (var t = 0; t < iterations; t++) {
+        // Look ahead
+        var lookAhead = theta.map(function(th, i) { return th - beta * velocity[i]; });
+        var grad = gradFn(lookAhead);
+        for (var i = 0; i < theta.length; i++) {
+            velocity[i] = beta * velocity[i] + lr * grad[i];
+            theta[i] -= velocity[i];
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://pytorch.org/docs/stable/optim.html" target="_blank">SGD with Momentum in PyTorch</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Momentum vs Vanilla GD</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Nesterov Momentum Implementation</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Momentum Through Saddle Points</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "momentum", title: "Momentum", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var px = 8, py = 8;
+            var lr = 0.08, beta = 0.9;
+            var vx = 0, vy = 0;
+            var trail = [];
+
+            steps.push({
+                points: [{x:px,y:py,r:8,color:'var(--accent-red)'},{x:0,y:0,r:6,color:'var(--accent-green)'}],
+                explanation: 'Momentum: like a ball with inertia. It accumulates velocity from past gradients, building speed in consistent directions and dampening oscillations.'
+            });
+
+            for (var t = 0; t < 25; t++) {
+                var gx = 2*px;
+                var gy = 2*py;
+                vx = beta*vx + lr*gx;
+                vy = beta*vy + lr*gy;
+                px -= vx;
+                py -= vy;
+                trail.push({x:px,y:py,r:3,color:'var(--accent-amber)'});
+
+                if (t % 2 === 0 || t < 4) {
+                    var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                    pts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+                    pts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+                    var speed = Math.sqrt(vx*vx+vy*vy);
+                    steps.push({ points: pts, explanation: 'Step ' + (t+1) + ': velocity = (' + vx.toFixed(2) + ', ' + vy.toFixed(2) + '), speed = ' + speed.toFixed(2) + '. ' + (t < 5 ? 'Building up speed...' : (Math.abs(px) < 1 ? 'Overshooting and oscillating around minimum.' : 'Accelerating toward minimum.')) });
+                }
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+            finalPts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+            finalPts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+            steps.push({ points: finalPts, explanation: 'Momentum converged. Notice the slight oscillation near the minimum (overshooting due to inertia). This is faster than vanilla GD but may oscillate more near optimum.' });
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -10, maxX: 10, minY: -10, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

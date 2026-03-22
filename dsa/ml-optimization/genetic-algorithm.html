@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetic Algorithm — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Genetic Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;g)</span>
+            <span class="complexity-tag">Space: O(n&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Genetic Algorithms (GA) are optimization methods inspired by natural evolution. A <strong>population</strong> of candidate solutions evolves over <strong>generations</strong> through selection, crossover, and mutation. Fitter individuals are more likely to survive and reproduce, gradually improving the population.</p>
+            <p>Each generation: (1) <strong>Selection</strong> — pick parents based on fitness. (2) <strong>Crossover</strong> — combine two parents to create offspring. (3) <strong>Mutation</strong> — randomly modify some genes. (4) <strong>Replacement</strong> — new generation replaces the old.</p>
+            <p>GAs are useful for complex optimization problems where the search space is large, non-differentiable, or has many local optima. They require no gradient information.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-users"></i>
+                    <h4>Population</h4>
+                    <p>Maintains diverse set of candidate solutions simultaneously.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-dna"></i>
+                    <h4>Crossover</h4>
+                    <p>Combines genes from two parents to create better offspring.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-random"></i>
+                    <h4>Mutation</h4>
+                    <p>Random changes maintain diversity and prevent premature convergence.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-trophy"></i>
+                    <h4>Selection</h4>
+                    <p>Fitter individuals have higher probability of reproduction.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function geneticAlgorithm(fitnessFn, popSize, geneLength, generations, mutRate) {
+    // Initialize random population
+    var population = [];
+    for (var i = 0; i < popSize; i++) {
+        population.push(randomChromosome(geneLength));
+    }
+
+    for (var gen = 0; gen < generations; gen++) {
+        // Evaluate fitness
+        var fitness = population.map(fitnessFn);
+
+        // Selection (tournament)
+        var newPop = [];
+        while (newPop.length < popSize) {
+            var p1 = tournamentSelect(population, fitness);
+            var p2 = tournamentSelect(population, fitness);
+
+            // Crossover
+            var child = crossover(p1, p2);
+
+            // Mutation
+            for (var g = 0; g < child.length; g++) {
+                if (Math.random() < mutRate) {
+                    child[g] = randomGene();
+                }
+            }
+            newPop.push(child);
+        }
+        population = newPop;
+    }
+
+    // Return best individual
+    var finalFitness = population.map(fitnessFn);
+    var bestIdx = argMax(finalFitness);
+    return population[bestIdx];
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://en.wikipedia.org/wiki/Genetic_algorithm" target="_blank">OneMax Problem (maximize 1s)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://en.wikipedia.org/wiki/Travelling_salesman_problem" target="_blank">TSP with Genetic Algorithm</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://en.wikipedia.org/wiki/Genetic_algorithm" target="_blank">Knapsack Problem with GA</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://en.wikipedia.org/wiki/Neuroevolution" target="_blank">Neuroevolution: Evolving Neural Network Weights</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://en.wikipedia.org/wiki/Genetic_algorithm" target="_blank">Job Scheduling with GA</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "genetic-algorithm", title: "Genetic Algorithm", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        // Bar chart: population fitness over generations
+        var popSize = 8;
+
+        function generateSteps() {
+            var steps = [];
+            // Each individual has a fitness score; we evolve them
+            var pop = [];
+            for (var i = 0; i < popSize; i++) {
+                pop.push(Math.random() * 30 + 10);
+            }
+
+            var targetFitness = 95;
+
+            steps.push({
+                array: pop.map(function(v){return Math.round(v);}),
+                highlights: {},
+                explanation: 'Genetic Algorithm: 8 individuals with random fitness scores. Goal: evolve toward fitness ~95. Each bar is one individual.'
+            });
+
+            for (var gen = 0; gen < 12; gen++) {
+                // Selection: tournament
+                var newPop = [];
+                for (var i = 0; i < popSize; i++) {
+                    var a = Math.floor(Math.random()*popSize);
+                    var b = Math.floor(Math.random()*popSize);
+                    var parent1 = pop[a] > pop[b] ? pop[a] : pop[b];
+                    a = Math.floor(Math.random()*popSize);
+                    b = Math.floor(Math.random()*popSize);
+                    var parent2 = pop[a] > pop[b] ? pop[a] : pop[b];
+
+                    // Crossover
+                    var child = (parent1 + parent2) / 2;
+                    // Mutation
+                    if (Math.random() < 0.3) {
+                        child += (Math.random() - 0.3) * 15;
+                    }
+                    // Drift toward target
+                    child += (targetFitness - child) * 0.1;
+                    child = Math.max(5, Math.min(100, child));
+                    newPop.push(child);
+                }
+                pop = newPop;
+
+                var best = 0;
+                var avg = 0;
+                for (var j = 0; j < popSize; j++) {
+                    avg += pop[j];
+                    if (pop[j] > pop[best]) best = j;
+                }
+                avg /= popSize;
+
+                var hl = {};
+                hl[best] = 'found';
+
+                steps.push({
+                    array: pop.map(function(v){return Math.round(v);}),
+                    highlights: hl,
+                    explanation: 'Generation ' + (gen+1) + ': selection → crossover → mutation. Best fitness: ' + Math.round(pop[best]) + ', avg: ' + Math.round(avg) + '. Green = fittest individual.'
+                });
+            }
+
+            var finalBest = 0;
+            for (var k = 1; k < popSize; k++) { if (pop[k] > pop[finalBest]) finalBest = k; }
+            var hlFinal = {};
+            hlFinal[finalBest] = 'sorted';
+            steps.push({
+                array: pop.map(function(v){return Math.round(v);}),
+                highlights: hlFinal,
+                explanation: 'Evolution complete! Population converged. Best individual fitness: ' + Math.round(pop[finalBest]) + '. Natural selection drove the population toward higher fitness over generations.'
+            });
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: new Array(popSize).fill(0), type: 'bars', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

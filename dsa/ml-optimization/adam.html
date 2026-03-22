@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adam Optimizer — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Adam Optimizer</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(d) per update</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Adam (Adaptive Moment Estimation) combines the benefits of Momentum (first moment) and RMSProp (second moment) into a single optimizer. It maintains per-parameter adaptive learning rates, making it robust across a wide range of problems.</p>
+            <p>Adam tracks two exponential moving averages: <strong>m</strong> (first moment, like momentum) and <strong>v</strong> (second moment, like RMSProp). With bias correction applied, the update is: <code>&theta; -= &alpha; &middot; m&#770; / (&radic;v&#770; + &epsilon;)</code></p>
+            <p>Parameters with large gradients get smaller effective learning rates (via v normalization), and parameters with consistent gradient direction get acceleration (via m). This makes Adam the default optimizer for most deep learning tasks.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>Adaptive LR</h4>
+                    <p>Each parameter gets its own learning rate based on gradient history.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-wind"></i>
+                    <h4>Momentum</h4>
+                    <p>First moment (m) accumulates gradient direction like momentum.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-compress"></i>
+                    <h4>RMSProp</h4>
+                    <p>Second moment (v) normalizes by gradient magnitude.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-wrench"></i>
+                    <h4>Bias Correction</h4>
+                    <p>Corrects initial bias when m and v are initialized to zero.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function adam(gradFn, theta, lr, beta1, beta2, epsilon, iterations) {
+    var m = new Array(theta.length).fill(0); // first moment
+    var v = new Array(theta.length).fill(0); // second moment
+    beta1 = beta1 || 0.9;
+    beta2 = beta2 || 0.999;
+    epsilon = epsilon || 1e-8;
+
+    for (var t = 1; t <= iterations; t++) {
+        var grad = gradFn(theta);
+
+        for (var i = 0; i < theta.length; i++) {
+            // Update moments
+            m[i] = beta1 * m[i] + (1 - beta1) * grad[i];
+            v[i] = beta2 * v[i] + (1 - beta2) * grad[i] * grad[i];
+
+            // Bias correction
+            var mHat = m[i] / (1 - Math.pow(beta1, t));
+            var vHat = v[i] / (1 - Math.pow(beta2, t));
+
+            // Update parameter
+            theta[i] -= lr * mHat / (Math.sqrt(vHat) + epsilon);
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://pytorch.org/docs/stable/optim.html" target="_blank">PyTorch Adam Basic Usage</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Adam vs SGD Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://arxiv.org/abs/1412.6980" target="_blank">Implement Adam from Scratch</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://arxiv.org/abs/1711.05101" target="_blank">AdamW: Decoupled Weight Decay</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Hyperparameter Sensitivity (beta1, beta2)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "adam", title: "Adam Optimizer", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            var px = 8, py = 7;
+            var lr = 0.5, beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+            var mx = 0, my = 0, vx = 0, vy = 0;
+            var trail = [];
+
+            steps.push({
+                points: [{x:px,y:py,r:8,color:'var(--accent-red)'},{x:0,y:0,r:6,color:'var(--accent-green)'}],
+                explanation: 'Adam Optimizer: combines momentum (direction) + RMSProp (magnitude normalization). Adaptive learning rate per parameter.'
+            });
+
+            for (var t = 1; t <= 25; t++) {
+                var gx = 2*px + (Math.random()-0.5)*2;
+                var gy = 2*py + (Math.random()-0.5)*2;
+
+                mx = beta1*mx + (1-beta1)*gx;
+                my = beta1*my + (1-beta1)*gy;
+                vx = beta2*vx + (1-beta2)*gx*gx;
+                vy = beta2*vy + (1-beta2)*gy*gy;
+
+                var mxh = mx/(1-Math.pow(beta1,t));
+                var myh = my/(1-Math.pow(beta1,t));
+                var vxh = vx/(1-Math.pow(beta2,t));
+                var vyh = vy/(1-Math.pow(beta2,t));
+
+                px -= lr * mxh / (Math.sqrt(vxh)+eps);
+                py -= lr * myh / (Math.sqrt(vyh)+eps);
+                trail.push({x:px,y:py,r:3,color:'var(--accent-cyan)'});
+
+                if (t % 2 === 0 || t <= 3) {
+                    var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                    pts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+                    pts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+                    steps.push({
+                        points: pts,
+                        explanation: 'Step ' + t + ': Adam adapts LR per dimension. m=[' + mxh.toFixed(2) + ',' + myh.toFixed(2) + '], v=[' + vxh.toFixed(2) + ',' + vyh.toFixed(2) + ']. Loss: ' + (px*px+py*py).toFixed(2)
+                    });
+                }
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+            finalPts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+            finalPts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+            steps.push({ points: finalPts, explanation: 'Adam converged quickly with a smooth, adaptive path. It automatically adjusts learning rates — no manual tuning needed per parameter.' });
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -10, maxX: 10, minY: -10, maxY: 10 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpropagation — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Backpropagation</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;d&sup2;)</span>
+            <span class="complexity-tag">Space: O(n&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Backpropagation is the algorithm that makes neural network training possible. It efficiently computes the gradient of the loss function with respect to every weight in the network by applying the <strong>chain rule</strong> of calculus backward from the output layer to the input layer.</p>
+            <p>The process has two phases: (1) <strong>Forward pass</strong> — compute output by propagating input through layers. (2) <strong>Backward pass</strong> — propagate error gradients backward, computing how much each weight contributed to the error.</p>
+            <p>At each layer, the gradient flows backward: <code>&delta;_l = &delta;_{l+1} &middot; W_{l+1}^T &odot; f'(z_l)</code>, where f' is the activation function's derivative. This allows gradient descent to update every weight simultaneously.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-link"></i>
+                    <h4>Chain Rule</h4>
+                    <p>Decomposes complex gradients into products of local derivatives.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-arrow-left"></i>
+                    <h4>Backward Pass</h4>
+                    <p>Error flows from output to input, computing all gradients in one pass.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Efficient</h4>
+                    <p>Computes all gradients in O(n) — same cost as forward pass.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Vanishing Gradients</h4>
+                    <p>Deep networks can suffer from gradients shrinking to near-zero.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function backpropagation(network, input, target, lr) {
+    // FORWARD PASS
+    var activations = [input];
+    var zValues = [];
+    for (var l = 0; l < network.layers.length; l++) {
+        var z = matMul(activations[l], network.layers[l].weights);
+        z = addBias(z, network.layers[l].bias);
+        zValues.push(z);
+        activations.push(activate(z, network.layers[l].activation));
+    }
+
+    // COMPUTE OUTPUT ERROR
+    var output = activations[activations.length - 1];
+    var loss = meanSquaredError(output, target);
+    var delta = output.map(function(o, i) {
+        return (o - target[i]) * activationDerivative(zValues[zValues.length - 1][i]);
+    });
+
+    // BACKWARD PASS — propagate gradients
+    var deltas = [delta];
+    for (var l = network.layers.length - 2; l >= 0; l--) {
+        var d = matMul(deltas[0], transpose(network.layers[l + 1].weights));
+        d = d.map(function(v, i) {
+            return v * activationDerivative(zValues[l][i]);
+        });
+        deltas.unshift(d);
+    }
+
+    // UPDATE WEIGHTS
+    for (var l = 0; l < network.layers.length; l++) {
+        for (var i = 0; i < network.layers[l].weights.length; i++) {
+            for (var j = 0; j < network.layers[l].weights[i].length; j++) {
+                network.layers[l].weights[i][j] -= lr * activations[l][i] * deltas[l][j];
+            }
+        }
+    }
+    return loss;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html" target="_blank">PyTorch Autograd Basics</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Implement Backprop for 2-Layer Net</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://cs231n.github.io/optimization-2/" target="_blank">Gradient Check Implementation</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://colah.github.io/posts/2015-08-Backprop/" target="_blank">Backprop Through an LSTM</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">XOR Problem with Backprop</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Vanishing Gradient Experiment</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "backpropagation", title: "Backpropagation", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+
+            // Network: 2 inputs, 3 hidden, 2 hidden, 1 output
+            var baseWeights = [
+                [[0.5,0.3,0.8],[0.2,0.7,0.4]],   // layer 0→1
+                [[0.6,0.4],[0.3,0.7],[0.5,0.2]],   // layer 1→2
+                [[0.8],[0.3]]                        // layer 2→3
+            ];
+
+            // Forward pass
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'x1',state:'active'},{label:'x2',state:'active'}] },
+                    { nodes: [{label:'h1'},{label:'h2'},{label:'h3'}], weights: baseWeights[0] },
+                    { nodes: [{label:'h4'},{label:'h5'}], weights: baseWeights[1] },
+                    { nodes: [{label:'y'}], weights: baseWeights[2] }
+                ],
+                explanation: 'Backpropagation Step 1: FORWARD PASS. Input (x1, x2) flows through the network. Each connection has a weight. Activations computed layer by layer.'
+            });
+
+            // Show activations flowing forward
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'1.0',state:'active'},{label:'0.5',state:'active'}] },
+                    { nodes: [{label:'.62',state:'active'},{label:'.69',state:'active'},{label:'.73',state:'active'}], weights: baseWeights[0] },
+                    { nodes: [{label:'h4'},{label:'h5'}], weights: baseWeights[1] },
+                    { nodes: [{label:'y'}], weights: baseWeights[2] }
+                ],
+                explanation: 'Forward: input [1.0, 0.5] → hidden layer 1 activations [0.62, 0.69, 0.73] after sigmoid(Wx+b).'
+            });
+
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'1.0'},{label:'0.5'}] },
+                    { nodes: [{label:'.62'},{label:'.69'},{label:'.73'}], weights: baseWeights[0] },
+                    { nodes: [{label:'.66',state:'active'},{label:'.58',state:'active'}], weights: baseWeights[1] },
+                    { nodes: [{label:'0.69',state:'active'}], weights: baseWeights[2] }
+                ],
+                explanation: 'Forward complete. Output = 0.69. Target = 1.0. Loss = (0.69 - 1.0)^2 = 0.096. Now we propagate error BACKWARD.'
+            });
+
+            // Backward pass - output layer
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'1.0'},{label:'0.5'}] },
+                    { nodes: [{label:'.62'},{label:'.69'},{label:'.73'}], weights: baseWeights[0] },
+                    { nodes: [{label:'.66'},{label:'.58'}], weights: baseWeights[1] },
+                    { nodes: [{label:'-0.31',state:'error'}], weights: baseWeights[2] }
+                ],
+                explanation: 'BACKWARD Step 1: Output error delta = (0.69-1.0) * sigmoid\'(z) = -0.31. This gradient tells us how to adjust the output layer weights.'
+            });
+
+            // Backward to hidden layer 2
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'1.0'},{label:'0.5'}] },
+                    { nodes: [{label:'.62'},{label:'.69'},{label:'.73'}], weights: baseWeights[0] },
+                    { nodes: [{label:'-.06',state:'error'},{label:'-.02',state:'error'}], weights: baseWeights[1] },
+                    { nodes: [{label:'-0.31',state:'error'}], weights: baseWeights[2] }
+                ],
+                explanation: 'BACKWARD Step 2: Error propagated to hidden layer 2 via chain rule: delta_h = delta_out * W^T * sigmoid\'(z). Gradients: [-0.06, -0.02].'
+            });
+
+            // Backward to hidden layer 1
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'1.0'},{label:'0.5'}] },
+                    { nodes: [{label:'-.01',state:'error'},{label:'-.02',state:'error'},{label:'-.01',state:'error'}], weights: baseWeights[0] },
+                    { nodes: [{label:'-.06',state:'error'},{label:'-.02',state:'error'}], weights: baseWeights[1] },
+                    { nodes: [{label:'-0.31',state:'error'}], weights: baseWeights[2] }
+                ],
+                explanation: 'BACKWARD Step 3: Error reaches hidden layer 1. Notice gradients get smaller (vanishing gradient). Each layer multiplies by weights and activation derivatives.'
+            });
+
+            // Weight update
+            for (var iter = 0; iter < 5; iter++) {
+                var opacity = 0.3 + iter * 0.14;
+                steps.push({
+                    type: 'network',
+                    layers: [
+                        { nodes: [{label:'x1',state:'active'},{label:'x2',state:'active'}] },
+                        { nodes: [{label:'h1'},{label:'h2'},{label:'h3'}], weights: baseWeights[0].map(function(r){return r.map(function(w){return Math.min(1,w+iter*0.05);});}) },
+                        { nodes: [{label:'h4'},{label:'h5'}], weights: baseWeights[1].map(function(r){return r.map(function(w){return Math.min(1,w+iter*0.03);});}) },
+                        { nodes: [{label: (0.69+iter*0.06).toFixed(2), state: iter===4?'active':''}], weights: baseWeights[2].map(function(r){return r.map(function(w){return Math.min(1,w+iter*0.04);});}) }
+                    ],
+                    explanation: 'Training iteration ' + (iter+1) + ': weights updated by w -= lr * gradient. Output: ' + (0.69+iter*0.06).toFixed(2) + ' → approaching target 1.0. Loss decreasing.'
+                });
+            }
+
+            steps.push({
+                type: 'network',
+                layers: [
+                    { nodes: [{label:'x1',state:'active'},{label:'x2',state:'active'}] },
+                    { nodes: [{label:'h1',state:'active'},{label:'h2',state:'active'},{label:'h3',state:'active'}], weights: [[0.7,0.5,0.9],[0.4,0.8,0.6]] },
+                    { nodes: [{label:'h4',state:'active'},{label:'h5',state:'active'}], weights: [[0.7,0.5],[0.5,0.8],[0.6,0.4]] },
+                    { nodes: [{label:'0.98',state:'active'}], weights: [[0.9],[0.5]] }
+                ],
+                explanation: 'Backpropagation training complete! Output ≈ 0.98 (target: 1.0). Weights adjusted by iteratively computing gradients backward and stepping toward lower loss.'
+            });
+
+            return steps;
+        }
+
+        Visualizer.init({ container: '#viz', data: [1], type: 'network', stepGenerator: generateSteps });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulated Annealing — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Simulated Annealing</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;T)</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Simulated Annealing (SA) is a probabilistic global optimization technique inspired by the metallurgical process of annealing — heating metal and slowly cooling it to remove defects. In optimization, it allows "uphill" moves (accepting worse solutions) with a probability that decreases over time (as temperature cools).</p>
+            <p>At high temperature, the algorithm freely explores the search space, accepting many worse solutions to escape local minima. As temperature drops, it becomes more selective, eventually converging to a (hopefully global) minimum.</p>
+            <p>The acceptance probability for a worse solution is: <code>P = exp(-&Delta;E / T)</code>, where &Delta;E is the energy increase and T is the current temperature.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-thermometer-full"></i>
+                    <h4>Temperature</h4>
+                    <p>Controls exploration: high T = random, low T = greedy.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-mountain"></i>
+                    <h4>Escapes Local Minima</h4>
+                    <p>Accepts worse solutions probabilistically at high temperature.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-thermometer-empty"></i>
+                    <h4>Cooling Schedule</h4>
+                    <p>Geometric or linear cooling determines convergence speed.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-globe"></i>
+                    <h4>Global Optimum</h4>
+                    <p>Provably converges to global minimum with slow enough cooling.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function simulatedAnnealing(costFn, initial, T0, coolingRate, iterations) {
+    var current = initial.slice();
+    var best = current.slice();
+    var currentCost = costFn(current);
+    var bestCost = currentCost;
+    var T = T0;
+
+    for (var i = 0; i < iterations; i++) {
+        // Generate neighbor
+        var neighbor = perturb(current);
+        var neighborCost = costFn(neighbor);
+        var delta = neighborCost - currentCost;
+
+        // Accept if better, or with probability exp(-delta/T)
+        if (delta < 0 || Math.random() < Math.exp(-delta / T)) {
+            current = neighbor;
+            currentCost = neighborCost;
+        }
+
+        // Track best solution found
+        if (currentCost < bestCost) {
+            best = current.slice();
+            bestCost = currentCost;
+        }
+
+        // Cool down
+        T *= coolingRate;
+    }
+    return { solution: best, cost: bestCost };
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://en.wikipedia.org/wiki/Simulated_annealing" target="_blank">1D Function Minimization with SA</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://en.wikipedia.org/wiki/Travelling_salesman_problem" target="_blank">Travelling Salesman with SA</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://en.wikipedia.org/wiki/Simulated_annealing" target="_blank">Graph Coloring with SA</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://en.wikipedia.org/wiki/Simulated_annealing" target="_blank">Cooling Schedule Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "simulated-annealing", title: "Simulated Annealing", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            // Global minimum at (2,2), local minimum at (7,7)
+            function cost(x,y) {
+                var g = (x-2)*(x-2) + (y-2)*(y-2); // global at (2,2)
+                var l = 3*Math.exp(-0.5*((x-7)*(x-7)+(y-7)*(y-7))); // local trap at (7,7)
+                return g - l*5;
+            }
+
+            var px = 8, py = 8; // start near local minimum
+            var T = 10.0;
+            var cooling = 0.92;
+            var trail = [];
+            var bestX = px, bestY = py, bestCost = cost(px,py);
+
+            steps.push({
+                points: [
+                    {x:px,y:py,r:8,color:'var(--accent-red)'},
+                    {x:2,y:2,r:8,color:'var(--accent-green)'},
+                    {x:7,y:7,r:6,color:'var(--accent-amber)'}
+                ],
+                explanation: 'Simulated Annealing: red = current position (near local min at amber). Green = global minimum at (2,2). Temperature T=' + T.toFixed(1) + ' (hot = exploratory).'
+            });
+
+            for (var i = 0; i < 35; i++) {
+                var nx = px + (Math.random()-0.5)*T*0.5;
+                var ny = py + (Math.random()-0.5)*T*0.5;
+                nx = Math.max(0, Math.min(10, nx));
+                ny = Math.max(0, Math.min(10, ny));
+
+                var currentCost = cost(px,py);
+                var newCost = cost(nx,ny);
+                var delta = newCost - currentCost;
+                var accepted = false;
+
+                if (delta < 0 || Math.random() < Math.exp(-delta/T)) {
+                    px = nx; py = ny;
+                    accepted = true;
+                    if (newCost < bestCost) { bestX=px; bestY=py; bestCost=newCost; }
+                }
+
+                T *= cooling;
+                trail.push({x:px,y:py,r:3,color: accepted?(delta>0?'var(--accent-red)':'var(--accent-cyan)'):'var(--text-muted)'});
+
+                if (i % 3 === 0) {
+                    var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                    pts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+                    pts.push({x:2,y:2,r:8,color:'var(--accent-green)'});
+                    pts.push({x:7,y:7,r:6,color:'var(--accent-amber)'});
+                    steps.push({ points:pts, explanation:'Step '+(i+1)+': T='+T.toFixed(2)+'. '+(accepted?(delta>0?'Accepted WORSE solution (uphill move at high T).':'Accepted better solution.'):'Rejected worse solution.')+' Position: ('+px.toFixed(1)+','+py.toFixed(1)+')' });
+                }
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+            finalPts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+            finalPts.push({x:2,y:2,r:8,color:'var(--accent-green)'});
+            finalPts.push({x:bestX,y:bestY,r:6,color:'var(--accent-purple)'});
+            steps.push({ points:finalPts, explanation:'SA complete. Best found: ('+bestX.toFixed(1)+','+bestY.toFixed(1)+'). Cyan=downhill, red=uphill (accepted), gray=rejected. Early uphill moves helped escape the local minimum near (7,7).' });
+            return steps;
+        }
+
+        Visualizer.init({
+            container:'#viz', data:[1], type:'scatter',
+            renderOptions: { minX:-1, maxX:11, minY:-1, maxY:11 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMSProp — DSA & ML/AI Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>RMSProp</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(d) per update</span>
+            <span class="complexity-tag">Space: O(d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>RMSProp (Root Mean Square Propagation) adapts the learning rate for each parameter by dividing by the running average of recent gradient magnitudes. This solves the problem of Adagrad's ever-decreasing learning rate.</p>
+            <p>Update rule: <code>v = &beta; &middot; v + (1-&beta;) &middot; g&sup2;</code>, then <code>&theta; -= &alpha; &middot; g / (&radic;v + &epsilon;)</code></p>
+            <p>Parameters with consistently large gradients get smaller effective learning rates (preventing overshooting), while parameters with small gradients get larger effective rates (accelerating slow dimensions). This is particularly useful for loss surfaces with different curvatures in different directions.</p>
+            <div class="key-points">
+                <div class="key-point-card">
+                    <i class="fas fa-sliders-h"></i>
+                    <h4>Adaptive Per-Parameter</h4>
+                    <p>Each parameter gets a learning rate scaled by its gradient history.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-chart-area"></i>
+                    <h4>Running Average</h4>
+                    <p>Exponential moving average prevents vanishing learning rates.</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    <h4>Handles Curvature</h4>
+                    <p>Works well with elongated loss surfaces (different scales per dim).</p>
+                </div>
+                <div class="key-point-card">
+                    <i class="fas fa-network-wired"></i>
+                    <h4>RNN Favorite</h4>
+                    <p>Particularly effective for training recurrent neural networks.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function rmsprop(gradFn, theta, lr, beta, epsilon, iterations) {
+    var v = new Array(theta.length).fill(0);
+    beta = beta || 0.9;
+    epsilon = epsilon || 1e-8;
+
+    for (var t = 0; t < iterations; t++) {
+        var grad = gradFn(theta);
+        for (var i = 0; i < theta.length; i++) {
+            // Running average of squared gradients
+            v[i] = beta * v[i] + (1 - beta) * grad[i] * grad[i];
+            // Adaptive update
+            theta[i] -= lr * grad[i] / (Math.sqrt(v[i]) + epsilon);
+        }
+    }
+    return theta;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://pytorch.org/docs/stable/optim.html" target="_blank">RMSProp for RNN Training</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">RMSProp vs Adagrad Comparison</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://www.kaggle.com/learn/intro-to-deep-learning" target="_blank">Implement RMSProp from Scratch</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+
+    <script>var TOPIC = { id: "rmsprop", title: "RMSProp", category: "Optimization" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    (function () {
+        function generateSteps() {
+            var steps = [];
+            // Elongated loss surface: L = 10*x^2 + y^2 (steep in x, shallow in y)
+            var px = 7, py = 7;
+            var lr = 0.3, beta = 0.9, eps = 1e-8;
+            var vx = 0, vy = 0;
+            var trail = [];
+
+            steps.push({
+                points: [{x:px,y:py,r:8,color:'var(--accent-red)'},{x:0,y:0,r:6,color:'var(--accent-green)'}],
+                explanation: 'RMSProp on an elongated loss surface (steep in x, shallow in y). RMSProp adapts learning rate per dimension to handle this asymmetry.'
+            });
+
+            for (var t = 0; t < 25; t++) {
+                var gx = 20*px + (Math.random()-0.5)*3;
+                var gy = 2*py + (Math.random()-0.5)*1;
+                vx = beta*vx + (1-beta)*gx*gx;
+                vy = beta*vy + (1-beta)*gy*gy;
+                px -= lr * gx / (Math.sqrt(vx)+eps);
+                py -= lr * gy / (Math.sqrt(vy)+eps);
+                trail.push({x:px,y:py,r:3,color:'var(--accent-purple)'});
+
+                if (t % 2 === 0) {
+                    var pts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+                    pts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+                    pts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+                    steps.push({ points: pts, explanation: 'Step ' + (t+1) + ': x-gradient is large → RMSProp shrinks x-LR. y-gradient is small → y-LR stays larger. Position: (' + px.toFixed(2) + ', ' + py.toFixed(2) + ')' });
+                }
+            }
+
+            var finalPts = trail.map(function(p){return{x:p.x,y:p.y,r:p.r,color:p.color};});
+            finalPts.push({x:px,y:py,r:8,color:'var(--accent-red)'});
+            finalPts.push({x:0,y:0,r:6,color:'var(--accent-green)'});
+            steps.push({ points: finalPts, explanation: 'RMSProp converged efficiently despite the elongated surface. Adaptive per-parameter rates balanced the steep x-direction and shallow y-direction.' });
+            return steps;
+        }
+
+        Visualizer.init({
+            container: '#viz', data: [1], type: 'scatter',
+            renderOptions: { minX: -9, maxX: 9, minY: -9, maxY: 9 },
+            stepGenerator: generateSteps
+        });
+    })();
+    </script>
+</body>
+</html>
