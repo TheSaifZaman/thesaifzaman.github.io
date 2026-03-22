@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monotonic Stack &amp; Queue — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Monotonic Stack &amp; Queue</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A <strong>Monotonic Stack</strong> is a stack that maintains its elements in either strictly increasing or strictly decreasing order. When a new element is pushed, all elements that violate the monotonic property are popped first. This allows us to efficiently find the next greater element, next smaller element, or solve problems involving ranges bounded by extremes.</p>
+            <p>A <strong>Monotonic Queue</strong> (often implemented with a deque) extends this idea to support efficient sliding window operations. It maintains elements in monotonic order while also allowing removal from the front when elements leave the window. This enables O(1) amortized access to the window's minimum or maximum.</p>
+            <p>Both structures are powerful tools for converting O(n&sup2;) brute-force solutions into O(n) algorithms. The key insight is that each element is pushed and popped at most once, giving O(n) total time despite the inner while loop.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Amortized O(1):</strong> Each element enters and leaves the stack/queue at most once.</li>
+                    <li><strong>Next Greater/Smaller:</strong> Monotonic stacks directly solve "next greater element" patterns.</li>
+                    <li><strong>Sliding Window:</strong> Monotonic deques provide O(1) window min/max queries.</li>
+                    <li><strong>Histogram Problems:</strong> Essential for largest rectangle in histogram and similar area problems.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Next Greater Element using Monotonic Stack
+function nextGreaterElements(arr) {
+    var n = arr.length;
+    var result = new Array(n).fill(-1);
+    var stack = []; // stores indices
+
+    for (var i = 0; i < n; i++) {
+        while (stack.length > 0 && arr[stack[stack.length - 1]] < arr[i]) {
+            result[stack.pop()] = arr[i];
+        }
+        stack.push(i);
+    }
+    return result;
+}
+
+// Sliding Window Maximum using Monotonic Deque
+function maxSlidingWindow(nums, k) {
+    var result = [];
+    var deque = []; // stores indices, front has max
+
+    for (var i = 0; i < nums.length; i++) {
+        // Remove elements outside window
+        while (deque.length && deque[0] <= i - k) deque.shift();
+        // Maintain decreasing order
+        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();
+        deque.push(i);
+        if (i >= k - 1) result.push(nums[deque[0]]);
+    }
+    return result;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>496</td><td><a href="https://leetcode.com/problems/next-greater-element-i/" target="_blank">Next Greater Element I</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>503</td><td><a href="https://leetcode.com/problems/next-greater-element-ii/" target="_blank">Next Greater Element II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>739</td><td><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank">Daily Temperatures</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>239</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>84</td><td><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank">Largest Rectangle in Histogram</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>907</td><td><a href="https://leetcode.com/problems/sum-of-subarray-minimums/" target="_blank">Sum of Subarray Minimums</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "monotonic-stack-queue", title: "Monotonic Stack & Queue", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+        var result = new Array(n).fill(-1);
+        var stack = [];
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Find Next Greater Element for each position using a monotonic decreasing stack." });
+
+        for (var i = 0; i < n; i++) {
+            var hl = {};
+            hl[i] = 'comparing';
+            for (var s = 0; s < stack.length; s++) hl[stack[s]] = 'visited';
+            steps.push({ array: arr.slice(), highlights: hl, explanation: "Processing arr[" + i + "]=" + arr[i] + ". Stack indices: [" + stack.join(", ") + "]." });
+
+            while (stack.length > 0 && arr[stack[stack.length - 1]] < arr[i]) {
+                var idx = stack.pop();
+                result[idx] = arr[i];
+                var hl2 = {};
+                hl2[idx] = 'swapped'; hl2[i] = 'found';
+                steps.push({ array: arr.slice(), highlights: hl2, explanation: "arr[" + i + "]=" + arr[i] + " is the next greater element for arr[" + idx + "]=" + arr[idx] + ". Pop " + idx + " from stack." });
+            }
+            stack.push(i);
+        }
+
+        var hlFinal = {};
+        for (var j = 0; j < n; j++) hlFinal[j] = 'sorted';
+        steps.push({ array: result.slice(), highlights: hlFinal, explanation: "Complete! Next Greater Element result: [" + result.join(", ") + "]. -1 means no greater element exists." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [2, 7, 4, 3, 5, 1, 6], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

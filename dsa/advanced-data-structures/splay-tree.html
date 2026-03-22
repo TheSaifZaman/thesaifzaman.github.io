@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splay Tree — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Splay Tree</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Amortized: O(log n)</span>
+            <span class="complexity-tag">Worst case: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Splay Tree is a self-adjusting binary search tree that moves recently accessed elements to the root through a series of rotations called <strong>splaying</strong>. Every access (search, insert, delete) triggers a splay operation on the accessed node, bringing it to the root. This provides amortized O(log n) time per operation.</p>
+            <p>Splaying uses three rotation patterns: <strong>Zig</strong> (single rotation when parent is root), <strong>Zig-Zig</strong> (two same-direction rotations), and <strong>Zig-Zag</strong> (two opposite-direction rotations). The zig-zig case is crucial — it restructures the path, preventing the tree from degenerating. Simple rotation-to-root (without zig-zig) does not achieve amortized O(log n).</p>
+            <p>Splay Trees exploit <strong>temporal locality</strong>: frequently accessed elements stay near the root. This makes them optimal for non-uniform access patterns like caches, where some elements are accessed much more often than others. They are used in Windows NT's virtual memory manager and GCC's memoization tables.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Self-Adjusting:</strong> No stored balance information — the tree restructures on every access.</li>
+                    <li><strong>Amortized O(log n):</strong> Any sequence of m operations on n nodes takes O(m log n) total.</li>
+                    <li><strong>Temporal Locality:</strong> Recently and frequently accessed items are fast to access again.</li>
+                    <li><strong>Working Set Property:</strong> Access time adapts to the access pattern, not just input size.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class SplayNode {
+  constructor(key) {
+    this.key = key;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function rightRotate(x) {
+  var y = x.left;
+  x.left = y.right;
+  y.right = x;
+  return y;
+}
+
+function leftRotate(x) {
+  var y = x.right;
+  x.right = y.left;
+  y.left = x;
+  return y;
+}
+
+function splay(root, key) {
+  if (!root || root.key === key) return root;
+
+  if (key < root.key) {
+    if (!root.left) return root;
+    if (key < root.left.key) {         // Zig-Zig
+      root.left.left = splay(root.left.left, key);
+      root = rightRotate(root);
+    } else if (key > root.left.key) {  // Zig-Zag
+      root.left.right = splay(root.left.right, key);
+      if (root.left.right) root.left = leftRotate(root.left);
+    }
+    return root.left ? rightRotate(root) : root;
+  } else {
+    if (!root.right) return root;
+    if (key > root.right.key) {        // Zig-Zig
+      root.right.right = splay(root.right.right, key);
+      root = leftRotate(root);
+    } else if (key < root.right.key) { // Zig-Zag
+      root.right.left = splay(root.right.left, key);
+      if (root.right.left) root.right = rightRotate(root.right);
+    }
+    return root.right ? leftRotate(root) : root;
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>450</td><td><a href="https://leetcode.com/problems/delete-node-in-a-bst/" target="_blank">Delete Node in a BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>701</td><td><a href="https://leetcode.com/problems/insert-into-a-binary-search-tree/" target="_blank">Insert into a Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>173</td><td><a href="https://leetcode.com/problems/binary-search-tree-iterator/" target="_blank">Binary Search Tree Iterator</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>715</td><td><a href="https://leetcode.com/problems/range-module/" target="_blank">Range Module</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "splay-tree", title: "Splay Tree", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var sorted = data.slice().sort(function(a,b){ return a-b; });
+
+        steps.push({ array: sorted.slice(), highlights: {}, explanation: "Splay Tree with keys: [" + sorted.join(", ") + "]. Accessing a node splays it to the root." });
+
+        // Simulate accessing different nodes
+        var accesses = [arr[0], arr[arr.length - 1], arr[Math.floor(arr.length / 2)], arr[1], arr[0]];
+
+        for (var i = 0; i < accesses.length; i++) {
+            var key = accesses[i];
+            var pos = sorted.indexOf(key);
+            var hl = {};
+            hl[pos] = 'comparing';
+            steps.push({ array: sorted.slice(), highlights: hl, explanation: "Access key " + key + ": search down the tree to find it." });
+
+            // Move accessed key to front (simulating splay to root)
+            sorted.splice(pos, 1);
+            sorted.unshift(key);
+            var hl2 = { 0: 'found' };
+            steps.push({ array: sorted.slice(), highlights: hl2, explanation: "Splay " + key + " to root via zig/zig-zig/zig-zag rotations. Now at root position." });
+        }
+
+        // Show repeated access is fast
+        var repeated = accesses[accesses.length - 1];
+        steps.push({ array: sorted.slice(), highlights: { 0: 'found' }, explanation: "Access " + repeated + " again: already at root! O(1) for recently accessed elements." });
+
+        var hlFinal = {};
+        for (var j = 0; j < sorted.length; j++) hlFinal[j] = 'sorted';
+        steps.push({ array: sorted.slice(), highlights: hlFinal, explanation: "Splay Tree adapts to access patterns. Amortized O(log n) per operation across any sequence." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [10, 5, 15, 3, 7, 12, 20], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

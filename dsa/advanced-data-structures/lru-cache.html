@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LRU Cache — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>LRU Cache</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Get: O(1)</span>
+            <span class="complexity-tag">Put: O(1)</span>
+            <span class="complexity-tag">Space: O(capacity)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>An LRU (Least Recently Used) Cache is a data structure that maintains a fixed-size collection of key-value pairs, evicting the least recently accessed entry when capacity is exceeded. It combines a <strong>hash map</strong> for O(1) key lookup with a <strong>doubly linked list</strong> for O(1) order maintenance.</p>
+            <p>On every <code>get</code> or <code>put</code>, the accessed node is moved to the head of the linked list (most recently used). When a new entry is added and the cache is full, the tail node (least recently used) is removed. The hash map stores key-to-node pointers for instant access, while the linked list tracks access order.</p>
+            <p>LRU Caches are fundamental in systems design: CPU caches, database buffer pools, web browser caches, CDN edge caches, and operating system page replacement all use LRU or LRU-variant policies. LeetCode #146 is one of the most frequently asked interview questions.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>O(1) Operations:</strong> Both get and put run in constant time.</li>
+                    <li><strong>Fixed Capacity:</strong> Automatically evicts least recently used entries.</li>
+                    <li><strong>HashMap + DLL:</strong> Combines two structures for optimal performance.</li>
+                    <li><strong>Recency Tracking:</strong> Most recently accessed items stay at the front.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.map = new Map();
+    // Sentinel nodes for doubly linked list
+    this.head = { key: null, val: null, prev: null, next: null };
+    this.tail = { key: null, val: null, prev: null, next: null };
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
+  }
+
+  _remove(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+
+  _addToFront(node) {
+    node.next = this.head.next;
+    node.prev = this.head;
+    this.head.next.prev = node;
+    this.head.next = node;
+  }
+
+  get(key) {
+    if (!this.map.has(key)) return -1;
+    var node = this.map.get(key);
+    this._remove(node);
+    this._addToFront(node);
+    return node.val;
+  }
+
+  put(key, value) {
+    if (this.map.has(key)) {
+      this._remove(this.map.get(key));
+    }
+    var node = { key: key, val: value, prev: null, next: null };
+    this._addToFront(node);
+    this.map.set(key, node);
+    if (this.map.size > this.capacity) {
+      var lru = this.tail.prev;
+      this._remove(lru);
+      this.map.delete(lru.key);
+    }
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>146</td><td><a href="https://leetcode.com/problems/lru-cache/" target="_blank">LRU Cache</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>460</td><td><a href="https://leetcode.com/problems/lfu-cache/" target="_blank">LFU Cache</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1472</td><td><a href="https://leetcode.com/problems/design-browser-history/" target="_blank">Design Browser History</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>432</td><td><a href="https://leetcode.com/problems/all-oone-data-structure/" target="_blank">All O`one Data Structure</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "lru-cache", title: "LRU Cache", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var capacity = 3;
+        var cache = []; // Ordered list: front=MRU, back=LRU
+        var operations = [
+            { op: 'put', k: 1, v: 10 },
+            { op: 'put', k: 2, v: 20 },
+            { op: 'put', k: 3, v: 30 },
+            { op: 'get', k: 2 },
+            { op: 'put', k: 4, v: 40 },
+            { op: 'get', k: 1 },
+            { op: 'get', k: 3 },
+            { op: 'put', k: 5, v: 50 }
+        ];
+
+        steps.push({ array: [], highlights: {}, explanation: "LRU Cache with capacity " + capacity + ". Front = most recently used, back = least recently used." });
+
+        for (var i = 0; i < operations.length; i++) {
+            var op = operations[i];
+            if (op.op === 'put') {
+                // Remove if exists
+                var existIdx = -1;
+                for (var j = 0; j < cache.length; j++) {
+                    if (cache[j] === op.v) { existIdx = j; break; }
+                }
+                if (existIdx >= 0) cache.splice(existIdx, 1);
+
+                cache.unshift(op.v); // Add to front
+
+                if (cache.length > capacity) {
+                    var evicted = cache.pop();
+                    var hl = { 0: 'found' };
+                    steps.push({ array: cache.slice(), highlights: hl, explanation: "put(" + op.k + ", " + op.v + "): Cache full! Evicted LRU value " + evicted + ". Added " + op.v + " to front." });
+                } else {
+                    var hl2 = { 0: 'found' };
+                    steps.push({ array: cache.slice(), highlights: hl2, explanation: "put(" + op.k + ", " + op.v + "): Added to front of cache. Size: " + cache.length + "/" + capacity + "." });
+                }
+            } else {
+                // get operation
+                var foundIdx = -1;
+                for (var k = 0; k < cache.length; k++) {
+                    if (cache[k] === op.k * 10) { foundIdx = k; break; }
+                }
+                if (foundIdx >= 0) {
+                    var val = cache.splice(foundIdx, 1)[0];
+                    cache.unshift(val);
+                    var hl3 = { 0: 'found' };
+                    steps.push({ array: cache.slice(), highlights: hl3, explanation: "get(" + op.k + "): Found! Moved value " + val + " to front (most recently used)." });
+                } else {
+                    steps.push({ array: cache.slice(), highlights: {}, explanation: "get(" + op.k + "): Cache miss! Key not found, returns -1." });
+                }
+            }
+        }
+
+        var hlFinal = {};
+        for (var m = 0; m < cache.length; m++) hlFinal[m] = 'sorted';
+        steps.push({ array: cache.slice(), highlights: hlFinal, explanation: "Final cache state (MRU to LRU): [" + cache.join(", ") + "]. All operations ran in O(1)." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 2, 3], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

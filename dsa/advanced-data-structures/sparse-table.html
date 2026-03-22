@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparse Table — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Sparse Table</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Build: O(n log n)</span>
+            <span class="complexity-tag">Query: O(1)</span>
+            <span class="complexity-tag">Space: O(n log n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Sparse Table is a data structure for answering static range queries (no updates) in O(1) time after O(n log n) preprocessing. It works for <strong>idempotent</strong> operations like minimum, maximum, and GCD, where applying the operation to overlapping ranges gives the correct result.</p>
+            <p>The table stores precomputed answers for all ranges of length 2^k. Entry sparse[i][k] holds the answer for the range starting at index i with length 2^k. Building the table uses dynamic programming: sparse[i][k] = merge(sparse[i][k-1], sparse[i + 2^(k-1)][k-1]).</p>
+            <p>For a query over range [l, r], we find the largest k such that 2^k fits within the range, then merge the two overlapping sub-ranges: merge(sparse[l][k], sparse[r - 2^k + 1][k]). Since min/max/GCD are idempotent, the overlap does not affect correctness. This gives O(1) queries without any updates — perfect for static arrays.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>O(1) Queries:</strong> After preprocessing, each query is answered in constant time.</li>
+                    <li><strong>Idempotent Only:</strong> Works for min, max, GCD — not for sum (overlapping ranges double-count).</li>
+                    <li><strong>Static:</strong> No support for updates — use Segment Tree or Fenwick Tree if updates needed.</li>
+                    <li><strong>LCA Applications:</strong> Sparse Tables enable O(1) Lowest Common Ancestor queries via Euler tour.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class SparseTable {
+  constructor(arr) {
+    var n = arr.length;
+    var LOG = Math.floor(Math.log2(n)) + 1;
+    this.sparse = [];
+    this.log = new Array(n + 1).fill(0);
+
+    // Precompute logs
+    for (var i = 2; i <= n; i++)
+      this.log[i] = this.log[Math.floor(i / 2)] + 1;
+
+    // Initialize level 0
+    this.sparse[0] = arr.slice();
+
+    // Build sparse table
+    for (var k = 1; k < LOG; k++) {
+      this.sparse[k] = [];
+      for (var j = 0; j + (1 << k) <= n; j++) {
+        this.sparse[k][j] = Math.min(
+          this.sparse[k-1][j],
+          this.sparse[k-1][j + (1 << (k-1))]
+        );
+      }
+    }
+  }
+
+  // O(1) range minimum query
+  query(l, r) {
+    var k = this.log[r - l + 1];
+    return Math.min(
+      this.sparse[k][l],
+      this.sparse[k][r - (1 << k) + 1]
+    );
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>303</td><td><a href="https://leetcode.com/problems/range-sum-query-immutable/" target="_blank">Range Sum Query – Immutable</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1547</td><td><a href="https://leetcode.com/problems/minimum-cost-to-cut-a-stick/" target="_blank">Minimum Cost to Cut a Stick</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2386</td><td><a href="https://leetcode.com/problems/find-the-k-sum-of-an-array/" target="_blank">Find the K-Sum of an Array</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>239</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "sparse-table", title: "Sparse Table", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Build a Sparse Table for Range Minimum Query on: [" + arr.join(", ") + "]." });
+
+        // Level 0: individual elements
+        var hl0 = {};
+        for (var i = 0; i < n; i++) hl0[i] = 'comparing';
+        steps.push({ array: arr.slice(), highlights: hl0, explanation: "Level 0 (length 1): each element is its own minimum. sparse[0] = [" + arr.join(", ") + "]." });
+
+        // Level 1: pairs
+        var level1 = [];
+        for (var j = 0; j + 1 < n; j++) {
+            level1.push(Math.min(arr[j], arr[j+1]));
+        }
+        var hl1 = {};
+        for (var k = 0; k < level1.length; k++) hl1[k] = 'found';
+        steps.push({ array: level1, highlights: hl1, explanation: "Level 1 (length 2): min of each pair. sparse[1] = [" + level1.join(", ") + "]." });
+
+        // Level 2: quads
+        var level2 = [];
+        for (var l = 0; l + 3 < n; l++) {
+            level2.push(Math.min(level1[l], level1[l+2]));
+        }
+        if (level2.length > 0) {
+            var hl2 = {};
+            for (var m = 0; m < level2.length; m++) hl2[m] = 'swapped';
+            steps.push({ array: level2, highlights: hl2, explanation: "Level 2 (length 4): min of quads. sparse[2] = [" + level2.join(", ") + "]." });
+        }
+
+        // Query demo
+        var ql = 1, qr = Math.min(5, n - 1);
+        var qk = Math.floor(Math.log2(qr - ql + 1));
+        var qMin = arr[ql];
+        for (var q = ql; q <= qr; q++) if (arr[q] < qMin) qMin = arr[q];
+
+        var hlQ = {};
+        for (var qi = ql; qi <= qr; qi++) hlQ[qi] = arr[qi] === qMin ? 'found' : 'comparing';
+        steps.push({ array: arr.slice(), highlights: hlQ, explanation: "Query min[" + ql + ".." + qr + "]: Use level k=" + qk + ". Overlap two sub-ranges, get min = " + qMin + " in O(1)." });
+
+        var hlFinal = {};
+        for (var f = 0; f < n; f++) hlFinal[f] = 'sorted';
+        steps.push({ array: arr.slice(), highlights: hlFinal, explanation: "Sparse Table complete. O(n log n) build, O(1) idempotent range queries." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [7, 2, 3, 0, 5, 10, 3, 12, 18], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skip List — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Skip List</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Search: O(log n) avg</span>
+            <span class="complexity-tag">Insert: O(log n) avg</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Skip List is a probabilistic data structure that allows O(log n) average-case search, insertion, and deletion in a sorted sequence. It extends a sorted linked list with multiple layers of "express lanes" that skip over intermediate elements, similar to how an express train skips stations.</p>
+            <p>The bottom level is a regular sorted linked list. Each higher level acts as an express lane, containing a random subset of the elements below. When searching, we start at the top level and move right until we would overshoot, then drop down a level. This produces a binary-search-like traversal with expected O(log n) comparisons.</p>
+            <p>Element promotion to higher levels is decided by a coin flip (typically 50% probability). This randomization means no single input sequence consistently produces worst-case behavior, unlike BSTs. Skip Lists are used in Redis sorted sets, LevelDB, and Apache HBase.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Probabilistic Balance:</strong> Randomized levels avoid worst-case degeneration.</li>
+                    <li><strong>Simple Implementation:</strong> Easier to implement than balanced BSTs like AVL or Red-Black trees.</li>
+                    <li><strong>Lock-Free Friendly:</strong> Concurrent skip lists are simpler than concurrent balanced trees.</li>
+                    <li><strong>Expected O(log n):</strong> Average height is O(log n) with high probability.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class SkipNode {
+  constructor(val, level) {
+    this.val = val;
+    this.next = new Array(level + 1).fill(null);
+  }
+}
+
+class SkipList {
+  constructor(maxLevel) {
+    this.maxLevel = maxLevel || 16;
+    this.head = new SkipNode(-Infinity, this.maxLevel);
+    this.level = 0;
+  }
+
+  randomLevel() {
+    var lvl = 0;
+    while (Math.random() < 0.5 && lvl < this.maxLevel) lvl++;
+    return lvl;
+  }
+
+  search(target) {
+    var curr = this.head;
+    for (var i = this.level; i >= 0; i--) {
+      while (curr.next[i] && curr.next[i].val < target)
+        curr = curr.next[i];
+    }
+    curr = curr.next[0];
+    return curr && curr.val === target;
+  }
+
+  insert(val) {
+    var update = new Array(this.maxLevel + 1).fill(null);
+    var curr = this.head;
+    for (var i = this.level; i >= 0; i--) {
+      while (curr.next[i] && curr.next[i].val < val)
+        curr = curr.next[i];
+      update[i] = curr;
+    }
+    var lvl = this.randomLevel();
+    if (lvl > this.level) {
+      for (var j = this.level + 1; j <= lvl; j++) update[j] = this.head;
+      this.level = lvl;
+    }
+    var node = new SkipNode(val, lvl);
+    for (var k = 0; k <= lvl; k++) {
+      node.next[k] = update[k].next[k];
+      update[k].next[k] = node;
+    }
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1206</td><td><a href="https://leetcode.com/problems/design-skiplist/" target="_blank">Design Skiplist</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>707</td><td><a href="https://leetcode.com/problems/design-linked-list/" target="_blank">Design Linked List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1472</td><td><a href="https://leetcode.com/problems/design-browser-history/" target="_blank">Design Browser History</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "skip-list", title: "Skip List", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = [];
+        var insertOrder = data.slice();
+
+        steps.push({ array: insertOrder, highlights: {}, explanation: "We will insert elements into a Skip List: " + insertOrder.join(", ") + ". Each element is randomly promoted to higher levels." });
+
+        for (var i = 0; i < insertOrder.length; i++) {
+            var val = insertOrder[i];
+            // Insert in sorted position
+            var pos = 0;
+            while (pos < arr.length && arr[pos] < val) pos++;
+            arr.splice(pos, 0, val);
+
+            var level = 0;
+            // Deterministic "random" level for visualization
+            if (i % 4 === 0) level = 2;
+            else if (i % 2 === 0) level = 1;
+
+            var hl = {};
+            hl[pos] = 'found';
+            steps.push({ array: arr.slice(), highlights: hl, explanation: "Insert " + val + " at position " + pos + " (promoted to level " + level + "). List: [" + arr.join(", ") + "]." });
+        }
+
+        // Search demonstration
+        var target = arr[Math.floor(arr.length / 2)];
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Now searching for " + target + ". Start at top level, move right until overshoot, then drop down." });
+
+        for (var j = 0; j < arr.length; j++) {
+            var hl2 = {};
+            hl2[j] = arr[j] === target ? 'found' : 'comparing';
+            steps.push({ array: arr.slice(), highlights: hl2, explanation: arr[j] === target ? "Found " + target + " at index " + j + "!" : "Check " + arr[j] + " — " + (arr[j] < target ? "move right." : "overshoot, drop level.") });
+            if (arr[j] === target) break;
+        }
+
+        var hlFinal = {};
+        for (var k = 0; k < arr.length; k++) hlFinal[k] = 'sorted';
+        steps.push({ array: arr.slice(), highlights: hlFinal, explanation: "Skip List operations complete. Average O(log n) search through layered express lanes." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [3, 7, 12, 5, 19, 2, 15, 9], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

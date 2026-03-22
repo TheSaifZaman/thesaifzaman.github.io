@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Buffer — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Circular Buffer</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Enqueue: O(1)</span>
+            <span class="complexity-tag">Dequeue: O(1)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Circular Buffer (ring buffer) is a fixed-size array that wraps around: when the write pointer reaches the end, it wraps to the beginning. It uses two pointers — <code>head</code> (read position) and <code>tail</code> (write position) — and modular arithmetic to treat the array as circular. This eliminates the need to shift elements, giving O(1) enqueue and dequeue.</p>
+            <p>When the buffer is full, new writes either overwrite the oldest data (streaming mode) or reject the write (bounded mode). The full/empty distinction is handled by tracking the count or leaving one slot empty (size = capacity + 1).</p>
+            <p>Circular buffers are used in audio/video streaming, network packet buffers, producer-consumer queues, keyboard input buffers, and log rotation systems. Their fixed memory footprint and lock-free potential make them ideal for real-time and embedded systems.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Fixed Size:</strong> No dynamic memory allocation — predictable memory usage.</li>
+                    <li><strong>Wrap-Around:</strong> Indices use modular arithmetic: (i + 1) % capacity.</li>
+                    <li><strong>No Shifting:</strong> Unlike array-based queues, no elements need to be moved.</li>
+                    <li><strong>Lock-Free:</strong> Single-producer single-consumer variants need no locks.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class CircularBuffer {
+  constructor(capacity) {
+    this.buffer = new Array(capacity);
+    this.capacity = capacity;
+    this.head = 0;  // read pointer
+    this.tail = 0;  // write pointer
+    this.count = 0;
+  }
+
+  enqueue(val) {
+    if (this.isFull()) return false;
+    this.buffer[this.tail] = val;
+    this.tail = (this.tail + 1) % this.capacity;
+    this.count++;
+    return true;
+  }
+
+  dequeue() {
+    if (this.isEmpty()) return undefined;
+    var val = this.buffer[this.head];
+    this.buffer[this.head] = undefined;
+    this.head = (this.head + 1) % this.capacity;
+    this.count--;
+    return val;
+  }
+
+  peek() { return this.isEmpty() ? undefined : this.buffer[this.head]; }
+  isFull() { return this.count === this.capacity; }
+  isEmpty() { return this.count === 0; }
+  size() { return this.count; }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>622</td><td><a href="https://leetcode.com/problems/design-circular-queue/" target="_blank">Design Circular Queue</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>641</td><td><a href="https://leetcode.com/problems/design-circular-deque/" target="_blank">Design Circular Deque</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>346</td><td><a href="https://leetcode.com/problems/moving-average-from-data-stream/" target="_blank">Moving Average from Data Stream</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "circular-buffer", title: "Circular Buffer", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var cap = 6;
+        var buf = new Array(cap).fill(0);
+        var head = 0, tail = 0, count = 0;
+
+        steps.push({ array: buf.slice(), highlights: {}, explanation: "Circular buffer of capacity " + cap + ". Head=0 (read), Tail=0 (write). All slots empty." });
+
+        var ops = [
+            { op: 'enq', val: 10 }, { op: 'enq', val: 20 }, { op: 'enq', val: 30 },
+            { op: 'deq' }, { op: 'deq' },
+            { op: 'enq', val: 40 }, { op: 'enq', val: 50 }, { op: 'enq', val: 60 },
+            { op: 'enq', val: 70 }, // wraps around
+            { op: 'deq' }
+        ];
+
+        for (var i = 0; i < ops.length; i++) {
+            var o = ops[i];
+            var hl = {};
+            if (o.op === 'enq') {
+                if (count < cap) {
+                    buf[tail] = o.val;
+                    hl[tail] = 'found';
+                    tail = (tail + 1) % cap;
+                    count++;
+                    steps.push({ array: buf.slice(), highlights: hl, explanation: "enqueue(" + o.val + "): Written at index " + ((tail - 1 + cap) % cap) + ". Head=" + head + ", Tail=" + tail + ", Count=" + count + "." });
+                } else {
+                    steps.push({ array: buf.slice(), highlights: {}, explanation: "enqueue(" + o.val + "): Buffer full! Cannot write." });
+                }
+            } else {
+                if (count > 0) {
+                    var val = buf[head];
+                    hl[head] = 'swapped';
+                    buf[head] = 0;
+                    head = (head + 1) % cap;
+                    count--;
+                    steps.push({ array: buf.slice(), highlights: hl, explanation: "dequeue(): Read " + val + " from index " + ((head - 1 + cap) % cap) + ". Head=" + head + ", Tail=" + tail + ", Count=" + count + "." });
+                }
+            }
+        }
+
+        var hlFinal = {};
+        for (var j = 0; j < cap; j++) if (buf[j]) hlFinal[j] = 'sorted';
+        steps.push({ array: buf.slice(), highlights: hlFinal, explanation: "Final buffer state. Wrap-around enables reuse of freed slots without shifting elements." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [0, 0, 0, 0, 0, 0], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fenwick Tree — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Fenwick Tree (Binary Indexed Tree)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Update: O(log n)</span>
+            <span class="complexity-tag">Prefix Query: O(log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Fenwick Tree (Binary Indexed Tree or BIT) is a data structure that efficiently supports prefix sum queries and point updates. It uses a clever bit-manipulation trick: each index <em>i</em> is responsible for a range of elements determined by the lowest set bit of <em>i</em>. For example, index 8 (binary 1000) covers 8 elements, while index 6 (binary 110) covers 2 elements.</p>
+            <p>To compute a prefix sum from index 1 to i, we add tree[i] and repeatedly strip the lowest set bit (i -= i & (-i)) until i becomes 0. To update index i, we add the delta and repeatedly add the lowest set bit (i += i & (-i)) until i exceeds n. Both operations visit at most O(log n) nodes.</p>
+            <p>Fenwick Trees are simpler to implement than Segment Trees (only a few lines of code) and have lower constant factors. They are ideal for problems requiring prefix sum queries with updates, counting inversions, and coordinate compression problems. However, they are less flexible than Segment Trees since they naturally support only prefix operations.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Compact:</strong> Uses only n+1 array elements — no 4n overhead like Segment Trees.</li>
+                    <li><strong>Bit Tricks:</strong> Lowest set bit (i & -i) determines each node's responsibility range.</li>
+                    <li><strong>Prefix Sums:</strong> Range sum [l, r] = prefix(r) - prefix(l-1).</li>
+                    <li><strong>Simple Code:</strong> Both update and query are 3-4 lines each.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class FenwickTree {
+  constructor(n) {
+    this.n = n;
+    this.tree = new Array(n + 1).fill(0);
+  }
+
+  // Add delta to index i (1-indexed)
+  update(i, delta) {
+    for (; i <= this.n; i += i & (-i))
+      this.tree[i] += delta;
+  }
+
+  // Prefix sum from 1 to i
+  query(i) {
+    var sum = 0;
+    for (; i > 0; i -= i & (-i))
+      sum += this.tree[i];
+    return sum;
+  }
+
+  // Range sum from l to r (inclusive)
+  rangeQuery(l, r) {
+    return this.query(r) - this.query(l - 1);
+  }
+
+  // Build from array
+  static fromArray(arr) {
+    var bit = new FenwickTree(arr.length);
+    for (var i = 0; i < arr.length; i++)
+      bit.update(i + 1, arr[i]);
+    return bit;
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>307</td><td><a href="https://leetcode.com/problems/range-sum-query-mutable/" target="_blank">Range Sum Query – Mutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>315</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>493</td><td><a href="https://leetcode.com/problems/reverse-pairs/" target="_blank">Reverse Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>327</td><td><a href="https://leetcode.com/problems/count-of-range-sum/" target="_blank">Count of Range Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "fenwick-tree", title: "Fenwick Tree", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var n = arr.length;
+        var tree = new Array(n + 1).fill(0);
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Build a Fenwick Tree from array: [" + arr.join(", ") + "]. 1-indexed internally." });
+
+        // Build
+        for (var i = 0; i < n; i++) {
+            var idx = i + 1;
+            var hl = {}; hl[i] = 'comparing';
+            steps.push({ array: arr.slice(), highlights: hl, explanation: "Insert arr[" + i + "]=" + arr[i] + " (1-indexed position " + idx + "). Update ancestors via i += i & (-i)." });
+
+            for (var j = idx; j <= n; j += j & (-j)) {
+                tree[j] += arr[i];
+            }
+        }
+
+        // Show BIT array
+        var bitArr = tree.slice(1);
+        var hlBit = {};
+        for (var k = 0; k < bitArr.length; k++) hlBit[k] = 'sorted';
+        steps.push({ array: bitArr, highlights: hlBit, explanation: "Fenwick Tree built: [" + bitArr.join(", ") + "]. Each cell stores partial sums based on lowest set bit." });
+
+        // Prefix query
+        var qIdx = Math.min(5, n);
+        var sum = 0;
+        var visited = [];
+        for (var q = qIdx; q > 0; q -= q & (-q)) {
+            sum += tree[q];
+            visited.push(q);
+        }
+        var hlQ = {};
+        for (var v = 0; v < visited.length; v++) hlQ[visited[v] - 1] = 'found';
+        steps.push({ array: bitArr, highlights: hlQ, explanation: "Prefix sum query(1.." + qIdx + "): visited indices [" + visited.join(", ") + "], sum = " + sum + ". Only O(log n) nodes accessed." });
+
+        // Point update
+        var updI = 3, delta = 5;
+        var hlU = {}; hlU[updI - 1] = 'swapped';
+        steps.push({ array: bitArr, highlights: hlU, explanation: "Update index " + updI + " by +" + delta + ". Propagate via i += i & (-i)." });
+        for (var u = updI; u <= n; u += u & (-u)) tree[u] += delta;
+        var bitArr2 = tree.slice(1);
+        var hlU2 = {};
+        for (var w = 0; w < bitArr2.length; w++) hlU2[w] = 'sorted';
+        steps.push({ array: bitArr2, highlights: hlU2, explanation: "Update complete. New BIT: [" + bitArr2.join(", ") + "]. O(log n) cells modified." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 7, 3, 0, 5, 8, 3, 2], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

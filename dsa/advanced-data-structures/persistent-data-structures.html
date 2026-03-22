@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistent Data Structures — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Persistent Data Structures</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Update: O(log n)</span>
+            <span class="complexity-tag">Query any version: O(log n)</span>
+            <span class="complexity-tag">Space: O(n log n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Persistent Data Structure preserves all previous versions of itself when modified. Instead of modifying nodes in-place, each update creates new nodes along the path from root to the modified leaf, sharing all unchanged subtrees with the previous version. This is called <strong>path copying</strong>.</p>
+            <p>For a balanced tree of height O(log n), each update creates O(log n) new nodes while sharing O(n) existing nodes. This gives O(log n) time and space per update, and allows querying any historical version in O(log n) time. The total space after m updates is O(n + m log n).</p>
+            <p>Persistent data structures are fundamental in functional programming (immutable data), version control systems (Git's object model), database MVCC (multi-version concurrency control), and competitive programming (persistent segment trees for offline range queries across time).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Version History:</strong> Every version is accessible — updates never destroy previous state.</li>
+                    <li><strong>Path Copying:</strong> Only nodes on the root-to-change path are duplicated.</li>
+                    <li><strong>Structural Sharing:</strong> Unchanged subtrees are shared across versions.</li>
+                    <li><strong>Immutability:</strong> Each version is immutable, enabling safe concurrent access.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Persistent Segment Tree
+class PersistentNode {
+  constructor(val, left, right) {
+    this.val = val;
+    this.left = left || null;
+    this.right = right || null;
+  }
+}
+
+function build(arr, lo, hi) {
+  if (lo === hi) return new PersistentNode(arr[lo]);
+  var mid = (lo + hi) >> 1;
+  var left = build(arr, lo, mid);
+  var right = build(arr, mid + 1, hi);
+  return new PersistentNode(left.val + right.val, left, right);
+}
+
+// Returns new root (new version)
+function update(node, lo, hi, idx, val) {
+  if (lo === hi) return new PersistentNode(val);
+  var mid = (lo + hi) >> 1;
+  if (idx <= mid) {
+    var newLeft = update(node.left, lo, mid, idx, val);
+    return new PersistentNode(newLeft.val + node.right.val, newLeft, node.right);
+  } else {
+    var newRight = update(node.right, mid + 1, hi, idx, val);
+    return new PersistentNode(node.left.val + newRight.val, node.left, newRight);
+  }
+}
+
+function query(node, lo, hi, l, r) {
+  if (r < lo || hi < l) return 0;
+  if (l <= lo && hi <= r) return node.val;
+  var mid = (lo + hi) >> 1;
+  return query(node.left, lo, mid, l, r) +
+         query(node.right, mid + 1, hi, l, r);
+}
+
+// Usage
+var roots = [];
+roots[0] = build([1,2,3,4,5], 0, 4);
+roots[1] = update(roots[0], 0, 4, 2, 10); // version 1: arr[2]=10
+query(roots[0], 0, 4, 0, 4); // 15 (original)
+query(roots[1], 0, 4, 0, 4); // 22 (updated)</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>307</td><td><a href="https://leetcode.com/problems/range-sum-query-mutable/" target="_blank">Range Sum Query – Mutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>315</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>327</td><td><a href="https://leetcode.com/problems/count-of-range-sum/" target="_blank">Count of Range Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "persistent-data-structures", title: "Persistent Data Structures", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var versions = [arr.slice()];
+
+        steps.push({ array: arr.slice(), highlights: {}, explanation: "Version 0 (original): [" + arr.join(", ") + "]. Persistent structure preserves all versions." });
+
+        // Update 1
+        var arr1 = arr.slice(); arr1[2] = 99;
+        versions.push(arr1);
+        var hl1 = { 2: 'found' };
+        steps.push({ array: arr1.slice(), highlights: hl1, explanation: "Version 1: Update index 2 to 99. Path copied: only O(log n) new nodes created. Unchanged subtrees shared." });
+
+        // Update 2
+        var arr2 = arr1.slice(); arr2[0] = 50;
+        versions.push(arr2);
+        var hl2 = { 0: 'found' };
+        steps.push({ array: arr2.slice(), highlights: hl2, explanation: "Version 2: Update index 0 to 50. Again O(log n) new nodes, rest shared with version 1." });
+
+        // Query version 0
+        var hlv0 = {};
+        for (var i = 0; i < versions[0].length; i++) hlv0[i] = 'comparing';
+        steps.push({ array: versions[0].slice(), highlights: hlv0, explanation: "Query version 0: [" + versions[0].join(", ") + "]. Original data intact! Sum = " + versions[0].reduce(function(a,b){return a+b;},0) + "." });
+
+        // Query version 1
+        var hlv1 = {};
+        for (var j = 0; j < versions[1].length; j++) hlv1[j] = 'comparing';
+        steps.push({ array: versions[1].slice(), highlights: hlv1, explanation: "Query version 1: [" + versions[1].join(", ") + "]. Sum = " + versions[1].reduce(function(a,b){return a+b;},0) + "." });
+
+        // Query version 2
+        var hlv2 = {};
+        for (var k = 0; k < versions[2].length; k++) hlv2[k] = 'sorted';
+        steps.push({ array: versions[2].slice(), highlights: hlv2, explanation: "Query version 2: [" + versions[2].join(", ") + "]. All 3 versions coexist with O(n + m log n) total space." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1, 3, 5, 7, 9, 11], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

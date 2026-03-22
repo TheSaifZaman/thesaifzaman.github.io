@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doubly Linked List — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Doubly Linked List</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Insert/Delete: O(1) at known node</span>
+            <span class="complexity-tag">Search: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Doubly Linked List is a linear data structure where each node contains a value, a pointer to the next node, and a pointer to the previous node. Unlike singly linked lists, doubly linked lists allow traversal in both directions and enable O(1) deletion of a node when you have a reference to it.</p>
+            <p>Sentinel (dummy) head and tail nodes simplify edge cases by eliminating null checks. Every insertion and deletion becomes a uniform pointer update between two existing nodes, making the code cleaner and less error-prone.</p>
+            <p>Doubly linked lists are the backbone of LRU caches, browser forward/back navigation, undo/redo systems, and memory allocators (free lists). Combined with a hash map, they enable O(1) access, insertion, and deletion — the classic LRU Cache design pattern.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Bidirectional:</strong> Traverse forward and backward through the list.</li>
+                    <li><strong>O(1) Delete:</strong> Remove any node in constant time given a reference to it.</li>
+                    <li><strong>Sentinel Nodes:</strong> Dummy head/tail eliminate edge case handling.</li>
+                    <li><strong>No Index Access:</strong> Unlike arrays, O(n) to access element by position.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class DLLNode {
+  constructor(val) {
+    this.val = val;
+    this.prev = null;
+    this.next = null;
+  }
+}
+
+class DoublyLinkedList {
+  constructor() {
+    this.head = new DLLNode(null); // sentinel
+    this.tail = new DLLNode(null); // sentinel
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
+    this.size = 0;
+  }
+
+  addToFront(val) {
+    var node = new DLLNode(val);
+    node.next = this.head.next;
+    node.prev = this.head;
+    this.head.next.prev = node;
+    this.head.next = node;
+    this.size++;
+    return node;
+  }
+
+  addToBack(val) {
+    var node = new DLLNode(val);
+    node.prev = this.tail.prev;
+    node.next = this.tail;
+    this.tail.prev.next = node;
+    this.tail.prev = node;
+    this.size++;
+    return node;
+  }
+
+  remove(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+    this.size--;
+    return node.val;
+  }
+
+  toArray() {
+    var arr = [], curr = this.head.next;
+    while (curr !== this.tail) { arr.push(curr.val); curr = curr.next; }
+    return arr;
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>707</td><td><a href="https://leetcode.com/problems/design-linked-list/" target="_blank">Design Linked List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>146</td><td><a href="https://leetcode.com/problems/lru-cache/" target="_blank">LRU Cache</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>432</td><td><a href="https://leetcode.com/problems/all-oone-data-structure/" target="_blank">All O`one Data Structure</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>430</td><td><a href="https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/" target="_blank">Flatten a Multilevel Doubly Linked List</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "doubly-linked-list", title: "Doubly Linked List", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var list = [];
+
+        steps.push({ array: [], highlights: {}, explanation: "Empty doubly linked list with sentinel head and tail nodes." });
+
+        // Add to back
+        var vals = [10, 20, 30, 40, 50];
+        for (var i = 0; i < vals.length; i++) {
+            list.push(vals[i]);
+            var hl = {};
+            hl[list.length - 1] = 'found';
+            steps.push({ array: list.slice(), highlights: hl, explanation: "addToBack(" + vals[i] + "): Inserted before tail sentinel. List: [" + list.join(" <-> ") + "]." });
+        }
+
+        // Add to front
+        list.unshift(5);
+        steps.push({ array: list.slice(), highlights: { 0: 'found' }, explanation: "addToFront(5): Inserted after head sentinel. List: [" + list.join(" <-> ") + "]." });
+
+        // Remove from middle
+        var removedIdx = 3;
+        var removedVal = list[removedIdx];
+        var hl2 = {};
+        hl2[removedIdx] = 'swapped';
+        steps.push({ array: list.slice(), highlights: hl2, explanation: "remove(node with value " + removedVal + "): Rewire prev.next and next.prev pointers." });
+        list.splice(removedIdx, 1);
+        steps.push({ array: list.slice(), highlights: {}, explanation: "Removed " + removedVal + ". List: [" + list.join(" <-> ") + "]. O(1) deletion." });
+
+        // Traverse forward
+        for (var j = 0; j < list.length; j++) {
+            var hl3 = {};
+            hl3[j] = 'comparing';
+            steps.push({ array: list.slice(), highlights: hl3, explanation: "Forward traversal: visiting node with value " + list[j] + " (index " + j + ")." });
+        }
+
+        var hlFinal = {};
+        for (var k = 0; k < list.length; k++) hlFinal[k] = 'sorted';
+        steps.push({ array: list.slice(), highlights: hlFinal, explanation: "Doubly Linked List operations complete. Bidirectional traversal and O(1) node removal." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [10, 20, 30, 40, 50], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

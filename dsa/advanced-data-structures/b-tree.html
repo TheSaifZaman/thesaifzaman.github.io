@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Tree — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>B-Tree</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Search: O(log n)</span>
+            <span class="complexity-tag">Insert: O(log n)</span>
+            <span class="complexity-tag">Delete: O(log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A B-Tree is a self-balancing search tree designed for systems that read and write large blocks of data, such as databases and file systems. Unlike binary search trees, each node in a B-Tree can contain multiple keys and have multiple children. A B-Tree of order <em>m</em> allows each node to have up to <em>m</em> children and <em>m-1</em> keys.</p>
+            <p>All leaves are at the same depth, ensuring the tree is always perfectly balanced. When a node overflows (exceeds m-1 keys), it splits into two nodes and pushes the median key up to the parent. This splitting propagates upward only when necessary, keeping the tree balanced with minimal restructuring.</p>
+            <p>B-Trees minimize disk I/O by storing many keys per node, reducing tree height. A B-Tree with branching factor 1000 and height 3 can index over a billion records. This is why databases like MySQL (InnoDB) and PostgreSQL use B-Tree variants (B+ Trees) for their indexes.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Multi-way:</strong> Each node holds up to m-1 keys and m children.</li>
+                    <li><strong>Balanced:</strong> All leaves are at the same depth at all times.</li>
+                    <li><strong>Disk-Optimized:</strong> Wide nodes reduce tree height, minimizing I/O operations.</li>
+                    <li><strong>Split on Overflow:</strong> Nodes split and push median up when full.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class BTreeNode {
+  constructor(t, leaf) {
+    this.t = t;           // minimum degree
+    this.keys = [];
+    this.children = [];
+    this.leaf = leaf;
+  }
+
+  search(k) {
+    var i = 0;
+    while (i < this.keys.length && k > this.keys[i]) i++;
+    if (i < this.keys.length && this.keys[i] === k) return this;
+    if (this.leaf) return null;
+    return this.children[i].search(k);
+  }
+
+  splitChild(i) {
+    var t = this.t;
+    var y = this.children[i];
+    var z = new BTreeNode(t, y.leaf);
+    z.keys = y.keys.splice(t);       // right half
+    var median = y.keys.pop();        // median key
+    if (!y.leaf) z.children = y.children.splice(t);
+    this.children.splice(i + 1, 0, z);
+    this.keys.splice(i, 0, median);
+  }
+
+  insertNonFull(k) {
+    var i = this.keys.length - 1;
+    if (this.leaf) {
+      while (i >= 0 && this.keys[i] > k) i--;
+      this.keys.splice(i + 1, 0, k);
+    } else {
+      while (i >= 0 && this.keys[i] > k) i--;
+      i++;
+      if (this.children[i].keys.length === 2 * this.t - 1) {
+        this.splitChild(i);
+        if (k > this.keys[i]) i++;
+      }
+      this.children[i].insertNonFull(k);
+    }
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>173</td><td><a href="https://leetcode.com/problems/binary-search-tree-iterator/" target="_blank">Binary Search Tree Iterator</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>449</td><td><a href="https://leetcode.com/problems/serialize-and-deserialize-bst/" target="_blank">Serialize and Deserialize BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>981</td><td><a href="https://leetcode.com/problems/time-based-key-value-store/" target="_blank">Time Based Key-Value Store</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>715</td><td><a href="https://leetcode.com/problems/range-module/" target="_blank">Range Module</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "b-tree", title: "B-Tree", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var insertOrder = data.slice();
+        var keys = [];
+
+        steps.push({ array: insertOrder, highlights: {}, explanation: "We will insert keys " + insertOrder.join(", ") + " into a B-Tree of order 3 (max 2 keys per node)." });
+
+        for (var i = 0; i < insertOrder.length; i++) {
+            var val = insertOrder[i];
+            keys.push(val);
+            keys.sort(function(a,b){ return a-b; });
+
+            var hl = {};
+            // Find where the new key landed
+            for (var j = 0; j < keys.length; j++) {
+                if (keys[j] === val) { hl[j] = 'found'; break; }
+            }
+            steps.push({ array: keys.slice(), highlights: hl, explanation: "Insert " + val + ". Current keys (sorted): [" + keys.join(", ") + "]." });
+
+            // Simulate split when we have 3 keys in a node (order-3 B-tree)
+            if (keys.length === 3 && i < insertOrder.length - 1) {
+                var mid = keys[1];
+                var hlSplit = { 0: 'comparing', 1: 'swapped', 2: 'comparing' };
+                steps.push({ array: keys.slice(), highlights: hlSplit, explanation: "Node full! Split: median " + mid + " moves up. Left=[" + keys[0] + "], Right=[" + keys[2] + "]." });
+            }
+        }
+
+        var hlFinal = {};
+        for (var k = 0; k < keys.length; k++) hlFinal[k] = 'sorted';
+        steps.push({ array: keys.slice(), highlights: hlFinal, explanation: "All keys inserted. B-Tree maintains O(log n) height with all leaves at the same level." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [10, 20, 5, 6, 12, 30, 7, 17], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

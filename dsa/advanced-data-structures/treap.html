@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treap — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Treap</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Search: O(log n) expected</span>
+            <span class="complexity-tag">Insert: O(log n) expected</span>
+            <span class="complexity-tag">Delete: O(log n) expected</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Treap is a combination of a binary search <strong>tree</strong> and a <strong>heap</strong>. Each node stores a key (maintaining BST property) and a random priority (maintaining heap property). The BST property ensures keys are ordered left-to-right, while the heap property (on random priorities) keeps the tree probabilistically balanced.</p>
+            <p>Insertion works by first inserting like a standard BST, then assigning a random priority and rotating the node upward until the heap property is restored. The key operation is <strong>split</strong> (divide tree by key) and <strong>merge</strong> (combine two treaps), which form the basis of an elegant implicit treap that can handle array operations like insert-at-position, delete-range, and reverse-range.</p>
+            <p>Treaps provide expected O(log n) operations with simpler code than AVL or Red-Black trees. Implicit treaps (using subtree sizes instead of keys) are powerful competitive programming tools that support all sequence operations — insert, delete, reverse, and aggregate queries — in O(log n).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Randomized Balance:</strong> Random priorities ensure expected O(log n) height.</li>
+                    <li><strong>Split/Merge:</strong> Two fundamental operations enable all treap manipulations.</li>
+                    <li><strong>Implicit Treap:</strong> Uses subtree sizes to support array operations in O(log n).</li>
+                    <li><strong>Simpler than AVL/RB:</strong> No complex rotation cases — just split and merge.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class TreapNode {
+  constructor(key) {
+    this.key = key;
+    this.priority = Math.random();
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function split(node, key) {
+  if (!node) return [null, null];
+  if (key <= node.key) {
+    var [left, right] = split(node.left, key);
+    node.left = right;
+    return [left, node];
+  } else {
+    var [left, right] = split(node.right, key);
+    node.right = left;
+    return [node, right];
+  }
+}
+
+function merge(left, right) {
+  if (!left || !right) return left || right;
+  if (left.priority > right.priority) {
+    left.right = merge(left.right, right);
+    return left;
+  } else {
+    right.left = merge(left, right.left);
+    return right;
+  }
+}
+
+function insert(root, key) {
+  var node = new TreapNode(key);
+  var [left, right] = split(root, key);
+  return merge(merge(left, node), right);
+}
+
+function erase(root, key) {
+  if (!root) return null;
+  if (key === root.key) return merge(root.left, root.right);
+  if (key < root.key) root.left = erase(root.left, key);
+  else root.right = erase(root.right, key);
+  return root;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>450</td><td><a href="https://leetcode.com/problems/delete-node-in-a-bst/" target="_blank">Delete Node in a BST</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>701</td><td><a href="https://leetcode.com/problems/insert-into-a-binary-search-tree/" target="_blank">Insert into a Binary Search Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>315</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>493</td><td><a href="https://leetcode.com/problems/reverse-pairs/" target="_blank">Reverse Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "treap", title: "Treap", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var keys = [];
+        var priorities = [83, 45, 92, 31, 67, 55, 78];
+
+        steps.push({ array: data.slice(), highlights: {}, explanation: "Insert keys into a Treap. Each node gets a key (BST order) and random priority (heap order)." });
+
+        for (var i = 0; i < data.length; i++) {
+            var key = data[i];
+            keys.push(key);
+            keys.sort(function(a, b) { return a - b; });
+
+            var pos = keys.indexOf(key);
+            var hl = {};
+            hl[pos] = 'found';
+            var pri = priorities[i % priorities.length];
+            steps.push({ array: keys.slice(), highlights: hl, explanation: "Insert key=" + key + " (priority=" + pri + "). BST order maintained: [" + keys.join(", ") + "]. Rotate up if priority is higher than parent." });
+        }
+
+        // Demonstrate split
+        var splitKey = keys[Math.floor(keys.length / 2)];
+        var left = [], right = [];
+        for (var j = 0; j < keys.length; j++) {
+            if (keys[j] < splitKey) left.push(keys[j]);
+            else right.push(keys[j]);
+        }
+        var hlSplit = {};
+        for (var k = 0; k < keys.length; k++) hlSplit[k] = keys[k] < splitKey ? 'comparing' : 'swapped';
+        steps.push({ array: keys.slice(), highlights: hlSplit, explanation: "Split at key " + splitKey + ": Left=[" + left.join(", ") + "], Right=[" + right.join(", ") + "]." });
+
+        // Merge back
+        var merged = left.concat(right);
+        merged.sort(function(a, b) { return a - b; });
+        var hlMerge = {};
+        for (var m = 0; m < merged.length; m++) hlMerge[m] = 'sorted';
+        steps.push({ array: merged, highlights: hlMerge, explanation: "Merge: combine left and right treaps back. Result: [" + merged.join(", ") + "]. Split + Merge = O(log n)." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [5, 2, 8, 1, 4, 7, 10], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deque — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Deque (Double-Ended Queue)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Push/Pop Front: O(1)</span>
+            <span class="complexity-tag">Push/Pop Back: O(1)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Deque (double-ended queue, pronounced "deck") is a generalized queue that allows insertion and removal at both the front and back in O(1) time. It combines the capabilities of both stacks (LIFO) and queues (FIFO) into a single data structure.</p>
+            <p>Deques can be implemented using a doubly linked list (each operation is O(1)) or a circular buffer / dynamic array (amortized O(1)). In JavaScript, arrays can simulate deques using push/pop for the back and unshift/shift for the front, though unshift/shift are O(n) internally. A proper implementation uses a circular buffer for true O(1) operations.</p>
+            <p>Deques are essential for the sliding window maximum/minimum pattern (monotonic deque), BFS optimizations like 0-1 BFS, and work-stealing algorithms in parallel computing. Python's collections.deque and Java's ArrayDeque are standard library implementations.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Double-Ended:</strong> O(1) insert and remove at both front and back.</li>
+                    <li><strong>Versatile:</strong> Can be used as a stack, queue, or both simultaneously.</li>
+                    <li><strong>Sliding Window:</strong> Foundation for O(n) sliding window min/max algorithms.</li>
+                    <li><strong>0-1 BFS:</strong> Enables BFS on graphs with 0/1 edge weights in O(V+E).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class Deque {
+  constructor() {
+    this.data = {};
+    this.head = 0;
+    this.tail = 0;
+  }
+
+  pushBack(val) {
+    this.data[this.tail] = val;
+    this.tail++;
+  }
+
+  pushFront(val) {
+    this.head--;
+    this.data[this.head] = val;
+  }
+
+  popBack() {
+    if (this.isEmpty()) return undefined;
+    this.tail--;
+    var val = this.data[this.tail];
+    delete this.data[this.tail];
+    return val;
+  }
+
+  popFront() {
+    if (this.isEmpty()) return undefined;
+    var val = this.data[this.head];
+    delete this.data[this.head];
+    this.head++;
+    return val;
+  }
+
+  peekFront() { return this.data[this.head]; }
+  peekBack() { return this.data[this.tail - 1]; }
+  size() { return this.tail - this.head; }
+  isEmpty() { return this.tail === this.head; }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>239</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>641</td><td><a href="https://leetcode.com/problems/design-circular-deque/" target="_blank">Design Circular Deque</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>232</td><td><a href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank">Implement Queue using Stacks</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>862</td><td><a href="https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/" target="_blank">Shortest Subarray with Sum at Least K</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "deque", title: "Deque", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var deque = [];
+
+        steps.push({ array: [], highlights: {}, explanation: "Empty deque. We can push/pop from both front and back in O(1)." });
+
+        var ops = [
+            { op: 'pushBack', val: 10 },
+            { op: 'pushBack', val: 20 },
+            { op: 'pushFront', val: 5 },
+            { op: 'pushBack', val: 30 },
+            { op: 'pushFront', val: 1 },
+            { op: 'popFront' },
+            { op: 'popBack' },
+            { op: 'pushBack', val: 25 }
+        ];
+
+        for (var i = 0; i < ops.length; i++) {
+            var o = ops[i];
+            var hl = {};
+            if (o.op === 'pushBack') {
+                deque.push(o.val);
+                hl[deque.length - 1] = 'found';
+                steps.push({ array: deque.slice(), highlights: hl, explanation: "pushBack(" + o.val + "): Added to rear. Deque: [" + deque.join(", ") + "]." });
+            } else if (o.op === 'pushFront') {
+                deque.unshift(o.val);
+                hl[0] = 'found';
+                steps.push({ array: deque.slice(), highlights: hl, explanation: "pushFront(" + o.val + "): Added to front. Deque: [" + deque.join(", ") + "]." });
+            } else if (o.op === 'popFront') {
+                var v = deque.shift();
+                steps.push({ array: deque.slice(), highlights: {}, explanation: "popFront(): Removed " + v + " from front. Deque: [" + deque.join(", ") + "]." });
+            } else if (o.op === 'popBack') {
+                var v2 = deque.pop();
+                steps.push({ array: deque.slice(), highlights: {}, explanation: "popBack(): Removed " + v2 + " from rear. Deque: [" + deque.join(", ") + "]." });
+            }
+        }
+
+        var hlFinal = {};
+        for (var j = 0; j < deque.length; j++) hlFinal[j] = 'sorted';
+        steps.push({ array: deque.slice(), highlights: hlFinal, explanation: "Final deque: [" + deque.join(", ") + "]. All operations executed in O(1)." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [10, 20, 30], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Map Internals — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Hash Map Internals</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Avg: O(1) get/put</span>
+            <span class="complexity-tag">Worst: O(n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Hash Map stores key-value pairs using an array of "buckets." A hash function converts each key into an array index. When two keys hash to the same index (a <strong>collision</strong>), the collision is resolved using either <strong>chaining</strong> (linked list at each bucket) or <strong>open addressing</strong> (probing for the next empty slot).</p>
+            <p>The <strong>load factor</strong> (n/m, elements/buckets) determines performance. When it exceeds a threshold (typically 0.75), the array is resized (usually doubled) and all elements are rehashed. This rehashing is O(n) but happens infrequently, giving amortized O(1) insertions.</p>
+            <p>A good hash function distributes keys uniformly across buckets. Java's HashMap uses chaining with linked lists that convert to red-black trees when a bucket exceeds 8 entries. Python's dict uses open addressing with pseudorandom probing. Understanding these internals helps you choose the right hash function and predict performance in adversarial scenarios.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Hash Function:</strong> Maps keys to indices; must be deterministic and distribute uniformly.</li>
+                    <li><strong>Collision Resolution:</strong> Chaining (linked lists) or open addressing (linear/quadratic probing).</li>
+                    <li><strong>Load Factor:</strong> n/m ratio; rehash when it exceeds threshold for O(1) amortized ops.</li>
+                    <li><strong>Rehashing:</strong> Resize array and reinsert all elements when load factor is too high.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class HashMap {
+  constructor(capacity) {
+    this.capacity = capacity || 16;
+    this.size = 0;
+    this.buckets = new Array(this.capacity).fill(null).map(() => []);
+    this.loadFactorThreshold = 0.75;
+  }
+
+  _hash(key) {
+    var hash = 0;
+    var str = String(key);
+    for (var i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) & 0x7FFFFFFF;
+    }
+    return hash % this.capacity;
+  }
+
+  put(key, value) {
+    var idx = this._hash(key);
+    var bucket = this.buckets[idx];
+    for (var i = 0; i < bucket.length; i++) {
+      if (bucket[i][0] === key) { bucket[i][1] = value; return; }
+    }
+    bucket.push([key, value]);
+    this.size++;
+    if (this.size / this.capacity > this.loadFactorThreshold) this._resize();
+  }
+
+  get(key) {
+    var idx = this._hash(key);
+    var bucket = this.buckets[idx];
+    for (var i = 0; i < bucket.length; i++) {
+      if (bucket[i][0] === key) return bucket[i][1];
+    }
+    return undefined;
+  }
+
+  _resize() {
+    var oldBuckets = this.buckets;
+    this.capacity *= 2;
+    this.buckets = new Array(this.capacity).fill(null).map(() => []);
+    this.size = 0;
+    for (var i = 0; i < oldBuckets.length; i++) {
+      for (var j = 0; j < oldBuckets[i].length; j++) {
+        this.put(oldBuckets[i][j][0], oldBuckets[i][j][1]);
+      }
+    }
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>706</td><td><a href="https://leetcode.com/problems/design-hashmap/" target="_blank">Design HashMap</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>705</td><td><a href="https://leetcode.com/problems/design-hashset/" target="_blank">Design HashSet</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>49</td><td><a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group Anagrams</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>380</td><td><a href="https://leetcode.com/problems/insert-delete-getrandom-o1/" target="_blank">Insert Delete GetRandom O(1)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "hash-map-internals", title: "Hash Map Internals", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var cap = 8;
+        var buckets = new Array(cap).fill(0); // count per bucket
+
+        steps.push({ array: buckets.slice(), highlights: {}, explanation: "Hash Map with " + cap + " buckets (showing item count per bucket). Load factor threshold = 0.75." });
+
+        var keys = ["apple", "banana", "cherry", "date", "elderberry", "fig"];
+        var totalItems = 0;
+
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var hash = 0;
+            for (var c = 0; c < key.length; c++) hash = (hash * 31 + key.charCodeAt(c)) & 0x7FFFFFFF;
+            var idx = hash % cap;
+
+            var hl = {};
+            hl[idx] = 'comparing';
+            steps.push({ array: buckets.slice(), highlights: hl, explanation: "put('" + key + "'): hash='" + key + "' -> bucket " + idx + "." });
+
+            buckets[idx]++;
+            totalItems++;
+            var hl2 = {};
+            hl2[idx] = buckets[idx] > 1 ? 'swapped' : 'found';
+            var lf = (totalItems / cap).toFixed(2);
+            steps.push({ array: buckets.slice(), highlights: hl2, explanation: (buckets[idx] > 1 ? "Collision! " : "") + "Bucket " + idx + " now has " + buckets[idx] + " item(s). Load factor: " + lf + "." });
+
+            // Check for resize
+            if (totalItems / cap > 0.75) {
+                steps.push({ array: buckets.slice(), highlights: {}, explanation: "Load factor " + lf + " > 0.75! Resize: double capacity to " + (cap * 2) + " and rehash all entries." });
+                var oldBuckets = buckets;
+                cap *= 2;
+                buckets = new Array(cap).fill(0);
+                // Simulate rehash (simplified)
+                for (var j = 0; j < oldBuckets.length; j++) {
+                    if (oldBuckets[j] > 0) buckets[j % cap] += oldBuckets[j];
+                }
+                var hlResize = {};
+                for (var k = 0; k < buckets.length; k++) if (buckets[k]) hlResize[k] = 'found';
+                steps.push({ array: buckets.slice(), highlights: hlResize, explanation: "Rehash complete. " + totalItems + " items distributed across " + cap + " buckets." });
+            }
+        }
+
+        var hlFinal = {};
+        for (var m = 0; m < buckets.length; m++) if (buckets[m]) hlFinal[m] = 'sorted';
+        steps.push({ array: buckets.slice(), highlights: hlFinal, explanation: "Hash Map operations complete. Good hash functions minimize collisions for O(1) average access." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [0,0,0,0,0,0,0,0], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

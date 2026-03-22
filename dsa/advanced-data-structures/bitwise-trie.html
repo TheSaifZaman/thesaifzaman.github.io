@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitwise Trie — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bitwise Trie (Binary Trie)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Insert: O(B)</span>
+            <span class="complexity-tag">Query: O(B)</span>
+            <span class="complexity-tag">Space: O(n &times; B)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Bitwise Trie (Binary Trie) stores integers by their binary representation. Each node has at most two children: one for bit 0 and one for bit 1. Numbers are inserted from the most significant bit (MSB) to the least significant bit (LSB), creating paths of length B (typically 30 or 31 for 32-bit integers).</p>
+            <p>The killer application is finding the <strong>maximum XOR</strong> of a given number with any number in the trie. For each bit of the query number, we greedily choose the opposite bit (to maximize XOR). If the opposite child exists, we go there; otherwise, we take the same bit. This finds the maximum XOR pair in O(B) per query.</p>
+            <p>Bitwise Tries are used in IP routing tables (longest prefix match), XOR-related competitive programming problems, and network address lookups. They can be augmented with subtree counts for problems involving XOR with constraints (e.g., count pairs with XOR greater than K).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Binary Branching:</strong> Each node has at most 2 children (bit 0 and bit 1).</li>
+                    <li><strong>MSB to LSB:</strong> Numbers are processed from the most significant bit down.</li>
+                    <li><strong>Maximum XOR:</strong> Greedily pick opposite bits to maximize XOR in O(B) time.</li>
+                    <li><strong>Fixed Depth:</strong> All paths have exactly B levels, where B is the bit width.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class BitwiseTrie {
+  constructor(maxBit) {
+    this.maxBit = maxBit || 30; // for values up to ~10^9
+    this.root = {};
+  }
+
+  insert(num) {
+    var node = this.root;
+    for (var i = this.maxBit; i >= 0; i--) {
+      var bit = (num >> i) & 1;
+      if (!node[bit]) node[bit] = {};
+      node = node[bit];
+    }
+  }
+
+  // Find number in trie that maximizes XOR with num
+  maxXor(num) {
+    var node = this.root;
+    var result = 0;
+    for (var i = this.maxBit; i >= 0; i--) {
+      var bit = (num >> i) & 1;
+      var want = 1 - bit; // opposite bit for max XOR
+      if (node[want]) {
+        result |= (1 << i);
+        node = node[want];
+      } else {
+        node = node[bit];
+      }
+    }
+    return result;
+  }
+}
+
+// Maximum XOR of Two Numbers in an Array
+function findMaximumXOR(nums) {
+  var trie = new BitwiseTrie();
+  var maxVal = 0;
+  trie.insert(nums[0]);
+  for (var i = 1; i < nums.length; i++) {
+    maxVal = Math.max(maxVal, trie.maxXor(nums[i]));
+    trie.insert(nums[i]);
+  }
+  return maxVal;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>421</td><td><a href="https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/" target="_blank">Maximum XOR of Two Numbers in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>208</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Implement Trie (Prefix Tree)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1938</td><td><a href="https://leetcode.com/problems/maximum-genetic-difference-query/" target="_blank">Maximum Genetic Difference Query</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>1707</td><td><a href="https://leetcode.com/problems/maximum-xor-with-an-element-from-array/" target="_blank">Maximum XOR With an Element From Array</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bitwise-trie", title: "Bitwise Trie", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var nums = data.slice();
+        var BITS = 4; // Use 4 bits for visualization
+
+        steps.push({ array: nums.slice(), highlights: {}, explanation: "Insert numbers into a Bitwise Trie (4-bit representation). Then find maximum XOR pair." });
+
+        for (var i = 0; i < nums.length; i++) {
+            var num = nums[i];
+            var bits = [];
+            for (var b = BITS - 1; b >= 0; b--) bits.push((num >> b) & 1);
+
+            var hl = {}; hl[i] = 'found';
+            steps.push({ array: nums.slice(), highlights: hl, explanation: "Insert " + num + " (binary: " + bits.join("") + "). Follow path from MSB to LSB, creating nodes as needed." });
+        }
+
+        // Find max XOR
+        var maxXor = 0, bestA = 0, bestB = 0;
+        for (var a = 0; a < nums.length; a++) {
+            for (var c = a + 1; c < nums.length; c++) {
+                var xor = nums[a] ^ nums[c];
+                if (xor > maxXor) { maxXor = xor; bestA = a; bestB = c; }
+            }
+        }
+
+        var hlXor = {};
+        hlXor[bestA] = 'comparing'; hlXor[bestB] = 'comparing';
+        steps.push({ array: nums.slice(), highlights: hlXor, explanation: "Finding max XOR: For each number, greedily pick opposite bits in the trie." });
+
+        hlXor[bestA] = 'found'; hlXor[bestB] = 'found';
+        steps.push({ array: nums.slice(), highlights: hlXor, explanation: "Maximum XOR = " + nums[bestA] + " XOR " + nums[bestB] + " = " + maxXor + ". Found in O(n * B) total time." });
+
+        var hlFinal = {};
+        for (var f = 0; f < nums.length; f++) hlFinal[f] = 'sorted';
+        steps.push({ array: nums.slice(), highlights: hlFinal, explanation: "Bitwise Trie complete. Efficient for XOR queries, IP routing, and bit-level prefix matching." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [3, 10, 5, 14, 7, 2], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

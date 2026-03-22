@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom Filter — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Bloom Filter</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Insert: O(k)</span>
+            <span class="complexity-tag">Lookup: O(k)</span>
+            <span class="complexity-tag">Space: O(m) bits</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>A Bloom Filter is a space-efficient probabilistic data structure that tests whether an element is a member of a set. It can tell you "definitely not in the set" or "possibly in the set" — it never produces false negatives, but may produce false positives.</p>
+            <p>It consists of a bit array of <em>m</em> bits (initially all 0) and <em>k</em> independent hash functions. To add an element, compute k hash values and set those bit positions to 1. To query, check if all k bit positions are set — if any is 0, the element is definitely absent. If all are 1, the element is probably present (with a tunable false positive rate).</p>
+            <p>Bloom Filters are used extensively in practice: web browsers check URLs against phishing databases, databases avoid unnecessary disk reads (LSM-tree levels), distributed systems reduce network round trips, and spell checkers quickly reject non-words. The false positive rate is approximately (1 - e^(-kn/m))^k, where n is the number of inserted elements.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>No False Negatives:</strong> If lookup says absent, the element is guaranteed absent.</li>
+                    <li><strong>False Positives:</strong> Lookup may report present for absent elements (tunable rate).</li>
+                    <li><strong>No Deletion:</strong> Standard Bloom Filters cannot remove elements (Counting Bloom Filters can).</li>
+                    <li><strong>Space Efficient:</strong> Uses far less memory than storing actual elements.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class BloomFilter {
+  constructor(size, numHashes) {
+    this.size = size;
+    this.numHashes = numHashes;
+    this.bits = new Array(size).fill(0);
+  }
+
+  // Simple hash functions using multiplication method
+  _hash(value, seed) {
+    var hash = 0;
+    var str = String(value);
+    for (var i = 0; i < str.length; i++) {
+      hash = (hash * seed + str.charCodeAt(i)) & 0x7FFFFFFF;
+    }
+    return hash % this.size;
+  }
+
+  add(value) {
+    for (var i = 0; i < this.numHashes; i++) {
+      var idx = this._hash(value, 31 + i * 37);
+      this.bits[idx] = 1;
+    }
+  }
+
+  mightContain(value) {
+    for (var i = 0; i < this.numHashes; i++) {
+      var idx = this._hash(value, 31 + i * 37);
+      if (this.bits[idx] === 0) return false; // definitely absent
+    }
+    return true; // possibly present
+  }
+}
+
+// Usage: ~1% false positive rate with m/n ~ 10, k ~ 7
+var bf = new BloomFilter(100, 3);
+bf.add("hello");
+bf.mightContain("hello"); // true
+bf.mightContain("world"); // false (probably)</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>705</td><td><a href="https://leetcode.com/problems/design-hashset/" target="_blank">Design HashSet</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>706</td><td><a href="https://leetcode.com/problems/design-hashmap/" target="_blank">Design HashMap</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>380</td><td><a href="https://leetcode.com/problems/insert-delete-getrandom-o1/" target="_blank">Insert Delete GetRandom O(1)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "bloom-filter", title: "Bloom Filter", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var size = data.length;
+        var bits = new Array(size).fill(0);
+
+        steps.push({ array: bits.slice(), highlights: {}, explanation: "Bloom Filter: " + size + " bit array, all initialized to 0. We use 2 hash functions." });
+
+        function hash1(v) { return ((v * 7) + 3) % size; }
+        function hash2(v) { return ((v * 13) + 5) % size; }
+
+        var values = [15, 27, 42];
+        for (var i = 0; i < values.length; i++) {
+            var v = values[i];
+            var h1 = hash1(v), h2 = hash2(v);
+            var hl = {};
+            hl[h1] = 'comparing'; hl[h2] = 'comparing';
+            steps.push({ array: bits.slice(), highlights: hl, explanation: "Add " + v + ": hash1=" + h1 + ", hash2=" + h2 + ". Set these bit positions to 1." });
+
+            bits[h1] = 1; bits[h2] = 1;
+            var hl2 = {};
+            hl2[h1] = 'found'; hl2[h2] = 'found';
+            steps.push({ array: bits.slice(), highlights: hl2, explanation: "Bits[" + h1 + "] and bits[" + h2 + "] set to 1. Element " + v + " added." });
+        }
+
+        // Query present
+        var qPresent = values[0];
+        var qh1 = hash1(qPresent), qh2 = hash2(qPresent);
+        var hlq = {};
+        hlq[qh1] = 'found'; hlq[qh2] = 'found';
+        steps.push({ array: bits.slice(), highlights: hlq, explanation: "Query " + qPresent + ": bits[" + qh1 + "]=" + bits[qh1] + ", bits[" + qh2 + "]=" + bits[qh2] + ". Both 1 — possibly present." });
+
+        // Query absent
+        var qAbsent = 99;
+        var ah1 = hash1(qAbsent), ah2 = hash2(qAbsent);
+        var hla = {};
+        hla[ah1] = bits[ah1] ? 'comparing' : 'swapped';
+        hla[ah2] = bits[ah2] ? 'comparing' : 'swapped';
+        var absent = bits[ah1] === 0 || bits[ah2] === 0;
+        steps.push({ array: bits.slice(), highlights: hla, explanation: "Query " + qAbsent + ": bits[" + ah1 + "]=" + bits[ah1] + ", bits[" + ah2 + "]=" + bits[ah2] + ". " + (absent ? "A 0 found — definitely NOT in set." : "All 1s — might be false positive!") });
+
+        var hlFinal = {};
+        for (var j = 0; j < size; j++) if (bits[j]) hlFinal[j] = 'sorted';
+        steps.push({ array: bits.slice(), highlights: hlFinal, explanation: "Bloom Filter complete. Space-efficient membership testing with no false negatives." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [0,0,0,0,0,0,0,0,0,0,0,0], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Union-Find — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Union-Find (Disjoint Set Union)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Find: O(&alpha;(n))</span>
+            <span class="complexity-tag">Union: O(&alpha;(n))</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Union-Find (also called Disjoint Set Union or DSU) is a data structure that tracks a set of elements partitioned into disjoint subsets. It supports two primary operations: <strong>Find</strong>, which determines which subset a particular element belongs to, and <strong>Union</strong>, which merges two subsets into one.</p>
+            <p>Two key optimizations make Union-Find nearly O(1) per operation: <strong>Path Compression</strong> flattens the tree during Find by making every node point directly to the root. <strong>Union by Rank</strong> always attaches the shorter tree under the root of the taller tree, keeping the structure balanced.</p>
+            <p>With both optimizations, the amortized time per operation is O(alpha(n)), where alpha is the inverse Ackermann function — effectively constant for all practical input sizes. Union-Find is widely used in Kruskal's MST algorithm, cycle detection, connected components, and network connectivity problems.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Path Compression:</strong> Flattens tree structure for near-constant lookups.</li>
+                    <li><strong>Union by Rank:</strong> Keeps trees balanced to prevent degenerate chains.</li>
+                    <li><strong>Connected Components:</strong> Efficiently tracks and merges groups of elements.</li>
+                    <li><strong>Cycle Detection:</strong> If two nodes share the same root, adding an edge creates a cycle.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({length: n}, (_, i) => i);
+    this.rank = new Array(n).fill(0);
+  }
+
+  find(x) {
+    if (this.parent[x] !== x) {
+      this.parent[x] = this.find(this.parent[x]); // path compression
+    }
+    return this.parent[x];
+  }
+
+  union(x, y) {
+    var rootX = this.find(x);
+    var rootY = this.find(y);
+    if (rootX === rootY) return false;
+    // union by rank
+    if (this.rank[rootX] < this.rank[rootY]) {
+      this.parent[rootX] = rootY;
+    } else if (this.rank[rootX] > this.rank[rootY]) {
+      this.parent[rootY] = rootX;
+    } else {
+      this.parent[rootY] = rootX;
+      this.rank[rootX]++;
+    }
+    return true;
+  }
+
+  connected(x, y) {
+    return this.find(x) === this.find(y);
+  }
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="Easy">Easy</button>
+                <button class="problems-tab" data-filter="Medium">Medium</button>
+                <button class="problems-tab" data-filter="Hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>547</td><td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>684</td><td><a href="https://leetcode.com/problems/redundant-connection/" target="_blank">Redundant Connection</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>721</td><td><a href="https://leetcode.com/problems/accounts-merge/" target="_blank">Accounts Merge</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>200</td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>1319</td><td><a href="https://leetcode.com/problems/number-of-operations-to-make-network-connected/" target="_blank">Number of Operations to Make Network Connected</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>839</td><td><a href="https://leetcode.com/problems/similar-string-groups/" target="_blank">Similar String Groups</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "union-find", title: "Union-Find", category: "Advanced Data Structures" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var n = data.length;
+        var parent = [];
+        var rank = [];
+        for (var i = 0; i < n; i++) { parent.push(i); rank.push(0); }
+
+        steps.push({ array: parent.slice(), highlights: {}, explanation: "Initial state: " + n + " elements, each in its own set. parent[i] = i for all." });
+
+        function find(x) {
+            while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+            return x;
+        }
+
+        // Perform unions based on data pairs
+        var unions = [[0,1],[1,2],[3,4],[4,5],[2,5]];
+        for (var u = 0; u < unions.length; u++) {
+            var a = unions[u][0], b = unions[u][1];
+            if (a >= n || b >= n) continue;
+            var ra = find(a), rb = find(b);
+            var hl = {};
+            hl[a] = 'comparing'; hl[b] = 'comparing';
+            steps.push({ array: parent.slice(), highlights: hl, explanation: "Union(" + a + ", " + b + "): find(" + a + ")=" + ra + ", find(" + b + ")=" + rb + "." });
+
+            if (ra !== rb) {
+                if (rank[ra] < rank[rb]) { parent[ra] = rb; }
+                else if (rank[ra] > rank[rb]) { parent[rb] = ra; }
+                else { parent[rb] = ra; rank[ra]++; }
+                var hl2 = {};
+                hl2[a] = 'found'; hl2[b] = 'found';
+                steps.push({ array: parent.slice(), highlights: hl2, explanation: "Merged sets containing " + a + " and " + b + ". Parent array updated." });
+            } else {
+                steps.push({ array: parent.slice(), highlights: hl, explanation: a + " and " + b + " are already in the same set. No merge needed." });
+            }
+        }
+
+        // Show final connected check
+        var hl3 = {};
+        for (var j = 0; j < n; j++) hl3[j] = 'sorted';
+        steps.push({ array: parent.slice(), highlights: hl3, explanation: "Final parent array: [" + parent.join(", ") + "]. All union operations complete." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [0, 1, 2, 3, 4, 5, 6], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>
