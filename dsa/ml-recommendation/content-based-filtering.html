@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content-Based Filtering — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Content-Based Filtering</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;d)</span>
+            <span class="complexity-tag">Space: O(n&middot;d)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Content-based filtering recommends items similar to those a user has previously liked, based on item features (genre, keywords, attributes). Each item is represented as a feature vector, and similarity (typically cosine) is computed between items to find the best matches.</p>
+            <p>Unlike collaborative filtering, it does not need other users' data and can recommend new items immediately if their features are known. However, it tends to over-specialize, only recommending items similar to what the user already knows (the "filter bubble" problem).</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Feature vectors:</strong> TF-IDF, embeddings, or handcrafted item attributes.</li>
+                    <li><strong>User profile:</strong> Weighted average of features from liked items.</li>
+                    <li><strong>No cold-start for items:</strong> New items can be recommended immediately.</li>
+                    <li><strong>Limitation:</strong> Cannot discover items outside user's existing taste profile.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function contentBasedRecommend(userProfile, items, topK) {
+    var scores = [];
+    for (var i = 0; i < items.length; i++) {
+        var sim = cosineSimilarity(userProfile, items[i].features);
+        scores.push({item: items[i], score: sim});
+    }
+    scores.sort(function(a, b) { return b.score - a.score; });
+    return scores.slice(0, topK);
+}
+
+function cosineSimilarity(a, b) {
+    var dot = 0, normA = 0, normB = 0;
+    for (var i = 0; i < a.length; i++) {
+        dot += a[i] * b[i];
+        normA += a[i] * a[i];
+        normB += b[i] * b[i];
+    }
+    return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata" target="_blank">Kaggle: TMDB Movie Metadata (Content Features)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations" target="_blank">Kaggle: H&M Fashion Recommendations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/otto-recommender-system" target="_blank">Kaggle: OTTO Multi-Objective RecSys</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>4</td><td><a href="https://www.kaggle.com/competitions/spotify-recsys-challenge" target="_blank">Kaggle: Spotify Playlist RecSys</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "content-based-filtering", title: "Content-Based Filtering", category: "Recommendation" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Items in 2D feature space (e.g., Action vs Romance scores)
+        var items = [
+            {name:'Avengers',  x:8, y:2, liked:true},
+            {name:'Die Hard',  x:7, y:1, liked:true},
+            {name:'Titanic',   x:2, y:9, liked:false},
+            {name:'Notebook',  x:1, y:8, liked:false},
+            {name:'MI:6',      x:9, y:3, liked:false},
+            {name:'La La Land',x:3, y:7, liked:false},
+            {name:'John Wick', x:8, y:1, liked:false}
+        ];
+
+        // Step 1: show all items in feature space
+        steps.push({
+            points: items.map(function(it) {
+                return {x: it.x, y: it.y, r: 6, color: '#94a3b8'};
+            }),
+            lines: [],
+            explanation: "Items in 2D feature space: x-axis = Action score, y-axis = Romance score. Each point is a movie."
+        });
+
+        // Step 2: highlight liked items
+        steps.push({
+            points: items.map(function(it) {
+                return {x: it.x, y: it.y, r: 6, color: it.liked ? '#22c55e' : '#94a3b8'};
+            }),
+            lines: [],
+            explanation: "Green = user's liked movies (Avengers, Die Hard). Both are high-action, low-romance. This defines the user profile."
+        });
+
+        // Step 3: compute user profile (centroid of liked items)
+        var profileX = (8 + 7) / 2, profileY = (2 + 1) / 2;
+        steps.push({
+            points: items.map(function(it) {
+                return {x: it.x, y: it.y, r: 6, color: it.liked ? '#22c55e' : '#94a3b8'};
+            }).concat([{x: profileX, y: profileY, r: 10, color: '#3b82f6'}]),
+            lines: [],
+            explanation: "User profile (blue, large): centroid of liked items at (" + profileX.toFixed(1) + ", " + profileY.toFixed(1) + "). This represents the user's taste."
+        });
+
+        // Step 4: compute distances and show closest
+        function dist(a, b) { return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)); }
+        var profile = {x: profileX, y: profileY};
+        var unlked = items.filter(function(it) { return !it.liked; });
+        var scored = unlked.map(function(it) {
+            return {name: it.name, x: it.x, y: it.y, d: dist(profile, it)};
+        }).sort(function(a, b) { return a.d - b.d; });
+
+        steps.push({
+            points: items.map(function(it) {
+                return {x: it.x, y: it.y, r: 6, color: it.liked ? '#22c55e' : '#94a3b8'};
+            }).concat([{x: profileX, y: profileY, r: 10, color: '#3b82f6'}]),
+            lines: scored.map(function(s) {
+                return {x1: profileX, y1: profileY, x2: s.x, y2: s.y, color: '#3b82f666', dash: '4'};
+            }),
+            explanation: "Computing cosine similarity from user profile to each unrated item. Closer items are more similar to user's taste."
+        });
+
+        // Step 5: highlight top recommendations
+        steps.push({
+            points: items.map(function(it) {
+                var isTop = it.name === scored[0].name || it.name === scored[1].name;
+                return {x: it.x, y: it.y, r: isTop ? 8 : 5, color: it.liked ? '#22c55e' : (isTop ? '#f59e0b' : '#94a3b8')};
+            }).concat([{x: profileX, y: profileY, r: 10, color: '#3b82f6'}]),
+            lines: [
+                {x1: profileX, y1: profileY, x2: scored[0].x, y2: scored[0].y, color: '#f59e0b'},
+                {x1: profileX, y1: profileY, x2: scored[1].x, y2: scored[1].y, color: '#f59e0b'}
+            ],
+            explanation: "Top 2 recommendations (amber): " + scored[0].name + " and " + scored[1].name + ". Both are action movies closest to user profile."
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'scatter',
+        renderOptions: {minX: 0, maxX: 10, minY: 0, maxY: 10} });
+    </script>
+</body>
+</html>

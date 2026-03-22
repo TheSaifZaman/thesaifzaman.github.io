@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP-Growth — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>FP-Growth</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>FP-Growth (Frequent Pattern Growth) mines frequent itemsets without candidate generation. It compresses the transaction database into a compact <strong>FP-tree</strong>, then extracts frequent patterns by building conditional FP-trees recursively.</p>
+            <p>The algorithm requires only two database scans: one to count item frequencies and another to build the FP-tree. Items are sorted by frequency and inserted as branches, with shared prefixes merged. This makes FP-Growth significantly faster than Apriori for dense datasets.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>No candidates:</strong> Avoids expensive candidate generation and testing.</li>
+                    <li><strong>Compact:</strong> FP-tree compresses the database by sharing prefixes.</li>
+                    <li><strong>Two scans:</strong> Only needs two passes over the database.</li>
+                    <li><strong>Divide &amp; conquer:</strong> Recursively mines conditional trees for each item.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function buildFPTree(transactions, minSupport) {
+    // Count item frequencies
+    var freq = {};
+    for (var t = 0; t < transactions.length; t++) {
+        for (var i = 0; i < transactions[t].length; i++) {
+            freq[transactions[t][i]] = (freq[transactions[t][i]] || 0) + 1;
+        }
+    }
+    // Filter and sort items by frequency
+    var root = {item: null, count: 0, children: {}};
+    for (var t2 = 0; t2 < transactions.length; t2++) {
+        var sorted = transactions[t2]
+            .filter(function(item) { return freq[item] >= minSupport; })
+            .sort(function(a, b) { return freq[b] - freq[a]; });
+        insertTree(root, sorted);
+    }
+    return root;
+}
+
+function insertTree(node, items) {
+    if (items.length === 0) return;
+    var item = items[0];
+    if (!node.children[item]) {
+        node.children[item] = {item: item, count: 0, children: {}};
+    }
+    node.children[item].count++;
+    insertTree(node.children[item], items.slice(1));
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/datasets/heeraldedhia/groceries-dataset" target="_blank">Kaggle: Groceries Market Basket</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/instacart-market-basket-analysis" target="_blank">Kaggle: Instacart Market Basket</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Implement Trie (Prefix Tree)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>4</td><td><a href="https://www.kaggle.com/competitions/otto-recommender-system" target="_blank">Kaggle: OTTO Recommender</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "fp-growth", title: "FP-Growth", category: "Recommendation" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Transactions (sorted by frequency: B=4, M=4, Bu=4, E=3)
+        // T1: B,M,E  T2: B,Bu  T3: M,Bu,E  T4: B,M,Bu  T5: B,M,Bu,E
+
+        // Step 1: frequency count
+        steps.push({
+            array: [4, 4, 4, 3],
+            highlights: {0:'sorted',1:'sorted',2:'sorted',3:'sorted'},
+            explanation: "Scan 1: item frequencies. Bread=4, Milk=4, Butter=4, Eggs=3. All \u2265 min_support=3. Sort order: B, M, Bu, E."
+        });
+
+        // Step 2: start building FP-tree — insert T1: {B,M,E}
+        var w = 500;
+        steps.push({
+            nodes: [
+                {id: 'root', label: 'Root', x: 250, y: 30, state: ''},
+                {id: 'B1', label: 'B:1', x: 250, y: 100, state: 'sorted'}
+            ],
+            edges: [{from: 'root', to: 'B1'}],
+            explanation: "Insert T1 {B,M,E}: Start branch with Bread (count=1)."
+        });
+
+        steps.push({
+            nodes: [
+                {id: 'root', label: 'Root', x: 250, y: 30, state: ''},
+                {id: 'B1', label: 'B:1', x: 250, y: 100, state: ''},
+                {id: 'M1', label: 'M:1', x: 250, y: 170, state: 'sorted'},
+                {id: 'E1', label: 'E:1', x: 250, y: 240, state: 'sorted'}
+            ],
+            edges: [{from: 'root', to: 'B1'},{from: 'B1', to: 'M1'},{from: 'M1', to: 'E1'}],
+            explanation: "T1 complete: Root \u2192 B:1 \u2192 M:1 \u2192 E:1. First branch of the FP-tree."
+        });
+
+        // Step 3: insert T2: {B,Bu} — B count increments
+        steps.push({
+            nodes: [
+                {id: 'root', label: 'Root', x: 250, y: 30, state: ''},
+                {id: 'B2', label: 'B:2', x: 200, y: 100, state: 'swapped'},
+                {id: 'M1', label: 'M:1', x: 150, y: 170, state: ''},
+                {id: 'E1', label: 'E:1', x: 150, y: 240, state: ''},
+                {id: 'Bu1',label: 'Bu:1',x: 250, y: 170, state: 'sorted'}
+            ],
+            edges: [{from:'root',to:'B2'},{from:'B2',to:'M1'},{from:'M1',to:'E1'},{from:'B2',to:'Bu1'}],
+            explanation: "Insert T2 {B,Bu}: B incremented to 2 (shared prefix!). New branch for Butter under B."
+        });
+
+        // Step 4: insert remaining — show fuller tree
+        steps.push({
+            nodes: [
+                {id: 'root', label: 'Root', x: 250, y: 30, state: ''},
+                {id: 'B4', label: 'B:4', x: 170, y: 100, state: ''},
+                {id: 'M3', label: 'M:3', x: 120, y: 170, state: ''},
+                {id: 'Bu2',label: 'Bu:2',x: 80,  y: 240, state: ''},
+                {id: 'E2', label: 'E:2', x: 160, y: 240, state: ''},
+                {id: 'Bu1b',label:'Bu:1',x: 240, y: 170, state: ''},
+                {id: 'M1b',label: 'M:1', x: 350, y: 100, state: ''},
+                {id: 'Bu1c',label:'Bu:1',x: 350, y: 170, state: ''},
+                {id: 'E1b',label: 'E:1', x: 350, y: 240, state: ''}
+            ],
+            edges: [
+                {from:'root',to:'B4'},{from:'B4',to:'M3'},{from:'M3',to:'Bu2'},{from:'M3',to:'E2'},
+                {from:'B4',to:'Bu1b'},
+                {from:'root',to:'M1b'},{from:'M1b',to:'Bu1c'},{from:'Bu1c',to:'E1b'}
+            ],
+            explanation: "All 5 transactions inserted. FP-tree compresses shared prefixes. B:4 \u2192 M:3 is the most common path."
+        });
+
+        // Step 5: mine conditional tree for Eggs
+        steps.push({
+            nodes: [
+                {id: 'root', label: 'Root', x: 250, y: 30, state: ''},
+                {id: 'B2e', label: 'B:2', x: 170, y: 100, state: 'comparing'},
+                {id: 'M2e', label: 'M:2', x: 170, y: 170, state: 'comparing'},
+                {id: 'M1e', label: 'M:1', x: 330, y: 100, state: 'comparing'},
+                {id: 'Bu1e',label: 'Bu:1',x: 330, y: 170, state: 'comparing'}
+            ],
+            edges: [
+                {from:'root',to:'B2e'},{from:'B2e',to:'M2e'},
+                {from:'root',to:'M1e'},{from:'M1e',to:'Bu1e'}
+            ],
+            explanation: "Conditional FP-tree for Eggs (E:3). Prefix paths: B\u2192M (count 2), M\u2192Bu (count 1). {M,E} has support 3 \u2192 frequent!"
+        });
+
+        // Step 6: final frequent patterns
+        steps.push({
+            array: [4, 4, 4, 3, 3, 3, 3],
+            highlights: {0:'sorted',1:'sorted',2:'sorted',3:'sorted',4:'comparing',5:'comparing',6:'comparing'},
+            explanation: "Frequent patterns: {B}:4, {M}:4, {Bu}:4, {E}:3, {B,M}:3, {B,Bu}:3, {M,Bu}:3. No candidates needed \u2014 FP-Growth is complete!"
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'tree' });
+    </script>
+</body>
+</html>

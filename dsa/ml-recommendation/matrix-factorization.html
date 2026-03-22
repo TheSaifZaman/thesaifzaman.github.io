@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Factorization — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Matrix Factorization</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n&middot;m&middot;k)</span>
+            <span class="complexity-tag">Space: O((n+m)&middot;k)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Matrix Factorization decomposes the sparse user-item rating matrix <strong>R</strong> (n users &times; m items) into two lower-rank matrices: <strong>U</strong> (n &times; k) and <strong>V</strong> (m &times; k), where k is the number of latent factors. The predicted rating is r&#770;<sub>ui</sub> = U<sub>u</sub> &middot; V<sub>i</sub><sup>T</sup>.</p>
+            <p>The latent factors capture hidden patterns (e.g., genre preference, movie quality). Training minimizes the reconstruction error on known ratings using SGD or ALS, with regularization to prevent overfitting. This was the winning approach in the Netflix Prize competition.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Latent factors:</strong> k dimensions capturing user preferences and item attributes.</li>
+                    <li><strong>Loss:</strong> &Sigma;(r<sub>ui</sub> &minus; U<sub>u</sub>&middot;V<sub>i</sub><sup>T</sup>)&sup2; + &lambda;(||U||&sup2; + ||V||&sup2;).</li>
+                    <li><strong>SGD update:</strong> U<sub>u</sub> += &alpha;(e&middot;V<sub>i</sub> &minus; &lambda;&middot;U<sub>u</sub>).</li>
+                    <li><strong>Handles sparsity:</strong> Only trains on observed ratings; generalizes to unseen pairs.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function matrixFactorization(R, k, alpha, lambda, iters) {
+    var n = R.length, m = R[0].length;
+    var U = randomMatrix(n, k);
+    var V = randomMatrix(m, k);
+    for (var iter = 0; iter < iters; iter++) {
+        for (var u = 0; u < n; u++) {
+            for (var i = 0; i < m; i++) {
+                if (R[u][i] === null) continue;
+                var pred = dotProduct(U[u], V[i]);
+                var err = R[u][i] - pred;
+                for (var f = 0; f < k; f++) {
+                    U[u][f] += alpha * (err * V[i][f] - lambda * U[u][f]);
+                    V[i][f] += alpha * (err * U[u][f] - lambda * V[i][f]);
+                }
+            }
+        }
+    }
+    return { U: U, V: V };
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="medium"><td>1</td><td><a href="https://www.kaggle.com/competitions/movielens-20m" target="_blank">Kaggle: MovieLens 20M</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>2</td><td><a href="https://www.kaggle.com/competitions/otto-recommender-system" target="_blank">Kaggle: OTTO Recommender System</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://leetcode.com/problems/sparse-matrix-multiplication/" target="_blank">Sparse Matrix Multiplication</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>4</td><td><a href="https://www.kaggle.com/competitions/spotify-recsys-challenge" target="_blank">Kaggle: Spotify RecSys Challenge</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "matrix-factorization", title: "Matrix Factorization", category: "Recommendation" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+
+        // Original sparse matrix R (3x4)
+        var R = [
+            [{value:5,state:''},{value:'?',state:'swapped'},{value:3,state:''},{value:'?',state:'swapped'}],
+            [{value:4,state:''},{value:5,state:''},{value:'?',state:'swapped'},{value:2,state:''}],
+            [{value:'?',state:'swapped'},{value:3,state:''},{value:4,state:''},{value:5,state:''}]
+        ];
+
+        // Header row
+        var hdr = [{value:'R',state:'comparing'},{value:'I1',state:'comparing'},{value:'I2',state:'comparing'},{value:'I3',state:'comparing'},{value:'I4',state:'comparing'}];
+
+        // Step 1: original matrix
+        var grid0 = [hdr];
+        var uLabels = ['U1','U2','U3'];
+        for (var r = 0; r < R.length; r++) {
+            var row = [{value: uLabels[r], state: 'comparing'}].concat(R[r]);
+            grid0.push(row);
+        }
+        steps.push({ grid: grid0, explanation: "Sparse user-item matrix R (3 users \u00d7 4 items). '?' = missing ratings to predict via factorization." });
+
+        // Step 2: decompose into U and V
+        var U = [
+            [{value:'0.8',state:'sorted'},{value:'0.3',state:'sorted'}],
+            [{value:'0.6',state:'sorted'},{value:'0.9',state:'sorted'}],
+            [{value:'0.2',state:'sorted'},{value:'0.7',state:'sorted'}]
+        ];
+        var uHdr = [{value:'U',state:'comparing'},{value:'f1',state:'comparing'},{value:'f2',state:'comparing'}];
+        var gridU = [uHdr];
+        for (var r2 = 0; r2 < U.length; r2++) {
+            gridU.push([{value: uLabels[r2], state: 'comparing'}].concat(U[r2]));
+        }
+        steps.push({ grid: gridU, explanation: "User matrix U (3\u00d72): each user mapped to k=2 latent factors. These represent hidden preferences." });
+
+        // Step 3: show V matrix
+        var V = [
+            [{value:'0.9',state:'sorted'},{value:'0.5',state:'sorted'}],
+            [{value:'0.4',state:'sorted'},{value:'0.8',state:'sorted'}],
+            [{value:'0.7',state:'sorted'},{value:'0.2',state:'sorted'}],
+            [{value:'0.3',state:'sorted'},{value:'0.9',state:'sorted'}]
+        ];
+        var vHdr = [{value:'V',state:'comparing'},{value:'f1',state:'comparing'},{value:'f2',state:'comparing'}];
+        var gridV = [vHdr];
+        var iLabels = ['I1','I2','I3','I4'];
+        for (var r3 = 0; r3 < V.length; r3++) {
+            gridV.push([{value: iLabels[r3], state: 'comparing'}].concat(V[r3]));
+        }
+        steps.push({ grid: gridV, explanation: "Item matrix V (4\u00d72): each item mapped to same latent space. r\u0302(u,i) = U\u1d64 \u00b7 V\u1d62\u1d40." });
+
+        // Step 4: compute one prediction
+        // U1 dot I2 = 0.8*0.4 + 0.3*0.8 = 0.32 + 0.24 = 0.56 -> scale up
+        var grid4 = [hdr];
+        for (var r4 = 0; r4 < R.length; r4++) {
+            var row4 = [{value: uLabels[r4], state: 'comparing'}].concat(
+                R[r4].map(function(c) { return {value: c.value, state: c.state}; })
+            );
+            grid4.push(row4);
+        }
+        grid4[1][2].value = '4.1';
+        grid4[1][2].state = 'sorted';
+        steps.push({ grid: grid4, explanation: "Predict R(U1,I2): U\u2081\u00b7V\u2082\u1d40 = [0.8,0.3]\u00b7[0.4,0.8] \u2248 4.1 (after scaling). First '?' filled!" });
+
+        // Step 5: SGD iteration update
+        var grid5 = JSON.parse(JSON.stringify(grid4));
+        grid5[2][3].value = '3.8'; grid5[2][3].state = 'sorted';
+        grid5[3][1].value = '3.5'; grid5[3][1].state = 'sorted';
+        steps.push({ grid: grid5, explanation: "After SGD iterations: more predictions filled. Error = R(u,i) - U\u1d64\u00b7V\u1d62\u1d40. Gradient updates reduce loss." });
+
+        // Step 6: fully reconstructed
+        var gridFinal = [hdr];
+        var fullR = [
+            [{value:5,state:''},{value:'4.1',state:'sorted'},{value:3,state:''},{value:'2.8',state:'sorted'}],
+            [{value:4,state:''},{value:5,state:''},{value:'3.8',state:'sorted'},{value:2,state:''}],
+            [{value:'3.5',state:'sorted'},{value:3,state:''},{value:4,state:''},{value:5,state:''}]
+        ];
+        for (var r5 = 0; r5 < fullR.length; r5++) {
+            gridFinal.push([{value: uLabels[r5], state: 'comparing'}].concat(fullR[r5]));
+        }
+        steps.push({ grid: gridFinal, explanation: "Fully reconstructed matrix. Green = predicted values. Matrix factorization captures latent patterns to fill all gaps." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

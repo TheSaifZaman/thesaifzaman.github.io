@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Filtering — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Collaborative Filtering</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n&middot;m)</span>
+            <span class="complexity-tag">Space: O(n&middot;m)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>Collaborative filtering recommends items based on the collective preferences of similar users. <strong>User-based CF</strong> finds users with similar rating patterns and recommends items they liked. <strong>Item-based CF</strong> finds items similar to those the target user already rated highly.</p>
+            <p>The user-item matrix stores ratings, with missing values representing items not yet rated. The algorithm fills in these missing values by leveraging similarity (cosine, Pearson correlation, or Jaccard) between users or items.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>User-based:</strong> "Users who are similar to you liked X."</li>
+                    <li><strong>Item-based:</strong> "Items similar to what you liked include X."</li>
+                    <li><strong>Cold start:</strong> Struggles with new users or items (no history).</li>
+                    <li><strong>Scalability:</strong> Item-based is more scalable (items change less often).</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function userBasedCF(matrix, targetUser, targetItem) {
+    var similarities = [];
+    for (var u = 0; u < matrix.length; u++) {
+        if (u === targetUser) continue;
+        if (matrix[u][targetItem] === null) continue;
+        var sim = cosineSimilarity(matrix[targetUser], matrix[u]);
+        similarities.push({user: u, sim: sim, rating: matrix[u][targetItem]});
+    }
+    similarities.sort(function(a, b) { return b.sim - a.sim; });
+    var topK = similarities.slice(0, 3);
+    var num = 0, den = 0;
+    for (var i = 0; i < topK.length; i++) {
+        num += topK[i].sim * topK[i].rating;
+        den += Math.abs(topK[i].sim);
+    }
+    return den > 0 ? num / den : 0;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/competitions/movielens-100k" target="_blank">Kaggle: MovieLens 100K</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/otto-recommender-system" target="_blank">Kaggle: OTTO Recommender System</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations" target="_blank">Kaggle: H&M Fashion Recommendations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>4</td><td><a href="https://www.kaggle.com/competitions/spotify-recsys-challenge" target="_blank">Kaggle: Spotify RecSys Challenge</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="easy"><td>5</td><td><a href="https://surprise.readthedocs.io/en/stable/" target="_blank">Surprise Library: RecSys Exercises</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "collaborative-filtering", title: "Collaborative Filtering", category: "Recommendation" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // User-item rating matrix: rows=users, cols=items
+        var matrix = [
+            [{value:5,state:''},{value:'?',state:''},{value:3,state:''},{value:'?',state:''}],
+            [{value:4,state:''},{value:5,state:''},{value:'?',state:''},{value:2,state:''}],
+            [{value:'?',state:''},{value:3,state:''},{value:4,state:''},{value:5,state:''}]
+        ];
+        var labels = ['U1','U2','U3'];
+        var items = ['M1','M2','M3','M4'];
+
+        // Step 1: show matrix with headers
+        var headerRow = items.map(function(it) { return {value: it, state: 'comparing'}; });
+        var grid0 = [headerRow];
+        for (var r = 0; r < matrix.length; r++) {
+            var row = [{value: labels[r], state: 'comparing'}];
+            for (var c = 0; c < matrix[r].length; c++) {
+                row.push({value: matrix[r][c].value, state: matrix[r][c].value === '?' ? 'swapped' : ''});
+            }
+            grid0.push(row);
+        }
+        // Add label column to header
+        grid0[0] = [{value: '', state: 'comparing'}].concat(headerRow);
+        steps.push({ grid: grid0, explanation: "User-Item rating matrix. '?' = unrated. Goal: predict missing ratings using similar users' preferences." });
+
+        // Step 2: highlight target — predict U1's rating for M2
+        var grid1 = JSON.parse(JSON.stringify(grid0));
+        grid1[1][2].state = 'swapped'; // U1, M2
+        steps.push({ grid: grid1, explanation: "Target: predict User 1's rating for Movie 2 (highlighted red). Find similar users who rated M2." });
+
+        // Step 3: compute similarity with U2 (who rated M2=5)
+        var grid2 = JSON.parse(JSON.stringify(grid0));
+        grid2[1][1].state = 'comparing'; // U1 M1
+        grid2[2][1].state = 'comparing'; // U2 M1
+        grid2[1][2].state = 'swapped';
+        grid2[2][2].state = 'sorted';    // U2 M2=5
+        steps.push({ grid: grid2, explanation: "Compare U1 and U2: both rated M1 (5 vs 4). Cosine similarity = 0.87. U2 rated M2 = 5." });
+
+        // Step 4: compute similarity with U3
+        var grid3 = JSON.parse(JSON.stringify(grid0));
+        grid3[1][3].state = 'comparing'; // U1 M3
+        grid3[3][3].state = 'comparing'; // U3 M3
+        grid3[1][2].state = 'swapped';
+        grid3[3][2].state = 'sorted';    // U3 M2=3
+        steps.push({ grid: grid3, explanation: "Compare U1 and U3: both rated M3 (3 vs 4). Cosine similarity = 0.72. U3 rated M2 = 3." });
+
+        // Step 5: weighted prediction
+        var pred = ((0.87 * 5 + 0.72 * 3) / (0.87 + 0.72)).toFixed(1);
+        var grid4 = JSON.parse(JSON.stringify(grid0));
+        grid4[1][2].value = pred;
+        grid4[1][2].state = 'sorted';
+        steps.push({ grid: grid4, explanation: "Prediction: (0.87\u00d75 + 0.72\u00d73) / (0.87+0.72) = " + pred + ". User 1 would likely rate Movie 2 around " + pred + "." });
+
+        // Step 6: fill all predictions
+        var grid5 = JSON.parse(JSON.stringify(grid0));
+        grid5[1][2].value = pred; grid5[1][2].state = 'sorted';
+        grid5[1][4].value = '3.2'; grid5[1][4].state = 'sorted';
+        grid5[2][3].value = '3.5'; grid5[2][3].state = 'sorted';
+        grid5[3][1].value = '4.1'; grid5[3][1].state = 'sorted';
+        steps.push({ grid: grid5, explanation: "All predictions filled (green). Collaborative filtering leverages the wisdom of the crowd to estimate preferences." });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'grid' });
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apriori Algorithm — ML Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="topic-header">
+        <h1>Apriori Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(2<sup>d</sup>)</span>
+            <span class="complexity-tag">Space: O(2<sup>d</sup>)</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>The Apriori algorithm discovers frequent itemsets in transactional data for association rule mining. It exploits the <strong>downward closure property</strong>: if an itemset is infrequent, all its supersets must also be infrequent. This allows aggressive pruning of the search space.</p>
+            <p>The algorithm iterates: (1) generate candidate k-itemsets from frequent (k-1)-itemsets, (2) scan transactions to count support, (3) prune candidates below the minimum support threshold. Rules like "bread &amp; butter &rArr; milk" are extracted from frequent itemsets.</p>
+            <div class="key-points">
+                <h3>Key Properties</h3>
+                <ul>
+                    <li><strong>Support:</strong> Fraction of transactions containing an itemset.</li>
+                    <li><strong>Confidence:</strong> P(B|A) = support(A&cup;B) / support(A).</li>
+                    <li><strong>Lift:</strong> confidence(A&rArr;B) / support(B). Lift &gt; 1 means positive association.</li>
+                    <li><strong>Anti-monotone:</strong> Subsets of frequent sets are always frequent.</li>
+                </ul>
+            </div>
+        </div>
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>function apriori(transactions, minSupport) {
+    var n = transactions.length;
+    // Count 1-itemsets
+    var counts = {};
+    for (var t = 0; t < n; t++) {
+        for (var i = 0; i < transactions[t].length; i++) {
+            var item = transactions[t][i];
+            counts[item] = (counts[item] || 0) + 1;
+        }
+    }
+    // Filter by min support
+    var frequent = [];
+    var keys = Object.keys(counts);
+    for (var k = 0; k < keys.length; k++) {
+        if (counts[keys[k]] / n >= minSupport) {
+            frequent.push([keys[k]]);
+        }
+    }
+    var allFrequent = frequent.slice();
+    // Generate candidates and repeat
+    while (frequent.length > 0) {
+        var candidates = generateCandidates(frequent);
+        frequent = filterBySupport(candidates, transactions, minSupport);
+        allFrequent = allFrequent.concat(frequent);
+    }
+    return allFrequent;
+}</code></pre></div>
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All</button>
+                <button class="problems-tab" data-filter="easy">Easy</button>
+                <button class="problems-tab" data-filter="medium">Medium</button>
+                <button class="problems-tab" data-filter="hard">Hard</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="easy"><td>1</td><td><a href="https://www.kaggle.com/datasets/heeraldedhia/groceries-dataset" target="_blank">Kaggle: Groceries Market Basket</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="medium"><td>2</td><td><a href="https://www.kaggle.com/competitions/instacart-market-basket-analysis" target="_blank">Kaggle: Instacart Market Basket</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="medium"><td>3</td><td><a href="https://www.kaggle.com/competitions/otto-recommender-system" target="_blank">Kaggle: OTTO Recommender</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="hard"><td>4</td><td><a href="https://www.hackerrank.com/challenges/frequency-queries/problem" target="_blank">HackerRank: Frequency Queries</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+    <footer class="dsa-footer"><p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p></footer>
+    <script>var TOPIC = { id: "apriori", title: "Apriori Algorithm", category: "Recommendation" };</script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Transactions
+        // T1: {Bread, Milk, Eggs}
+        // T2: {Bread, Butter}
+        // T3: {Milk, Butter, Eggs}
+        // T4: {Bread, Milk, Butter}
+        // T5: {Bread, Milk, Butter, Eggs}
+        var minSup = 3; // 60%
+
+        // Step 1: show 1-itemset counts
+        var items1 = ['Bread','Milk','Butter','Eggs'];
+        var counts1 = [4, 4, 4, 3];
+        steps.push({
+            array: counts1,
+            highlights: {0:'sorted',1:'sorted',2:'sorted',3:'sorted'},
+            explanation: "1-itemset support counts (min=3): Bread=4, Milk=4, Butter=4, Eggs=3. All pass \u2265 60% threshold!"
+        });
+
+        // Step 2: generate 2-itemset candidates
+        var pairs = ['{B,M}','{B,Bu}','{B,E}','{M,Bu}','{M,E}','{Bu,E}'];
+        var counts2 = [3, 3, 2, 3, 2, 2];
+        steps.push({
+            array: counts2,
+            highlights: {0:'sorted',1:'sorted',2:'swapped',3:'sorted',4:'swapped',5:'swapped'},
+            explanation: "2-itemsets: {Bread,Milk}=3\u2713, {Bread,Butter}=3\u2713, {Bread,Eggs}=2\u2717, {Milk,Butter}=3\u2713, {Milk,Eggs}=2\u2717, {Butter,Eggs}=2\u2717."
+        });
+
+        // Step 3: frequent 2-itemsets
+        var freq2 = ['{B,M}','{B,Bu}','{M,Bu}'];
+        var fCounts2 = [3, 3, 3];
+        steps.push({
+            array: fCounts2,
+            highlights: {0:'sorted',1:'sorted',2:'sorted'},
+            explanation: "3 frequent 2-itemsets survive: {Bread,Milk}, {Bread,Butter}, {Milk,Butter}. All have support \u2265 3."
+        });
+
+        // Step 4: generate 3-itemset candidate
+        var counts3 = [2];
+        steps.push({
+            array: counts3,
+            highlights: {0:'swapped'},
+            explanation: "3-itemset candidate: {Bread,Milk,Butter}. Support=2 < min_support=3. Pruned! No frequent 3-itemsets."
+        });
+
+        // Step 5: extract rules
+        var rules = [3, 3, 3]; // confidence values for display
+        steps.push({
+            array: [75, 75, 75],
+            highlights: {0:'sorted',1:'sorted',2:'sorted'},
+            explanation: "Association rules: Bread\u2192Milk (conf=75%), Bread\u2192Butter (conf=75%), Milk\u2192Butter (conf=75%). Customers who buy one often buy the other!"
+        });
+
+        return steps;
+    }
+    Visualizer.init({ container: '#viz', data: [1], stepGenerator: generateSteps, type: 'bars' });
+    </script>
+</body>
+</html>
