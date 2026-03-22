@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit Manipulation — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Bit Manipulation</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(1)&ndash;O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Bit manipulation operates directly on the binary representation of integers using bitwise operators: AND (&amp;), OR (|), XOR (^), NOT (~), and shifts (&lt;&lt;, &gt;&gt;). These operations execute in a single CPU cycle, making them extremely fast.
+            </p>
+            <p>
+                Key tricks include: <code>n &amp; (n-1)</code> clears the lowest set bit (used to count bits), <code>n &amp; (-n)</code> isolates the lowest set bit, and <code>a ^ b</code> finds bits that differ. XOR is particularly powerful: <code>a ^ a = 0</code> and <code>a ^ 0 = a</code>, enabling finding the single unique number in a list of pairs.
+            </p>
+            <p>
+                Bit manipulation is essential for power-of-two checks, parity, subsets (each subset maps to a bitmask), and space-efficient flags. Many interview problems have elegant O(1) space solutions using bit tricks.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>XOR Properties</strong><br>a ^ a = 0, a ^ 0 = a. XOR cancels pairs, leaving the unique element.</div>
+                <div class="key-point"><strong>Clear Lowest Bit</strong><br>n &amp; (n-1) removes the rightmost set bit. Useful for counting set bits.</div>
+                <div class="key-point"><strong>Check Power of Two</strong><br>n > 0 &amp;&amp; (n &amp; (n-1)) === 0. Powers of two have exactly one set bit.</div>
+                <div class="key-point"><strong>Bitmask Subsets</strong><br>For n items, iterate 0 to 2^n - 1. Each integer represents a subset via its bits.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Single Number (LeetCode #136) — XOR all elements
+function singleNumber(nums) {
+    var result = 0;
+    for (var i = 0; i < nums.length; i++) result ^= nums[i];
+    return result;
+}
+
+// Number of 1 Bits (LeetCode #191)
+function hammingWeight(n) {
+    var count = 0;
+    while (n) { n &= (n - 1); count++; }
+    return count;
+}
+
+// Power of Two
+function isPowerOfTwo(n) {
+    return n > 0 && (n & (n - 1)) === 0;
+}
+
+// Counting Bits (LeetCode #338)
+function countBits(n) {
+    var dp = new Array(n + 1).fill(0);
+    for (var i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
+    return dp;
+}
+
+// Missing Number using XOR
+function missingNumber(nums) {
+    var xor = nums.length;
+    for (var i = 0; i < nums.length; i++) xor ^= i ^ nums[i];
+    return xor;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (12)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (6)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/single-number/" target="_blank">Single Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://leetcode.com/problems/number-of-1-bits/" target="_blank">Number of 1 Bits</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>3</td><td><a href="https://leetcode.com/problems/counting-bits/" target="_blank">Counting Bits</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>4</td><td><a href="https://leetcode.com/problems/missing-number/" target="_blank">Missing Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>5</td><td><a href="https://leetcode.com/problems/reverse-bits/" target="_blank">Reverse Bits</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://leetcode.com/problems/power-of-two/" target="_blank">Power of Two</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/single-number-ii/" target="_blank">Single Number II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/single-number-iii/" target="_blank">Single Number III</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/bitwise-and-of-numbers-range/" target="_blank">Bitwise AND of Numbers Range</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/sum-of-two-integers/" target="_blank">Sum of Two Integers</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>11</td><td><a href="https://leetcode.com/problems/subsets/" target="_blank">Subsets (Bitmask)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>12</td><td><a href="https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/" target="_blank">Maximum XOR of Two Numbers in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "bit-manipulation", title: "Bit Manipulation", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Bit Manipulation: XOR running visualization
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Bit Manipulation: XOR all values. Paired values cancel (a ^ a = 0). Showing running XOR.' });
+
+        var xor = 0;
+        for (var i = 0; i < arr.length; i++) {
+            var prev = xor;
+            xor ^= arr[i];
+            var h = {}; h[i] = 'highlight-active';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: prev + ' ^ ' + arr[i] + ' = ' + xor + '  (binary: ' + (prev >>> 0).toString(2) + ' ^ ' + (arr[i] >>> 0).toString(2) + ' = ' + (xor >>> 0).toString(2) + ')' });
+        }
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Final XOR = ' + xor + '. In a paired-element problem, this is the unique element.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [5, 3, 6, 12, 7],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

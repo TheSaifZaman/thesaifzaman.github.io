@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Detection (Arrays) — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Cycle Detection (Arrays)</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Floyd's cycle detection (tortoise and hare) uses two pointers moving at different speeds to detect cycles. The slow pointer moves one step at a time; the fast pointer moves two steps. If there is a cycle, they will meet inside it. If not, the fast pointer reaches the end.
+            </p>
+            <p>
+                Once a meeting point is found, to locate the cycle start: reset one pointer to the beginning and keep the other at the meeting point. Move both one step at a time &mdash; they meet at the cycle entrance. This mathematical property follows from the relationship between the distances traveled.
+            </p>
+            <p>
+                In array problems, the &ldquo;next&rdquo; function is <code>f(x) = arr[x]</code>. If array values are in [1, n] for an array of size n+1, the pigeonhole principle guarantees a duplicate (cycle). This is how LeetCode #287 &ldquo;Find the Duplicate Number&rdquo; is solved in O(1) space.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Two Speeds</strong><br>Slow moves 1 step, fast moves 2 steps. If they meet, a cycle exists.</div>
+                <div class="key-point"><strong>Finding Cycle Start</strong><br>After meeting: reset one pointer to start, advance both at speed 1. They meet at the cycle entrance.</div>
+                <div class="key-point"><strong>Array as Graph</strong><br>Treat arr[i] as a &ldquo;next pointer&rdquo; from index i. Duplicates create cycles in this implicit graph.</div>
+                <div class="key-point"><strong>O(1) Space</strong><br>No hash set or marking needed. Only two pointer variables.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Find the Duplicate Number (LeetCode #287)
+function findDuplicate(nums) {
+    var slow = nums[0], fast = nums[0];
+    // Phase 1: Detect cycle
+    do {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+    } while (slow !== fast);
+
+    // Phase 2: Find cycle entrance
+    slow = nums[0];
+    while (slow !== fast) {
+        slow = nums[slow];
+        fast = nums[fast];
+    }
+    return slow;
+}
+
+// Linked List Cycle Detection
+function hasCycle(head) {
+    var slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) return true;
+    }
+    return false;
+}
+
+// Find Cycle Start in Linked List
+function detectCycle(head) {
+    var slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) {
+            slow = head;
+            while (slow !== fast) {
+                slow = slow.next;
+                fast = fast.next;
+            }
+            return slow;
+        }
+    }
+    return null;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank">Find the Duplicate Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked List Cycle</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank">Linked List Cycle II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>4</td><td><a href="https://leetcode.com/problems/happy-number/" target="_blank">Happy Number</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/circular-array-loop/" target="_blank">Circular Array Loop</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "cycle-detection-arrays", title: "Cycle Detection (Arrays)", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // arr where arr[i] points to next index, contains a duplicate = cycle
+        var arr = [0, 3, 1, 4, 2, 5, 3]; // index 0 unused, values 1-6, duplicate=3
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Floyd Cycle Detection: arr values are "next pointers." Find the duplicate (cycle entry). slow=arr[0]=' + arr[0] + ', fast=arr[0]=' + arr[0] });
+
+        var slow = arr[0], fast = arr[0];
+        var stepNum = 0;
+        do {
+            slow = arr[slow];
+            fast = arr[arr[fast]];
+            stepNum++;
+            var h = {}; h[slow] = 'highlight-compare'; h[fast] = 'highlight-active';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'Step ' + stepNum + ': slow → ' + slow + ', fast → ' + fast + (slow === fast ? ' — they meet!' : '') });
+        } while (slow !== fast);
+
+        slow = arr[0];
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Phase 2: Reset slow to arr[0]=' + slow + '. Move both at speed 1 to find cycle start.' });
+
+        while (slow !== fast) {
+            slow = arr[slow];
+            fast = arr[fast];
+            var h = {}; h[slow] = 'highlight-compare'; h[fast] = 'highlight-active';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'slow → ' + slow + ', fast → ' + fast + (slow === fast ? ' — cycle entrance found!' : '') });
+        }
+
+        var fh = {}; fh[slow] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Duplicate number = ' + slow + ' (the cycle entrance). O(n) time, O(1) space.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [0, 3, 1, 4, 2, 5, 3],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backtracking — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Backtracking</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n!)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Backtracking is a systematic method for exploring all possible configurations of a solution space. It builds candidates incrementally, abandoning a candidate (&ldquo;backtracking&rdquo;) as soon as it determines the candidate cannot lead to a valid solution.
+            </p>
+            <p>
+                The algorithm follows a depth-first search pattern through the decision tree. At each node, it makes a choice, recurses deeper, then <strong>undoes the choice</strong> before trying the next option. This &ldquo;choose, explore, unchoose&rdquo; pattern is the signature of backtracking.
+            </p>
+            <p>
+                Pruning is the key to making backtracking efficient. By detecting invalid partial solutions early, we avoid exploring large portions of the search tree. Without pruning, backtracking degenerates into brute-force enumeration.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Choose-Explore-Unchoose</strong><br>Make a choice, recurse to explore, then undo the choice to try alternatives.</div>
+                <div class="key-point"><strong>Pruning</strong><br>Skip branches early when a partial solution cannot lead to a valid complete solution.</div>
+                <div class="key-point"><strong>Decision Tree</strong><br>The search space is a tree where each level represents a decision point.</div>
+                <div class="key-point"><strong>Base Case</strong><br>When the solution is complete (or invalid), stop recursing and record or reject.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Permutations (LeetCode #46)
+function permute(nums) {
+    var result = [];
+    function backtrack(path, used) {
+        if (path.length === nums.length) {
+            result.push(path.slice());
+            return;
+        }
+        for (var i = 0; i < nums.length; i++) {
+            if (used[i]) continue;
+            path.push(nums[i]);
+            used[i] = true;
+            backtrack(path, used);
+            path.pop();       // unchoose
+            used[i] = false;  // unchoose
+        }
+    }
+    backtrack([], new Array(nums.length).fill(false));
+    return result;
+}
+
+// Subsets (LeetCode #78)
+function subsets(nums) {
+    var result = [];
+    function backtrack(start, path) {
+        result.push(path.slice());
+        for (var i = start; i < nums.length; i++) {
+            path.push(nums[i]);
+            backtrack(i + 1, path);
+            path.pop();
+        }
+    }
+    backtrack(0, []);
+    return result;
+}
+
+// N-Queens (LeetCode #51)
+function solveNQueens(n) {
+    var result = [], board = [];
+    for (var i = 0; i < n; i++) board.push(new Array(n).fill('.'));
+    function isValid(row, col) {
+        for (var i = 0; i < row; i++) {
+            if (board[i][col] === 'Q') return false;
+            if (col-(row-i) >= 0 && board[i][col-(row-i)] === 'Q') return false;
+            if (col+(row-i) < n && board[i][col+(row-i)] === 'Q') return false;
+        }
+        return true;
+    }
+    function backtrack(row) {
+        if (row === n) { result.push(board.map(function(r) { return r.join(''); })); return; }
+        for (var col = 0; col < n; col++) {
+            if (!isValid(row, col)) continue;
+            board[row][col] = 'Q';
+            backtrack(row + 1);
+            board[row][col] = '.';
+        }
+    }
+    backtrack(0);
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (12)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (10)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/permutations/" target="_blank">Permutations</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/subsets/" target="_blank">Subsets</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/n-queens/" target="_blank">N-Queens</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/sudoku-solver/" target="_blank">Sudoku Solver</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/combination-sum/" target="_blank">Combination Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/palindrome-partitioning/" target="_blank">Palindrome Partitioning</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/" target="_blank">Letter Combinations of a Phone Number</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/generate-parentheses/" target="_blank">Generate Parentheses</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/word-search/" target="_blank">Word Search</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/combination-sum-ii/" target="_blank">Combination Sum II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>11</td><td><a href="https://leetcode.com/problems/permutations-ii/" target="_blank">Permutations II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>12</td><td><a href="https://leetcode.com/problems/restore-ip-addresses/" target="_blank">Restore IP Addresses</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "backtracking", title: "Backtracking", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Backtracking: generate all permutations
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice(0, Math.min(data.length, 4));
+        var n = arr.length;
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Backtracking: Generate all permutations of [' + arr.join(', ') + ']. Choose, explore, unchoose.' });
+
+        var result = [], current = [], used = new Array(n).fill(false);
+
+        function backtrack() {
+            if (current.length === n) {
+                result.push(current.slice());
+                var h = {};
+                for (var i = 0; i < current.length; i++) h[i] = 'highlight-sorted';
+                steps.push({ type: 'bars', array: current.slice(), highlights: h,
+                    explanation: 'Found permutation #' + result.length + ': [' + current.join(', ') + ']' });
+                return;
+            }
+            for (var i = 0; i < n; i++) {
+                if (used[i]) continue;
+                current.push(arr[i]);
+                used[i] = true;
+                var h = {};
+                for (var j = 0; j < current.length; j++)
+                    h[j] = j === current.length - 1 ? 'highlight-active' : 'highlight-compare';
+                steps.push({ type: 'bars', array: current.slice(), highlights: h,
+                    explanation: 'Choose ' + arr[i] + ' → current = [' + current.join(', ') + ']' });
+                backtrack();
+                current.pop();
+                used[i] = false;
+            }
+        }
+
+        backtrack();
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Done! Found ' + result.length + ' permutations.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 2, 3],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

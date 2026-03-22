@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Hashing — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>String Hashing</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n) build, O(1) query</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                String hashing converts a string into a numeric fingerprint, enabling O(1) substring comparison after O(n) preprocessing. The polynomial rolling hash is: <code>hash(s) = s[0]*p^(n-1) + s[1]*p^(n-2) + ... + s[n-1]*p^0 (mod m)</code>, where p is a prime base and m is a large prime modulus.
+            </p>
+            <p>
+                By precomputing prefix hashes and power arrays, the hash of any substring s[l..r] can be computed in O(1): <code>hash(l,r) = (prefix[r+1] - prefix[l] * pow[r-l+1]) mod m</code>. This enables O(1) string comparison (with small collision probability).
+            </p>
+            <p>
+                Applications include: Rabin-Karp pattern matching (O(n+m)), finding the longest palindromic substring, counting distinct substrings, and detecting duplicate substrings. Use double hashing (two different (p, m) pairs) to minimize collision probability.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Polynomial Hash</strong><br>hash = sum of s[i] * p^(n-1-i) mod m. O(n) to compute, O(1) for substring hash.</div>
+                <div class="key-point"><strong>Rolling Hash</strong><br>Update hash in O(1) when sliding a window: remove leftmost char, add rightmost char.</div>
+                <div class="key-point"><strong>Collision Risk</strong><br>Hash match ≠ guaranteed string match. Use double hashing for high-stakes applications.</div>
+                <div class="key-point"><strong>Rabin-Karp</strong><br>Pattern matching in O(n+m) average: compute pattern hash, slide window over text comparing hashes.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// String Hashing — polynomial rolling hash
+function StringHash(s) {
+    var P = 31, MOD = 1e9 + 9;
+    var n = s.length;
+    this.prefix = new Array(n + 1);
+    this.pow = new Array(n + 1);
+    this.prefix[0] = 0;
+    this.pow[0] = 1;
+    for (var i = 0; i < n; i++) {
+        this.prefix[i + 1] = (this.prefix[i] + (s.charCodeAt(i) - 96) * this.pow[0]) % MOD;
+        // Actually: prefix[i+1] = (prefix[i] * P + char) % MOD
+        this.pow[i + 1] = (this.pow[i] * P) % MOD;
+    }
+    // Correct implementation:
+    this.prefix[0] = 0;
+    for (var i = 0; i < n; i++) {
+        this.prefix[i + 1] = (this.prefix[i] * P + (s.charCodeAt(i) - 96)) % MOD;
+    }
+    this.MOD = MOD;
+}
+
+StringHash.prototype.getHash = function(l, r) {
+    // hash of s[l..r]
+    var h = (this.prefix[r + 1] - this.prefix[l] * this.pow[r - l + 1]) % this.MOD;
+    return (h + this.MOD) % this.MOD;
+};
+
+// Rabin-Karp Pattern Matching
+function rabinKarp(text, pattern) {
+    var P = 31, MOD = 1e9 + 9;
+    var n = text.length, m = pattern.length;
+    if (m > n) return [];
+
+    var patHash = 0, pow = 1;
+    for (var i = 0; i < m; i++) {
+        patHash = (patHash * P + (pattern.charCodeAt(i) - 96)) % MOD;
+        if (i > 0) pow = (pow * P) % MOD;
+    }
+
+    var textHash = 0, results = [];
+    for (var i = 0; i < n; i++) {
+        textHash = (textHash * P + (text.charCodeAt(i) - 96)) % MOD;
+        if (i >= m) {
+            textHash = (textHash - (text.charCodeAt(i - m) - 96) * pow % MOD * P % MOD + MOD * 2) % MOD;
+        }
+        if (i >= m - 1 && textHash === patHash) {
+            // Verify to handle collisions
+            if (text.substring(i - m + 1, i + 1) === pattern) results.push(i - m + 1);
+        }
+    }
+    return results;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" target="_blank">Find the Index of First Occurrence (strStr)</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/repeated-dna-sequences/" target="_blank">Repeated DNA Sequences</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank">Longest Duplicate Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/distinct-echo-substrings/" target="_blank">Distinct Echo Substrings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/longest-happy-prefix/" target="_blank">Longest Happy Prefix</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "string-hashing", title: "String Hashing", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var text = "abcabcabc";
+        var pattern = "abc";
+        var P = 31, MOD = 1000000009;
+        var chars = text.split('').map(function(c) { return c.charCodeAt(0) - 96; });
+
+        steps.push({ type: 'bars', array: chars.slice(), highlights: {},
+            explanation: 'String Hashing (Rabin-Karp): Find "' + pattern + '" in "' + text + '". Character values: [' + chars.join(', ') + ']' });
+
+        // Compute pattern hash
+        var patHash = 0;
+        for (var i = 0; i < pattern.length; i++) {
+            patHash = (patHash * P + (pattern.charCodeAt(i) - 96)) % MOD;
+        }
+        steps.push({ type: 'bars', array: chars.slice(), highlights: {},
+            explanation: 'Pattern hash("' + pattern + '") = ' + patHash + '. Now slide window over text comparing hashes.' });
+
+        var textHash = 0, pow = 1;
+        for (var i = 0; i < pattern.length - 1; i++) pow = (pow * P) % MOD;
+
+        for (var i = 0; i < text.length; i++) {
+            textHash = (textHash * P + chars[i]) % MOD;
+            if (i >= pattern.length) {
+                textHash = ((textHash - chars[i - pattern.length] * pow % MOD * P % MOD) % MOD + MOD) % MOD;
+            }
+
+            if (i >= pattern.length - 1) {
+                var h = {};
+                for (var j = i - pattern.length + 1; j <= i; j++) h[j] = textHash === patHash ? 'highlight-sorted' : 'highlight-compare';
+                var match = textHash === patHash;
+                steps.push({ type: 'bars', array: chars.slice(), highlights: h,
+                    explanation: 'Window [' + (i-pattern.length+1) + '..' + i + ']: hash=' + textHash + (match ? ' == pattern hash. MATCH!' : ' ≠ pattern hash.') });
+            }
+        }
+
+        steps.push({ type: 'bars', array: chars.slice(), highlights: {},
+            explanation: 'Done! Rabin-Karp finds all occurrences via rolling hash comparison in O(n+m) average.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 2, 3, 1, 2, 3, 1, 2, 3],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

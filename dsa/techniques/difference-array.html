@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference Array — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Difference Array</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n + q)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A difference array is the inverse of a prefix sum. Given an array, diff[i] = arr[i] - arr[i-1]. The key advantage: a range update <code>add val to arr[l..r]</code> becomes just two operations: <code>diff[l] += val</code> and <code>diff[r+1] -= val</code>. This turns O(n) range updates into O(1).
+            </p>
+            <p>
+                After all updates, reconstruct the final array by computing the prefix sum of the difference array. This makes the technique ideal when you have many range updates but only need the final result &mdash; O(1) per update instead of O(n).
+            </p>
+            <p>
+                Common applications include: applying multiple range increments (corporate flight bookings, car pooling), computing the effect of overlapping intervals, and any scenario where many &ldquo;add to range&rdquo; operations are batched before reading.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>O(1) Range Update</strong><br>Add val to [l, r]: diff[l] += val, diff[r+1] -= val. No need to iterate the range.</div>
+                <div class="key-point"><strong>Prefix Sum to Reconstruct</strong><br>After all updates, compute prefix sum of diff array to get the final values.</div>
+                <div class="key-point"><strong>Batch Updates</strong><br>Ideal when many range updates are applied before any queries on individual elements.</div>
+                <div class="key-point"><strong>Inverse of Prefix Sum</strong><br>Difference array is the inverse operation: prefixSum(differenceArray(arr)) = arr.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Difference Array — range update technique
+function DifferenceArray(n) {
+    this.diff = new Array(n + 1).fill(0);
+}
+DifferenceArray.prototype.update = function(l, r, val) {
+    this.diff[l] += val;
+    if (r + 1 < this.diff.length) this.diff[r + 1] -= val;
+};
+DifferenceArray.prototype.build = function() {
+    var result = [];
+    var sum = 0;
+    for (var i = 0; i < this.diff.length - 1; i++) {
+        sum += this.diff[i];
+        result.push(sum);
+    }
+    return result;
+};
+
+// Corporate Flight Bookings (LeetCode #1109)
+function corpFlightBookings(bookings, n) {
+    var diff = new Array(n + 1).fill(0);
+    for (var i = 0; i < bookings.length; i++) {
+        diff[bookings[i][0] - 1] += bookings[i][2];
+        if (bookings[i][1] < n) diff[bookings[i][1]] -= bookings[i][2];
+    }
+    var result = [];
+    var sum = 0;
+    for (var i = 0; i < n; i++) {
+        sum += diff[i];
+        result.push(sum);
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/corporate-flight-bookings/" target="_blank">Corporate Flight Bookings</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/car-pooling/" target="_blank">Car Pooling</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>3</td><td><a href="https://leetcode.com/problems/range-addition/" target="_blank">Range Addition</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/minimum-number-of-increments-on-subarrays-to-form-a-target-array/" target="_blank">Min Increments on Subarrays to Form Target</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/maximum-sum-obtained-of-any-permutation/" target="_blank">Maximum Sum Obtained of Any Permutation</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "difference-array", title: "Difference Array", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var n = Math.max(data.length, 6);
+        var arr = new Array(n).fill(0);
+        var diff = new Array(n + 1).fill(0);
+
+        var updates = [[1, 4, 3], [2, 5, 2], [0, 3, -1]];
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Difference Array: Start with zeros. We will apply 3 range updates.' });
+
+        for (var u = 0; u < updates.length; u++) {
+            var l = updates[u][0], r = Math.min(updates[u][1], n - 1), val = updates[u][2];
+            diff[l] += val;
+            if (r + 1 <= n) diff[r + 1] -= val;
+
+            // Rebuild to show current state
+            var sum = 0;
+            for (var i = 0; i < n; i++) { sum += diff[i]; arr[i] = sum; }
+
+            var h = {};
+            for (var i = l; i <= r; i++) h[i] = 'highlight-active';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'Update: add ' + val + ' to range [' + l + '..' + r + ']. diff[' + l + ']+=' + val + ', diff[' + (r+1) + ']-=' + val });
+        }
+
+        var fh = {};
+        for (var i = 0; i < n; i++) fh[i] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Final array after all range updates: [' + arr.join(', ') + ']. Each update was O(1).' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [0, 0, 0, 0, 0, 0, 0, 0],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

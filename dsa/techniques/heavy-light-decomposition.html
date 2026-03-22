@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heavy-Light Decomposition — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Heavy-Light Decomposition</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n) build, O(log&sup2; n) query</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Heavy-Light Decomposition (HLD) decomposes a tree into chains of heavy edges, allowing path queries and updates to be answered in O(log&sup2; n) time using a segment tree. A <strong>heavy child</strong> of a node is the child with the largest subtree; all other children are light.
+            </p>
+            <p>
+                Following heavy edges from any node creates a &ldquo;heavy chain.&rdquo; The key insight: any path from a node to the root crosses at most O(log n) light edges, meaning it traverses at most O(log n) chains. By flattening chains into contiguous array segments, each chain query becomes a segment tree query.
+            </p>
+            <p>
+                HLD enables: path sum/max queries, path updates, and subtree queries on trees, all in O(log&sup2; n) per operation. Combined with a lazy segment tree, it handles range updates on paths efficiently.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Heavy vs Light Edges</strong><br>Heavy edge connects to the child with the largest subtree. Light edges go to smaller subtrees.</div>
+                <div class="key-point"><strong>O(log n) Chain Switches</strong><br>Any root-to-leaf path crosses at most O(log n) light edges (chain boundaries).</div>
+                <div class="key-point"><strong>Flatten to Array</strong><br>DFS order maps each chain to contiguous positions, enabling segment tree queries.</div>
+                <div class="key-point"><strong>Segment Tree on Chains</strong><br>Path queries decompose into O(log n) chain queries, each answered in O(log n) by segment tree.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Heavy-Light Decomposition (outline)
+var parent, depth, heavy, head, pos, curPos;
+
+function dfs(v, adj, par) {
+    parent[v] = par;
+    var maxSize = 0, heavyChild = -1, size = 1;
+    for (var i = 0; i < adj[v].length; i++) {
+        var u = adj[v][i];
+        if (u === par) continue;
+        depth[u] = depth[v] + 1;
+        var childSize = dfs(u, adj, v);
+        size += childSize;
+        if (childSize > maxSize) { maxSize = childSize; heavyChild = u; }
+    }
+    heavy[v] = heavyChild;
+    return size;
+}
+
+function decompose(v, h, adj) {
+    head[v] = h;
+    pos[v] = curPos++;
+    if (heavy[v] !== -1) decompose(heavy[v], h, adj); // continue chain
+    for (var i = 0; i < adj[v].length; i++) {
+        var u = adj[v][i];
+        if (u !== parent[v] && u !== heavy[v]) {
+            decompose(u, u, adj); // start new chain
+        }
+    }
+}
+
+function pathQuery(u, v, segTree) {
+    var result = 0; // or -Infinity for max
+    while (head[u] !== head[v]) {
+        if (depth[head[u]] < depth[head[v]]) { var t = u; u = v; v = t; }
+        result += segTree.query(pos[head[u]], pos[u]);
+        u = parent[head[u]];
+    }
+    if (depth[u] > depth[v]) { var t = u; u = v; v = t; }
+    result += segTree.query(pos[u], pos[v]);
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/" target="_blank">Path Queries on Tree (SPOJ QTREE)</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" target="_blank">Lowest Common Ancestor of a Binary Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank">Binary Tree Maximum Path Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/tree-of-coprimes/" target="_blank">Tree of Coprimes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "heavy-light-decomposition", title: "Heavy-Light Decomposition", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var positions = [
+            {id:0,label:'A',x:250,y:30,state:''}, {id:1,label:'B',x:150,y:100,state:''},
+            {id:2,label:'C',x:350,y:100,state:''}, {id:3,label:'D',x:80,y:170,state:''},
+            {id:4,label:'E',x:180,y:170,state:''}, {id:5,label:'F',x:320,y:170,state:''},
+            {id:6,label:'G',x:420,y:170,state:''}, {id:7,label:'H',x:80,y:240,state:''},
+            {id:8,label:'I',x:180,y:240,state:''}
+        ];
+        var edges = [{from:0,to:1},{from:0,to:2},{from:1,to:3},{from:1,to:4},{from:2,to:5},{from:2,to:6},{from:3,to:7},{from:4,to:8}];
+        // Heavy edges: 0->1 (subtree 6 vs 4), 1->3 (subtree 2 vs 2, tie->3), 2->5 or 2->6, 3->7
+        var heavyEdges = [[0,1],[1,3],[3,7],[2,5]];
+
+        steps.push({ type: 'tree', nodes: JSON.parse(JSON.stringify(positions)), edges: edges,
+            explanation: 'HLD: Decompose tree into heavy chains. Heavy child = child with largest subtree.' });
+
+        // Highlight heavy edges
+        var n2 = JSON.parse(JSON.stringify(positions));
+        n2[0].state = 'highlight-sorted'; n2[1].state = 'highlight-sorted';
+        n2[3].state = 'highlight-sorted'; n2[7].state = 'highlight-sorted';
+        steps.push({ type: 'tree', nodes: n2, edges: edges,
+            explanation: 'Heavy chain 1: A → B → D → H (following the largest subtrees down).' });
+
+        var n3 = JSON.parse(JSON.stringify(positions));
+        n3[2].state = 'highlight-compare'; n3[5].state = 'highlight-compare';
+        steps.push({ type: 'tree', nodes: n3, edges: edges,
+            explanation: 'Heavy chain 2: C → F. Light children (E, G, I) start their own chains.' });
+
+        var n4 = JSON.parse(JSON.stringify(positions));
+        n4[4].state = 'highlight-active'; n4[6].state = 'highlight-active'; n4[8].state = 'highlight-active';
+        steps.push({ type: 'tree', nodes: n4, edges: edges,
+            explanation: 'Singleton chains: E, G, I. Each light edge starts a new chain.' });
+
+        steps.push({ type: 'tree', nodes: JSON.parse(JSON.stringify(positions)), edges: edges,
+            explanation: 'Any path crosses at most O(log n) chains. Each chain query uses a segment tree in O(log n). Total: O(log^2 n).' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [9],
+        stepGenerator: generateSteps,
+        type: 'tree'
+    });
+    </script>
+</body>
+</html>

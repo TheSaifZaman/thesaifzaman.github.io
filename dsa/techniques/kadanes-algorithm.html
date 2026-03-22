@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kadane's Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Kadane's Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Kadane's Algorithm finds the maximum sum contiguous subarray in O(n) time using a simple observation: at each position, the maximum subarray ending here is either the current element alone, or the current element plus the maximum subarray ending at the previous position.
+            </p>
+            <p>
+                We maintain <code>currentMax</code> (best sum ending at the current position) and <code>globalMax</code> (best sum found so far). At each element: <code>currentMax = max(arr[i], currentMax + arr[i])</code>. If currentMax drops below arr[i], we start a new subarray from arr[i]. Then update globalMax.
+            </p>
+            <p>
+                This is fundamentally a DP algorithm with space-optimized to O(1). The key insight is: if the running sum becomes negative, it is always better to start fresh from the next element rather than carry a negative prefix.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Current Max</strong><br>max(arr[i], currentMax + arr[i]). Decides whether to extend the subarray or start fresh.</div>
+                <div class="key-point"><strong>Global Max</strong><br>Tracks the best result across all positions. Updated after each currentMax computation.</div>
+                <div class="key-point"><strong>Negative Prefix</strong><br>A negative running sum is discarded &mdash; starting fresh from the next element is always better.</div>
+                <div class="key-point"><strong>DP with O(1) Space</strong><br>This is dp[i] = max(arr[i], dp[i-1] + arr[i]) with only the previous value needed.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Maximum Subarray (LeetCode #53)
+function maxSubArray(nums) {
+    var currentMax = nums[0], globalMax = nums[0];
+    for (var i = 1; i < nums.length; i++) {
+        currentMax = Math.max(nums[i], currentMax + nums[i]);
+        globalMax = Math.max(globalMax, currentMax);
+    }
+    return globalMax;
+}
+
+// Maximum Subarray with indices
+function maxSubArrayWithIndices(nums) {
+    var currentMax = nums[0], globalMax = nums[0];
+    var start = 0, end = 0, tempStart = 0;
+    for (var i = 1; i < nums.length; i++) {
+        if (nums[i] > currentMax + nums[i]) {
+            currentMax = nums[i];
+            tempStart = i;
+        } else {
+            currentMax += nums[i];
+        }
+        if (currentMax > globalMax) {
+            globalMax = currentMax;
+            start = tempStart;
+            end = i;
+        }
+    }
+    return { sum: globalMax, start: start, end: end };
+}
+
+// Maximum Product Subarray (LeetCode #152)
+function maxProduct(nums) {
+    var maxSoFar = nums[0], minSoFar = nums[0], result = nums[0];
+    for (var i = 1; i < nums.length; i++) {
+        var candidates = [nums[i], maxSoFar * nums[i], minSoFar * nums[i]];
+        maxSoFar = Math.max.apply(null, candidates);
+        minSoFar = Math.min.apply(null, candidates);
+        result = Math.max(result, maxSoFar);
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (5)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank">Maximum Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank">Maximum Product Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>3</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank">Best Time to Buy and Sell Stock</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/maximum-sum-circular-subarray/" target="_blank">Maximum Sum Circular Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/longest-turbulent-subarray/" target="_blank">Longest Turbulent Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/max-sum-of-rectangle-no-larger-than-k/" target="_blank">Max Sum of Rectangle No Larger Than K</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>7</td><td><a href="https://leetcode.com/problems/maximum-ascending-subarray-sum/" target="_blank">Maximum Ascending Subarray Sum</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/k-concatenation-maximum-sum/" target="_blank">K-Concatenation Maximum Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "kadanes-algorithm", title: "Kadane's Algorithm", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var currentMax = arr[0], globalMax = arr[0], bestStart = 0, bestEnd = 0, tempStart = 0;
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {0: 'highlight-active'},
+            explanation: 'Kadane\'s: Find maximum sum subarray. currentMax=' + currentMax + ', globalMax=' + globalMax });
+
+        for (var i = 1; i < arr.length; i++) {
+            var h = {}; h[i] = 'highlight-active';
+            if (arr[i] > currentMax + arr[i]) {
+                currentMax = arr[i]; tempStart = i;
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'i=' + i + ': ' + arr[i] + ' > ' + (currentMax - arr[i] + arr[i]) + '+' + arr[i] + '. Start new subarray. currentMax=' + currentMax });
+            } else {
+                currentMax += arr[i];
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'i=' + i + ': Extend subarray. currentMax=' + currentMax });
+            }
+            if (currentMax > globalMax) {
+                globalMax = currentMax; bestStart = tempStart; bestEnd = i;
+                for (var j = bestStart; j <= bestEnd; j++) h[j] = 'highlight-sorted';
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'New globalMax=' + globalMax + ' from subarray [' + bestStart + '..' + bestEnd + ']' });
+            }
+        }
+
+        var fh = {};
+        for (var j = bestStart; j <= bestEnd; j++) fh[j] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Max subarray sum = ' + globalMax + ', subarray [' + bestStart + '..' + bestEnd + ']' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [-2, 1, -3, 4, -1, 2, 1, -5, 4],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divide and Conquer — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Divide and Conquer</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(log n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Divide and Conquer breaks a problem into smaller sub-problems of the same type, solves each sub-problem recursively, and then combines the results. This strategy is the backbone of efficient algorithms like Merge Sort, Quick Sort, and Binary Search.
+            </p>
+            <p>
+                The three steps are: <strong>Divide</strong> the problem into sub-problems, <strong>Conquer</strong> by solving sub-problems recursively (base case for small inputs), and <strong>Combine</strong> the sub-problem solutions into the final answer. The recursion tree shows how the problem splits at each level.
+            </p>
+            <p>
+                The Master Theorem provides a framework for analyzing the time complexity of divide-and-conquer recurrences: T(n) = aT(n/b) + O(n^d). By comparing log_b(a) with d, we can determine whether the algorithm is dominated by the divide step, the combine step, or both equally.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Divide</strong><br>Split the problem into two or more smaller instances of the same problem.</div>
+                <div class="key-point"><strong>Conquer</strong><br>Recursively solve each sub-problem. When small enough, solve directly (base case).</div>
+                <div class="key-point"><strong>Combine</strong><br>Merge sub-problem solutions. This step often determines the overall complexity.</div>
+                <div class="key-point"><strong>Master Theorem</strong><br>T(n) = aT(n/b) + O(n^d): compare log_b(a) with d to determine time complexity.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Merge Sort — classic divide and conquer
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    var mid = Math.floor(arr.length / 2);
+    var left = mergeSort(arr.slice(0, mid));
+    var right = mergeSort(arr.slice(mid));
+    return merge(left, right);
+}
+
+function merge(left, right) {
+    var result = [], i = 0, j = 0;
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) result.push(left[i++]);
+        else result.push(right[j++]);
+    }
+    return result.concat(left.slice(i)).concat(right.slice(j));
+}
+
+// Maximum Subarray (Divide and Conquer approach)
+function maxSubArray(nums, lo, hi) {
+    if (lo === hi) return nums[lo];
+    var mid = Math.floor((lo + hi) / 2);
+    var leftMax = maxSubArray(nums, lo, mid);
+    var rightMax = maxSubArray(nums, mid + 1, hi);
+    var crossMax = maxCrossing(nums, lo, mid, hi);
+    return Math.max(leftMax, rightMax, crossMax);
+}
+
+function maxCrossing(nums, lo, mid, hi) {
+    var leftSum = -Infinity, sum = 0;
+    for (var i = mid; i >= lo; i--) {
+        sum += nums[i];
+        leftSum = Math.max(leftSum, sum);
+    }
+    var rightSum = -Infinity; sum = 0;
+    for (var i = mid + 1; i <= hi; i++) {
+        sum += nums[i];
+        rightSum = Math.max(rightSum, sum);
+    }
+    return leftSum + rightSum;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (10)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array (Merge Sort)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank">Maximum Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Kth Largest Element in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/search-a-2d-matrix-ii/" target="_blank">Search a 2D Matrix II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://leetcode.com/problems/minimum-distance-between-bst-nodes/" target="_blank">Closest Pair of Points</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/different-ways-to-add-parentheses/" target="_blank">Different Ways to Add Parentheses</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/median-of-two-sorted-arrays/" target="_blank">Median of Two Sorted Arrays</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>9</td><td><a href="https://leetcode.com/problems/reverse-pairs/" target="_blank">Reverse Pairs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" target="_blank">Construct Binary Tree from Preorder and Inorder</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "divide-and-conquer", title: "Divide and Conquer", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Divide & Conquer: visualize merge sort step by step
+    function generateSteps(data) {
+        var steps = [];
+        var workArr = data.slice();
+
+        steps.push({
+            type: 'bars',
+            array: workArr.slice(),
+            highlights: {},
+            explanation: 'Divide & Conquer: Sort using Merge Sort. Divide into halves, sort each, then merge.'
+        });
+
+        function mergeSortViz(arr, offset) {
+            if (arr.length <= 1) return arr;
+            var mid = Math.floor(arr.length / 2);
+            var left = arr.slice(0, mid);
+            var right = arr.slice(mid);
+
+            var h = {};
+            for (var i = 0; i < mid; i++) h[offset + i] = 'highlight-compare';
+            for (var i = mid; i < arr.length; i++) h[offset + i] = 'highlight-active';
+            steps.push({
+                type: 'bars', array: workArr.slice(), highlights: h,
+                explanation: 'Divide [' + arr.join(', ') + '] into [' + left.join(', ') + '] and [' + right.join(', ') + ']'
+            });
+
+            var sortedLeft = mergeSortViz(left, offset);
+            var sortedRight = mergeSortViz(right, offset + mid);
+            var merged = [], i = 0, j = 0;
+            while (i < sortedLeft.length && j < sortedRight.length) {
+                if (sortedLeft[i] <= sortedRight[j]) merged.push(sortedLeft[i++]);
+                else merged.push(sortedRight[j++]);
+            }
+            while (i < sortedLeft.length) merged.push(sortedLeft[i++]);
+            while (j < sortedRight.length) merged.push(sortedRight[j++]);
+
+            for (var k = 0; k < merged.length; k++) workArr[offset + k] = merged[k];
+
+            var hm = {};
+            for (var k = offset; k < offset + merged.length; k++) hm[k] = 'highlight-sorted';
+            steps.push({
+                type: 'bars', array: workArr.slice(), highlights: hm,
+                explanation: 'Combine: merged into [' + merged.join(', ') + ']'
+            });
+            return merged;
+        }
+
+        mergeSortViz(workArr.slice(), 0);
+
+        var fh = {};
+        for (var i = 0; i < workArr.length; i++) fh[i] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: workArr.slice(), highlights: fh, explanation: 'Done! Array fully sorted via Divide and Conquer.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [38, 27, 43, 3, 9, 82, 10],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

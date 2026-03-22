@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fisher-Yates Shuffle — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Fisher-Yates Shuffle</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Fisher-Yates (Knuth) shuffle generates a uniformly random permutation of an array in O(n) time and O(1) extra space. It iterates from the end of the array to the beginning, swapping each element with a randomly chosen element from the remaining unshuffled portion.
+            </p>
+            <p>
+                For each position i from n-1 down to 1, pick a random index j in [0, i] and swap arr[i] with arr[j]. After the swap, arr[i] is in its final position. This guarantees each of the n! permutations is equally likely.
+            </p>
+            <p>
+                A common mistake is the &ldquo;naive shuffle&rdquo; where j is picked from [0, n-1] for every i &mdash; this does NOT produce uniform distributions. The correct algorithm restricts the random range to shrink with each step.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Uniform Distribution</strong><br>Every permutation has exactly 1/n! probability of being produced.</div>
+                <div class="key-point"><strong>In-Place</strong><br>Modifies the array in place with O(1) extra space.</div>
+                <div class="key-point"><strong>Shrinking Range</strong><br>Random index j is chosen from [0, i], not [0, n-1]. Critical for uniformity.</div>
+                <div class="key-point"><strong>Linear Time</strong><br>Exactly n-1 swaps for an array of size n.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Fisher-Yates Shuffle (Knuth version)
+function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+    return arr;
+}
+
+// Shuffle an Array (LeetCode #384)
+function Solution(nums) {
+    this.original = nums.slice();
+    this.array = nums.slice();
+}
+Solution.prototype.reset = function() {
+    this.array = this.original.slice();
+    return this.array;
+};
+Solution.prototype.shuffle = function() {
+    for (var i = this.array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = this.array[i];
+        this.array[i] = this.array[j];
+        this.array[j] = temp;
+    }
+    return this.array;
+};</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/shuffle-an-array/" target="_blank">Shuffle an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://leetcode.com/problems/shuffle-the-array/" target="_blank">Shuffle the Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>3</td><td><a href="https://leetcode.com/problems/shuffle-string/" target="_blank">Shuffle String</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/random-pick-with-weight/" target="_blank">Random Pick with Weight</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "fisher-yates-shuffle", title: "Fisher-Yates Shuffle", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Fisher-Yates: iterate from end, swap each with random earlier element.' });
+
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var h = {}; h[i] = 'highlight-active'; h[j] = 'highlight-compare';
+            for (var k = i + 1; k < arr.length; k++) h[k] = 'highlight-sorted';
+
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'i=' + i + ': random j=' + j + ' from [0,' + i + ']. Swap ' + arr[i] + ' <-> ' + arr[j] });
+
+            var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+
+            var h2 = {};
+            for (var k = i; k < arr.length; k++) h2[k] = 'highlight-sorted';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h2,
+                explanation: 'arr[' + i + '] = ' + arr[i] + ' is now in final position.' });
+        }
+
+        var fh = {};
+        for (var k = 0; k < arr.length; k++) fh[k] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Shuffle complete! [' + arr.join(', ') + ']. Each permutation equally likely.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 2, 3, 4, 5, 6, 7, 8],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

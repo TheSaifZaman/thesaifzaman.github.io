@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prefix Sum — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Prefix Sum</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n) build, O(1) query</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A prefix sum array stores cumulative sums: <code>prefix[i] = arr[0] + arr[1] + ... + arr[i]</code>. Once built in O(n), any range sum query <code>sum(l, r)</code> can be answered in O(1) as <code>prefix[r] - prefix[l-1]</code>.
+            </p>
+            <p>
+                This is one of the most versatile techniques in competitive programming. Beyond range sums, prefix sums enable: finding subarrays with a given sum (using hash maps), computing running averages, and solving problems where the &ldquo;contribution&rdquo; of each element to many ranges must be computed efficiently.
+            </p>
+            <p>
+                The technique extends to 2D (prefix sum of a matrix for O(1) rectangle sum queries) and can be combined with hash maps for problems like &ldquo;subarray sum equals k&rdquo; where we look for prefix[j] - prefix[i] = k.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Build in O(n)</strong><br>prefix[0] = arr[0]; prefix[i] = prefix[i-1] + arr[i]. Single pass construction.</div>
+                <div class="key-point"><strong>Query in O(1)</strong><br>sum(l, r) = prefix[r] - prefix[l-1]. No need to iterate over the range.</div>
+                <div class="key-point"><strong>Hash Map Combo</strong><br>Store prefix sums in a hash map to find subarrays with a target sum in O(n).</div>
+                <div class="key-point"><strong>2D Extension</strong><br>prefix[i][j] = sum of all elements in rectangle (0,0) to (i,j). Enables O(1) rectangle queries.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Range Sum Query — Immutable (LeetCode #303)
+function NumArray(nums) {
+    this.prefix = [0];
+    for (var i = 0; i < nums.length; i++) {
+        this.prefix.push(this.prefix[i] + nums[i]);
+    }
+}
+NumArray.prototype.sumRange = function(left, right) {
+    return this.prefix[right + 1] - this.prefix[left];
+};
+
+// Subarray Sum Equals K (LeetCode #560)
+function subarraySum(nums, k) {
+    var count = 0, sum = 0;
+    var map = {0: 1};
+    for (var i = 0; i < nums.length; i++) {
+        sum += nums[i];
+        if (map[sum - k] !== undefined) count += map[sum - k];
+        map[sum] = (map[sum] || 0) + 1;
+    }
+    return count;
+}
+
+// Product of Array Except Self (LeetCode #238)
+function productExceptSelf(nums) {
+    var n = nums.length;
+    var result = new Array(n).fill(1);
+    var prefix = 1;
+    for (var i = 0; i < n; i++) {
+        result[i] = prefix;
+        prefix *= nums[i];
+    }
+    var suffix = 1;
+    for (var i = n - 1; i >= 0; i--) {
+        result[i] *= suffix;
+        suffix *= nums[i];
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (10)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (3)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/range-sum-query-immutable/" target="_blank">Range Sum Query — Immutable</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank">Subarray Sum Equals K</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank">Product of Array Except Self</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/contiguous-array/" target="_blank">Contiguous Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>5</td><td><a href="https://leetcode.com/problems/running-sum-of-1d-array/" target="_blank">Running Sum of 1D Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/range-sum-query-2d-immutable/" target="_blank">Range Sum Query 2D — Immutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/path-sum-iii/" target="_blank">Path Sum III</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>8</td><td><a href="https://leetcode.com/problems/find-pivot-index/" target="_blank">Find Pivot Index</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/continuous-subarray-sum/" target="_blank">Continuous Subarray Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>10</td><td><a href="https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/" target="_blank">Number of Submatrices That Sum to Target</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "prefix-sum", title: "Prefix Sum", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var prefix = [0];
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Prefix Sum: Build prefix array where prefix[i] = sum of arr[0..i-1].' });
+
+        for (var i = 0; i < arr.length; i++) {
+            prefix.push(prefix[i] + arr[i]);
+            var h = {}; h[i] = 'highlight-active';
+            for (var j = 0; j <= i; j++) h[j] = h[j] || 'highlight-compare';
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'prefix[' + (i+1) + '] = prefix[' + i + '] + arr[' + i + '] = ' + prefix[i] + ' + ' + arr[i] + ' = ' + prefix[i+1] });
+        }
+
+        // Demo a range query
+        var l = 1, r = Math.min(4, arr.length - 1);
+        var rangeSum = prefix[r + 1] - prefix[l];
+        var qh = {};
+        for (var j = l; j <= r; j++) qh[j] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: qh,
+            explanation: 'Query sum(' + l + ',' + r + ') = prefix[' + (r+1) + '] - prefix[' + l + '] = ' + prefix[r+1] + ' - ' + prefix[l] + ' = ' + rangeSum + ' in O(1)!' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 1, 4, 1, 5, 9, 2, 6],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

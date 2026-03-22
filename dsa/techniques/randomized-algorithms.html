@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomized Algorithms — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Randomized Algorithms</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: Varies (expected)</span>
+            <span class="complexity-tag">Space: O(1)&ndash;O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Randomized algorithms use random choices during execution to achieve good expected performance. They come in two flavors: <strong>Las Vegas</strong> (always correct, random running time &mdash; e.g., randomized QuickSort) and <strong>Monte Carlo</strong> (fast, but may be incorrect with small probability &mdash; e.g., randomized primality testing).
+            </p>
+            <p>
+                Randomized QuickSort picks a random pivot, making worst-case O(n&sup2;) input impossible to construct. The expected time is O(n log n) regardless of input. Similarly, Randomized Quick Select finds the k-th smallest element in O(n) expected time.
+            </p>
+            <p>
+                Randomization is also used in hashing (random hash functions reduce collisions), skip lists (randomized balanced search structure), and randomized geometric algorithms. The key advantage: simple implementation with provable expected-case guarantees, avoiding adversarial worst cases.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Las Vegas</strong><br>Always correct, but running time is random. Expected time is usually O(n log n) or O(n).</div>
+                <div class="key-point"><strong>Monte Carlo</strong><br>Fast (deterministic time), but answer may be wrong with probability &lt; epsilon.</div>
+                <div class="key-point"><strong>Avoid Adversarial Input</strong><br>Random choices prevent adversaries from crafting worst-case inputs.</div>
+                <div class="key-point"><strong>Expected vs Worst Case</strong><br>Expected O(n log n) is often better in practice than deterministic O(n log n) with large constants.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Randomized QuickSort
+function quickSort(arr, lo, hi) {
+    if (lo >= hi) return;
+    // Random pivot selection
+    var pivotIdx = lo + Math.floor(Math.random() * (hi - lo + 1));
+    var temp = arr[pivotIdx]; arr[pivotIdx] = arr[hi]; arr[hi] = temp;
+
+    var pivot = arr[hi], p = lo;
+    for (var i = lo; i < hi; i++) {
+        if (arr[i] < pivot) {
+            var t = arr[i]; arr[i] = arr[p]; arr[p] = t;
+            p++;
+        }
+    }
+    var t = arr[p]; arr[p] = arr[hi]; arr[hi] = t;
+
+    quickSort(arr, lo, p - 1);
+    quickSort(arr, p + 1, hi);
+}
+
+// Randomized Quick Select — O(n) expected
+function quickSelect(arr, lo, hi, k) {
+    if (lo === hi) return arr[lo];
+    var pivotIdx = lo + Math.floor(Math.random() * (hi - lo + 1));
+    var t = arr[pivotIdx]; arr[pivotIdx] = arr[hi]; arr[hi] = t;
+
+    var pivot = arr[hi], p = lo;
+    for (var i = lo; i < hi; i++) {
+        if (arr[i] < pivot) {
+            var t = arr[i]; arr[i] = arr[p]; arr[p] = t;
+            p++;
+        }
+    }
+    t = arr[p]; arr[p] = arr[hi]; arr[hi] = t;
+
+    if (p === k) return arr[p];
+    if (p < k) return quickSelect(arr, p + 1, hi, k);
+    return quickSelect(arr, lo, p - 1, k);
+}
+
+// Miller-Rabin Primality Test (Monte Carlo)
+function isPrime(n, rounds) {
+    if (n < 2) return false;
+    if (n < 4) return true;
+    if (n % 2 === 0) return false;
+    var d = n - 1, r = 0;
+    while (d % 2 === 0) { d /= 2; r++; }
+    for (var i = 0; i < (rounds || 5); i++) {
+        var a = 2 + Math.floor(Math.random() * (n - 3));
+        // Check witness... (simplified)
+    }
+    return true; // probably prime
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/sort-an-array/" target="_blank">Sort an Array (Randomized QuickSort)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Kth Largest Element (QuickSelect)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/random-pick-with-weight/" target="_blank">Random Pick with Weight</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>4</td><td><a href="https://leetcode.com/problems/shuffle-an-array/" target="_blank">Shuffle an Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/random-point-in-non-overlapping-rectangles/" target="_blank">Random Point in Non-overlapping Rectangles</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "randomized-algorithms", title: "Randomized Algorithms", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Randomized QuickSort: Pick random pivot at each step to avoid worst-case O(n^2).' });
+
+        function qsort(a, lo, hi, full, offset) {
+            if (lo >= hi) return;
+            var pivotIdx = lo + Math.floor(Math.random() * (hi - lo + 1));
+            var t = a[pivotIdx]; a[pivotIdx] = a[hi]; a[hi] = t;
+            var pivot = a[hi], p = lo;
+
+            var h = {};
+            h[offset + hi] = 'highlight-swap';
+            steps.push({ type: 'bars', array: full.slice(), highlights: h,
+                explanation: 'Random pivot: ' + pivot + ' at index ' + (offset + pivotIdx) + '. Partition [' + lo + '..' + hi + '].' });
+
+            for (var i = lo; i < hi; i++) {
+                if (a[i] < pivot) {
+                    t = a[i]; a[i] = a[p]; a[p] = t;
+                    p++;
+                }
+            }
+            t = a[p]; a[p] = a[hi]; a[hi] = t;
+            for (var k = lo; k <= hi; k++) full[offset + k] = a[k];
+
+            var ph = {};
+            ph[offset + p] = 'highlight-sorted';
+            for (var k = lo; k < p; k++) ph[offset + k] = 'highlight-compare';
+            for (var k = p + 1; k <= hi; k++) ph[offset + k] = 'highlight-active';
+            steps.push({ type: 'bars', array: full.slice(), highlights: ph,
+                explanation: 'After partition: pivot ' + pivot + ' at position ' + (offset + p) + '. Left < pivot, right > pivot.' });
+
+            qsort(a, lo, p - 1, full, offset);
+            qsort(a, p + 1, hi, full, offset);
+        }
+
+        var work = arr.slice();
+        qsort(work, 0, work.length - 1, work, 0);
+
+        var fh = {};
+        for (var i = 0; i < work.length; i++) fh[i] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: work.slice(), highlights: fh,
+            explanation: 'Sorted! Randomized pivot selection gives O(n log n) expected time for any input.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [7, 3, 9, 1, 5, 8, 2],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Maximum — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Sliding Window Maximum</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(k)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Sliding Window Maximum problem finds the maximum element in every contiguous window of size k. A naive O(nk) approach checks every element in each window. The optimal O(n) solution uses a <strong>monotonic deque</strong> (double-ended queue) that maintains indices in decreasing order of their values.
+            </p>
+            <p>
+                As the window slides, we: (1) remove indices from the front that are outside the window, (2) remove indices from the back whose values are smaller than the new element (they can never be the maximum while the new element exists in the window), (3) add the new index to the back. The front always holds the maximum.
+            </p>
+            <p>
+                The monotonic deque ensures each element is added and removed at most once, giving amortized O(1) per element. This pattern extends to sliding window minimum (use increasing deque) and is used in DP optimization.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Monotonic Deque</strong><br>Maintains indices in decreasing order of values. Front = index of current maximum.</div>
+                <div class="key-point"><strong>Remove Expired</strong><br>Pop from front if the index is outside the current window [i-k+1, i].</div>
+                <div class="key-point"><strong>Maintain Monotonicity</strong><br>Pop from back while back value <= new value. Smaller values cannot be future maxima.</div>
+                <div class="key-point"><strong>Amortized O(1)</strong><br>Each element enters and leaves the deque exactly once. Total: O(n).</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Sliding Window Maximum (LeetCode #239)
+function maxSlidingWindow(nums, k) {
+    var deque = []; // stores indices
+    var result = [];
+
+    for (var i = 0; i < nums.length; i++) {
+        // Remove indices outside window
+        while (deque.length && deque[0] < i - k + 1) {
+            deque.shift();
+        }
+        // Remove smaller elements from back
+        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) {
+            deque.pop();
+        }
+        deque.push(i);
+        // Window is complete when i >= k - 1
+        if (i >= k - 1) {
+            result.push(nums[deque[0]]);
+        }
+    }
+    return result;
+}
+
+// Sliding Window Minimum (same pattern, flip comparison)
+function minSlidingWindow(nums, k) {
+    var deque = [], result = [];
+    for (var i = 0; i < nums.length; i++) {
+        while (deque.length && deque[0] < i - k + 1) deque.shift();
+        while (deque.length && nums[deque[deque.length - 1]] >= nums[i]) deque.pop();
+        deque.push(i);
+        if (i >= k - 1) result.push(nums[deque[0]]);
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/" target="_blank">Longest Subarray With Absolute Diff <= Limit</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/" target="_blank">Shortest Subarray with Sum at Least K</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/jump-game-vi/" target="_blank">Jump Game VI</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/max-value-of-equation/" target="_blank">Max Value of Equation</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/constrained-subsequence-sum/" target="_blank">Constrained Subsequence Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "sliding-window-max", title: "Sliding Window Maximum", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var k = 3;
+        var deque = [], result = [];
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Sliding Window Maximum: Find max in every window of size ' + k + ' using a monotonic deque.' });
+
+        for (var i = 0; i < arr.length; i++) {
+            while (deque.length && deque[0] < i - k + 1) deque.shift();
+            while (deque.length && arr[deque[deque.length - 1]] <= arr[i]) deque.pop();
+            deque.push(i);
+
+            var h = {};
+            for (var j = Math.max(0, i - k + 1); j <= i; j++) h[j] = 'highlight-compare';
+            if (deque.length) h[deque[0]] = 'highlight-sorted';
+            h[i] = h[i] === 'highlight-sorted' ? 'highlight-sorted' : 'highlight-active';
+
+            if (i >= k - 1) {
+                result.push(arr[deque[0]]);
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Window [' + (i-k+1) + '..' + i + ']: deque indices=[' + deque.join(',') + ']. Max = ' + arr[deque[0]] + '. Result: [' + result.join(', ') + ']' });
+            } else {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Building window: added index ' + i + ' (val=' + arr[i] + '). Deque: [' + deque.join(',') + ']' });
+            }
+        }
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Done! Sliding window maximums: [' + result.join(', ') + ']' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 3, -1, -3, 5, 3, 6, 7],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

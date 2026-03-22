@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two Pointers — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Two Pointers</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The two-pointer technique uses two indices that move through the data structure (usually a sorted array) from different directions or at different speeds. By leveraging the sorted order or structural properties, it eliminates the need for nested loops, reducing O(n&sup2;) brute force to O(n).
+            </p>
+            <p>
+                The most common variant places one pointer at the start and one at the end. If the current pair's sum is too small, advance the left pointer; if too large, retreat the right pointer. This works because the array is sorted &mdash; moving left increases the sum, moving right decreases it.
+            </p>
+            <p>
+                Other variants include the &ldquo;slow and fast&rdquo; pattern (for cycle detection or partitioning) and the &ldquo;same direction&rdquo; pattern (for merging or removing duplicates). The key insight is always: each pointer moves in only one direction, guaranteeing linear time.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Sorted Input</strong><br>Most two-pointer problems require sorted input. If not sorted, sort first in O(n log n).</div>
+                <div class="key-point"><strong>Converging Pointers</strong><br>Left starts at 0, right at n-1. They move toward each other until they meet.</div>
+                <div class="key-point"><strong>Same-Direction Pointers</strong><br>Both pointers start at 0 and move right &mdash; used for removing duplicates or partitioning.</div>
+                <div class="key-point"><strong>No Extra Space</strong><br>The technique works in-place with O(1) extra space, making it highly efficient.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Two Sum II — Input Array Is Sorted (LeetCode #167)
+function twoSum(numbers, target) {
+    var left = 0, right = numbers.length - 1;
+    while (left < right) {
+        var sum = numbers[left] + numbers[right];
+        if (sum === target) return [left + 1, right + 1];
+        if (sum < target) left++;
+        else right--;
+    }
+    return [-1, -1];
+}
+
+// Container With Most Water (LeetCode #11)
+function maxArea(height) {
+    var left = 0, right = height.length - 1;
+    var best = 0;
+    while (left < right) {
+        var w = right - left;
+        var h = Math.min(height[left], height[right]);
+        best = Math.max(best, w * h);
+        if (height[left] < height[right]) left++;
+        else right--;
+    }
+    return best;
+}
+
+// Remove Duplicates from Sorted Array
+function removeDuplicates(nums) {
+    if (nums.length === 0) return 0;
+    var slow = 0;
+    for (var fast = 1; fast < nums.length; fast++) {
+        if (nums[fast] !== nums[slow]) {
+            slow++;
+            nums[slow] = nums[fast];
+        }
+    }
+    return slow + 1;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (15)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (6)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (8)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank">Two Sum II - Input Array Is Sorted</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/3sum/" target="_blank">3Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">Container With Most Water</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank">Trapping Rain Water</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>5</td><td><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank">Remove Duplicates from Sorted Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://leetcode.com/problems/move-zeroes/" target="_blank">Move Zeroes</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>7</td><td><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank">Valid Palindrome</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/sort-colors/" target="_blank">Sort Colors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/3sum-closest/" target="_blank">3Sum Closest</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>10</td><td><a href="https://leetcode.com/problems/reverse-string/" target="_blank">Reverse String</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>11</td><td><a href="https://leetcode.com/problems/squares-of-a-sorted-array/" target="_blank">Squares of a Sorted Array</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>12</td><td><a href="https://leetcode.com/problems/backspace-string-compare/" target="_blank">Backspace String Compare</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>13</td><td><a href="https://leetcode.com/problems/4sum/" target="_blank">4Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>14</td><td><a href="https://leetcode.com/problems/partition-labels/" target="_blank">Partition Labels</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>15</td><td><a href="https://leetcode.com/problems/longest-mountain-in-array/" target="_blank">Longest Mountain in Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "two-pointers", title: "Two Pointers", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Two-pointer visualization: find two numbers that sum to target
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice().sort(function(a, b) { return a - b; });
+        var target = arr[0] + arr[arr.length - 1];
+
+        steps.push({
+            type: 'bars',
+            array: arr.slice(),
+            highlights: {},
+            explanation: 'Two Pointers: Find two numbers in sorted array that sum to ' + target + '. Left pointer at start, right pointer at end.'
+        });
+
+        var left = 0, right = arr.length - 1;
+        var found = false;
+
+        while (left < right) {
+            var sum = arr[left] + arr[right];
+            var h = {};
+            h[left] = 'highlight-compare';
+            h[right] = 'highlight-compare';
+
+            if (sum === target) {
+                h[left] = 'highlight-sorted';
+                h[right] = 'highlight-sorted';
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h,
+                    explanation: 'arr[' + left + ']=' + arr[left] + ' + arr[' + right + ']=' + arr[right] + ' = ' + sum + ' == target ' + target + '. Found!'
+                });
+                found = true;
+                break;
+            } else if (sum < target) {
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h,
+                    explanation: 'arr[' + left + ']=' + arr[left] + ' + arr[' + right + ']=' + arr[right] + ' = ' + sum + ' < ' + target + '. Move left pointer right.'
+                });
+                left++;
+            } else {
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h,
+                    explanation: 'arr[' + left + ']=' + arr[left] + ' + arr[' + right + ']=' + arr[right] + ' = ' + sum + ' > ' + target + '. Move right pointer left.'
+                });
+                right--;
+            }
+        }
+
+        if (!found) {
+            steps.push({
+                type: 'bars',
+                array: arr.slice(),
+                highlights: {},
+                explanation: 'Pointers crossed. No pair found summing to ' + target + '.'
+            });
+        }
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 2, 3, 4, 6, 8, 9, 11],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

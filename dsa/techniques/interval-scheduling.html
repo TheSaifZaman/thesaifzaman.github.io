@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interval Scheduling — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Interval Scheduling</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Interval scheduling problems deal with selecting, merging, or partitioning intervals. The most common variant is selecting the maximum number of non-overlapping intervals, solved greedily by sorting by end time and always picking the earliest-ending interval that does not overlap with the last selected one.
+            </p>
+            <p>
+                For <strong>merging intervals</strong>, sort by start time and merge overlapping ones. For <strong>minimum meeting rooms</strong>, use a min-heap to track the earliest ending meeting, or use the event-point technique (count +1 at each start, -1 at each end, find the maximum overlap).
+            </p>
+            <p>
+                The key insight across all interval problems is sorting: either by start time (for merging) or by end time (for selection). Once sorted, a single pass through the intervals with greedy logic yields the optimal solution.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Sort by End Time</strong><br>For maximum non-overlapping selection, always pick the interval that ends earliest.</div>
+                <div class="key-point"><strong>Sort by Start Time</strong><br>For merging intervals, sort by start then merge consecutive overlapping ones.</div>
+                <div class="key-point"><strong>Sweep Line</strong><br>+1 at start, -1 at end. The running maximum gives the peak overlap count.</div>
+                <div class="key-point"><strong>Greedy Proof</strong><br>The earliest-deadline-first strategy provably maximizes the number of non-overlapping intervals.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Merge Intervals (LeetCode #56)
+function merge(intervals) {
+    intervals.sort(function(a, b) { return a[0] - b[0]; });
+    var merged = [intervals[0]];
+    for (var i = 1; i < intervals.length; i++) {
+        var last = merged[merged.length - 1];
+        if (intervals[i][0] <= last[1]) {
+            last[1] = Math.max(last[1], intervals[i][1]);
+        } else {
+            merged.push(intervals[i]);
+        }
+    }
+    return merged;
+}
+
+// Non-overlapping Intervals (LeetCode #435)
+function eraseOverlapIntervals(intervals) {
+    intervals.sort(function(a, b) { return a[1] - b[1]; });
+    var count = 0, lastEnd = -Infinity;
+    for (var i = 0; i < intervals.length; i++) {
+        if (intervals[i][0] >= lastEnd) {
+            lastEnd = intervals[i][1];
+        } else {
+            count++; // remove this interval
+        }
+    }
+    return count;
+}
+
+// Minimum Number of Arrows to Burst Balloons (LeetCode #452)
+function findMinArrowShots(points) {
+    points.sort(function(a, b) { return a[1] - b[1]; });
+    var arrows = 1, lastEnd = points[0][1];
+    for (var i = 1; i < points.length; i++) {
+        if (points[i][0] > lastEnd) {
+            arrows++;
+            lastEnd = points[i][1];
+        }
+    }
+    return arrows;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank">Non-overlapping Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/insert-interval/" target="_blank">Insert Interval</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/" target="_blank">Minimum Number of Arrows to Burst Balloons</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/meeting-rooms-ii/" target="_blank">Meeting Rooms II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://leetcode.com/problems/meeting-rooms/" target="_blank">Meeting Rooms</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/interval-list-intersections/" target="_blank">Interval List Intersections</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/employee-free-time/" target="_blank">Employee Free Time</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "interval-scheduling", title: "Interval Scheduling", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var intervals = [[1,4],[2,5],[3,6],[5,8],[6,9],[8,10]];
+
+        steps.push({ type: 'timeline',
+            intervals: intervals.map(function(iv,i) { return { start: iv[0], end: iv[1], label: String.fromCharCode(65+i), state: '' }; }),
+            explanation: 'Interval Scheduling: Select maximum non-overlapping intervals. Sort by end time.' });
+
+        intervals.sort(function(a, b) { return a[1] - b[1]; });
+        var selected = [0], lastEnd = intervals[0][1];
+
+        steps.push({ type: 'timeline',
+            intervals: intervals.map(function(iv,i) { return { start: iv[0], end: iv[1], label: String.fromCharCode(65+i), state: i === 0 ? 'highlight-sorted' : '' }; }),
+            explanation: 'Select first interval [' + intervals[0][0] + ',' + intervals[0][1] + '] (earliest end time).' });
+
+        for (var i = 1; i < intervals.length; i++) {
+            var sel = selected.slice();
+            if (intervals[i][0] >= lastEnd) {
+                selected.push(i);
+                lastEnd = intervals[i][1];
+                steps.push({ type: 'timeline',
+                    intervals: intervals.map(function(iv,j) {
+                        return { start: iv[0], end: iv[1], label: String.fromCharCode(65+j),
+                            state: selected.indexOf(j) >= 0 ? 'highlight-sorted' : (j === i ? 'highlight-active' : '') };
+                    }),
+                    explanation: '[' + intervals[i][0] + ',' + intervals[i][1] + '] starts at ' + intervals[i][0] + ' >= lastEnd ' + (lastEnd - intervals[i][1] + intervals[i][1]) + '. Select it!' });
+            } else {
+                steps.push({ type: 'timeline',
+                    intervals: intervals.map(function(iv,j) {
+                        return { start: iv[0], end: iv[1], label: String.fromCharCode(65+j),
+                            state: selected.indexOf(j) >= 0 ? 'highlight-sorted' : (j === i ? 'highlight-swap' : '') };
+                    }),
+                    explanation: '[' + intervals[i][0] + ',' + intervals[i][1] + '] starts at ' + intervals[i][0] + ' < lastEnd ' + lastEnd + '. Skip (overlaps).' });
+            }
+        }
+
+        steps.push({ type: 'timeline',
+            intervals: intervals.map(function(iv,j) {
+                return { start: iv[0], end: iv[1], label: String.fromCharCode(65+j),
+                    state: selected.indexOf(j) >= 0 ? 'highlight-sorted' : '' };
+            }),
+            explanation: 'Done! Selected ' + selected.length + ' non-overlapping intervals.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 4, 2, 5, 3, 6],
+        stepGenerator: generateSteps,
+        type: 'timeline'
+    });
+    </script>
+</body>
+</html>

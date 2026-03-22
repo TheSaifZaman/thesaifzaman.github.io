@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greedy — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Greedy</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                A greedy algorithm makes the locally optimal choice at each step, hoping this leads to a globally optimal solution. Unlike dynamic programming which considers all possibilities, greedy commits to the best immediate option and never backtracks.
+            </p>
+            <p>
+                Greedy works when a problem has the <strong>greedy choice property</strong> (a locally optimal choice leads to a global optimum) and <strong>optimal substructure</strong>. Not all problems have these properties &mdash; proving correctness via exchange argument or contradiction is essential.
+            </p>
+            <p>
+                Classic greedy strategies include sorting by deadline/profit, always picking the minimum cost edge, or jumping as far as possible. The elegance of greedy lies in its simplicity: no recursion or table needed, just a single pass with the right criterion.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Greedy Choice Property</strong><br>Making the locally best choice at each step leads to a globally optimal solution.</div>
+                <div class="key-point"><strong>Sort First</strong><br>Many greedy problems require sorting the input by some criterion before making greedy choices.</div>
+                <div class="key-point"><strong>Prove Correctness</strong><br>Greedy solutions need proof (exchange argument, contradiction) &mdash; intuition alone is not enough.</div>
+                <div class="key-point"><strong>No Backtracking</strong><br>Unlike DP or backtracking, greedy never revisits a decision once made.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Jump Game (LeetCode #55)
+function canJump(nums) {
+    var farthest = 0;
+    for (var i = 0; i < nums.length; i++) {
+        if (i > farthest) return false;
+        farthest = Math.max(farthest, i + nums[i]);
+    }
+    return true;
+}
+
+// Activity Selection — select maximum non-overlapping activities
+function activitySelection(activities) {
+    activities.sort(function(a, b) { return a[1] - b[1]; });
+    var selected = [activities[0]];
+    var lastEnd = activities[0][1];
+    for (var i = 1; i < activities.length; i++) {
+        if (activities[i][0] >= lastEnd) {
+            selected.push(activities[i]);
+            lastEnd = activities[i][1];
+        }
+    }
+    return selected;
+}
+
+// Task Scheduler (LeetCode #621)
+function leastInterval(tasks, n) {
+    var freq = new Array(26).fill(0);
+    for (var i = 0; i < tasks.length; i++) {
+        freq[tasks[i].charCodeAt(0) - 65]++;
+    }
+    freq.sort(function(a, b) { return b - a; });
+    var maxFreq = freq[0];
+    var idleSlots = (maxFreq - 1) * n;
+    for (var i = 1; i < freq.length && freq[i] > 0; i++) {
+        idleSlots -= Math.min(freq[i], maxFreq - 1);
+    }
+    return Math.max(tasks.length, tasks.length + idleSlots);
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (12)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (9)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/jump-game/" target="_blank">Jump Game</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/jump-game-ii/" target="_blank">Jump Game II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/task-scheduler/" target="_blank">Task Scheduler</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/gas-station/" target="_blank">Gas Station</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>5</td><td><a href="https://leetcode.com/problems/assign-cookies/" target="_blank">Assign Cookies</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Easy"><td>6</td><td><a href="https://leetcode.com/problems/lemonade-change/" target="_blank">Lemonade Change</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/" target="_blank">Best Time to Buy and Sell Stock II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/boats-to-save-people/" target="_blank">Boats to Save People</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/queue-reconstruction-by-height/" target="_blank">Queue Reconstruction by Height</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/" target="_blank">Minimum Number of Arrows to Burst Balloons</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>11</td><td><a href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank">Non-overlapping Intervals</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>12</td><td><a href="https://leetcode.com/problems/candy/" target="_blank">Candy</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "greedy", title: "Greedy", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Greedy: Jump Game visualization
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Jump Game: Can we reach the last index? Each value = max jump length from that position.' });
+
+        var farthest = 0;
+        for (var i = 0; i < arr.length; i++) {
+            var h = {};
+            for (var j = 0; j <= Math.min(farthest, arr.length - 1); j++) h[j] = 'highlight-sorted';
+            h[i] = 'highlight-active';
+
+            if (i > farthest) {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Index ' + i + ' is beyond farthest reachable (' + farthest + '). Cannot reach the end!' });
+                steps.push({ type: 'bars', array: arr.slice(), highlights: {}, explanation: 'Result: Cannot reach the last index.' });
+                return steps;
+            }
+
+            var newF = Math.max(farthest, i + arr[i]);
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'At index ' + i + ': jump ' + arr[i] + '. Farthest = max(' + farthest + ', ' + (i + arr[i]) + ') = ' + newF });
+            farthest = newF;
+
+            if (farthest >= arr.length - 1) {
+                var fh = {};
+                for (var k = 0; k < arr.length; k++) fh[k] = 'highlight-sorted';
+                steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+                    explanation: 'Farthest (' + farthest + ') >= last index (' + (arr.length-1) + '). We can reach the end!' });
+                return steps;
+            }
+        }
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 2, 1, 0, 4],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

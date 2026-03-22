@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top-K Elements — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Top-K Elements</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n log k)</span>
+            <span class="complexity-tag">Space: O(k)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Top-K pattern finds the k largest (or smallest) elements efficiently. The optimal approach uses a min-heap of size k: iterate through all n elements, maintaining only the k largest in the heap. Each insertion/removal is O(log k), giving O(n log k) total &mdash; better than O(n log n) sorting.
+            </p>
+            <p>
+                Alternatively, Quickselect (partition-based) achieves O(n) average time: partition around a random pivot, recurse into the half containing the k-th element. This is the same idea behind finding the median in O(n) average time.
+            </p>
+            <p>
+                The pattern applies to: k largest/smallest elements, k most frequent elements (use frequency map + heap), k closest points, and streaming top-k where elements arrive one at a time and the heap maintains a running answer.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Min-Heap of Size K</strong><br>For top-k largest: maintain a min-heap of size k. The heap root is the k-th largest.</div>
+                <div class="key-point"><strong>Quickselect</strong><br>O(n) average: partition around pivot, recurse into the side containing k-th element.</div>
+                <div class="key-point"><strong>Frequency + Heap</strong><br>For k most frequent: build frequency map O(n), then use heap to extract top-k O(m log k).</div>
+                <div class="key-point"><strong>Streaming</strong><br>Process elements one at a time. Heap always holds the current top-k answer.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Kth Largest Element — Quickselect (LeetCode #215)
+function findKthLargest(nums, k) {
+    k = nums.length - k; // convert to k-th smallest
+    function quickselect(lo, hi) {
+        var pivot = nums[hi], p = lo;
+        for (var i = lo; i < hi; i++) {
+            if (nums[i] <= pivot) {
+                var t = nums[i]; nums[i] = nums[p]; nums[p] = t;
+                p++;
+            }
+        }
+        var t = nums[p]; nums[p] = nums[hi]; nums[hi] = t;
+        if (p === k) return nums[p];
+        if (p < k) return quickselect(p + 1, hi);
+        return quickselect(lo, p - 1);
+    }
+    return quickselect(0, nums.length - 1);
+}
+
+// Top K Frequent Elements (LeetCode #347)
+function topKFrequent(nums, k) {
+    var freq = {};
+    for (var i = 0; i < nums.length; i++) {
+        freq[nums[i]] = (freq[nums[i]] || 0) + 1;
+    }
+    // Bucket sort by frequency
+    var buckets = new Array(nums.length + 1);
+    for (var num in freq) {
+        var f = freq[num];
+        if (!buckets[f]) buckets[f] = [];
+        buckets[f].push(Number(num));
+    }
+    var result = [];
+    for (var i = buckets.length - 1; i >= 0 && result.length < k; i--) {
+        if (buckets[i]) result = result.concat(buckets[i]);
+    }
+    return result.slice(0, k);
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (8)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (6)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (1)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Kth Largest Element in an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">K Closest Points to Origin</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/sort-characters-by-frequency/" target="_blank">Sort Characters By Frequency</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>5</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/" target="_blank">Kth Largest Element in a Stream</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/top-k-frequent-words/" target="_blank">Top K Frequent Words</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>7</td><td><a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank">Find Median from Data Stream</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/reorganize-string/" target="_blank">Reorganize String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "topk-elements", title: "Top-K Elements", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var k = 3;
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Top-K: Find the ' + k + ' largest elements using a min-heap of size ' + k + '.' });
+
+        var heap = [];
+        function heapPush(val) {
+            heap.push(val); heap.sort(function(a,b){return a-b;});
+        }
+        function heapPop() { return heap.shift(); }
+
+        for (var i = 0; i < arr.length; i++) {
+            var h = {}; h[i] = 'highlight-active';
+            if (heap.length < k) {
+                heapPush(arr[i]);
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Add ' + arr[i] + ' to heap (size < k). Heap: [' + heap.join(', ') + ']' });
+            } else if (arr[i] > heap[0]) {
+                var removed = heapPop();
+                heapPush(arr[i]);
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: arr[i] + ' > heap min ' + removed + '. Replace! Heap: [' + heap.join(', ') + ']' });
+            } else {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: arr[i] + ' <= heap min ' + heap[0] + '. Skip. Heap: [' + heap.join(', ') + ']' });
+            }
+        }
+
+        var fh = {};
+        for (var i = 0; i < arr.length; i++) {
+            if (heap.indexOf(arr[i]) >= 0) fh[i] = 'highlight-sorted';
+        }
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Top-' + k + ' largest: [' + heap.sort(function(a,b){return b-a;}).join(', ') + ']' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 7, 2, 9, 1, 8, 5, 4],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

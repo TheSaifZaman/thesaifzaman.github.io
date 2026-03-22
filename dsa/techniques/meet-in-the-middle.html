@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet in the Middle — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Meet in the Middle</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(2^(n/2))</span>
+            <span class="complexity-tag">Space: O(2^(n/2))</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Meet in the Middle splits the input into two halves, exhaustively explores all possibilities for each half independently, then combines results. This reduces exponential complexity from O(2^n) to O(2^(n/2)), which is a massive improvement for n around 30-40.
+            </p>
+            <p>
+                For example, to find a subset with a target sum from n=36 elements: brute force is O(2^36) which is impractical. But splitting into two halves of 18 elements each: enumerate all 2^18 subset sums for each half (~260K each), sort one half, then binary search for complements. Total: O(2^18 * 18).
+            </p>
+            <p>
+                The technique applies to: subset sum with large n, closest subset sum, counting pairs with specific properties, and certain cryptographic attacks. The core pattern is always: split, enumerate both halves, combine with sorting + binary search.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Split in Half</strong><br>Divide the input into two roughly equal halves (n/2 elements each).</div>
+                <div class="key-point"><strong>Enumerate Both</strong><br>Generate all 2^(n/2) possibilities for each half independently.</div>
+                <div class="key-point"><strong>Combine with Search</strong><br>Sort one half's results, binary search for complements from the other half.</div>
+                <div class="key-point"><strong>O(2^n) to O(2^(n/2))</strong><br>Reduces 2^40 (~10^12) to 2^20 (~10^6), making previously impossible problems tractable.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Meet in the Middle — subset sum closest to target
+function closestSubsetSum(arr, target) {
+    var n = arr.length;
+    var half = Math.floor(n / 2);
+
+    // Generate all subset sums for each half
+    function allSubsetSums(a) {
+        var sums = [0];
+        for (var i = 0; i < a.length; i++) {
+            var len = sums.length;
+            for (var j = 0; j < len; j++) {
+                sums.push(sums[j] + a[i]);
+            }
+        }
+        return sums;
+    }
+
+    var leftSums = allSubsetSums(arr.slice(0, half));
+    var rightSums = allSubsetSums(arr.slice(half));
+
+    rightSums.sort(function(a, b) { return a - b; });
+
+    var best = Infinity;
+    for (var i = 0; i < leftSums.length; i++) {
+        var need = target - leftSums[i];
+        // Binary search for closest in rightSums
+        var lo = 0, hi = rightSums.length - 1;
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            var diff = Math.abs(leftSums[i] + rightSums[mid] - target);
+            best = Math.min(best, diff);
+            if (rightSums[mid] < need) lo = mid + 1;
+            else hi = mid - 1;
+        }
+        if (lo < rightSums.length) {
+            best = Math.min(best, Math.abs(leftSums[i] + rightSums[lo] - target));
+        }
+    }
+    return target - best; // or target + best depending on direction
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/closest-subsequence-sum/" target="_blank">Closest Subsequence Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank">Partition Equal Subset Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/4sum/" target="_blank">4Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/4sum-ii/" target="_blank">4Sum II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/split-array-with-same-average/" target="_blank">Split Array With Same Average</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "meet-in-the-middle", title: "Meet in the Middle", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice(0, Math.min(data.length, 8));
+        var target = 0;
+        for (var i = 0; i < arr.length; i++) target += arr[i];
+        target = Math.floor(target / 2);
+        var half = Math.floor(arr.length / 2);
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Meet in the Middle: Find subset sum closest to ' + target + '. Split array into two halves.' });
+
+        var h1 = {}, h2 = {};
+        for (var i = 0; i < half; i++) h1[i] = 'highlight-compare';
+        for (var i = half; i < arr.length; i++) h2[i] = 'highlight-active';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: Object.assign({}, h1, h2),
+            explanation: 'Left half: [' + arr.slice(0, half).join(', ') + '], Right half: [' + arr.slice(half).join(', ') + ']' });
+
+        function allSums(a) {
+            var s = [0];
+            for (var i = 0; i < a.length; i++) {
+                var len = s.length;
+                for (var j = 0; j < len; j++) s.push(s[j] + a[i]);
+            }
+            return s;
+        }
+
+        var leftSums = allSums(arr.slice(0, half));
+        var rightSums = allSums(arr.slice(half));
+        rightSums.sort(function(a,b) { return a - b; });
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: h1,
+            explanation: 'Left half generates ' + leftSums.length + ' subset sums: [' + leftSums.sort(function(a,b){return a-b;}).join(', ') + ']' });
+        steps.push({ type: 'bars', array: arr.slice(), highlights: h2,
+            explanation: 'Right half generates ' + rightSums.length + ' subset sums (sorted): [' + rightSums.join(', ') + ']' });
+
+        var best = Infinity, bestSum = 0;
+        for (var i = 0; i < leftSums.length; i++) {
+            var need = target - leftSums[i];
+            for (var j = 0; j < rightSums.length; j++) {
+                var diff = Math.abs(leftSums[i] + rightSums[j] - target);
+                if (diff < best) { best = diff; bestSum = leftSums[i] + rightSums[j]; }
+            }
+        }
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Binary search each left sum for best complement in right sums.' });
+
+        var fh = {};
+        for (var i = 0; i < arr.length; i++) fh[i] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Closest subset sum to ' + target + ' is ' + bestSum + '. Checked 2^' + half + ' + 2^' + (arr.length - half) + ' instead of 2^' + arr.length + '.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 7, 2, 5, 8, 1],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mo's Algorithm — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Mo's Algorithm</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O((n + q) * &radic;n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Mo's Algorithm answers offline range queries in O((n + q) * sqrt(n)) time by sorting queries in a specific order that minimizes the total pointer movement. It maintains a &ldquo;current range&rdquo; [curL, curR] and incrementally adds/removes elements as it moves to the next query.
+            </p>
+            <p>
+                The key insight is the sorting order: divide the array into blocks of size sqrt(n). Sort queries by (block of L, R). Within the same block of L, queries are sorted by R. This ensures the right pointer moves O(n * sqrt(n)) total, and the left pointer moves O(n * sqrt(n)) total across all queries.
+            </p>
+            <p>
+                Mo's algorithm works for any problem where you can efficiently add/remove a single element to/from the current answer. Examples: count distinct elements in range, range mode query, range frequency query. It requires offline processing (all queries known in advance).
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Block Decomposition</strong><br>Divide indices into blocks of size sqrt(n). Sort queries by (block of L, then R).</div>
+                <div class="key-point"><strong>Incremental Updates</strong><br>Move [curL, curR] to each query by adding/removing one element at a time.</div>
+                <div class="key-point"><strong>O((n+q) * sqrt(n))</strong><br>Total pointer movement is bounded. Each pointer moves O(n * sqrt(n)) across all queries.</div>
+                <div class="key-point"><strong>Offline Only</strong><br>All queries must be known in advance. Not suitable for online/interactive problems.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Mo's Algorithm — count distinct elements in range queries
+function mosAlgorithm(arr, queries) {
+    var n = arr.length;
+    var block = Math.floor(Math.sqrt(n)) || 1;
+
+    // Sort queries by (block of L, R)
+    var indexed = queries.map(function(q, i) { return [q[0], q[1], i]; });
+    indexed.sort(function(a, b) {
+        var blockA = Math.floor(a[0] / block);
+        var blockB = Math.floor(b[0] / block);
+        if (blockA !== blockB) return blockA - blockB;
+        return (blockA % 2 === 0) ? a[1] - b[1] : b[1] - a[1];
+    });
+
+    var freq = {}, distinct = 0;
+    var curL = 0, curR = -1;
+    var result = new Array(queries.length);
+
+    function add(idx) {
+        freq[arr[idx]] = (freq[arr[idx]] || 0) + 1;
+        if (freq[arr[idx]] === 1) distinct++;
+    }
+    function remove(idx) {
+        freq[arr[idx]]--;
+        if (freq[arr[idx]] === 0) distinct--;
+    }
+
+    for (var i = 0; i < indexed.length; i++) {
+        var qL = indexed[i][0], qR = indexed[i][1], qIdx = indexed[i][2];
+        while (curR < qR) add(++curR);
+        while (curL > qL) add(--curL);
+        while (curR > qR) remove(curR--);
+        while (curL < qL) remove(curL++);
+        result[qIdx] = distinct;
+    }
+    return result;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (1)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/count-of-range-sum/" target="_blank">Count of Range Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/range-sum-query-mutable/" target="_blank">Range Sum Query — Mutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank">Count of Smaller Numbers After Self</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/" target="_blank">Number of Submatrices That Sum to Target</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "mos-algorithm", title: "Mo's Algorithm", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = [1, 3, 2, 1, 3, 1, 2, 4];
+        var queries = [[0,3],[1,5],[2,7],[0,7]];
+        var block = Math.floor(Math.sqrt(arr.length));
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Mo\'s Algorithm: Answer ' + queries.length + ' range queries for distinct count. Block size = ' + block + '.' });
+
+        var indexed = queries.map(function(q,i){ return [q[0],q[1],i]; });
+        indexed.sort(function(a,b){
+            var ba = Math.floor(a[0]/block), bb = Math.floor(b[0]/block);
+            return ba !== bb ? ba - bb : a[1] - b[1];
+        });
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Queries sorted by (L block, R): ' + indexed.map(function(q){ return '['+q[0]+','+q[1]+']'; }).join(', ') });
+
+        var freq = {}, distinct = 0, curL = 0, curR = -1, results = [];
+
+        for (var i = 0; i < indexed.length; i++) {
+            var qL = indexed[i][0], qR = indexed[i][1];
+            while (curR < qR) { curR++; freq[arr[curR]] = (freq[arr[curR]]||0)+1; if(freq[arr[curR]]===1) distinct++; }
+            while (curL > qL) { curL--; freq[arr[curL]] = (freq[arr[curL]]||0)+1; if(freq[arr[curL]]===1) distinct++; }
+            while (curR > qR) { freq[arr[curR]]--; if(freq[arr[curR]]===0) distinct--; curR--; }
+            while (curL < qL) { freq[arr[curL]]--; if(freq[arr[curL]]===0) distinct--; curL++; }
+
+            var h = {};
+            for (var j = qL; j <= qR; j++) h[j] = 'highlight-compare';
+            results.push(distinct);
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'Query [' + qL + ',' + qR + ']: range = [' + arr.slice(qL,qR+1).join(',') + ']. Distinct = ' + distinct });
+        }
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Done! All queries answered. Pointer movement was minimized by block sorting.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 3, 2, 1, 3, 1, 2, 4],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

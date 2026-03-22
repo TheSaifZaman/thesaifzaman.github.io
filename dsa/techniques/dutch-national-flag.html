@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dutch National Flag — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Dutch National Flag</h1>
+        <div class="topic-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(1)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The Dutch National Flag algorithm, designed by Dijkstra, partitions an array of three distinct values into three contiguous groups in a single pass. It uses three pointers: <strong>low</strong> (boundary for 0s), <strong>mid</strong> (current element), and <strong>high</strong> (boundary for 2s).
+            </p>
+            <p>
+                The invariant maintained is: elements before <code>low</code> are all 0 (red), elements between <code>low</code> and <code>mid</code> are all 1 (white), elements after <code>high</code> are all 2 (blue), and elements between <code>mid</code> and <code>high</code> are unprocessed. The algorithm processes mid and moves pointers accordingly.
+            </p>
+            <p>
+                When arr[mid]=0, swap with arr[low] and advance both; when arr[mid]=1, just advance mid; when arr[mid]=2, swap with arr[high] and decrement high (do not advance mid since the swapped value is unprocessed).
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Three Pointers</strong><br>low tracks the boundary of 0s, mid scans the array, high tracks the boundary of 2s.</div>
+                <div class="key-point"><strong>Single Pass</strong><br>Process each element once. mid advances right, partitioning into three groups in O(n).</div>
+                <div class="key-point"><strong>In-Place</strong><br>Only pointer variables needed &mdash; O(1) extra space.</div>
+                <div class="key-point"><strong>Three-Way Partition</strong><br>Generalizes to any three-way partition problem around a pivot value.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Sort Colors (LeetCode #75) — Dutch National Flag
+function sortColors(nums) {
+    var low = 0, mid = 0, high = nums.length - 1;
+    while (mid <= high) {
+        if (nums[mid] === 0) {
+            // Swap with low, advance both
+            var temp = nums[low];
+            nums[low] = nums[mid];
+            nums[mid] = temp;
+            low++; mid++;
+        } else if (nums[mid] === 1) {
+            mid++;  // already in correct region
+        } else {
+            // Swap with high, decrement high
+            var temp = nums[mid];
+            nums[mid] = nums[high];
+            nums[high] = temp;
+            high--;
+            // Don't advance mid — swapped value is unprocessed
+        }
+    }
+}
+
+// Three-way partition around a pivot
+function threeWayPartition(arr, pivot) {
+    var low = 0, mid = 0, high = arr.length - 1;
+    while (mid <= high) {
+        if (arr[mid] < pivot) {
+            var t = arr[low]; arr[low] = arr[mid]; arr[mid] = t;
+            low++; mid++;
+        } else if (arr[mid] === pivot) {
+            mid++;
+        } else {
+            var t = arr[mid]; arr[mid] = arr[high]; arr[high] = t;
+            high--;
+        }
+    }
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/sort-colors/" target="_blank">Sort Colors</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>2</td><td><a href="https://leetcode.com/problems/move-zeroes/" target="_blank">Move Zeroes</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/wiggle-sort-ii/" target="_blank">Wiggle Sort II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>4</td><td><a href="https://leetcode.com/problems/sort-array-by-parity/" target="_blank">Sort Array By Parity</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/sort-array-by-parity-ii/" target="_blank">Sort Array By Parity II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "dutch-national-flag", title: "Dutch National Flag", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // Ensure values are 0, 1, or 2
+        var arr = data.map(function(v) { return Math.abs(Math.round(v)) % 3; });
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Dutch National Flag: Sort [0=red, 1=white, 2=blue] in one pass. low=0, mid=0, high=' + (arr.length-1) });
+
+        var low = 0, mid = 0, high = arr.length - 1;
+
+        while (mid <= high) {
+            var h = {};
+            h[low] = 'highlight-compare'; h[mid] = 'highlight-active'; h[high] = 'highlight-swap';
+            for (var k = 0; k < low; k++) h[k] = 'highlight-sorted';
+
+            if (arr[mid] === 0) {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'arr[mid=' + mid + ']=0 (red). Swap with arr[low=' + low + ']=' + arr[low] + '. Advance low & mid.' });
+                var t = arr[low]; arr[low] = arr[mid]; arr[mid] = t;
+                low++; mid++;
+            } else if (arr[mid] === 1) {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'arr[mid=' + mid + ']=1 (white). Already correct region. Advance mid.' });
+                mid++;
+            } else {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'arr[mid=' + mid + ']=2 (blue). Swap with arr[high=' + high + ']=' + arr[high] + '. Decrement high.' });
+                var t = arr[mid]; arr[mid] = arr[high]; arr[high] = t;
+                high--;
+            }
+        }
+
+        var fh = {};
+        for (var i = 0; i < arr.length; i++) fh[i] = 'highlight-sorted';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Array partitioned: 0s (red), then 1s (white), then 2s (blue).' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [2, 0, 2, 1, 1, 0, 1, 2, 0],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Programming — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Dynamic Programming</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: Varies</span>
+            <span class="complexity-tag">Space: Varies</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Dynamic Programming (DP) solves complex problems by breaking them into overlapping sub-problems and storing their results to avoid redundant computation. Unlike divide and conquer where sub-problems are independent, DP sub-problems share common sub-sub-problems, making memoization or tabulation essential.
+            </p>
+            <p>
+                The two approaches are <strong>top-down (memoization)</strong>, where you solve recursively and cache results, and <strong>bottom-up (tabulation)</strong>, where you fill a table iteratively from the smallest sub-problems upward. Bottom-up avoids recursion overhead and is often preferred in interviews.
+            </p>
+            <p>
+                Identifying a DP problem requires recognizing <strong>optimal substructure</strong> (optimal solution uses optimal sub-solutions) and <strong>overlapping sub-problems</strong> (same sub-problem solved multiple times). The hardest part is defining the state: what information do you need to make a decision at each step?
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Optimal Substructure</strong><br>The optimal solution can be constructed from optimal solutions of its sub-problems.</div>
+                <div class="key-point"><strong>Overlapping Sub-problems</strong><br>The same sub-problems are solved repeatedly &mdash; caching prevents exponential blowup.</div>
+                <div class="key-point"><strong>State Definition</strong><br>Define dp[i] (or dp[i][j]) clearly: what does each cell represent? This is the hardest step.</div>
+                <div class="key-point"><strong>Transition Formula</strong><br>Express dp[i] in terms of previously computed values. This is the recurrence relation.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Climbing Stairs (LeetCode #70)
+function climbStairs(n) {
+    if (n <= 2) return n;
+    var prev2 = 1, prev1 = 2;
+    for (var i = 3; i <= n; i++) {
+        var curr = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}
+
+// Coin Change (LeetCode #322)
+function coinChange(coins, amount) {
+    var dp = new Array(amount + 1).fill(Infinity);
+    dp[0] = 0;
+    for (var i = 1; i <= amount; i++) {
+        for (var j = 0; j < coins.length; j++) {
+            if (coins[j] <= i && dp[i - coins[j]] + 1 < dp[i]) {
+                dp[i] = dp[i - coins[j]] + 1;
+            }
+        }
+    }
+    return dp[amount] === Infinity ? -1 : dp[amount];
+}
+
+// Longest Common Subsequence (LeetCode #1143)
+function longestCommonSubsequence(text1, text2) {
+    var m = text1.length, n = text2.length;
+    var dp = [];
+    for (var i = 0; i <= m; i++) dp[i] = new Array(n + 1).fill(0);
+    for (var i = 1; i <= m; i++) {
+        for (var j = 1; j <= n; j++) {
+            if (text1[i-1] === text2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+            else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+
+// House Robber (LeetCode #198)
+function rob(nums) {
+    if (nums.length === 0) return 0;
+    var prev2 = 0, prev1 = 0;
+    for (var i = 0; i < nums.length; i++) {
+        var curr = Math.max(prev1, prev2 + nums[i]);
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (20)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (2)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (15)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Easy"><td>1</td><td><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Climbing Stairs</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/coin-change/" target="_blank">Coin Change</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/longest-common-subsequence/" target="_blank">Longest Common Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/house-robber/" target="_blank">House Robber</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">Longest Increasing Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank">Partition Equal Subset Sum (0/1 Knapsack)</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>8</td><td><a href="https://leetcode.com/problems/edit-distance/" target="_blank">Edit Distance</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/word-break/" target="_blank">Word Break</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/decode-ways/" target="_blank">Decode Ways</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>11</td><td><a href="https://leetcode.com/problems/palindrome-partitioning-ii/" target="_blank">Palindrome Partitioning II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>12</td><td><a href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank">Maximum Product Subarray</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Easy"><td>13</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank">Best Time to Buy and Sell Stock</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>14</td><td><a href="https://leetcode.com/problems/minimum-path-sum/" target="_blank">Minimum Path Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>15</td><td><a href="https://leetcode.com/problems/target-sum/" target="_blank">Target Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>16</td><td><a href="https://leetcode.com/problems/regular-expression-matching/" target="_blank">Regular Expression Matching</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>17</td><td><a href="https://leetcode.com/problems/burst-balloons/" target="_blank">Burst Balloons</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>18</td><td><a href="https://leetcode.com/problems/interleaving-string/" target="_blank">Interleaving String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>19</td><td><a href="https://leetcode.com/problems/longest-palindromic-subsequence/" target="_blank">Longest Palindromic Subsequence</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>20</td><td><a href="https://leetcode.com/problems/stone-game/" target="_blank">Stone Game</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "dynamic-programming", title: "Dynamic Programming", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // DP: Visualize climbing stairs tabulation
+    function generateSteps(data) {
+        var steps = [];
+        var n = Math.min(Math.max(Math.round(data[0]) || 5, 2), 10);
+        var dp = new Array(n + 1).fill(0);
+        dp[0] = 1; dp[1] = 1;
+
+        steps.push({
+            type: 'grid',
+            grid: [
+                Array.from({length: n + 1}, function(_, i) { return { value: 'Step ' + i, state: '' }; }),
+                Array.from({length: n + 1}, function(_, i) { return { value: i <= 1 ? dp[i] : '?', state: i <= 1 ? 'highlight-sorted' : '' }; })
+            ],
+            explanation: 'Climbing Stairs DP: dp[i] = ways to reach step i. Base cases: dp[0]=1, dp[1]=1.'
+        });
+
+        for (var i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            steps.push({
+                type: 'grid',
+                grid: [
+                    Array.from({length: n + 1}, function(_, j) { return { value: 'Step ' + j, state: '' }; }),
+                    Array.from({length: n + 1}, function(_, j) {
+                        return { value: j <= i ? dp[j] : '?', state: j === i ? 'highlight-swap' : (j < i ? 'highlight-sorted' : '') };
+                    })
+                ],
+                explanation: 'dp[' + i + '] = dp[' + (i-1) + '] + dp[' + (i-2) + '] = ' + dp[i-1] + ' + ' + dp[i-2] + ' = ' + dp[i]
+            });
+        }
+
+        steps.push({
+            type: 'grid',
+            grid: [
+                Array.from({length: n + 1}, function(_, j) { return { value: 'Step ' + j, state: '' }; }),
+                Array.from({length: n + 1}, function(_, j) { return { value: dp[j], state: 'highlight-sorted' }; })
+            ],
+            explanation: 'Done! There are ' + dp[n] + ' ways to climb ' + n + ' stairs.'
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [6],
+        stepGenerator: generateSteps,
+        type: 'grid'
+    });
+    </script>
+</body>
+</html>

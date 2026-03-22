@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Lifting — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Binary Lifting</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n log n) build, O(log n) query</span>
+            <span class="complexity-tag">Space: O(n log n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Binary lifting precomputes <code>up[v][k]</code> = the 2^k-th ancestor of node v in a tree. By expressing any distance as a sum of powers of two, we can jump to any ancestor in O(log n) time. This is the standard approach for answering Lowest Common Ancestor (LCA) queries efficiently.
+            </p>
+            <p>
+                The precomputation: <code>up[v][0]</code> = parent of v. For k > 0: <code>up[v][k] = up[up[v][k-1]][k-1]</code> (the 2^k-th ancestor is the 2^(k-1)-th ancestor of the 2^(k-1)-th ancestor). This builds the table in O(n log n) time and space.
+            </p>
+            <p>
+                For LCA: first bring both nodes to the same depth using binary lifting, then lift both nodes simultaneously until they meet. Each step doubles the jump distance, ensuring O(log n) total steps.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Sparse Table of Ancestors</strong><br>up[v][k] stores the 2^k-th ancestor. Any ancestor query decomposes into O(log n) jumps.</div>
+                <div class="key-point"><strong>Power-of-Two Jumps</strong><br>Jump 2^k, 2^(k-1), ..., 2^0 steps. Like binary representation of the target distance.</div>
+                <div class="key-point"><strong>LCA in O(log n)</strong><br>Equalize depths, then lift both nodes until they meet. The standard offline LCA technique.</div>
+                <div class="key-point"><strong>O(n log n) Preprocessing</strong><br>Build the table with DFS + dynamic programming on the ancestor table.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Binary Lifting for LCA
+var LOG = 20;
+var up = [];  // up[v][k] = 2^k-th ancestor of v
+var depth = [];
+
+function buildBinaryLifting(adj, root, n) {
+    up = new Array(n);
+    depth = new Array(n).fill(0);
+    for (var i = 0; i < n; i++) up[i] = new Array(LOG).fill(-1);
+
+    // BFS to set parent and depth
+    var queue = [root];
+    var visited = new Array(n).fill(false);
+    visited[root] = true;
+    while (queue.length) {
+        var v = queue.shift();
+        for (var i = 0; i < adj[v].length; i++) {
+            var u = adj[v][i];
+            if (!visited[u]) {
+                visited[u] = true;
+                up[u][0] = v;
+                depth[u] = depth[v] + 1;
+                queue.push(u);
+            }
+        }
+    }
+    // Fill sparse table
+    for (var k = 1; k < LOG; k++) {
+        for (var v = 0; v < n; v++) {
+            if (up[v][k-1] !== -1)
+                up[v][k] = up[up[v][k-1]][k-1];
+        }
+    }
+}
+
+function lca(u, v) {
+    if (depth[u] < depth[v]) { var t = u; u = v; v = t; }
+    var diff = depth[u] - depth[v];
+    for (var k = 0; k < LOG; k++) {
+        if ((diff >> k) & 1) u = up[u][k];
+    }
+    if (u === v) return u;
+    for (var k = LOG - 1; k >= 0; k--) {
+        if (up[u][k] !== up[v][k]) {
+            u = up[u][k]; v = up[v][k];
+        }
+    }
+    return up[u][0];
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/kth-ancestor-of-a-tree-node/" target="_blank">Kth Ancestor of a Tree Node</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" target="_blank">Lowest Common Ancestor of a Binary Tree</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iv/" target="_blank">LCA of Binary Tree IV</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/maximum-difference-between-node-and-ancestor/" target="_blank">Maximum Difference Between Node and Ancestor</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/minimum-edge-weight-equilibrium-queries-in-a-tree/" target="_blank">Min Edge Weight Equilibrium Queries</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/tree-of-coprimes/" target="_blank">Tree of Coprimes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "binary-lifting", title: "Binary Lifting", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        // A sample tree: 0 is root, edges: 0-1, 0-2, 1-3, 1-4, 2-5, 3-6
+        var labels = [0,1,2,3,4,5,6];
+        var parents = [-1,0,0,1,1,2,3];
+        var depths = [0,1,1,2,2,2,3];
+        var positions = [
+            {id:0,label:0,x:250,y:30,state:''},
+            {id:1,label:1,x:150,y:100,state:''},
+            {id:2,label:2,x:350,y:100,state:''},
+            {id:3,label:3,x:100,y:170,state:''},
+            {id:4,label:4,x:200,y:170,state:''},
+            {id:5,label:5,x:350,y:170,state:''},
+            {id:6,label:6,x:100,y:240,state:''}
+        ];
+        var edges = [{from:0,to:1},{from:0,to:2},{from:1,to:3},{from:1,to:4},{from:2,to:5},{from:3,to:6}];
+
+        steps.push({ type: 'tree', nodes: JSON.parse(JSON.stringify(positions)), edges: edges,
+            explanation: 'Binary Lifting: Precompute 2^k-th ancestor for each node. Tree with 7 nodes, root=0.' });
+
+        // Show up[v][0] = parent
+        var n2 = JSON.parse(JSON.stringify(positions));
+        for (var i = 0; i < n2.length; i++) n2[i].state = 'highlight-compare';
+        steps.push({ type: 'tree', nodes: n2, edges: edges,
+            explanation: 'up[v][0] = parent: ' + labels.map(function(v){ return 'up['+v+'][0]='+(parents[v]===-1?'none':parents[v]); }).join(', ') });
+
+        // Show up[v][1] = grandparent
+        var gp = parents.map(function(p){ return p === -1 ? -1 : parents[p]; });
+        steps.push({ type: 'tree', nodes: JSON.parse(JSON.stringify(positions)), edges: edges,
+            explanation: 'up[v][1] = 2nd ancestor: ' + labels.map(function(v){ return 'up['+v+'][1]='+(gp[v]===-1?'none':gp[v]); }).join(', ') });
+
+        // LCA query: find LCA(6, 5)
+        var n3 = JSON.parse(JSON.stringify(positions));
+        n3[6].state = 'highlight-active'; n3[5].state = 'highlight-active';
+        steps.push({ type: 'tree', nodes: n3, edges: edges,
+            explanation: 'Query: LCA(6, 5)? Node 6 at depth 3, node 5 at depth 2. Lift node 6 by 1.' });
+
+        var n4 = JSON.parse(JSON.stringify(positions));
+        n4[3].state = 'highlight-compare'; n4[5].state = 'highlight-active';
+        steps.push({ type: 'tree', nodes: n4, edges: edges,
+            explanation: 'After lifting: node 3 (depth 2) and node 5 (depth 2). Now lift both until they meet.' });
+
+        var n5 = JSON.parse(JSON.stringify(positions));
+        n5[0].state = 'highlight-sorted';
+        steps.push({ type: 'tree', nodes: n5, edges: edges,
+            explanation: 'LCA(6, 5) = 0. Found in O(log n) jumps using the precomputed table.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [7],
+        stepGenerator: generateSteps,
+        type: 'tree'
+    });
+    </script>
+</body>
+</html>

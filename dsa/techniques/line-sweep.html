@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Sweep — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Line Sweep</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: O(n log n)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Line sweep (or sweep line) processes events along a sorted axis. Imagine a vertical line sweeping left-to-right across a plane. At each event point (start or end of an interval/rectangle), we update an active set. This converts 2D problems into a sequence of 1D operations.
+            </p>
+            <p>
+                Events are created for each interval: a &ldquo;start&rdquo; event (+1) and an &ldquo;end&rdquo; event (-1). After sorting all events by position, sweep through them maintaining a counter or balanced BST of active intervals. The running state at each event point captures the answer.
+            </p>
+            <p>
+                Applications include: counting maximum overlapping intervals, computing union of rectangles, the skyline problem, and computational geometry problems like finding intersecting line segments. The technique is powerful because it reduces complexity from O(n&sup2;) to O(n log n).
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Event Points</strong><br>Create +1 events at interval starts and -1 events at interval ends. Sort all events.</div>
+                <div class="key-point"><strong>Active Set</strong><br>Maintain the set of currently active intervals as the sweep line moves through events.</div>
+                <div class="key-point"><strong>Sort by Position</strong><br>Events must be processed in order. Ties broken by type (end before start, or vice versa).</div>
+                <div class="key-point"><strong>2D to 1D Reduction</strong><br>Converts spatial problems into event-sequence problems, enabling efficient solutions.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// The Skyline Problem (LeetCode #218)
+function getSkyline(buildings) {
+    var events = [];
+    for (var i = 0; i < buildings.length; i++) {
+        events.push([buildings[i][0], -buildings[i][2]]); // start: negative height
+        events.push([buildings[i][1], buildings[i][2]]);   // end: positive height
+    }
+    events.sort(function(a, b) { return a[0] - b[0] || a[1] - b[1]; });
+
+    var result = [], heights = [0], prevMax = 0;
+    // Simplified — in practice use a max-heap for heights
+    for (var i = 0; i < events.length; i++) {
+        if (events[i][1] < 0) heights.push(-events[i][1]);
+        else heights.splice(heights.indexOf(events[i][1]), 1);
+        var curMax = Math.max.apply(null, heights);
+        if (curMax !== prevMax) {
+            result.push([events[i][0], curMax]);
+            prevMax = curMax;
+        }
+    }
+    return result;
+}
+
+// Maximum overlap count
+function maxOverlap(intervals) {
+    var events = [];
+    for (var i = 0; i < intervals.length; i++) {
+        events.push([intervals[i][0], 1]);
+        events.push([intervals[i][1], -1]);
+    }
+    events.sort(function(a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    var count = 0, maxCount = 0;
+    for (var i = 0; i < events.length; i++) {
+        count += events[i][1];
+        maxCount = Math.max(maxCount, count);
+    }
+    return maxCount;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (6)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/the-skyline-problem/" target="_blank">The Skyline Problem</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/meeting-rooms-ii/" target="_blank">Meeting Rooms II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/my-calendar-i/" target="_blank">My Calendar I</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/my-calendar-iii/" target="_blank">My Calendar III</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/car-pooling/" target="_blank">Car Pooling</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>6</td><td><a href="https://leetcode.com/problems/rectangle-area-ii/" target="_blank">Rectangle Area II</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "line-sweep", title: "Line Sweep", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var intervals = [[1,5],[2,7],[4,8],[6,10],[9,12]];
+
+        steps.push({ type: 'timeline',
+            intervals: intervals.map(function(iv,i) { return { start: iv[0], end: iv[1], label: 'I' + i, state: '' }; }),
+            explanation: 'Line Sweep: Find max overlap. Create +1 at start, -1 at end. Sweep left to right.' });
+
+        var events = [];
+        for (var i = 0; i < intervals.length; i++) {
+            events.push([intervals[i][0], 1, i]);
+            events.push([intervals[i][1], -1, i]);
+        }
+        events.sort(function(a, b) { return a[0] - b[0] || a[1] - b[1]; });
+
+        var count = 0, maxCount = 0, maxPos = 0;
+        for (var e = 0; e < events.length; e++) {
+            count += events[e][1];
+            var type = events[e][1] > 0 ? 'START' : 'END';
+            if (count > maxCount) { maxCount = count; maxPos = events[e][0]; }
+
+            steps.push({ type: 'timeline',
+                intervals: intervals.map(function(iv,i) {
+                    var active = events[e][0] >= iv[0] && events[e][0] < iv[1];
+                    return { start: iv[0], end: iv[1], label: 'I' + i, state: active ? 'highlight-sorted' : '' };
+                }),
+                explanation: 'Sweep at x=' + events[e][0] + ': ' + type + ' of I' + events[e][2] + '. Active count = ' + count + (count === maxCount && events[e][1] > 0 ? ' (new max!)' : '') });
+        }
+
+        steps.push({ type: 'timeline',
+            intervals: intervals.map(function(iv,i) { return { start: iv[0], end: iv[1], label: 'I' + i, state: '' }; }),
+            explanation: 'Done! Maximum overlap = ' + maxCount + ' intervals at position ' + maxPos + '.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [1, 5, 2, 7],
+        stepGenerator: generateSteps,
+        type: 'timeline'
+    });
+    </script>
+</body>
+</html>

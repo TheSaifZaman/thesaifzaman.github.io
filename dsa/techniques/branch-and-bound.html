@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branch and Bound — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Branch and Bound</h1>
+        <div class="topic-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="complexity-tag">Time: Exponential (pruned)</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Branch and Bound is an optimization technique for combinatorial problems. Like backtracking, it explores a search tree, but it also computes a <strong>bound</strong> (optimistic estimate) for each partial solution. If the bound is worse than the best known solution, the entire subtree is pruned.
+            </p>
+            <p>
+                The &ldquo;branch&rdquo; part generates child nodes (partial solutions). The &ldquo;bound&rdquo; part computes an upper bound (for maximization) or lower bound (for minimization). If the bound cannot beat the current best, skip the subtree. This is more aggressive than backtracking&rsquo;s feasibility pruning.
+            </p>
+            <p>
+                Common applications: TSP (Traveling Salesman Problem), 0/1 Knapsack, job scheduling, integer linear programming. The bounding function quality determines effectiveness &mdash; tighter bounds prune more aggressively.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Branch</strong><br>Generate child nodes by making one decision (include/exclude an item, visit a city, etc.).</div>
+                <div class="key-point"><strong>Bound</strong><br>Compute an optimistic estimate for each node. If bound <= current best, prune the subtree.</div>
+                <div class="key-point"><strong>Best-First Search</strong><br>Use a priority queue to explore the most promising nodes first, finding good solutions early.</div>
+                <div class="key-point"><strong>Pruning Power</strong><br>Tighter bounds = more pruning = faster. The bounding function is the key design choice.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Branch and Bound — 0/1 Knapsack
+function knapsackBnB(weights, values, capacity) {
+    var n = weights.length;
+    var bestValue = 0;
+
+    // Upper bound: greedy fractional knapsack from current state
+    function bound(level, weight, value) {
+        if (weight > capacity) return 0;
+        var b = value;
+        var w = weight;
+        for (var i = level; i < n && w + weights[i] <= capacity; i++) {
+            w += weights[i];
+            b += values[i];
+        }
+        if (i < n) {
+            b += (capacity - w) * (values[i] / weights[i]);
+        }
+        return b;
+    }
+
+    // Sort by value/weight ratio descending
+    var items = [];
+    for (var i = 0; i < n; i++) items.push([weights[i], values[i], i]);
+    items.sort(function(a, b) { return (b[1]/b[0]) - (a[1]/a[0]); });
+    weights = items.map(function(x) { return x[0]; });
+    values = items.map(function(x) { return x[1]; });
+
+    function solve(level, weight, value) {
+        if (level === n) {
+            bestValue = Math.max(bestValue, value);
+            return;
+        }
+        // Include item
+        if (weight + weights[level] <= capacity) {
+            solve(level + 1, weight + weights[level], value + values[level]);
+        }
+        // Exclude item (check bound first)
+        if (bound(level + 1, weight, value) > bestValue) {
+            solve(level + 1, weight, value);
+        }
+    }
+
+    solve(0, 0, 0);
+    return bestValue;
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (2)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Hard"><td>1</td><td><a href="https://leetcode.com/problems/stickers-to-spell-word/" target="_blank">Stickers to Spell Word</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank">Partition Equal Subset Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>3</td><td><a href="https://leetcode.com/problems/find-minimum-time-to-finish-all-jobs/" target="_blank">Min Time to Finish All Jobs</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/last-stone-weight-ii/" target="_blank">Last Stone Weight II</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>5</td><td><a href="https://leetcode.com/problems/shortest-path-visiting-all-nodes/" target="_blank">Shortest Path Visiting All Nodes</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "branch-and-bound", title: "Branch and Bound", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var weights = [2, 3, 4, 5];
+        var values =  [3, 4, 5, 6];
+        var capacity = 8;
+        var n = weights.length;
+
+        steps.push({ type: 'bars', array: values.slice(), highlights: {},
+            explanation: 'Branch & Bound: 0/1 Knapsack. Items (w,v): ' + weights.map(function(w,i){return '('+w+','+values[i]+')';}).join(', ') + '. Capacity=' + capacity });
+
+        var bestValue = 0;
+        var explored = 0, pruned = 0;
+
+        function bound(level, w, v) {
+            if (w > capacity) return 0;
+            var b = v, wt = w;
+            for (var i = level; i < n && wt + weights[i] <= capacity; i++) {
+                wt += weights[i]; b += values[i];
+            }
+            if (i < n) b += (capacity - wt) * (values[i] / weights[i]);
+            return b;
+        }
+
+        function solve(level, w, v, path) {
+            if (level === n) {
+                explored++;
+                if (v > bestValue) {
+                    bestValue = v;
+                    var h = {};
+                    for (var i = 0; i < path.length; i++) if (path[i]) h[i] = 'highlight-sorted';
+                    steps.push({ type: 'bars', array: values.slice(), highlights: h,
+                        explanation: 'Leaf: value=' + v + ', weight=' + w + '. New best!' });
+                }
+                return;
+            }
+            // Include
+            if (w + weights[level] <= capacity) {
+                path.push(true);
+                solve(level + 1, w + weights[level], v + values[level], path);
+                path.pop();
+            }
+            // Exclude with bound check
+            var b = bound(level + 1, w, v);
+            if (b > bestValue) {
+                path.push(false);
+                solve(level + 1, w, v, path);
+                path.pop();
+            } else {
+                pruned++;
+                steps.push({ type: 'bars', array: values.slice(), highlights: {},
+                    explanation: 'Prune! Bound=' + b.toFixed(1) + ' <= bestValue=' + bestValue + '. Skip subtree.' });
+            }
+        }
+
+        solve(0, 0, 0, []);
+
+        steps.push({ type: 'bars', array: values.slice(), highlights: {},
+            explanation: 'Done! Best knapsack value = ' + bestValue + '. Pruned ' + pruned + ' subtrees.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 4, 5, 6],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

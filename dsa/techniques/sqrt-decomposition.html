@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sqrt Decomposition — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Sqrt Decomposition</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(&radic;n) per query</span>
+            <span class="complexity-tag">Space: O(n)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Sqrt decomposition divides an array of n elements into blocks of size sqrt(n). Each block precomputes an aggregate (sum, min, max, etc.). Queries span at most 2 partial blocks plus O(sqrt(n)) complete blocks, giving O(sqrt(n)) per query.
+            </p>
+            <p>
+                For a range query [l, r]: handle the partial left block (l to block end), all complete middle blocks (precomputed answers), and the partial right block (block start to r). Updates: modify the element and recompute its block in O(sqrt(n)).
+            </p>
+            <p>
+                While segment trees provide O(log n) queries, sqrt decomposition is simpler to implement, has smaller constants, and handles certain operations (like Mo's algorithm) more naturally. It is the workhorse technique for competitive programming when full generality of segment trees is not needed.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Block Size &radic;n</strong><br>Divide array into blocks of size &radic;n. Total blocks: &radic;n.</div>
+                <div class="key-point"><strong>O(&radic;n) Query</strong><br>At most 2 partial blocks + O(&radic;n) full blocks = O(&radic;n) total work per query.</div>
+                <div class="key-point"><strong>O(&radic;n) Update</strong><br>Modify element and recompute its block. Or O(1) with lazy propagation.</div>
+                <div class="key-point"><strong>Simple to Implement</strong><br>Much simpler than segment trees. Good balance of performance and code complexity.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Sqrt Decomposition — range sum query with point update
+function SqrtDecomp(arr) {
+    this.arr = arr.slice();
+    this.n = arr.length;
+    this.block = Math.floor(Math.sqrt(this.n)) || 1;
+    this.blocks = new Array(Math.ceil(this.n / this.block)).fill(0);
+    for (var i = 0; i < this.n; i++) {
+        this.blocks[Math.floor(i / this.block)] += arr[i];
+    }
+}
+
+SqrtDecomp.prototype.update = function(idx, val) {
+    var b = Math.floor(idx / this.block);
+    this.blocks[b] += val - this.arr[idx];
+    this.arr[idx] = val;
+};
+
+SqrtDecomp.prototype.query = function(l, r) {
+    var sum = 0;
+    var bl = Math.floor(l / this.block);
+    var br = Math.floor(r / this.block);
+
+    if (bl === br) {
+        for (var i = l; i <= r; i++) sum += this.arr[i];
+        return sum;
+    }
+    // Partial left block
+    for (var i = l; i < (bl + 1) * this.block; i++) sum += this.arr[i];
+    // Full middle blocks
+    for (var b = bl + 1; b < br; b++) sum += this.blocks[b];
+    // Partial right block
+    for (var i = br * this.block; i <= r; i++) sum += this.arr[i];
+    return sum;
+};</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (5)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (3)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (2)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/range-sum-query-mutable/" target="_blank">Range Sum Query — Mutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/count-of-range-sum/" target="_blank">Count of Range Sum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/range-frequency-queries/" target="_blank">Range Frequency Queries</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>4</td><td><a href="https://leetcode.com/problems/falling-squares/" target="_blank">Falling Squares</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/range-sum-query-2d-mutable/" target="_blank">Range Sum Query 2D — Mutable</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "sqrt-decomposition", title: "Sqrt Decomposition", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = [3, 1, 4, 1, 5, 9, 2, 6, 5];
+        var block = Math.floor(Math.sqrt(arr.length));
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {},
+            explanation: 'Sqrt Decomposition: Block size = ' + block + '. Divide array into blocks, precompute block sums.' });
+
+        var blocks = [];
+        for (var b = 0; b * block < arr.length; b++) {
+            var sum = 0, h = {};
+            for (var i = b * block; i < Math.min((b+1) * block, arr.length); i++) {
+                sum += arr[i]; h[i] = b % 2 === 0 ? 'highlight-compare' : 'highlight-active';
+            }
+            blocks.push(sum);
+            steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                explanation: 'Block ' + b + ': indices [' + (b*block) + '..' + (Math.min((b+1)*block, arr.length)-1) + '], sum = ' + sum });
+        }
+
+        // Query example: sum(2, 7)
+        var l = 2, r = 7, sum = 0;
+        var qh = {};
+        for (var i = l; i <= r; i++) { qh[i] = 'highlight-sorted'; sum += arr[i]; }
+        steps.push({ type: 'bars', array: arr.slice(), highlights: qh,
+            explanation: 'Query sum(' + l + ',' + r + '): partial left block + full middle blocks + partial right = ' + sum + '. O(sqrt(n)) operations.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [3, 1, 4, 1, 5, 9, 2, 6, 5],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

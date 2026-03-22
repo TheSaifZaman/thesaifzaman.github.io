@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Sliding Window</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(k)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                The sliding window technique maintains a contiguous subarray or substring that expands and contracts as it slides through the data. It transforms problems that would require O(n&sup2;) nested loops into O(n) single-pass solutions by reusing computation from the previous window position.
+            </p>
+            <p>
+                There are two main variants: <strong>fixed-size windows</strong> (find the maximum sum of k consecutive elements) and <strong>variable-size windows</strong> (find the smallest window satisfying a condition). In the variable variant, expand the right boundary until the condition is met, then shrink from the left to find the optimal window.
+            </p>
+            <p>
+                The key invariant is that the window always represents a valid or candidate subarray. A hash map or counter often tracks the window contents, updated in O(1) as elements enter and leave the window.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Fixed Window</strong><br>Window size k is constant. Slide by adding one element on the right and removing one on the left.</div>
+                <div class="key-point"><strong>Variable Window</strong><br>Expand right to satisfy a condition, then shrink left to optimize. Track the best result found.</div>
+                <div class="key-point"><strong>Hash Map Tracking</strong><br>Use a frequency map to track characters or values inside the window in O(1) per update.</div>
+                <div class="key-point"><strong>Amortized O(n)</strong><br>Each element enters the window once and leaves once, giving O(2n) = O(n) total operations.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Maximum Sum of Subarray of Size K
+function maxSubarraySum(arr, k) {
+    var windowSum = 0, maxSum = 0;
+    for (var i = 0; i < k; i++) windowSum += arr[i];
+    maxSum = windowSum;
+    for (var i = k; i < arr.length; i++) {
+        windowSum += arr[i] - arr[i - k];
+        maxSum = Math.max(maxSum, windowSum);
+    }
+    return maxSum;
+}
+
+// Longest Substring Without Repeating Characters (LeetCode #3)
+function lengthOfLongestSubstring(s) {
+    var map = {}, left = 0, best = 0;
+    for (var right = 0; right < s.length; right++) {
+        var ch = s[right];
+        if (map[ch] !== undefined && map[ch] >= left) {
+            left = map[ch] + 1;
+        }
+        map[ch] = right;
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+
+// Minimum Window Substring (LeetCode #76)
+function minWindow(s, t) {
+    var need = {}, have = {}, formed = 0, required = 0;
+    for (var i = 0; i < t.length; i++) {
+        need[t[i]] = (need[t[i]] || 0) + 1;
+    }
+    required = Object.keys(need).length;
+    var left = 0, best = [Infinity, 0, 0];
+    for (var right = 0; right < s.length; right++) {
+        var ch = s[right];
+        have[ch] = (have[ch] || 0) + 1;
+        if (need[ch] && have[ch] === need[ch]) formed++;
+        while (formed === required) {
+            if (right - left + 1 < best[0]) best = [right - left + 1, left, right];
+            var lch = s[left];
+            have[lch]--;
+            if (need[lch] && have[lch] < need[lch]) formed--;
+            left++;
+        }
+    }
+    return best[0] === Infinity ? "" : s.substring(best[1], best[2] + 1);
+}</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (12)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (1)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (8)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (3)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank">Longest Substring Without Repeating Characters</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>2</td><td><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank">Minimum Window Substring</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Easy"><td>3</td><td><a href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank">Maximum Average Subarray I</a></td><td><span class="badge badge-easy">Easy</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/permutation-in-string/" target="_blank">Permutation in String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>5</td><td><a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank">Longest Repeating Character Replacement</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>6</td><td><a href="https://leetcode.com/problems/max-consecutive-ones-iii/" target="_blank">Max Consecutive Ones III</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>7</td><td><a href="https://leetcode.com/problems/fruit-into-baskets/" target="_blank">Fruit Into Baskets</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>8</td><td><a href="https://leetcode.com/problems/subarrays-with-k-different-integers/" target="_blank">Subarrays with K Different Integers</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                    <tr data-difficulty="Medium"><td>9</td><td><a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank">Minimum Size Subarray Sum</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>10</td><td><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank">Find All Anagrams in a String</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>11</td><td><a href="https://leetcode.com/problems/grumpy-bookstore-owner/" target="_blank">Grumpy Bookstore Owner</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Hard"><td>12</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum</a></td><td><span class="badge badge-hard">Hard</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "sliding-window", title: "Sliding Window", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    // Sliding Window: find max sum of k consecutive elements
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var k = Math.min(3, arr.length);
+
+        steps.push({
+            type: 'bars',
+            array: arr.slice(),
+            highlights: {},
+            explanation: 'Sliding Window: Find maximum sum of ' + k + ' consecutive elements.'
+        });
+
+        var windowSum = 0;
+        for (var i = 0; i < k; i++) windowSum += arr[i];
+        var maxSum = windowSum;
+        var maxStart = 0;
+
+        var h = {};
+        for (var i = 0; i < k; i++) h[i] = 'highlight-compare';
+        steps.push({
+            type: 'bars',
+            array: arr.slice(),
+            highlights: h,
+            explanation: 'Initial window [0..' + (k-1) + ']: sum = ' + windowSum
+        });
+
+        for (var i = k; i < arr.length; i++) {
+            windowSum += arr[i] - arr[i - k];
+            var h = {};
+            for (var j = i - k + 1; j <= i; j++) h[j] = 'highlight-compare';
+            h[i] = 'highlight-active';
+
+            if (windowSum > maxSum) {
+                maxSum = windowSum;
+                maxStart = i - k + 1;
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h,
+                    explanation: 'Slide to [' + (i-k+1) + '..' + i + ']: sum = ' + windowSum + ' — new maximum!'
+                });
+            } else {
+                steps.push({
+                    type: 'bars',
+                    array: arr.slice(),
+                    highlights: h,
+                    explanation: 'Slide to [' + (i-k+1) + '..' + i + ']: sum = ' + windowSum
+                });
+            }
+        }
+
+        var finalH = {};
+        for (var j = maxStart; j < maxStart + k; j++) finalH[j] = 'highlight-sorted';
+        steps.push({
+            type: 'bars',
+            array: arr.slice(),
+            highlights: finalH,
+            explanation: 'Maximum sum window: [' + maxStart + '..' + (maxStart+k-1) + '] with sum = ' + maxSum
+        });
+
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [2, 1, 5, 1, 3, 2, 8, 4],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>

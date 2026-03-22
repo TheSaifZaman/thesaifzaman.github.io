@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservoir Sampling — DSA Visualizer</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../../new_avatar.jpg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">DSA Visualizer</a></div>
+        <div class="nav-right">
+            <a href="../index.html">Hub</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="topic-header">
+        <h1>Reservoir Sampling</h1>
+        <div class="topic-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="complexity-tag">Time: O(n)</span>
+            <span class="complexity-tag">Space: O(k)</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="concept-section">
+            <h2 class="section-title">How It Works</h2>
+            <p>
+                Reservoir Sampling is a family of randomized algorithms for choosing k items uniformly at random from a stream of unknown or very large size n, using only O(k) memory. You do not need to know n in advance.
+            </p>
+            <p>
+                The basic algorithm (k=1): keep the first item. For the i-th item (1-indexed), replace the current choice with probability 1/i. After processing all n items, each item has exactly 1/n probability of being selected. For k items, fill a reservoir of size k, then for each subsequent item i, replace a random reservoir element with probability k/i.
+            </p>
+            <p>
+                This is essential for streaming scenarios: sampling from a huge file, random selection from a database without knowing the total count, or any situation where you cannot store all elements.
+            </p>
+            <div class="key-points">
+                <div class="key-point"><strong>Streaming Input</strong><br>Process elements one at a time without storing them all. Only O(k) space needed.</div>
+                <div class="key-point"><strong>Uniform Probability</strong><br>Each element has exactly k/n probability of being in the final sample.</div>
+                <div class="key-point"><strong>Replace Strategy</strong><br>For item i > k, include it with probability k/i, replacing a random reservoir element.</div>
+                <div class="key-point"><strong>No Advance Knowledge</strong><br>You do not need to know the total number of elements in advance.</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualization</h2>
+        <div class="viz-container" id="viz"></div>
+
+        <h2 class="section-title">Implementation</h2>
+        <div class="code-block"><pre><code>// Reservoir Sampling — select 1 random element from stream
+function reservoirSample1(stream) {
+    var result = stream[0];
+    for (var i = 1; i < stream.length; i++) {
+        var j = Math.floor(Math.random() * (i + 1));
+        if (j === 0) result = stream[i];
+    }
+    return result;
+}
+
+// Reservoir Sampling — select k random elements
+function reservoirSampleK(stream, k) {
+    var reservoir = stream.slice(0, k);
+    for (var i = k; i < stream.length; i++) {
+        var j = Math.floor(Math.random() * (i + 1));
+        if (j < k) reservoir[j] = stream[i];
+    }
+    return reservoir;
+}
+
+// Linked List Random Node (LeetCode #382)
+function RandomNode(head) { this.head = head; }
+RandomNode.prototype.getRandom = function() {
+    var result = this.head.val, node = this.head.next, i = 2;
+    while (node) {
+        if (Math.floor(Math.random() * i) === 0) result = node.val;
+        node = node.next; i++;
+    }
+    return result;
+};</code></pre></div>
+
+        <div class="problems-section">
+            <h2 class="section-title">Practice Problems</h2>
+            <div class="problems-tabs">
+                <button class="problems-tab active" data-filter="all">All (4)</button>
+                <button class="problems-tab" data-filter="Easy">Easy (0)</button>
+                <button class="problems-tab" data-filter="Medium">Medium (4)</button>
+                <button class="problems-tab" data-filter="Hard">Hard (0)</button>
+            </div>
+            <table class="problems-table">
+                <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th></tr></thead>
+                <tbody>
+                    <tr data-difficulty="Medium"><td>1</td><td><a href="https://leetcode.com/problems/linked-list-random-node/" target="_blank">Linked List Random Node</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>2</td><td><a href="https://leetcode.com/problems/random-pick-index/" target="_blank">Random Pick Index</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>3</td><td><a href="https://leetcode.com/problems/random-pick-with-weight/" target="_blank">Random Pick with Weight</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                    <tr data-difficulty="Medium"><td>4</td><td><a href="https://leetcode.com/problems/shuffle-an-array/" target="_blank">Shuffle an Array</a></td><td><span class="badge badge-medium">Medium</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="topic-nav" id="topicNav"></div>
+    </div>
+
+    <footer class="dsa-footer">
+        <p>&copy; 2026 <a href="https://thesaifzaman.github.io/">Md. Saif Zaman</a></p>
+    </footer>
+
+    <script>
+    var TOPIC = { id: "reservoir-sampling", title: "Reservoir Sampling", category: "Techniques & Patterns" };
+    </script>
+    <script src="../dsa-data.js"></script>
+    <script src="../shared/shared.js"></script>
+    <script src="../shared/visualizer.js"></script>
+    <script>
+    function generateSteps(data) {
+        var steps = [];
+        var arr = data.slice();
+        var chosen = arr[0], chosenIdx = 0;
+
+        steps.push({ type: 'bars', array: arr.slice(), highlights: {0: 'highlight-sorted'},
+            explanation: 'Reservoir Sampling (k=1): Start with first element ' + arr[0] + ' in reservoir.' });
+
+        for (var i = 1; i < arr.length; i++) {
+            var prob = 1 / (i + 1);
+            var rand = Math.random();
+            var replace = rand < prob;
+            var h = {}; h[chosenIdx] = 'highlight-sorted'; h[i] = 'highlight-active';
+
+            if (replace) {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Item ' + i + ' (' + arr[i] + '): rand=' + rand.toFixed(3) + ' < 1/' + (i+1) + '=' + prob.toFixed(3) + ' → REPLACE!' });
+                chosen = arr[i]; chosenIdx = i;
+            } else {
+                steps.push({ type: 'bars', array: arr.slice(), highlights: h,
+                    explanation: 'Item ' + i + ' (' + arr[i] + '): rand=' + rand.toFixed(3) + ' >= 1/' + (i+1) + '=' + prob.toFixed(3) + ' → keep current.' });
+            }
+        }
+
+        var fh = {}; fh[chosenIdx] = 'highlight-swap';
+        steps.push({ type: 'bars', array: arr.slice(), highlights: fh,
+            explanation: 'Done! Selected: ' + chosen + ' at index ' + chosenIdx + '. Each had 1/' + arr.length + ' probability.' });
+        return steps;
+    }
+
+    Visualizer.init({
+        container: '#viz',
+        data: [10, 20, 30, 40, 50, 60, 70, 80],
+        stepGenerator: generateSteps,
+        type: 'bars'
+    });
+    </script>
+</body>
+</html>
