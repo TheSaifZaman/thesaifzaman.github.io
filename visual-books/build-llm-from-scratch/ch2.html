@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch2: Working with Text Data — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 {
+      margin-bottom: 0.6rem;
+    }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── One-hot vs Dense table ── */
+    .encoding-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 600px) { .encoding-compare { grid-template-columns: 1fr; } }
+    .encoding-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .encoding-card-header {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .encoding-card-header.onehot { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .encoding-card-header.dense  { background: rgba(16,185,129,0.12); color: var(--accent-3); }
+    .encoding-card-body {
+      padding: 0.6rem 0.85rem;
+    }
+    .encoding-vec {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin: 0.4rem 0;
+    }
+    .encoding-cell {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-family: 'JetBrains Mono', monospace;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+    .encoding-cell.zero { background: var(--border-2); color: var(--text-light); }
+    .encoding-cell.one  { background: rgba(239,68,68,0.25); color: #ef4444; }
+    .encoding-cell.float { background: rgba(16,185,129,0.18); color: var(--accent-3); font-size: 0.55rem; }
+    .encoding-label {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .encoding-dims {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.4rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--surface-2);
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    /* ── Token badges ── */
+    .token-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.75rem 0;
+      align-items: center;
+    }
+    .viz-token {
+      padding: 0.3rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: all 0.25s;
+    }
+    .viz-token.t-word  { background: rgba(79,110,247,0.12); border-color: rgba(79,110,247,0.35); color: var(--accent); }
+    .viz-token.t-punct { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4);  color: var(--accent-2); }
+    .viz-token.t-space { background: rgba(107,114,128,0.1); border-color: var(--border); color: var(--text-muted); font-style: italic; }
+    .viz-token.t-special { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); color: #ef4444; }
+    .viz-token.t-sub   { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: var(--accent-3); }
+
+    /* ── Tokenizer step demo ── */
+    .tokenizer-step {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .tokenizer-step.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Vocab lookup table ── */
+    .vocab-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 0.75rem 0;
+    }
+    .vocab-table th {
+      padding: 0.5rem 0.75rem;
+      background: rgba(79,110,247,0.08);
+      color: var(--accent);
+      font-weight: 700;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .vocab-table td {
+      padding: 0.4rem 0.75rem;
+      border-bottom: 1px solid var(--border-2);
+      color: var(--text-muted);
+    }
+    .vocab-table tr.highlight td {
+      background: rgba(79,110,247,0.1);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .vocab-table tr:last-child td { border-bottom: none; }
+
+    /* ── Special token cards ── */
+    .special-token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+    .special-token-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1rem;
+      transition: all var(--transition);
+    }
+    .special-token-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .st-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.88rem;
+      margin-bottom: 0.25rem;
+    }
+    .st-id   { font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.4rem; }
+    .st-desc { font-size: 0.79rem; color: var(--text-muted); line-height: 1.45; }
+    .st-name.bos { color: #4f6ef7; }
+    .st-name.eos { color: #ef4444; }
+    .st-name.pad { color: var(--accent-2); }
+    .st-name.unk { color: var(--accent-3); }
+    .st-name.eot { color: #a855f7; }
+
+    /* ── BPE merge visualization ── */
+    .bpe-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 0.4rem 0;
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .bpe-pair {
+      padding: 0.2rem 0.5rem;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.4);
+      border-radius: 4px;
+      color: #ef4444;
+      font-weight: 700;
+    }
+    .bpe-merged {
+      padding: 0.2rem 0.5rem;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.4);
+      border-radius: 4px;
+      color: var(--accent-3);
+      font-weight: 700;
+    }
+    .bpe-arrow {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+    .bpe-count {
+      font-size: 0.72rem;
+      color: var(--text-light);
+    }
+
+    /* ── Sliding window visualization ── */
+    .sliding-window-wrap {
+      margin: 1rem 0;
+    }
+    .sw-tokens {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      padding: 0.5rem 0;
+    }
+    .sw-token {
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+    .sw-token.sw-input  { border-color: rgba(79,110,247,0.6); background: rgba(79,110,247,0.12); color: var(--accent); }
+    .sw-token.sw-target { border-color: rgba(16,185,129,0.6); background: rgba(16,185,129,0.12); color: var(--accent-3); }
+    .sw-legend {
+      display: flex;
+      gap: 1.25rem;
+      margin: 0.5rem 0;
+      font-size: 0.79rem;
+    }
+    .sw-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .sw-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+    .sw-dot.input  { background: rgba(79,110,247,0.4); border: 1.5px solid var(--accent); }
+    .sw-dot.target { background: rgba(16,185,129,0.4); border: 1.5px solid var(--accent-3); }
+    .sw-pairs {
+      margin: 0.75rem 0;
+      font-size: 0.83rem;
+    }
+    .sw-pair-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .sw-pair-row:last-child { border-bottom: none; }
+    .sw-pair-label { color: var(--text-muted); font-size: 0.75rem; min-width: 50px; }
+    .sw-pair-tokens {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .sw-slider-wrap {
+      margin: 1rem 0 0.5rem;
+    }
+    .sw-slider-wrap label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    #swSlider { width: 100%; accent-color: var(--accent); }
+    .sw-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .sw-info strong { color: var(--text); }
+
+    /* ── Positional embedding diagram ── */
+    .pos-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .pos-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .pos-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 160px;
+      color: var(--text-muted);
+    }
+    .pos-vec {
+      display: flex;
+      gap: 3px;
+    }
+    .pos-cell {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    .pos-cell.tok   { background: rgba(79,110,247,0.2); color: var(--accent); border: 1px solid rgba(79,110,247,0.4); }
+    .pos-cell.pos   { background: rgba(245,158,11,0.2); color: var(--accent-2); border: 1px solid rgba(245,158,11,0.4); }
+    .pos-cell.comb  { background: rgba(16,185,129,0.2); color: var(--accent-3); border: 1px solid rgba(16,185,129,0.4); }
+    .pos-op {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      font-weight: 700;
+    }
+    .pos-dims {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Compare table (encoding comparison) ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      margin: 1rem 0;
+    }
+    .compare-table th {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      background: rgba(79,110,247,0.08);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--border);
+    }
+    .compare-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border-2);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { font-weight: 600; color: var(--text); width: 28%; }
+    .compare-table tr:hover td { background: rgba(79,110,247,0.03); }
+  </style>
+</head>
+<body data-chapter="ch2">
+
+  <!-- ══════════════════════════════════════════
+       STICKY HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">Ch2: Working with Text Data</span>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      <a href="index.html" class="btn-icon" title="Home">
+        <i class="fas fa-home"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Chapter 2</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 2</div>
+      <h1>Working with Text Data</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 8 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 7-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~35 min read</span>
+        <span class="tag">Text Processing</span>
+      </div>
+    </div>
+
+    <p>Before a neural network can understand or generate text, that text must be transformed into numbers. This chapter walks through every step of that pipeline — from raw characters all the way to the combined token-plus-position embedding vectors that feed into a transformer's first layer. You will build an intuition for why each step exists, how different design choices (vocabulary size, window stride, positional encoding scheme) affect model behavior, and how GPT-2 specifically implements each of these components.</p>
+
+    <!-- ══════════════════
+         LESSON 2.1
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-1">
+      <div class="lesson-header">
+        <span class="lesson-number">2.1</span>
+        <h2>Word Embeddings: Why We Need Them</h2>
+      </div>
+
+      <p>At the most fundamental level, a neural network is a composition of linear algebra operations — matrix multiplications, additions, and non-linear activations. All of these operations require floating-point numbers as inputs. Raw text, a sequence of Unicode characters, is not a number. Therefore the very first challenge of building a language model is answering the question: <em>how do we represent words as numbers in a way that preserves meaning?</em></p>
+
+      <p>The naive answer is <strong>one-hot encoding</strong>: assign each word in your vocabulary an integer index, then represent that word as a vector of all zeros with a single 1 at the word's index. A vocabulary of 10,000 words would give each word a 10,000-dimensional vector that is 99.99% zeros. This approach has two fatal weaknesses. First, it is catastrophically memory-inefficient — GPT-2's vocabulary of 50,257 tokens would require a 50,257-dimensional sparse vector per token. Second, and more importantly, one-hot vectors carry <em>zero semantic information</em>: the vectors for "cat" and "kitten" are just as far apart as the vectors for "cat" and "universe". The model has no way to leverage the fact that synonyms, related words, or grammatically similar words should behave similarly.</p>
+
+      <p><strong>Dense embeddings</strong> solve both problems. Instead of a sparse binary vector of length V (vocabulary size), each word is mapped to a compact, real-valued vector of length d (the embedding dimension, often 128–1024). These vectors are <em>learned</em>: during training, the model adjusts them so that words appearing in similar contexts end up with similar vectors. In the resulting embedding space, "cat" and "kitten" are geometrically nearby, arithmetic relationships like <em>king − man + woman ≈ queen</em> emerge naturally, and the model can generalise: if it learns something about "cats", some of that knowledge transfers to "kittens".</p>
+
+      <p>Classical embedding methods like <strong>Word2Vec</strong> (Mikolov et al., 2013) and <strong>GloVe</strong> (Pennington et al., 2014) produced standalone, context-independent embedding tables trained on unlabeled corpora. Modern LLMs go further: they learn their own embedding tables <em>end-to-end</em> as part of training. Every weight update that improves next-token prediction also refines the embeddings. The result is context-aware representations — the same token "bank" gets a different effective representation depending on whether the surrounding context is about rivers or finance, because the attention mechanism modulates the embedding before it reaches the output layer.</p>
+
+      <div class="insight-box">
+        <strong>Key Insight:</strong> The embedding layer is the bridge between the discrete world of tokens (integers) and the continuous world of neural network mathematics (real-valued vectors). Everything downstream — attention, feed-forward layers, layer normalisation — operates on these vectors.
+      </div>
+
+      <!-- Visualization: one-hot vs dense -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-table-columns"></i> One-Hot Encoding vs Dense Embedding</div>
+        <div class="encoding-compare">
+          <div class="encoding-card">
+            <div class="encoding-card-header onehot">One-Hot (Sparse)</div>
+            <div class="encoding-card-body">
+              <div class="step-label">Word: "cat" (index 2 in vocab)</div>
+              <div class="encoding-vec">
+                <div class="encoding-cell zero">0</div><div class="encoding-cell zero">0</div>
+                <div class="encoding-cell one">1</div><div class="encoding-cell zero">0</div>
+                <div class="encoding-cell zero">0</div><div class="encoding-cell zero">0</div>
+                <div class="encoding-cell zero">0</div><div class="encoding-cell zero">0</div>
+                <div class="encoding-cell zero">0</div><div class="encoding-cell zero">0</div>
+              </div>
+              <div class="encoding-dims">Shape: [50,257] — 99.998% zeros</div>
+              <div class="encoding-label" style="margin-top:0.5rem;">No semantic similarity: "cat" and "kitten" are orthogonal vectors.</div>
+            </div>
+          </div>
+          <div class="encoding-card">
+            <div class="encoding-card-header dense">Dense Embedding (Learned)</div>
+            <div class="encoding-card-body">
+              <div class="step-label">Word: "cat" → 768-dim vector</div>
+              <div class="encoding-vec">
+                <div class="encoding-cell float">.32</div><div class="encoding-cell float">-.17</div>
+                <div class="encoding-cell float">.81</div><div class="encoding-cell float">.04</div>
+                <div class="encoding-cell float">-.55</div><div class="encoding-cell float">.29</div>
+                <div class="encoding-cell float">.11</div><div class="encoding-cell float">-.72</div>
+                <div class="encoding-cell float">.63</div><div class="encoding-cell float">.44</div>
+              </div>
+              <div class="encoding-dims">Shape: [768] — all values meaningful</div>
+              <div class="encoding-label" style="margin-top:0.5rem;">Semantic similarity: "cat" and "kitten" vectors are geometrically close.</div>
+            </div>
+          </div>
+        </div>
+
+        <pre class="code-block"><code><span class="kw">import</span> torch
+
+vocab_size    = <span class="num">50257</span>  <span class="cmt"># GPT-2 vocabulary size</span>
+embedding_dim = <span class="num">768</span>    <span class="cmt"># GPT-2 small hidden size</span>
+
+<span class="cmt"># Create an embedding layer (weight matrix: [50257, 768])</span>
+embedding_layer = torch.nn.<span class="fn">Embedding</span>(vocab_size, embedding_dim)
+
+<span class="cmt"># Map a token ID to its dense vector</span>
+token_id = torch.<span class="fn">tensor</span>([<span class="num">1234</span>])
+vector   = embedding_layer(token_id)   <span class="cmt"># shape: [1, 768]</span>
+
+<span class="fn">print</span>(vector.shape)  <span class="cmt"># torch.Size([1, 768])</span>
+</code></pre>
+
+        <div class="viz-caption">One-hot vectors are sparse and carry no relational information. Learned dense embeddings are compact and encode semantic proximity — words used in similar contexts end up close together in embedding space.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.2
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-2">
+      <div class="lesson-header">
+        <span class="lesson-number">2.2</span>
+        <h2>Tokenizing Text</h2>
+      </div>
+
+      <p>Before we can assign integer IDs to words, we must first decide what counts as a "word" — the process of <strong>tokenization</strong>. At first glance, splitting by whitespace seems obvious: "The cat sat" → ["The", "cat", "sat"]. But real text is messier. Punctuation needs to be separated ("Hello," → ["Hello", ","]), contractions behave differently across languages ("don't" → ["don", "'", "t"] or ["don't"]?), and some languages like Chinese have no whitespace between words at all. The tokenizer's job is to convert a raw Unicode string into a clean, well-defined sequence of string tokens.</p>
+
+      <p>A simple rule-based tokenizer might split on whitespace <em>and</em> on punctuation, handling edge cases with regular expressions. For example, the sentence "Hello, world!" could be split by scanning character-by-character: accumulate alphabetic characters into a word token, then emit any punctuation as its own token. This produces ["Hello", ",", " world", "!"] — five distinct tokens that together faithfully reconstruct the original string when concatenated.</p>
+
+      <p>Building a <strong>vocabulary</strong> then means scanning a large corpus, collecting every unique token encountered, and assigning each a consecutive integer ID. The result is two dictionaries: <code>word_to_id</code> (encode: string → int) and <code>id_to_word</code> (decode: int → string). Encoding turns text into a list of integers; decoding turns a list of integers back into text. The vocabulary must be fixed before training — tokens not seen in the training corpus would be "out-of-vocabulary" (OOV).</p>
+
+      <p>Simple word-level tokenizers have a fundamental weakness: <em>out-of-vocabulary words</em>. If the vocabulary was built from the training corpus and a test sentence contains a proper noun, a brand name, or a misspelling not seen during training, the tokenizer has no token for it. One workaround is a special <code>[UNK]</code> token, but this loses all information about the unknown word. Sub-word tokenization methods — the most important being <strong>Byte-Pair Encoding (BPE)</strong>, covered in Lesson 2.5 — solve this problem by decomposing unknown words into smaller known pieces.</p>
+
+      <div class="insight-box">
+        <strong>Rule of Thumb:</strong> In the GPT-2 tokenizer, a token is roughly 4 characters on average. A 1,000-word essay is approximately 750–800 tokens. LLM context windows and pricing are measured in tokens, not words, so understanding tokenization is practically important.
+      </div>
+
+      <!-- Visualization: step-by-step tokenizer -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-scissors"></i> Step-by-Step Tokenizer Demo</div>
+        <div class="step-label">Input sentence</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; padding:0.5rem 0.75rem; background:var(--surface-2); border-radius:6px; margin-bottom:1rem; color:var(--text);">"The cat sat on the mat."</div>
+
+        <div id="tokenizerSteps">
+          <div class="tokenizer-step show">
+            <div class="step-label">Step 1 — Split by whitespace</div>
+            <div class="token-strip">
+              <span class="viz-token t-word">The</span>
+              <span class="viz-token t-word">cat</span>
+              <span class="viz-token t-word">sat</span>
+              <span class="viz-token t-word">on</span>
+              <span class="viz-token t-word">the</span>
+              <span class="viz-token t-word">mat.</span>
+            </div>
+          </div>
+
+          <div class="tokenizer-step" id="step2">
+            <div class="step-label">Step 2 — Separate punctuation from words</div>
+            <div class="token-strip">
+              <span class="viz-token t-word">The</span>
+              <span class="viz-token t-word">cat</span>
+              <span class="viz-token t-word">sat</span>
+              <span class="viz-token t-word">on</span>
+              <span class="viz-token t-word">the</span>
+              <span class="viz-token t-word">mat</span>
+              <span class="viz-token t-punct">.</span>
+            </div>
+          </div>
+
+          <div class="tokenizer-step" id="step3">
+            <div class="step-label">Step 3 — Assign integer IDs from vocabulary</div>
+            <div class="token-strip">
+              <span class="viz-token t-word">The <small style="opacity:.65">→ 0</small></span>
+              <span class="viz-token t-word">cat <small style="opacity:.65">→ 1</small></span>
+              <span class="viz-token t-word">sat <small style="opacity:.65">→ 2</small></span>
+              <span class="viz-token t-word">on <small style="opacity:.65">→ 3</small></span>
+              <span class="viz-token t-word">the <small style="opacity:.65">→ 4</small></span>
+              <span class="viz-token t-word">mat <small style="opacity:.65">→ 5</small></span>
+              <span class="viz-token t-punct">. <small style="opacity:.65">→ 6</small></span>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.83rem; margin-top:0.5rem; color:var(--text-muted);">Output: [0, 1, 2, 3, 4, 5, 6]</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="tokNextBtn"><i class="fas fa-play"></i> Next Step</button>
+          <button class="btn btn-ghost btn-sm" id="tokResetBtn"><i class="fas fa-rotate-left"></i> Reset</button>
+        </div>
+
+        <pre class="code-block" style="margin-top:1rem;"><code><span class="kw">import</span> re
+
+<span class="kw">class</span> <span class="fn">SimpleTokenizer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab):
+        self.word_to_id = vocab
+        self.id_to_word = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> vocab.items()}
+
+    <span class="kw">def</span> <span class="fn">tokenize</span>(self, text):
+        <span class="cmt"># Split on whitespace, then isolate punctuation</span>
+        tokens = re.<span class="fn">findall</span>(<span class="str">r"\b\w+\b|[^\s\w]"</span>, text)
+        <span class="kw">return</span> tokens
+
+    <span class="kw">def</span> <span class="fn">encode</span>(self, text):
+        tokens = self.<span class="fn">tokenize</span>(text)
+        <span class="kw">return</span> [self.word_to_id[t] <span class="kw">for</span> t <span class="kw">in</span> tokens]
+
+    <span class="kw">def</span> <span class="fn">decode</span>(self, ids):
+        <span class="kw">return</span> <span class="str">" "</span>.<span class="fn">join</span>(self.id_to_word[i] <span class="kw">for</span> i <span class="kw">in</span> ids)
+</code></pre>
+
+        <div class="viz-caption">Click "Next Step" to walk through how a simple tokenizer decomposes a sentence into tokens, separates punctuation, and maps each token to an integer ID.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.3
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-3">
+      <div class="lesson-header">
+        <span class="lesson-number">2.3</span>
+        <h2>Token IDs: Converting Text to Numbers</h2>
+      </div>
+
+      <p>Once we have a fixed vocabulary, <strong>encoding</strong> is the process of replacing every token string with its corresponding integer ID. The result is a sequence of integers — often called a <em>token ID sequence</em> or simply <em>input IDs</em> — that the model actually consumes. The inverse operation, <strong>decoding</strong>, converts a sequence of integer IDs back into human-readable text by looking up each ID in the reverse vocabulary mapping.</p>
+
+      <p>GPT-2 uses a vocabulary of 50,257 BPE tokens, so every token ID is an integer in the range [0, 50256]. When you encode the string "Hello world" using the GPT-2 tokenizer, you get a specific sequence: <code>[15496, 995]</code>. Token 15496 is the BPE subword piece corresponding to "Hello" and 995 corresponds to " world" (note the leading space is encoded as part of the token — GPT-2's BPE vocabulary treats "world" and " world" as two distinct tokens). Decoding [15496, 995] back produces exactly "Hello world".</p>
+
+      <p>The vocabulary acts as a two-way lookup table. Building it efficiently requires sorting all unique tokens from the training corpus and assigning IDs in a deterministic order (often alphabetical or by frequency). During inference, the model produces a probability distribution over all 50,257 token IDs, then samples or argmax-selects the next token ID, which is decoded to produce the next character of output text.</p>
+
+      <p>One important subtlety: whitespace handling. Some tokenizers strip all whitespace and add it back on decode. Others — like GPT-2's tiktoken — include leading spaces as part of tokens (e.g., "Ġcat" where Ġ represents a leading space). This means the same word encoded at the start of a sentence may have a different token ID than the same word in the middle of a sentence. This is not a bug; it is a deliberate design choice that makes decoding perfectly lossless — the tokenized form can always be decoded back to the exact original string.</p>
+
+      <div class="insight-box">
+        <strong>Actual GPT-2 IDs:</strong> You can verify token IDs with <code>tiktoken</code>. "Hello" → 15496, " world" → 995, "." → 13, " the" → 262, " cat" → 3797. Notice " the" and " cat" have leading spaces embedded in the token — GPT-2 BPE includes spacing as part of the token representation.
+      </div>
+
+      <!-- Visualization: vocab lookup table -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-table"></i> Vocabulary Lookup Table — Encode / Decode</div>
+        <table class="vocab-table">
+          <thead>
+            <tr>
+              <th>Token String</th>
+              <th>Token ID</th>
+              <th>GPT-2 Actual ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Hello</td><td>0</td><td>15496</td></tr>
+            <tr class="highlight"><td>" world"</td><td>1</td><td>995</td></tr>
+            <tr><td>.</td><td>2</td><td>13</td></tr>
+            <tr><td>" the"</td><td>3</td><td>262</td></tr>
+            <tr><td>" cat"</td><td>4</td><td>3797</td></tr>
+            <tr><td>" sat"</td><td>5</td><td>3332</td></tr>
+            <tr><td>&lt;|endoftext|&gt;</td><td>6</td><td>50256</td></tr>
+          </tbody>
+        </table>
+
+        <pre class="code-block"><code><span class="cmt"># Simple vocabulary mapping</span>
+vocab = {<span class="str">'the'</span>: <span class="num">0</span>, <span class="str">'cat'</span>: <span class="num">1</span>, <span class="str">'sat'</span>: <span class="num">2</span>,
+         <span class="str">'on'</span>: <span class="num">3</span>, <span class="str">'mat'</span>: <span class="num">4</span>, <span class="str">'.'</span>: <span class="num">5</span>}
+
+tokens    = [<span class="str">'the'</span>, <span class="str">'cat'</span>, <span class="str">'sat'</span>, <span class="str">'on'</span>, <span class="str">'the'</span>, <span class="str">'mat'</span>, <span class="str">'.'</span>]
+token_ids = [vocab[t] <span class="kw">for</span> t <span class="kw">in</span> tokens]
+<span class="fn">print</span>(token_ids)   <span class="cmt"># [0, 1, 2, 3, 0, 4, 5]</span>
+
+<span class="cmt"># Decode back to text</span>
+id_to_token = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> vocab.items()}
+text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] <span class="kw">for</span> i <span class="kw">in</span> token_ids)
+<span class="fn">print</span>(text)         <span class="cmt"># "the cat sat on the mat ."</span>
+</code></pre>
+
+        <div class="viz-caption">The highlighted row shows " world" (with leading space) — GPT-2's BPE encodes whitespace as part of the following token. The vocabulary table maps string tokens to integers and back, enabling lossless round-trip encode/decode.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.4
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-4">
+      <div class="lesson-header">
+        <span class="lesson-number">2.4</span>
+        <h2>Special Tokens: [BOS], [EOS], [PAD], [UNK]</h2>
+      </div>
+
+      <p>In addition to regular word tokens, language model vocabularies include a set of <strong>special tokens</strong> — reserved entries that serve structural or control purposes rather than representing actual words. These tokens are essential for training stability, batch processing, and instructing the model about the boundaries of meaningful content. Different model families use different special tokens with slightly different conventions, so it is important to understand what each one does.</p>
+
+      <p>The <strong>[BOS]</strong> (Beginning of Sequence) token is prepended to every input sequence to signal to the model "this is the start of a new text". Without it, the model would need to infer from context whether it is in the middle of a document or at its very beginning — information that changes how it should behave. Conversely, the <strong>[EOS]</strong> (End of Sequence) token is appended to every training example. The model learns that generating an EOS token means "I am done generating" — which is how autoregressive models know when to stop at inference time.</p>
+
+      <p>The <strong>[PAD]</strong> (Padding) token is a technical necessity for batch processing. When training on batches of sequences, all sequences in the same batch must have the same length to fit into a tensor. Shorter sequences are right-padded with [PAD] tokens to match the length of the longest sequence. The attention mask tells the model to ignore padded positions during the attention computation so they don't affect gradients. Without padding, you would have to train one sequence at a time (batch size = 1), which is extremely slow.</p>
+
+      <p>The <strong>[UNK]</strong> (Unknown) token is used by word-level tokenizers to handle out-of-vocabulary (OOV) words encountered at inference time. If a test sentence contains a word never seen during training, the tokenizer replaces it with [UNK]. GPT-2, however, uses BPE tokenization — since BPE can represent <em>any</em> string using individual bytes as a fallback, it has no concept of OOV and therefore needs no [UNK] token. GPT-2's vocabulary has only a single special token: <strong>&lt;|endoftext|&gt;</strong> (ID 50256), which serves as both BOS and EOS separator between documents during pretraining.</p>
+
+      <div class="insight-box">
+        <strong>GPT-2 Simplicity:</strong> GPT-2's vocabulary has exactly one special token — <code>&lt;|endoftext|&gt;</code> with ID 50256. It appears between documents in the pretraining corpus (e.g. "...end of article. &lt;|endoftext|&gt; Next article begins...") and signals document boundaries. No [PAD], no [UNK], no [CLS] — BPE eliminates the need for most special tokens.
+      </div>
+
+      <!-- Visualization: special token cards -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-tag"></i> Special Tokens at a Glance</div>
+        <div class="special-token-grid">
+          <div class="special-token-card">
+            <div class="st-name bos">[BOS]</div>
+            <div class="st-id">Beginning of Sequence</div>
+            <div class="st-desc">Prepended to mark the start of a new sequence. Helps the model initialise its context correctly. Used in BERT (<code>[CLS]</code>), T5, and others.</div>
+          </div>
+          <div class="special-token-card">
+            <div class="st-name eos">[EOS]</div>
+            <div class="st-id">End of Sequence</div>
+            <div class="st-desc">Appended to tell the model "generation is complete here". Autoregressive models stop sampling when they predict this token at inference.</div>
+          </div>
+          <div class="special-token-card">
+            <div class="st-name pad">[PAD]</div>
+            <div class="st-id">Padding token</div>
+            <div class="st-desc">Fills shorter sequences in a batch to a uniform length. Used with an attention mask so padded positions are ignored in attention computation.</div>
+          </div>
+          <div class="special-token-card">
+            <div class="st-name unk">[UNK]</div>
+            <div class="st-id">Unknown token</div>
+            <div class="st-desc">Replaces out-of-vocabulary words in word-level tokenizers. <strong>Not needed in GPT-2</strong> — BPE can encode any string using byte-level fallback.</div>
+          </div>
+          <div class="special-token-card">
+            <div class="st-name eot">&lt;|endoftext|&gt;</div>
+            <div class="st-id">ID: 50256 — GPT-2 only</div>
+            <div class="st-desc">GPT-2's single special token. Serves as both BOS and EOS separator between documents in pretraining. Also used to signal end of generation at inference.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.5
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-5">
+      <div class="lesson-header">
+        <span class="lesson-number">2.5</span>
+        <h2>Byte-Pair Encoding (BPE)</h2>
+      </div>
+
+      <p><strong>Byte-Pair Encoding (BPE)</strong> is the tokenization algorithm that powers GPT-2 and most modern LLMs. It elegantly solves the OOV problem by operating at the sub-word level: instead of a fixed vocabulary of whole words, it builds a vocabulary of <em>sub-word pieces</em> — common character sequences that can be assembled into any word. Any word the model has never seen can be broken down into known sub-word pieces, and if all else fails, individual bytes always exist in the vocabulary as a last resort.</p>
+
+      <p>The BPE algorithm starts from a character-level vocabulary (every individual character in the training corpus gets its own token) and iteratively merges the most frequently co-occurring adjacent pair of tokens into a single new token. For example, if "e" and "s" appear next to each other 10,000 times in the corpus — far more than any other pair — BPE creates a new token "es" and replaces all occurrences of the pair "e s" with the single token "es". This merge step is repeated thousands of times until the vocabulary reaches the desired size.</p>
+
+      <p>Consider a toy corpus containing the words "low", "lower", "newest", and "widest". Starting from characters: l, o, w, e, r, n, s, t, i, d. BPE might first merge "e"+"s" → "es" (because "newest", "widest" both contain "-est"), then "es"+"t" → "est", then "l"+"o" → "lo", and so on. After enough merges, common words like "the" or "ing" become single tokens; rare or new words get split into their component morphemes. The vocabulary size is a hyperparameter — GPT-2 uses 50,000 merge rules, yielding a final vocabulary of 50,257 tokens (50,000 merges + 256 base byte tokens + 1 special token).</p>
+
+      <p>Why does this design work so well? Because natural language is highly morphological — words share prefixes ("un-", "pre-"), suffixes ("-ing", "-tion", "-est"), and roots. BPE automatically discovers these units from the data. A word like "uncharacteristically" might be tokenized as ["un", "char", "acter", "ist", "ically"] — each piece is a common sub-word that appears in many other words, allowing the model to generalise across them. GPT-2 uses the <code>tiktoken</code> library for fast BPE encoding at inference time.</p>
+
+      <div class="insight-box">
+        <strong>BPE in Practice:</strong> The same word can tokenize differently depending on context (leading space) and model. GPT-2 typically encodes " cat" (with a space) as a single token 3797, but "cat" at the start of a sentence is token 9246. Always use the model's own tokenizer — never a different model's tokenizer — to ensure consistency.
+      </div>
+
+      <!-- Visualization: BPE merges -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-code-merge"></i> BPE Merge Steps — Toy Example</div>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.75rem;">Starting corpus: "low", "lower", "newest", "widest". Characters split: l·o·w, l·o·w·e·r, n·e·w·e·s·t, w·i·d·e·s·t</p>
+
+        <div class="bpe-step">
+          <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #1</span>
+          <span class="bpe-pair">e + s</span>
+          <span class="bpe-arrow">→</span>
+          <span class="bpe-merged">es</span>
+          <span class="bpe-count">(freq: 2 — "new<strong>es</strong>t", "wid<strong>es</strong>t")</span>
+        </div>
+
+        <div class="bpe-step">
+          <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #2</span>
+          <span class="bpe-pair">es + t</span>
+          <span class="bpe-arrow">→</span>
+          <span class="bpe-merged">est</span>
+          <span class="bpe-count">(freq: 2 — "new<strong>est</strong>", "wid<strong>est</strong>")</span>
+        </div>
+
+        <div class="bpe-step">
+          <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #3</span>
+          <span class="bpe-pair">l + o</span>
+          <span class="bpe-arrow">→</span>
+          <span class="bpe-merged">lo</span>
+          <span class="bpe-count">(freq: 2 — "<strong>lo</strong>w", "<strong>lo</strong>wer")</span>
+        </div>
+
+        <div class="bpe-step">
+          <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #4</span>
+          <span class="bpe-pair">lo + w</span>
+          <span class="bpe-arrow">→</span>
+          <span class="bpe-merged">low</span>
+          <span class="bpe-count">(freq: 2 — "<strong>low</strong>", "<strong>low</strong>er")</span>
+        </div>
+
+        <div class="bpe-step" style="margin-top:0.5rem; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2);">
+          <span style="font-size:0.75rem; color:var(--accent-3); min-width:60px;">Final vocab</span>
+          <span style="font-size:0.82rem; color:var(--text-muted);">includes: <span class="viz-token t-sub" style="padding:0.1rem 0.4rem;">low</span> <span class="viz-token t-sub" style="padding:0.1rem 0.4rem;">er</span> <span class="viz-token t-sub" style="padding:0.1rem 0.4rem;">new</span> <span class="viz-token t-sub" style="padding:0.1rem 0.4rem;">est</span> <span class="viz-token t-sub" style="padding:0.1rem 0.4rem;">wid</span> — any new word can be composed from these pieces.</span>
+        </div>
+
+        <pre class="code-block" style="margin-top:1rem;"><code><span class="kw">import</span> tiktoken
+
+enc    = tiktoken.<span class="fn">get_encoding</span>(<span class="str">"gpt2"</span>)
+
+tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</span>)
+<span class="fn">print</span>(tokens)            <span class="cmt"># [15496, 11, 995, 0]</span>
+<span class="fn">print</span>(enc.<span class="fn">decode</span>(tokens)) <span class="cmt"># "Hello, world!"</span>
+
+<span class="cmt"># Inspect individual pieces</span>
+<span class="kw">for</span> tid <span class="kw">in</span> tokens:
+    piece = enc.<span class="fn">decode</span>([tid])
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{tid:6d}  →  {piece!r}"</span>)
+<span class="cmt"># 15496  →  'Hello'</span>
+<span class="cmt">#    11  →  ','</span>
+<span class="cmt">#   995  →  ' world'</span>
+<span class="cmt">#     0  →  '!'</span>
+</code></pre>
+
+        <div class="viz-caption">BPE builds a vocabulary bottom-up by merging the most frequent character pairs. The final vocabulary contains whole words (for common terms) and sub-word pieces (for rare or compound words), enabling lossless encoding of any text.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.6
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-6">
+      <div class="lesson-header">
+        <span class="lesson-number">2.6</span>
+        <h2>Sliding Window Data Sampling</h2>
+      </div>
+
+      <p>With a tokenized corpus in hand, the next step is creating the actual <strong>training examples</strong> that will teach the model to predict the next token. This is done using a <strong>sliding window</strong> approach: a window of fixed width moves along the token sequence, and at each position it produces one (input, target) training pair. The input is the window's tokens and the target is those same tokens shifted one position to the right — i.e., for each input token, the corresponding target is the token that comes immediately after it in the corpus.</p>
+
+      <p>Concretely, if the context window size (also called <em>block size</em> or <em>max_seq_len</em>) is 4 and the token sequence is ["The", "cat", "sat", "on", "the", "mat"], then the first window produces: input = ["The", "cat", "sat", "on"], target = ["cat", "sat", "on", "the"]. Slide the window by 1 (stride = 1) and the second sample is: input = ["cat", "sat", "on", "the"], target = ["sat", "on", "the", "mat"]. Each (input, target) pair actually encodes <em>4 individual next-token prediction tasks</em> simultaneously — one per position — because the loss is computed at every output position.</p>
+
+      <p>The <strong>stride</strong> parameter controls how much the window moves between consecutive samples. A stride of 1 maximises data diversity (consecutive samples overlap by <em>context_size − 1</em> tokens) but consumes a lot of memory to store all the samples. A stride equal to <em>context_size</em> produces non-overlapping samples, which is more memory-efficient but may miss important context boundaries. GPT-2 was pretrained with a stride equal to the full context size (1024 tokens) for efficiency.</p>
+
+      <p>During training, many windows are batched together. If batch size is 4 and context size is 1024, the model processes a tensor of shape [4, 1024] as input and [4, 1024] as target simultaneously, computing loss across 4 × 1024 = 4,096 individual next-token prediction tasks in a single forward pass. This parallelism — training on every position in every sequence simultaneously — is one of the key efficiency advantages of the transformer over recurrent architectures, which had to process positions sequentially.</p>
+
+      <div class="insight-box">
+        <strong>Data Efficiency:</strong> A single sliding window of context_size C produces C individual training signals (one per position). A batch of B windows produces B × C signals. For GPT-2 with C=1024 and B=512, that is 524,288 next-token predictions per training step — from a single forward + backward pass.
+      </div>
+
+      <!-- Interactive sliding window -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-window-maximize"></i> Interactive: Sliding Window Sampler</div>
+
+        <div id="swViz">
+          <div class="sw-tokens" id="swTokenRow"></div>
+          <div class="sw-legend">
+            <div class="sw-legend-item"><div class="sw-dot input"></div><span style="font-size:0.79rem; color:var(--text-muted);">Input window</span></div>
+            <div class="sw-legend-item"><div class="sw-dot target"></div><span style="font-size:0.79rem; color:var(--text-muted);">Target window (shifted +1)</span></div>
+          </div>
+
+          <div class="sw-slider-wrap">
+            <label for="swSlider">Window position (stride = 1): <strong id="swSliderVal">0</strong></label>
+            <input type="range" id="swSlider" min="0" max="3" value="0" step="1" />
+          </div>
+
+          <div class="sw-info" id="swInfo"></div>
+        </div>
+
+        <div class="viz-caption">Drag the slider to move the context window along the token sequence. Blue tokens are the input context; green tokens are the corresponding prediction targets (shifted right by 1).</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.7
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-7">
+      <div class="lesson-header">
+        <span class="lesson-number">2.7</span>
+        <h2>Token Embeddings</h2>
+      </div>
+
+      <p>After tokenization and ID assignment, the embedding layer performs the critical transformation: it maps each integer token ID into a dense real-valued vector. Mechanically, this is just a lookup table (also called a weight matrix) of shape [vocab_size, d_model]. Given a token ID, the embedding layer returns the corresponding row of this matrix. For a sequence of N token IDs, the output is an N × d_model matrix — one vector per token position.</p>
+
+      <p>For GPT-2 Small, vocab_size = 50,257 and d_model = 768. The embedding matrix therefore contains 50,257 × 768 = <strong>38,597,376 parameters</strong> — roughly 38.6 million learnable floats just in the embedding layer. This is actually the single largest weight matrix in GPT-2 Small, containing more parameters than any individual transformer block. At 4 bytes per float32 parameter, this matrix occupies about 147 MB of memory. In practice, the output projection (the final linear layer that produces logits) often <em>shares weights</em> with the embedding matrix (called weight tying), cutting the parameter count significantly.</p>
+
+      <p>The embedding vectors are initialised randomly (typically from a normal distribution with small standard deviation) and then updated through backpropagation just like any other weight matrix. Over training, tokens that appear in similar contexts — and therefore produce similar losses when their embeddings are swapped — converge to similar vector locations. This is the mechanism by which the model implicitly learns semantic relationships: "Paris" and "London" end up nearby in embedding space not because someone told the model they are both capitals, but because sentences containing "Paris" and sentences containing "London" are statistically similar.</p>
+
+      <p>A useful way to inspect learned embeddings is to apply dimensionality reduction (PCA or t-SNE) to project the high-dimensional embedding space down to 2D for visualisation. In such plots, you typically see clusters of semantically related words — countries near each other, numbers near each other, verbs in one region, nouns in another. This emergent geometric structure is one of the most striking demonstrations that the model has learned something meaningful about language from raw next-token prediction.</p>
+
+      <div class="insight-box">
+        <strong>Weight Tying:</strong> Many LLMs including GPT-2 "tie" the input embedding matrix and the output projection matrix — they are literally the same tensor. This halves the parameter count for these layers and often improves performance, since the model must produce embeddings in a space that is also good for predicting which tokens come next.
+      </div>
+
+      <!-- Code + shape diagram -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-network-wired"></i> Token Embedding Layer — Shapes</div>
+
+        <table class="vocab-table">
+          <thead>
+            <tr><th>Component</th><th>Shape</th><th>Parameters</th></tr>
+          </thead>
+          <tbody>
+            <tr class="highlight"><td>Embedding matrix</td><td>[50,257 × 768]</td><td>38,597,376</td></tr>
+            <tr><td>Input: token IDs</td><td>[batch, seq_len]</td><td>—</td></tr>
+            <tr><td>Output: embeddings</td><td>[batch, seq_len, 768]</td><td>—</td></tr>
+            <tr><td>Single token vector</td><td>[768]</td><td>768 floats ≈ 3 KB</td></tr>
+          </tbody>
+        </table>
+
+        <pre class="code-block"><code>embedding_layer = torch.nn.<span class="fn">Embedding</span>(vocab_size, d_model)
+<span class="cmt"># Input:  token_ids  shape [batch, seq_len]     e.g. [4, 1024]</span>
+<span class="cmt"># Output: embeddings shape [batch, seq_len, d_model] e.g. [4, 1024, 768]</span>
+token_embeddings = embedding_layer(token_ids)
+
+<span class="cmt"># Parameter count</span>
+params = vocab_size * d_model   <span class="cmt"># 50257 * 768 = 38,597,376</span>
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Embedding parameters: {params:,}"</span>)
+<span class="cmt"># Embedding parameters: 38,597,376</span>
+
+<span class="cmt"># Weight tying: share embedding and output projection weights</span>
+model.lm_head.weight = model.transformer.wte.weight
+</code></pre>
+
+        <div class="viz-caption">The embedding layer is a simple lookup table. Each of the 50,257 rows is a 768-dimensional learned vector. Passing a batch of token ID sequences through it produces a batch of embedding matrices — one [seq_len, 768] matrix per sequence.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 2.8
+    ══════════════════ -->
+    <section class="lesson" id="lesson-2-8">
+      <div class="lesson-header">
+        <span class="lesson-number">2.8</span>
+        <h2>Positional Embeddings</h2>
+      </div>
+
+      <p>The transformer's self-attention mechanism is fundamentally <strong>permutation-equivariant</strong>: if you shuffle the tokens in the input sequence, the output is shuffled in exactly the same way. Unlike RNNs or CNNs, a vanilla transformer has no built-in sense of which token comes first or last. This is a serious problem for language modelling — the sentence "the dog bit the man" and "the man bit the dog" contain the same words but mean something very different. Without positional information, the attention mechanism would produce identical outputs for both.</p>
+
+      <p>The solution is <strong>positional embeddings</strong>: a second set of learned (or computed) vectors — one per position in the sequence — that are <em>added element-wise</em> to the token embeddings before the first transformer block. The combined vector at position i is: <code>input[i] = token_embedding[token_id[i]] + positional_embedding[i]</code>. Both are [d_model]-dimensional vectors, so addition is straightforward. The result carries both semantic information (what word it is) and positional information (where in the sequence it sits).</p>
+
+      <p>GPT-2 uses <strong>learned absolute positional embeddings</strong>: a trainable weight matrix of shape [max_seq_len, d_model] = [1024, 768]. Each row is a learned vector for one absolute position (position 0, 1, 2, …, 1023). These vectors are initialised randomly and updated by backpropagation, just like the token embeddings. The downside of absolute positional embeddings is that the model cannot generalise beyond its training context length — position 1025 was never seen during training. More modern approaches like <strong>RoPE</strong> (Rotary Position Embeddings, used in LLaMA) and <strong>ALiBi</strong> address this by using relative position representations that can extrapolate beyond training length.</p>
+
+      <p>The original "Attention Is All You Need" paper proposed <strong>sinusoidal positional encodings</strong> — fixed mathematical functions (sine and cosine at different frequencies) rather than learned vectors. The intuition is that each position gets a unique "fingerprint" of sine/cosine values across dimensions, with lower dimensions corresponding to lower frequencies (global position information) and higher dimensions to higher frequencies (local position information). While sinusoidal encodings work well and require no additional parameters, GPT-2's learned positional embeddings tend to perform slightly better in practice because they can adapt to the specific patterns in the training data.</p>
+
+      <div class="insight-box">
+        <strong>Modern Alternative — RoPE:</strong> LLaMA, Mistral, and most post-2022 LLMs use Rotary Position Embeddings (RoPE), which encode relative position by rotating the query and key vectors before the dot-product attention. RoPE extrapolates better to long sequences and is now the dominant approach in frontier models.
+      </div>
+
+      <!-- Visualization: positional embedding diagram -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-plus-circle"></i> Token Embedding + Positional Embedding = Combined Input</div>
+
+        <div class="pos-diagram">
+          <div class="pos-row">
+            <div class="pos-label">token_embedding[" cat"]</div>
+            <div class="pos-vec">
+              <div class="pos-cell tok">.32</div>
+              <div class="pos-cell tok">-.17</div>
+              <div class="pos-cell tok">.81</div>
+              <div class="pos-cell tok">.04</div>
+              <div class="pos-cell tok">…</div>
+            </div>
+            <div class="pos-dims">[768]</div>
+          </div>
+
+          <div class="pos-row">
+            <div class="pos-label" style="padding-left:1rem;"></div>
+            <div class="pos-op">+</div>
+          </div>
+
+          <div class="pos-row">
+            <div class="pos-label">positional_emb[1]<br><small style="font-size:0.65rem;">(position 1 in sequence)</small></div>
+            <div class="pos-vec">
+              <div class="pos-cell pos">.09</div>
+              <div class="pos-cell pos">.55</div>
+              <div class="pos-cell pos">-.22</div>
+              <div class="pos-cell pos">.71</div>
+              <div class="pos-cell pos">…</div>
+            </div>
+            <div class="pos-dims">[768]</div>
+          </div>
+
+          <div class="pos-row">
+            <div class="pos-label" style="padding-left:1rem;"></div>
+            <div class="pos-op">=</div>
+          </div>
+
+          <div class="pos-row">
+            <div class="pos-label" style="color:var(--accent-3); font-weight:700;">combined_input[1]</div>
+            <div class="pos-vec">
+              <div class="pos-cell comb">.41</div>
+              <div class="pos-cell comb">.38</div>
+              <div class="pos-cell comb">.59</div>
+              <div class="pos-cell comb">.75</div>
+              <div class="pos-cell comb">…</div>
+            </div>
+            <div class="pos-dims">[768]</div>
+          </div>
+        </div>
+
+        <table class="vocab-table" style="margin-top:1rem;">
+          <thead>
+            <tr><th>Approach</th><th>Type</th><th>Extrapolates?</th><th>Used by</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sinusoidal (fixed)</td><td>Absolute, deterministic</td><td>Yes (limited)</td><td>Original Transformer</td></tr>
+            <tr class="highlight"><td>Learned absolute</td><td>Absolute, trainable</td><td>No (up to max_len)</td><td>GPT-2, GPT-3</td></tr>
+            <tr><td>RoPE (rotary)</td><td>Relative, computed</td><td>Yes</td><td>LLaMA, Mistral</td></tr>
+            <tr><td>ALiBi</td><td>Relative, fixed bias</td><td>Yes</td><td>BLOOM, MPT</td></tr>
+          </tbody>
+        </table>
+
+        <pre class="code-block"><code><span class="cmt"># GPT-2 positional embedding layer</span>
+pos_embedding_layer = torch.nn.<span class="fn">Embedding</span>(context_length, d_model)
+<span class="cmt"># Shape: [1024, 768] — one learned vector per position</span>
+
+positions = torch.<span class="fn">arange</span>(<span class="num">0</span>, seq_len)  <span class="cmt"># [0, 1, 2, ..., seq_len-1]</span>
+pos_embeddings   = pos_embedding_layer(positions)   <span class="cmt"># [seq_len, 768]</span>
+token_embeddings = embedding_layer(token_ids)       <span class="cmt"># [batch, seq_len, 768]</span>
+
+<span class="cmt"># Element-wise addition — both must be same shape</span>
+x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]</span>
+<span class="cmt"># x is now the input to the first transformer block</span>
+</code></pre>
+
+        <div class="viz-caption">Token and positional embeddings are both [d_model]-dimensional vectors. Adding them element-wise creates a combined representation that encodes both <em>what</em> the token is (semantic content) and <em>where</em> it is in the sequence (positional context).</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SUMMARY BOX
+    ══════════════════════════════════════════ -->
+    <div class="summary-box glass">
+      <h3><i class="fas fa-bookmark"></i> Chapter 2 — Key Takeaways</h3>
+      <ul>
+        <li>Text must be converted to tokens, then token IDs for neural network processing. Raw strings cannot be used as neural network inputs.</li>
+        <li><strong>BPE tokenization</strong> handles any word without out-of-vocabulary issues by decomposing unknown words into common sub-word pieces. GPT-2 uses tiktoken for fast BPE encoding.</li>
+        <li>GPT-2 uses exactly <strong>50,257 BPE tokens</strong> (50,256 sub-word pieces + 1 special &lt;|endoftext|&gt; token) and 768-dimensional embeddings.</li>
+        <li><strong>Sliding window sampling</strong> creates training pairs: for each context window of K tokens, the target is the same window shifted right by 1 position, providing K next-token prediction tasks per sample.</li>
+        <li><strong>Positional embeddings</strong> inject token order information into the model. GPT-2 uses learned absolute positional embeddings added element-wise to token embeddings before the first transformer block.</li>
+        <li>The final input to a transformer is <code>token_embedding + positional_embedding</code> — a combined vector encoding both semantic identity and sequence position.</li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         QUIZ BOX
+    ══════════════════════════════════════════ -->
+    <div class="quiz-box glass">
+      <h3><i class="fas fa-circle-question"></i> Chapter 2 Quiz</h3>
+      <p class="quiz-subtitle">Test your understanding of the concepts covered in this chapter. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="ch1.html" class="nav-prev" aria-label="Previous chapter">
+        <i class="fas fa-arrow-left"></i> Ch1: Understanding LLMs
+      </a>
+      <a href="ch3.html" class="nav-next" aria-label="Next chapter">
+        Ch3: Attention Mechanism <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "Why can't we feed raw text directly into a neural network?",
+        options: [
+          "Text is too long",
+          "Neural networks require numerical inputs, not strings",
+          "Text lacks punctuation",
+          "GPUs can't store text"
+        ],
+        correct: 1,
+        explanation: "Neural networks perform mathematical operations (matrix multiplication, etc.) and can only work with numbers. Text must first be converted to numerical vectors (embeddings)."
+      },
+      {
+        question: "What does BPE stand for and what problem does it solve?",
+        options: [
+          "Byte-Pair Encoding — handles out-of-vocabulary words by using sub-word units",
+          "Binary Processing Encoding — speeds up tokenization",
+          "Bidirectional Pattern Embedding — improves accuracy",
+          "Batch Processing Engine — parallelizes tokenization"
+        ],
+        correct: 0,
+        explanation: "BPE (Byte-Pair Encoding) is a sub-word tokenization method. It can represent any word using combinations of common sub-word pieces, eliminating out-of-vocabulary problems."
+      },
+      {
+        question: "In the sliding window approach for training data creation, what is the 'stride'?",
+        options: [
+          "The size of the context window",
+          "How many tokens are in the vocabulary",
+          "How many positions the window moves between consecutive samples",
+          "The number of special tokens"
+        ],
+        correct: 2,
+        explanation: "Stride controls overlap between consecutive training samples. A stride of 1 maximizes data usage (high overlap); a stride equal to window size creates non-overlapping samples."
+      },
+      {
+        question: "How many tokens are in the GPT-2 vocabulary?",
+        options: [
+          "32,000",
+          "50,257",
+          "100,000",
+          "128,256"
+        ],
+        correct: 1,
+        explanation: "GPT-2 uses a BPE vocabulary of exactly 50,257 tokens, including 50,256 regular BPE tokens plus the special <|endoftext|> token."
+      },
+      {
+        question: "What is the purpose of the positional embedding in a Transformer?",
+        options: [
+          "Reduce memory usage",
+          "Inject information about token position/order since attention has no inherent ordering",
+          "Replace token embeddings",
+          "Speed up self-attention computation"
+        ],
+        correct: 1,
+        explanation: "Self-attention treats all positions equally by default. Positional embeddings add position information to the token embeddings so the model knows the order of tokens."
+      },
+      {
+        question: "What is the shape of the token embedding matrix in GPT-2 Small?",
+        options: [
+          "768 × 768",
+          "50,257 × 768",
+          "1024 × 768",
+          "50,257 × 50,257"
+        ],
+        correct: 1,
+        explanation: "GPT-2 Small has vocab_size=50,257 and d_model=768. The embedding matrix shape is [vocab_size, d_model] = [50,257, 768], containing ~38.6M learnable parameters."
+      },
+      {
+        question: "In GPT-2, which special token serves as both beginning-of-sequence and end-of-sequence separator?",
+        options: [
+          "[PAD]",
+          "[CLS]",
+          "<|endoftext|>",
+          "[SEP]"
+        ],
+        correct: 2,
+        explanation: "GPT-2 uses <|endoftext|> (token ID 50256) as the separator between documents. It signals the end of one text and the beginning of another during both pretraining and inference."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+
+    /* ─────────────────────────────────────────
+       Tokenizer step demo (Lesson 2.2)
+    ───────────────────────────────────────── */
+    (function() {
+      const steps = ['step2', 'step3'];
+      let current = 0;
+      const nextBtn  = document.getElementById('tokNextBtn');
+      const resetBtn = document.getElementById('tokResetBtn');
+
+      function updateButtons() {
+        nextBtn.disabled = (current >= steps.length);
+        if (current >= steps.length) {
+          nextBtn.innerHTML = '<i class="fas fa-check"></i> Done';
+        } else {
+          nextBtn.innerHTML = '<i class="fas fa-play"></i> Next Step';
+        }
+      }
+
+      nextBtn.addEventListener('click', function() {
+        if (current < steps.length) {
+          const el = document.getElementById(steps[current]);
+          if (el) el.classList.add('show');
+          current++;
+        }
+        updateButtons();
+      });
+
+      resetBtn.addEventListener('click', function() {
+        steps.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('show');
+        });
+        current = 0;
+        updateButtons();
+      });
+
+      updateButtons();
+    })();
+
+    /* ─────────────────────────────────────────
+       Sliding window visualization (Lesson 2.6)
+    ───────────────────────────────────────── */
+    (function() {
+      const TOKENS   = ['The', 'cat', 'sat', 'on', 'the', 'mat', '.'];
+      const WIN_SIZE = 4;
+      const MAX_POS  = TOKENS.length - WIN_SIZE - 1; // 0..2
+
+      const row      = document.getElementById('swTokenRow');
+      const slider   = document.getElementById('swSlider');
+      const sliderVal= document.getElementById('swSliderVal');
+      const infoEl   = document.getElementById('swInfo');
+
+      slider.max = MAX_POS;
+
+      function render(pos) {
+        row.innerHTML = '';
+        TOKENS.forEach(function(tok, i) {
+          const span = document.createElement('span');
+          span.className = 'sw-token';
+          span.textContent = tok;
+          if (i >= pos && i < pos + WIN_SIZE) {
+            span.classList.add('sw-input');
+          } else if (i >= pos + 1 && i < pos + WIN_SIZE + 1) {
+            // target overlaps with input shifted by 1
+          }
+          // target: positions pos+1 .. pos+WIN_SIZE
+          if (i > pos && i <= pos + WIN_SIZE) {
+            span.classList.remove('sw-input');
+            span.classList.add('sw-target');
+          }
+          // input takes priority for positions pos..pos+WIN_SIZE-1
+          if (i >= pos && i < pos + WIN_SIZE) {
+            span.classList.remove('sw-target');
+            span.classList.add('sw-input');
+          }
+          // The overlap (pos+1..pos+WIN_SIZE-1) becomes input colour
+          row.appendChild(span);
+        });
+
+        const inputToks  = TOKENS.slice(pos, pos + WIN_SIZE);
+        const targetToks = TOKENS.slice(pos + 1, pos + WIN_SIZE + 1);
+
+        infoEl.innerHTML =
+          '<strong>Input:</strong> [' + inputToks.map(function(t){ return '"' + t + '"'; }).join(', ') + ']<br>' +
+          '<strong>Target:</strong> [' + targetToks.map(function(t){ return '"' + t + '"'; }).join(', ') + ']';
+      }
+
+      slider.addEventListener('input', function() {
+        var pos = parseInt(this.value, 10);
+        sliderVal.textContent = pos;
+        render(pos);
+      });
+
+      render(0);
+    })();
+  </script>
+</body>
+</html>
