@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch6: Fine-tuning for Classification — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Comparison cards ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 520px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+    .compare-card {
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+    }
+    .compare-card .cc-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.65rem;
+    }
+    .compare-card .cc-header i {
+      font-size: 1rem;
+    }
+    .compare-card.cc-classif { border-color: rgba(79,110,247,0.35); }
+    .compare-card.cc-classif .cc-header { color: var(--accent); }
+    .compare-card.cc-instruct { border-color: rgba(16,185,129,0.35); }
+    .compare-card.cc-instruct .cc-header { color: var(--accent-3); }
+    .compare-card dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      row-gap: 0.3rem;
+      column-gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .compare-card dt {
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .compare-card dd {
+      margin: 0;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+    }
+
+    /* ── Bar chart (spam distribution) ── */
+    .dist-chart {
+      margin: 1rem 0;
+    }
+    .dist-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .dist-bar-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      width: 40px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .dist-bar-track {
+      flex: 1;
+      height: 28px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .dist-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 0.6rem;
+      font-size: 0.76rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #fff;
+      transition: width 0.5s ease;
+    }
+    .dist-fill-ham   { background: rgba(79,110,247,0.8); }
+    .dist-fill-spam  { background: rgba(239,68,68,0.75); }
+    .dist-bar-count {
+      font-size: 0.76rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    /* ── viz-flow (shared with ch5) ── */
+    .viz-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1rem auto;
+      max-width: 420px;
+    }
+    .viz-node {
+      width: 100%;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      position: relative;
+    }
+    .viz-node .vn-sub {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      opacity: 0.75;
+      display: block;
+      margin-top: 0.1rem;
+    }
+    .viz-arrow {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .vn-embed    { background: rgba(79,110,247,0.12);  color: var(--accent);   border: 1.5px solid rgba(79,110,247,0.3); }
+    .vn-attn     { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+    .vn-ffn      { background: rgba(168,85,247,0.10);  color: #a855f7;         border: 1.5px solid rgba(168,85,247,0.25); }
+    .vn-last     { background: rgba(239,68,68,0.10);   color: #ef4444;         border: 1.5px solid rgba(239,68,68,0.25); }
+    .vn-head     { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .vn-output   { background: rgba(79,110,247,0.18);  color: var(--accent);   border: 2px solid rgba(79,110,247,0.4); }
+    .vn-frozen   { background: rgba(107,114,128,0.10); color: var(--text-muted); border: 1.5px dashed rgba(107,114,128,0.35); }
+
+    /* ── Confusion matrix ── */
+    .cm-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .cm-table {
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .cm-table th, .cm-table td {
+      padding: 0.55rem 0.9rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .cm-table thead th {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cm-table tbody td:first-child {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cm-tp { background: rgba(16,185,129,0.15); color: var(--accent-3); font-weight: 700; }
+    .cm-tn { background: rgba(16,185,129,0.10); color: var(--accent-3); font-weight: 700; }
+    .cm-fp { background: rgba(239,68,68,0.12);  color: #ef4444; font-weight: 700; }
+    .cm-fn { background: rgba(245,158,11,0.12); color: var(--accent-2); font-weight: 700; }
+    .cm-sub {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      display: block;
+      opacity: 0.75;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Training accuracy curve SVG ── */
+    .acc-svg-wrap {
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .acc-legend {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+    }
+    .acc-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+    .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+  </style>
+</head>
+<body data-chapter="ch6">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">Ch6: Classification Fine-tuning</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Chapter 6</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 6</div>
+      <h1>Fine-tuning for Classification</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 8 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 7-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~22 min read</span>
+        <span class="tag">Fine-tuning</span>
+        <span class="tag">Transfer Learning</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>Chapter 5 concluded with a pretrained GPT model and the skill to load OpenAI's GPT-2 weights into your own architecture. At that point the model can generate fluent text — but it cannot make decisions. Classification fine-tuning bridges the gap between a general-purpose language model and a task-specific predictor. Rather than teaching the model a new language from scratch, you redirect its already-rich linguistic understanding toward drawing a specific, bounded conclusion from every input it sees. The result is a model that is orders of magnitude more accurate than any approach you could train from random initialisation on a small labelled dataset.</p>
+
+      <p>This chapter walks through every step of that transformation: choosing the right output representation, assembling a labelled dataset and data loader, loading pretrained weights, grafting on a lightweight classification head, selecting appropriate loss and evaluation metrics, running a tight fine-tuning loop, and finally deploying the classifier in a real inference pipeline. The running example is spam detection on SMS messages — a deliberately simple binary task that lets you focus on the mechanics without getting lost in domain complexity. Every pattern you learn here applies directly to sentiment analysis, topic classification, toxicity detection, or any other discrete-label NLP problem.</p>
+
+      <!-- ══════════════════
+           LESSON 6.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-1">
+        <div class="lesson-header">
+          <span class="lesson-number">6.1</span>
+          <h2>Classification vs Instruction Fine-tuning</h2>
+        </div>
+
+        <p>Fine-tuning a pretrained LLM falls into two broad families that differ fundamentally in what the model is asked to produce. <strong>Classification fine-tuning</strong> requires the model to emit one label from a finite set — "spam" or "ham", "positive" or "negative", "sports" or "politics" or "finance". The output space is discrete and closed; every possible answer is known upfront. This simplicity makes the architecture change minimal: you discard or bypass the vocabulary-size output projection and replace it with a small linear layer that outputs a score for each class. The model learns to map any input to a point in that restricted label space, guided by a cross-entropy loss computed over a handful of classes rather than over tens of thousands of vocabulary tokens.</p>
+
+        <p><strong>Instruction fine-tuning</strong> (covered in Chapter 7) demands free-text output. The model must generate an open-ended response to a natural language prompt — summarise this article, translate this sentence, answer this question. The output space is the full vocabulary at every decoding step, so the language modelling head is kept intact. The loss is still next-token cross-entropy, but now it is computed over long target sequences rather than a single label. Instruction fine-tuning requires substantially more labelled data and compute than classification fine-tuning, because the model must learn both what to say and how to express it coherently across many tokens. For well-defined decision problems, classification fine-tuning is almost always the right choice — it is faster, cheaper, and more reliable.</p>
+
+        <p>The key insight that makes both approaches work is <strong>transfer learning</strong>: the pretrained model already understands language. It knows that "free prize winner" and "claim your reward now" signal something promotional; it knows that subject and verb must agree; it understands negation and context. Fine-tuning does not teach the model language — it teaches the model which aspects of its existing language knowledge to weigh when making a particular decision. That is why even a tiny labelled dataset of a few thousand examples can yield a high-accuracy classifier when the backbone was pretrained on billions of tokens.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Two Fine-tuning Families</div>
+
+          <div class="compare-grid">
+            <div class="compare-card cc-classif">
+              <div class="cc-header"><i class="fas fa-tag"></i> Classification Fine-tuning</div>
+              <dl>
+                <dt>Output</dt><dd>Discrete label (e.g. spam / ham)</dd>
+                <dt>Head</dt><dd>Linear(d_model, num_classes)</dd>
+                <dt>Loss</dt><dd>CrossEntropy over N classes</dd>
+                <dt>Dataset</dt><dd>(text, label_id) pairs</dd>
+                <dt>Use cases</dt><dd>Spam, sentiment, toxicity</dd>
+              </dl>
+            </div>
+            <div class="compare-card cc-instruct">
+              <div class="cc-header"><i class="fas fa-comments"></i> Instruction Fine-tuning</div>
+              <dl>
+                <dt>Output</dt><dd>Free-text sequence of tokens</dd>
+                <dt>Head</dt><dd>Linear(d_model, vocab_size) — kept</dd>
+                <dt>Loss</dt><dd>CrossEntropy over vocab (next token)</dd>
+                <dt>Dataset</dt><dd>(prompt, response) pairs</dd>
+                <dt>Use cases</dt><dd>Chat, summarisation, Q&amp;A</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="viz-caption">Classification fine-tuning replaces the language head with a tiny class-score layer. Instruction fine-tuning keeps the full language head and supervises on generated text sequences.</div>
+        </div>
+
+      </section><!-- /#lesson-6-1 -->
+
+      <!-- ══════════════════
+           LESSON 6.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-2">
+        <div class="lesson-header">
+          <span class="lesson-number">6.2</span>
+          <h2>Spam Detection Dataset</h2>
+        </div>
+
+        <p>The book uses the UCI SMS Spam Collection as its running example — a publicly available dataset of 5,572 short text messages, each labelled "ham" (legitimate) or "spam". Every message is a single SMS of up to a few hundred characters, making the dataset small enough to iterate on quickly while still being realistic enough to reveal the challenges of applied classification. After loading, the string labels are converted to integers: 0 for ham, 1 for spam. The conversion is a one-liner using pandas boolean indexing, and the resulting column feeds directly into the DataLoader as the target tensor.</p>
+
+        <p>The most important characteristic of this dataset is severe <strong>class imbalance</strong>: roughly 4,825 messages are ham (87%) and only 747 are spam (13%). This ratio reflects the real world — most messages people receive are legitimate — but it creates a dangerous trap for evaluation. A model that predicts "ham" for every single input with no learning whatsoever achieves 87% accuracy. This sounds impressive until you realise the model has completely failed at its actual purpose: catching spam. Class imbalance means raw accuracy is essentially meaningless as a primary metric for this task. Any honest evaluation must track precision, recall, and F1 score for the minority class — and ideally report them separately for each label.</p>
+
+        <p>Two standard remedies for class imbalance are <strong>oversampling</strong> the minority class (duplicating spam examples until the classes are roughly balanced) and <strong>undersampling</strong> the majority class (randomly removing ham examples). Oversampling is simpler to implement and avoids discarding data; undersampling reduces total training time. The book addresses imbalance by oversampling the spam class to match the ham count before splitting into train/validation/test sets, which ensures the model sees equal exposure to both classes during gradient updates. A weighted loss function is another option: assign a higher per-sample loss weight to the minority class, effectively making the model pay more attention to spam misclassifications.</p>
+
+        <pre class="code-block"><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'SMSSpamCollection'</span>, sep=<span class="str">'\t'</span>,
+                  header=<span class="kw">None</span>, names=[<span class="str">'label'</span>, <span class="str">'text'</span>])
+<span class="cmt"># 'ham' → 0, 'spam' → 1</span>
+df[<span class="str">'label'</span>] = (df[<span class="str">'label'</span>] == <span class="str">'spam'</span>).<span class="fn">astype</span>(<span class="fn">int</span>)
+<span class="fn">print</span>(df[<span class="str">'label'</span>].<span class="fn">value_counts</span>())
+<span class="cmt"># 0    4825  (ham)</span>
+<span class="cmt"># 1     747  (spam)</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-bar"></i> SMS Dataset Class Distribution</div>
+
+          <div class="dist-chart">
+            <div class="dist-bar-row">
+              <div class="dist-bar-label" style="color:var(--accent);">Ham</div>
+              <div class="dist-bar-track">
+                <div class="dist-bar-fill dist-fill-ham" id="hamBar" style="width:0%;">87%</div>
+              </div>
+              <div class="dist-bar-count">4,825</div>
+            </div>
+            <div class="dist-bar-row">
+              <div class="dist-bar-label" style="color:#ef4444;">Spam</div>
+              <div class="dist-bar-track">
+                <div class="dist-bar-fill dist-fill-spam" id="spamBar" style="width:0%;">13%</div>
+              </div>
+              <div class="dist-bar-count">747</div>
+            </div>
+          </div>
+
+          <div class="viz-caption">87% ham vs 13% spam. A trivial "always predict ham" classifier achieves 87% accuracy — raw accuracy is a misleading metric here. Use F1 score for the spam class instead.</div>
+        </div>
+
+      </section><!-- /#lesson-6-2 -->
+
+      <!-- ══════════════════
+           LESSON 6.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-3">
+        <div class="lesson-header">
+          <span class="lesson-number">6.3</span>
+          <h2>Padding and DataLoaders</h2>
+        </div>
+
+        <p>PyTorch requires that all sequences within a batch share the same length so they can be stacked into a rectangular tensor. SMS messages range from a handful of tokens to well over a hundred, so a naive batch would fail with a shape mismatch. Two strategies handle this: <strong>truncation</strong> discards tokens beyond a maximum length (a reasonable choice when messages are already short); <strong>padding</strong> extends shorter sequences to the length of the longest in the batch by appending a designated padding token. GPT-2 uses the <code>&lt;|endoftext|&gt;</code> token (ID 50256) as padding — a token that appears at document boundaries in the training data and is therefore semantically neutral when it shows up at the end of an input.</p>
+
+        <p>When padding tokens are present, the self-attention mechanism should ideally ignore them — padding should carry no signal about the message's content. This is achieved with an <strong>attention mask</strong>: a binary tensor of the same shape as the input, where 1 means "real token, attend normally" and 0 means "padding, do not attend to this position". The mask is passed alongside the input IDs and used inside the attention computation to set padding positions to <code>-infinity</code> before the softmax, which zeroes out their contribution. For classification using only the last real token's representation, well-padded batches also require tracking the position of the last non-padding token per example — a bookkeeping step the book handles inside the forward pass.</p>
+
+        <p>The <strong>DataLoader</strong> handles shuffling and batching; a custom <code>collate_fn</code> is the right hook for padding. By deferring padding to collate time rather than preprocessing, you avoid wasting memory on globally padded sequences — each batch is padded only to the length of its longest member. This matters most when the dataset has high variance in sequence length, as the SMS collection does. The collate function encodes each text on the fly, applies optional truncation, then pads within the batch and returns a pair of tensors ready for the model.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">collate_batch</span>(batch, pad_token_id=<span class="num">50256</span>, max_length=<span class="kw">None</span>):
+    texts, labels = <span class="fn">zip</span>(*batch)
+    <span class="cmt"># Encode each text</span>
+    encoded = [tokenizer.<span class="fn">encode</span>(t) <span class="kw">for</span> t <span class="kw">in</span> texts]
+    <span class="kw">if</span> max_length:
+        encoded = [e[:max_length] <span class="kw">for</span> e <span class="kw">in</span> encoded]
+    <span class="cmt"># Pad to the length of the longest in this batch</span>
+    max_len = <span class="fn">max</span>(<span class="fn">len</span>(e) <span class="kw">for</span> e <span class="kw">in</span> encoded)
+    padded  = [e + [pad_token_id] * (max_len - <span class="fn">len</span>(e)) <span class="kw">for</span> e <span class="kw">in</span> encoded]
+    <span class="kw">return</span> torch.<span class="fn">tensor</span>(padded), torch.<span class="fn">tensor</span>(labels)</code></pre>
+
+      </section><!-- /#lesson-6-3 -->
+
+      <!-- ══════════════════
+           LESSON 6.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-4">
+        <div class="lesson-header">
+          <span class="lesson-number">6.4</span>
+          <h2>Loading Pretrained Weights</h2>
+        </div>
+
+        <p>The power of the fine-tuning approach comes entirely from starting with weights that already encode a rich model of language. Loading those weights requires instantiating your custom GPT architecture and then filling it with values from a saved checkpoint — either one you saved yourself after running Chapter 5's pretraining loop, or the publicly released GPT-2 Small weights from OpenAI (which Chapter 5 covers how to map). The embedding tables, all twelve transformer blocks, and the final LayerNorm are loaded exactly as-is. Only the language modelling head (the <code>lm_head</code> linear layer projecting from 768 dimensions to 50,257 vocabulary logits) is replaced — it would produce nonsensical gradients if kept, since its outputs correspond to vocabulary tokens rather than class labels.</p>
+
+        <p>A critical architectural decision is how many layers to <strong>freeze</strong> during fine-tuning. Freezing a layer means setting <code>requires_grad = False</code> on all its parameters; the forward pass still uses those values, but no gradient is computed for them and the optimizer leaves them untouched. There are three common strategies: (a) freeze everything and train only the new classification head — fastest but the lowest accuracy ceiling, because all the representations are fixed; (b) freeze the first N transformer blocks and unfreeze the last M plus the classifier — a good default compromise; (c) train all parameters end-to-end — the most powerful but also the slowest and most prone to catastrophic forgetting. For the SMS dataset the book unfreezes the last transformer block and the final LayerNorm in addition to the new head, which gives near-full accuracy at a fraction of the compute cost of option (c).</p>
+
+        <p>The intuition behind selective unfreezing is that early transformer layers tend to learn low-level linguistic features — token morphology, part-of-speech patterns, syntactic structure — that are useful for almost any task and should be kept intact. Later layers learn higher-level semantic representations that are more task-specific and benefit most from being steered toward the new objective. By concentrating gradient updates on the upper layers, you get the best of both worlds: stable low-level features from pretraining and task-adapted high-level representations from fine-tuning.</p>
+
+        <pre class="code-block"><code>model = <span class="fn">GPTModel</span>(GPT2_CONFIG_124M)
+model.<span class="fn">load_state_dict</span>(torch.<span class="fn">load</span>(<span class="str">'gpt2_weights.pt'</span>, map_location=<span class="str">'cpu'</span>))
+
+<span class="cmt"># Freeze all parameters first</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.<span class="fn">parameters</span>():
+    param.requires_grad = <span class="kw">False</span>
+
+<span class="cmt"># Unfreeze last transformer block + final LayerNorm</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.trf_blocks[<span class="num">-1</span>].<span class="fn">parameters</span>():
+    param.requires_grad = <span class="kw">True</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.final_norm.<span class="fn">parameters</span>():
+    param.requires_grad = <span class="kw">True</span></code></pre>
+
+      </section><!-- /#lesson-6-4 -->
+
+      <!-- ══════════════════
+           LESSON 6.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-5">
+        <div class="lesson-header">
+          <span class="lesson-number">6.5</span>
+          <h2>Adding a Classification Head</h2>
+        </div>
+
+        <p>Once the pretrained weights are loaded and the appropriate layers are frozen, you attach a classification head — a single <code>nn.Linear(d_model, num_classes)</code> layer. For GPT-2 Small, <code>d_model = 768</code>. For binary classification, <code>num_classes = 2</code>. This tiny module is the only part of the network trained from random initialisation; everything else starts from the pretrained checkpoint. The head takes as input a single 768-dimensional vector extracted from the GPT backbone's final hidden state and outputs two logits, one per class. The argmax of those logits is the predicted label.</p>
+
+        <p>The critical decision is <em>which</em> position in the sequence to extract as the classification representation. GPT-2 is a causal (left-to-right) model: at each token position, the hidden state is a function of all tokens to the left, including the current one. This means the hidden state at the <strong>last real token</strong> position is the only one that has attended to the complete input — it has seen every preceding token and incorporated their information through the multi-head attention mechanism across all twelve layers. Using the first token (the BERT convention with a dedicated <code>[CLS]</code> token) would work poorly for GPT, because causal masking means the first token can only see itself. Mean-pooling all token representations is reasonable but adds noise from padding positions. The standard choice for GPT-style classifiers is therefore the last non-padding token.</p>
+
+        <p>The resulting architecture is conceptually very clean: the GPT backbone acts as a deep feature extractor, transforming a variable-length token sequence into a single fixed-size vector that is semantically rich. The classification head is then a logistic regression layer operating on top of those features. This modular view — backbone plus head — is the fundamental pattern underlying not only classification but also question answering, named entity recognition, and other structured prediction tasks built on top of pretrained transformers.</p>
+
+        <pre class="code-block"><code><span class="kw">class</span> <span class="fn">SpamClassifier</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, base_model, num_classes=<span class="num">2</span>):
+        <span class="fn">super</span>().__init__()
+        self.gpt        = base_model
+        self.classifier = nn.<span class="fn">Linear</span>(<span class="num">768</span>, num_classes)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, input_ids):
+        hidden    = self.gpt.<span class="fn">transformer_output</span>(input_ids)  <span class="cmt"># [B, T, 768]</span>
+        last_tok  = hidden[:, <span class="num">-1</span>, :]                        <span class="cmt"># [B, 768]</span>
+        <span class="kw">return</span> self.classifier(last_tok)                      <span class="cmt"># [B, 2]</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-project-diagram"></i> GPT + Classification Head Architecture</div>
+
+          <div class="viz-flow">
+            <div class="viz-node vn-embed">Token + Positional Embeddings
+              <span class="vn-sub">[B, T] → [B, T, 768]</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-frozen">Transformer Blocks 0–10 (frozen)
+              <span class="vn-sub">12× MHA + FFN — pretrained weights fixed</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-attn">Transformer Block 11 (trainable)
+              <span class="vn-sub">MHA + FFN — adapts to classification task</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-last">Extract last token hidden state
+              <span class="vn-sub">[B, T, 768] → [B, 768]</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-head">Classification Head (trainable)
+              <span class="vn-sub">Linear(768 → 2) — new, trained from scratch</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-output">Class Logits
+              <span class="vn-sub">[B, 2] — argmax → predicted label</span>
+            </div>
+          </div>
+
+          <div class="viz-caption">Early blocks (frozen, dashed) preserve pretrained linguistic knowledge. The last block and head are trained to redirect that knowledge toward the spam/ham decision.</div>
+        </div>
+
+      </section><!-- /#lesson-6-5 -->
+
+      <!-- ══════════════════
+           LESSON 6.6
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-6">
+        <div class="lesson-header">
+          <span class="lesson-number">6.6</span>
+          <h2>Loss and Accuracy Metrics</h2>
+        </div>
+
+        <p>Classification fine-tuning uses <strong>cross-entropy loss</strong> — the same formula as pretraining, but now applied over <code>num_classes</code> outputs instead of 50,257 vocabulary tokens. The model outputs two logits per example; cross-entropy interprets these as unnormalised log-probabilities, applies softmax internally, and computes <code>-log(p_correct_class)</code> for each example in the batch, then averages. Because there are only two classes, this is equivalent to binary cross-entropy. The gradient of this loss strongly penalises confident wrong predictions and gently penalises uncertain correct ones, which is exactly the right training signal for a classifier.</p>
+
+        <p><strong>Accuracy</strong> — the fraction of predictions that match the true label — is easy to compute and intuitive to report, but dangerously misleading for imbalanced datasets. The <strong>F1 score</strong> is far more informative: it is the harmonic mean of precision (of all examples predicted as spam, what fraction actually are spam?) and recall (of all actual spam examples, what fraction did the model catch?). The harmonic mean severely punishes any model that collapses one of these two values, which is exactly what happens when a model learns to always predict the majority class. In production spam filters, recall is typically prioritised — missing real spam is more costly than the occasional false alarm — but both must be tracked. The <strong>confusion matrix</strong> — a 2×2 table of true positives, true negatives, false positives, and false negatives — gives the full picture at a glance.</p>
+
+        <p>A well-calibrated classifier should also provide a meaningful <strong>confidence score</strong> alongside its label prediction. Applying softmax to the raw logits yields class probabilities that sum to 1.0; the probability of the predicted class is a rough confidence estimate. In practice, raw neural network softmax probabilities tend to be overconfident — the model often assigns 98% to its top class even when it is wrong. Techniques like temperature scaling (applying a temperature > 1 to soften the softmax before deployment) or Platt scaling (fitting a logistic regression on top of the raw logits using a calibration set) can correct this. For the purposes of this chapter's spam filter, the raw softmax probability is sufficient, but the book flags calibration as an important consideration for production systems.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">compute_accuracy</span>(model, loader):
+    model.<span class="fn">eval</span>()
+    correct, total = <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        <span class="kw">for</span> input_ids, labels <span class="kw">in</span> loader:
+            logits = <span class="fn">model</span>(input_ids)
+            preds  = logits.<span class="fn">argmax</span>(dim=<span class="num">-1</span>)
+            correct += (preds == labels).<span class="fn">sum</span>().<span class="fn">item</span>()
+            total   += labels.<span class="fn">size</span>(<span class="num">0</span>)
+    <span class="kw">return</span> correct / total</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table"></i> Confusion Matrix (Binary Classification)</div>
+
+          <div class="cm-wrap">
+            <table class="cm-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Predicted: Ham</th>
+                  <th>Predicted: Spam</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Actual: Ham</td>
+                  <td class="cm-tn">TN<span class="cm-sub">Correct rejection</span></td>
+                  <td class="cm-fp">FP<span class="cm-sub">False alarm</span></td>
+                </tr>
+                <tr>
+                  <td>Actual: Spam</td>
+                  <td class="cm-fn">FN<span class="cm-sub">Missed spam</span></td>
+                  <td class="cm-tp">TP<span class="cm-sub">Caught spam</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="viz-caption">Green cells (TN, TP) are correct predictions; FP is a false alarm (ham flagged as spam); FN is missed spam — typically the costlier error. F1 = 2TP / (2TP + FP + FN).</div>
+        </div>
+
+      </section><!-- /#lesson-6-6 -->
+
+      <!-- ══════════════════
+           LESSON 6.7
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-7">
+        <div class="lesson-header">
+          <span class="lesson-number">6.7</span>
+          <h2>Fine-tuning Training Loop</h2>
+        </div>
+
+        <p>The fine-tuning training loop looks nearly identical to the pretraining loop from Chapter 5, but several hyperparameters must be adjusted significantly. The most important is the <strong>learning rate</strong>: pretraining typically uses a warmup schedule that peaks around <code>1e-4</code> to <code>3e-4</code>. Fine-tuning should use a much smaller value — typically <code>5e-5</code> or lower — and often without warmup, because the model starts from a high-quality pretrained state rather than random weights. A large learning rate during fine-tuning risks <strong>catastrophic forgetting</strong>: the gradient updates are large enough to overwrite the rich linguistic representations acquired during pretraining, leaving the model good at spam detection but incoherent at language in general. The low learning rate ensures only small, targeted adjustments are made to the already-useful representations.</p>
+
+        <p>The number of training epochs also shrinks dramatically. Pretraining runs for many thousands of steps over enormous corpora to build up language knowledge from scratch. Fine-tuning on a few thousand labelled examples typically converges in one to five epochs. Running for longer risks overfitting: the labelled dataset is too small to justify more gradient steps, and the model will start memorising the specific examples it has seen rather than generalising the discriminative patterns. Monitor validation accuracy after each epoch and stop when it plateaus or declines — early stopping is both the practical and theoretically correct approach here.</p>
+
+        <p>The optimizer is still AdamW with weight decay, but only the unfrozen parameters are passed to it. Constructing the optimizer with <code>filter(lambda p: p.requires_grad, model.parameters())</code> ensures that frozen parameters are not included in the optimizer's state dictionaries, saving memory and avoiding any accidental updates. Gradient clipping remains useful at the same threshold of 1.0, though exploding gradients are less likely here because the model starts from a stable pretrained state rather than random initialisation.</p>
+
+        <pre class="code-block"><code>optimizer = torch.optim.<span class="fn">AdamW</span>(
+    <span class="fn">filter</span>(<span class="kw">lambda</span> p: p.requires_grad, model.<span class="fn">parameters</span>()),
+    lr=<span class="num">5e-5</span>, weight_decay=<span class="num">0.1</span>
+)
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(num_epochs):
+    model.<span class="fn">train</span>()
+    <span class="kw">for</span> input_ids, labels <span class="kw">in</span> train_loader:
+        optimizer.<span class="fn">zero_grad</span>()
+        logits = <span class="fn">model</span>(input_ids)               <span class="cmt"># [B, num_classes]</span>
+        loss   = F.<span class="fn">cross_entropy</span>(logits, labels)
+        loss.<span class="fn">backward</span>()
+        optimizer.<span class="fn">step</span>()
+    val_acc = <span class="fn">compute_accuracy</span>(model, val_loader)
+    <span class="fn">print</span>(<span class="str">f"Epoch {epoch+1} | Val Acc: {val_acc:.3f}"</span>)</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Fine-tuning Accuracy over Epochs</div>
+
+          <div class="acc-svg-wrap">
+            <svg id="accCurveSvg" viewBox="0 0 500 220" width="100%" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="acc-legend">
+            <span class="acc-legend-item"><span class="legend-line" style="background:#4f6ef7;"></span> Train accuracy</span>
+            <span class="acc-legend-item"><span class="legend-line" style="background:#10b981; border-style:dashed;"></span> Val accuracy</span>
+          </div>
+
+          <div class="viz-caption">Fine-tuning converges in just a few epochs when starting from pretrained weights. Val accuracy rises sharply in epoch 1–2, then plateaus — early stopping at epoch 3–4 is typical to prevent overfitting.</div>
+        </div>
+
+      </section><!-- /#lesson-6-7 -->
+
+      <!-- ══════════════════
+           LESSON 6.8
+      ══════════════════ -->
+      <section class="lesson" id="lesson-6-8">
+        <div class="lesson-header">
+          <span class="lesson-number">6.8</span>
+          <h2>Using the Classifier</h2>
+        </div>
+
+        <p>Inference with the fine-tuned model is straightforward: encode the input text with the tokeniser, wrap it in a batch dimension, run a forward pass, take the argmax of the output logits. The key operational difference from training is the <code>model.eval()</code> call, which disables dropout (if any) and switches BatchNorm layers to use their running statistics rather than per-batch statistics. Wrapping the forward pass in <code>torch.no_grad()</code> is equally important — it prevents PyTorch from recording the computation graph for backpropagation, which saves significant memory and speeds up inference by roughly 10–20% for a model of this size.</p>
+
+        <p>Applying softmax to the logits converts them to proper probabilities, enabling a <strong>confidence threshold</strong> strategy. Rather than always outputting the argmax label, you can instruct the model to abstain when its maximum probability falls below some threshold — say, 0.8. Messages that fall below the threshold get routed to a manual review queue or are classified conservatively as ham. This is a simple but highly practical pattern for production deployments where the cost of a wrong answer is asymmetric: missing spam is bad, but incorrectly filtering a legitimate message (a false positive) erodes user trust rapidly. Threshold tuning on a held-out calibration set lets you explicitly trade off precision against recall to match your application's tolerance for each type of error.</p>
+
+        <p>When deploying the classifier beyond the SMS domain — for example, applying the same model to email subject lines or social media posts — it is worth re-evaluating performance on a representative sample from the new domain before going live. Fine-tuning produces a highly task-specific model, but it is still grounded in the original training distribution. A model trained exclusively on SMS messages may miss spam patterns that are common in emails (HTML links, large embedded images, formal salutations) while flagging short transactional messages that look "spammy" in SMS context but are perfectly normal in email. Domain shift is one of the most common causes of production performance degradation in deployed NLP systems, and it is often invisible until users start complaining.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">classify_text</span>(model, tokenizer, text, device=<span class="str">'cpu'</span>):
+    model.<span class="fn">eval</span>()
+    input_ids = torch.<span class="fn">tensor</span>([tokenizer.<span class="fn">encode</span>(text)]).<span class="fn">to</span>(device)
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        logits = <span class="fn">model</span>(input_ids)
+    probs      = F.<span class="fn">softmax</span>(logits, dim=<span class="num">-1</span>)
+    label      = logits.<span class="fn">argmax</span>(dim=<span class="num">-1</span>).<span class="fn">item</span>()
+    confidence = probs[<span class="num">0</span>][label].<span class="fn">item</span>()
+    <span class="kw">return</span> (<span class="str">'spam'</span> <span class="kw">if</span> label == <span class="num">1</span> <span class="kw">else</span> <span class="str">'ham'</span>), confidence
+
+<span class="cmt"># Example</span>
+label, conf = <span class="fn">classify_text</span>(model, enc, <span class="str">"WIN A FREE IPHONE NOW!!!"</span>)
+<span class="fn">print</span>(<span class="str">f"{label} ({conf:.1%} confidence)"</span>)  <span class="cmt"># spam (98.3% confidence)</span></code></pre>
+
+      </section><!-- /#lesson-6-8 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Chapter 6 — Key Takeaways</h3>
+        <ul>
+          <li><strong>Classification fine-tuning</strong> replaces <code>lm_head</code> with a small <code>Linear(d_model, num_classes)</code> layer — everything else stays from pretraining.</li>
+          <li><strong>Last token's hidden state</strong> is used as the classification representation in GPT-style models — causal attention means it has seen the whole input.</li>
+          <li><strong>Loading pretrained weights</strong> provides a massive head start — a few hours of fine-tuning on thousands of examples beats weeks of training from scratch.</li>
+          <li><strong>Freezing early layers</strong> speeds up training and preserves low-level linguistic features; unfreezing the last block + head is the standard compromise.</li>
+          <li><strong>Low learning rate</strong> (5e-5) is critical — too high causes catastrophic forgetting, destroying the pretrained knowledge that makes fine-tuning valuable.</li>
+          <li><strong>F1 score</strong> is the right metric for imbalanced datasets like spam detection — raw accuracy is misleading when the majority class dominates.</li>
+          <li><strong>Confidence thresholds</strong> at inference allow the classifier to abstain on uncertain cases, enabling precision/recall trade-offs suited to the application's risk tolerance.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Chapter 6 Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of classification fine-tuning, architecture choices, and evaluation. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click a node to explore</div>
+        <svg id="mindmap-ch6" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+          <style>
+            #mindmap-ch6 .mm-branch { cursor:pointer; transition:opacity 0.3s; }
+            #mindmap-ch6 .mm-branch.dimmed { opacity:0.15; }
+            #mindmap-ch6 .mm-branch.highlighted .mm-branch-node rect { filter:brightness(1.2); }
+            #mindmap-ch6 .mm-center { cursor:pointer; }
+            #mindmap-ch6 .mm-sub { animation: mmFadeIn6 0.5s ease both; }
+            @keyframes mmFadeIn6 { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+            #mindmap-ch6 text { font-family: Inter, sans-serif; }
+          </style>
+          <defs>
+            <filter id="mm6-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0004"/>
+            </filter>
+          </defs>
+          <!-- Center node -->
+          <g class="mm-center" id="mm6-center">
+            <rect x="290" y="258" width="220" height="75" rx="16" fill="#6c63ff" filter="url(#mm6-shadow)"/>
+            <text x="400" y="288" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Classification</text>
+            <text x="400" y="306" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Fine-tuning</text>
+            <text x="400" y="323" text-anchor="middle" fill="#ffffffcc" font-size="10">Ch 6</text>
+          </g>
+          <!-- Branch 1: Fine-tuning Types (top-left) -->
+          <g class="mm-branch" id="mm6-b1">
+            <line x1="335" y1="268" x2="195" y2="175" stroke="#f97316" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="100" y="148" width="190" height="42" rx="10" fill="#f97316"/>
+              <text x="195" y="168" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Fine-tuning Types</text>
+              <text x="195" y="183" text-anchor="middle" fill="#ffffffcc" font-size="10">approaches</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="145" y1="165" x2="88" y2="115" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="20" y="98" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="88" y="118" text-anchor="middle" fill="#b45309" font-size="10">classification vs instr.</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="195" y1="148" x2="195" y2="98" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="127" y="68" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="195" y="88" text-anchor="middle" fill="#b45309" font-size="10">num_classes head</text>
+            </g>
+          </g>
+          <!-- Branch 2: Dataset (top) -->
+          <g class="mm-branch" id="mm6-b2">
+            <line x1="400" y1="258" x2="400" y2="168" stroke="#10b981" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="310" y="140" width="180" height="42" rx="10" fill="#10b981"/>
+              <text x="400" y="160" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Dataset</text>
+              <text x="400" y="175" text-anchor="middle" fill="#ffffffcc" font-size="10">SMS spam</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="355" y1="152" x2="290" y2="105" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="222" y="88" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="290" y="108" text-anchor="middle" fill="#065f46" font-size="10">class imbalance</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="400" y1="140" x2="400" y2="90" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="332" y="60" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="400" y="80" text-anchor="middle" fill="#065f46" font-size="10">F1 score</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="445" y1="152" x2="510" y2="105" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="442" y="88" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="510" y="108" text-anchor="middle" fill="#065f46" font-size="10">SMS spam dataset</text>
+            </g>
+          </g>
+          <!-- Branch 3: Data Loading (top-right) -->
+          <g class="mm-branch" id="mm6-b3">
+            <line x1="465" y1="268" x2="590" y2="175" stroke="#3b82f6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="510" y="148" width="160" height="42" rx="10" fill="#3b82f6"/>
+              <text x="590" y="168" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Data Loading</text>
+              <text x="590" y="183" text-anchor="middle" fill="#ffffffcc" font-size="10">batching</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="545" y1="162" x2="510" y2="115" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="442" y="98" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="510" y="118" text-anchor="middle" fill="#1e40af" font-size="10">padding</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="590" y1="148" x2="590" y2="98" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="522" y="68" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="590" y="88" text-anchor="middle" fill="#1e40af" font-size="10">collate_fn</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="635" y1="162" x2="665" y2="115" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="597" y="98" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="665" y="118" text-anchor="middle" fill="#1e40af" font-size="10">DataLoader</text>
+            </g>
+          </g>
+          <!-- Branch 4: Pretrained Weights (right) -->
+          <g class="mm-branch" id="mm6-b4">
+            <line x1="510" y1="300" x2="645" y2="300" stroke="#ec4899" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="645" y="278" width="150" height="42" rx="10" fill="#ec4899"/>
+              <text x="720" y="298" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Pretrained Weights</text>
+              <text x="720" y="313" text-anchor="middle" fill="#ffffffcc" font-size="10">transfer learning</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="680" y1="278" x2="660" y2="240" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="592" y="210" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="660" y="230" text-anchor="middle" fill="#9d174d" font-size="10">freeze layers</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="720" y1="278" x2="720" y2="240" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="652" y="210" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="720" y="230" text-anchor="middle" fill="#9d174d" font-size="10">catastrophic forgetting</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="755" y1="295" x2="760" y2="358" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="692" y="350" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="760" y="370" text-anchor="middle" fill="#9d174d" font-size="10">lr = 5e-5</text>
+            </g>
+          </g>
+          <!-- Branch 5: Classification Head (bottom-right) -->
+          <g class="mm-branch" id="mm6-b5">
+            <line x1="465" y1="325" x2="560" y2="430" stroke="#f59e0b" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="480" y="412" width="170" height="42" rx="10" fill="#f59e0b"/>
+              <text x="565" y="432" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Classification Head</text>
+              <text x="565" y="447" text-anchor="middle" fill="#ffffffcc" font-size="10">output layer</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="520" y1="450" x2="500" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="432" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="500" y="495" text-anchor="middle" fill="#92400e" font-size="10">last token repr.</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="565" y1="454" x2="565" y2="494" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="497" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="565" y="495" text-anchor="middle" fill="#92400e" font-size="10">Linear(768 → 2)</text>
+            </g>
+          </g>
+          <!-- Branch 6: Training (bottom-left) -->
+          <g class="mm-branch" id="mm6-b6">
+            <line x1="335" y1="325" x2="240" y2="430" stroke="#8b5cf6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="150" y="412" width="180" height="42" rx="10" fill="#8b5cf6"/>
+              <text x="240" y="432" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Training</text>
+              <text x="240" y="447" text-anchor="middle" fill="#ffffffcc" font-size="10">fine-tuning loop</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="185" y1="450" x2="148" y2="490" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="80" y="475" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="148" y="495" text-anchor="middle" fill="#4c1d95" font-size="10">AdamW</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="240" y1="454" x2="240" y2="494" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="172" y="475" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="240" y="495" text-anchor="middle" fill="#4c1d95" font-size="10">accuracy</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="290" y1="450" x2="330" y2="490" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="262" y="475" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="330" y="495" text-anchor="middle" fill="#4c1d95" font-size="10">confusion matrix</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <script>
+    (function(){
+      var svg = document.getElementById('mindmap-ch6');
+      if (!svg) return;
+      var branches = svg.querySelectorAll('.mm-branch');
+      var center   = svg.querySelector('.mm-center');
+      function resetAll() {
+        branches.forEach(function(b){ b.classList.remove('dimmed','highlighted'); });
+      }
+      branches.forEach(function(branch) {
+        branch.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isHighlighted = branch.classList.contains('highlighted');
+          resetAll();
+          if (!isHighlighted) {
+            branches.forEach(function(b){ b.classList.add('dimmed'); });
+            branch.classList.remove('dimmed');
+            branch.classList.add('highlighted');
+          }
+        });
+      });
+      center.addEventListener('click', function(){ resetAll(); });
+    })();
+    </script>
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="ch5.html" class="nav-prev" aria-label="Previous chapter">
+        <i class="fas fa-arrow-left"></i> Ch5: Pretraining
+      </a>
+      <a href="ch7.html" class="nav-next" aria-label="Next chapter">
+        Ch7: Instruction Fine-tuning <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions — Chapter 6
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "When fine-tuning GPT for classification, which token's representation is typically used as input to the classifier?",
+        options: [
+          "The first token (like BERT's [CLS])",
+          "The last non-padding token (captures full context causally)",
+          "The average of all token embeddings",
+          "A randomly selected token"
+        ],
+        correct: 1,
+        explanation: "GPT processes tokens causally — the last token has attended to all previous tokens and thus carries the most complete contextual representation of the entire input. This makes it the natural choice for classification."
+      },
+      {
+        question: "What architectural change is made to convert GPT into a classifier?",
+        options: [
+          "Add more transformer blocks",
+          "Replace the vocabulary-size output projection with a num_classes output projection",
+          "Remove the positional embeddings",
+          "Change the activation function"
+        ],
+        correct: 1,
+        explanation: "The lm_head (Linear: d_model → vocab_size) is replaced or bypassed with a classification head (Linear: d_model → num_classes). Everything else — embeddings, attention, FFN — stays the same."
+      },
+      {
+        question: "Why should the learning rate be much lower for fine-tuning (e.g. 5e-5) than for pretraining (e.g. 1e-4)?",
+        options: [
+          "Fine-tuning datasets are larger",
+          "To prevent catastrophic forgetting — large updates destroy pretrained language knowledge",
+          "The model is already trained, so gradients are unstable",
+          "Hardware limitations"
+        ],
+        correct: 1,
+        explanation: "Catastrophic forgetting occurs when aggressive gradient updates overwrite the learned representations from pretraining. A small learning rate makes incremental adjustments while preserving the model's general language understanding."
+      },
+      {
+        question: "Why is accuracy alone a poor metric for the spam/ham classification task?",
+        options: [
+          "Accuracy is too slow to compute",
+          "Class imbalance means a model predicting 'ham' for everything achieves ~87% accuracy without learning anything",
+          "Accuracy only works for 3+ classes",
+          "Accuracy doesn't account for model confidence"
+        ],
+        correct: 1,
+        explanation: "With ~87% ham and ~13% spam, always predicting 'not spam' achieves 87% accuracy trivially. F1 score (harmonic mean of precision and recall) captures performance on the minority class and is the right metric here."
+      },
+      {
+        question: "What is 'catastrophic forgetting' in the context of fine-tuning?",
+        options: [
+          "The model forgets how to tokenize text",
+          "Large gradient updates during fine-tuning overwrite pretrained language representations",
+          "The optimizer loses its momentum state",
+          "Gradient checkpointing clears cached activations"
+        ],
+        correct: 1,
+        explanation: "Catastrophic forgetting is when fine-tuning on a small task-specific dataset causes the model to lose general knowledge acquired during pretraining, degrading both the new task and any general capability."
+      },
+      {
+        question: "What is one way to handle class imbalance in fine-tuning?",
+        options: [
+          "Add more transformer blocks",
+          "Oversample the minority class or undersample the majority class",
+          "Use a larger learning rate",
+          "Remove the LayerNorm layers"
+        ],
+        correct: 1,
+        explanation: "Oversampling duplicates minority-class examples; undersampling removes majority-class examples. Both balance the training distribution, preventing the model from ignoring the underrepresented class."
+      },
+      {
+        question: "When layers are 'frozen' during fine-tuning, what does this mean?",
+        options: [
+          "The weights are stored in read-only memory",
+          "The parameters have requires_grad=False so no gradients are computed or applied to them",
+          "The layers are removed from the forward pass",
+          "The layers use a fixed learning rate of 0"
+        ],
+        correct: 1,
+        explanation: "Setting requires_grad=False prevents PyTorch from computing gradients for those parameters, so the optimizer never updates them. Frozen layers contribute to the forward pass but are fixed — only the unfrozen layers adapt."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+
+    /* ─────────────────────────────────────────
+       Dataset distribution bars (Lesson 6.2)
+       Animate in on load
+    ───────────────────────────────────────── */
+    (function() {
+      const hamBar  = document.getElementById('hamBar');
+      const spamBar = document.getElementById('spamBar');
+      if (!hamBar || !spamBar) return;
+      // Trigger CSS transition after a brief delay
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          hamBar.style.width  = '87%';
+          spamBar.style.width = '13%';
+        }, 200);
+      });
+    })();
+
+    /* ─────────────────────────────────────────
+       Accuracy curve SVG (Lesson 6.7)
+    ───────────────────────────────────────── */
+    (function() {
+      const svg = document.getElementById('accCurveSvg');
+      if (!svg) return;
+      const W = 500, H = 220;
+      const PAD = { top: 20, bottom: 35, left: 48, right: 20 };
+      const plotW = W - PAD.left - PAD.right;
+      const plotH = H - PAD.top - PAD.bottom;
+
+      // X: epoch 1–5, Y: accuracy 0.5–1.0
+      const xMin = 1, xMax = 5;
+      const yMin = 0.50, yMax = 1.02;
+
+      function xS(x) { return PAD.left + (x - xMin) / (xMax - xMin) * plotW; }
+      function yS(y) { return PAD.top + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
+
+      // Axes
+      const yAxis = PAD.left;
+      const xAxis = PAD.top + plotH;
+      svg.innerHTML += `<line x1="${yAxis}" y1="${PAD.top}" x2="${yAxis}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
+      svg.innerHTML += `<line x1="${yAxis}" y1="${xAxis}" x2="${W - PAD.right}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
+
+      // Y-axis grid + labels
+      [0.6, 0.7, 0.8, 0.9, 1.0].forEach(yv => {
+        const sy = yS(yv);
+        svg.innerHTML += `<line x1="${yAxis}" y1="${sy}" x2="${W - PAD.right}" y2="${sy}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
+        svg.innerHTML += `<text x="${yAxis - 6}" y="${sy + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${(yv * 100).toFixed(0)}%</text>`;
+      });
+
+      // X-axis labels
+      for (let ep = xMin; ep <= xMax; ep++) {
+        const sx = xS(ep);
+        svg.innerHTML += `<text x="${sx}" y="${xAxis + 14}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${ep}</text>`;
+      }
+      svg.innerHTML += `<text x="${xS(3)}" y="${H}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="Inter, sans-serif">epoch</text>`;
+
+      // Train accuracy: rises quickly
+      const trainPts = [
+        [1, 0.72], [2, 0.89], [3, 0.94], [4, 0.96], [5, 0.98]
+      ];
+      // Val accuracy: rises then plateaus
+      const valPts = [
+        [1, 0.70], [2, 0.87], [3, 0.92], [4, 0.93], [5, 0.93]
+      ];
+
+      function toPolyline(pts) {
+        return pts.map(([x, y]) => `${xS(x).toFixed(1)},${yS(y).toFixed(1)}`).join(' ');
+      }
+
+      svg.innerHTML += `<polyline points="${toPolyline(trainPts)}" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      svg.innerHTML += `<polyline points="${toPolyline(valPts)}"   fill="none" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>`;
+
+      // Dots
+      trainPts.forEach(([x, y]) => {
+        svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3.5" fill="#4f6ef7"/>`;
+      });
+      valPts.forEach(([x, y]) => {
+        svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3.5" fill="#10b981"/>`;
+      });
+
+      // Early stop annotation at epoch 3
+      const stopX = xS(3);
+      svg.innerHTML += `<line x1="${stopX}" y1="${PAD.top}" x2="${stopX}" y2="${xAxis}" stroke="var(--accent-2)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+      svg.innerHTML += `<text x="${stopX + 4}" y="${PAD.top + 12}" font-size="9" fill="var(--accent-2)" font-family="Inter, sans-serif">early stop</text>`;
+    })();
+  </script>
+</body>
+</html>

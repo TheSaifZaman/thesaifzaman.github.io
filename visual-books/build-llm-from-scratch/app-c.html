@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App C: Exercise Solutions — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Exercise cards ── */
+    .exercise-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .exercise-card .ex-question {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+    .exercise-card .ex-q-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(79,110,247,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(79,110,247,0.3);
+      border-radius: 6px;
+      padding: 0.18rem 0.55rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .solution-toggle {
+      background: none;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      border-radius: 7px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.18s;
+    }
+    .solution-toggle:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .solution-body {
+      display: none;
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .solution-body.open {
+      display: block;
+    }
+    .solution-body .sol-step {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .sol-label {
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Calculation table ── */
+    .calc-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.8rem;
+      margin: 0.75rem 0;
+    }
+    .calc-table th {
+      background: var(--surface);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .calc-table td {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .calc-table tr:last-child td {
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(79,110,247,0.06);
+    }
+  </style>
+</head>
+<body data-chapter="app-c">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">App C: Exercises</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Appendix C</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Appendix C</div>
+      <h1>Exercise Solutions</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 5 Exercises</span>
+        <span><i class="fas fa-question-circle"></i> 5-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~20 min read</span>
+        <span class="tag">Exercises</span>
+        <span class="tag">Solutions</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>The exercises in this book are designed to check conceptual understanding, not just code recall. Each exercise targets a moment of potential confusion — a place where the math, the architecture, or the training dynamics could be misunderstood if learned by reading alone. Working through them forces you to confront the reasoning, not just memorise the answer.</p>
+
+      <p>Try each exercise yourself before revealing the solution. The struggle is the learning. If you get the answer immediately, the exercise confirmed knowledge you already had. If you find it difficult, the exercise is revealing a gap worth filling — and the solution will be significantly more memorable after the struggle. Click the "Show Solution" button below each question to reveal the full worked answer.</p>
+
+      <!-- ══════════════════
+           EXERCISE C.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-c-1">
+        <div class="lesson-header">
+          <span class="lesson-number">C.1</span>
+          <h2>Ch1 Exercise: Encoder vs Decoder</h2>
+        </div>
+
+        <p>This exercise targets the single most important architectural distinction in the transformer family: the difference between bidirectional attention and causal attention. Understanding why BERT and GPT use different masking strategies — and what that means for what each architecture is good at — is foundational to every subsequent design decision in LLM development.</p>
+
+        <p>The question is deliberately framed in terms of masking because masking is the implementation-level mechanism. The conceptual-level answer is about information flow: which tokens can a given position "see" when computing its representation? For generation, a token must only see past tokens (otherwise the model would cheat by looking at the future). For understanding, seeing all tokens simultaneously builds richer context representations. Knowing this distinction lets you immediately understand why GPT cannot be used for masked language modelling and why BERT cannot auto-regressively generate text.</p>
+
+        <div class="exercise-card">
+          <div class="ex-question">
+            <span class="ex-q-badge">Q</span>
+            What is the fundamental difference between an encoder-only and decoder-only transformer in terms of attention masking?
+          </div>
+          <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fas fa-eye"></i> Show Solution</button>
+          <div class="solution-body">
+            <p><strong>Encoder-only (BERT):</strong> Uses <strong>bidirectional attention</strong> — each token can attend to all other tokens in the sequence, both before and after it. The attention mask has no causal restriction. This gives richer contextual representations because every position has access to the full context simultaneously, making BERT excellent for understanding tasks (classification, NER, question answering) where the full input is available.</p>
+            <p style="margin-top:0.6rem;"><strong>Decoder-only (GPT):</strong> Uses <strong>causal masking</strong> (upper-triangular mask) — each token can only attend to positions at or before its own position. This enforces the autoregressive property: position <em>i</em> can only see tokens 1 through <em>i</em>. This makes GPT suitable for generation (predicts the next token one at a time) but means it cannot "see" future tokens — which is why you cannot use GPT for masked language modelling.</p>
+            <p style="margin-top:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.78rem;">BERT mask: all 1s (full attention)<br>GPT mask:  lower-triangular (causal attention)</p>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-c-1 -->
+
+      <!-- ══════════════════
+           EXERCISE C.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-c-2">
+        <div class="lesson-header">
+          <span class="lesson-number">C.2</span>
+          <h2>Ch2 Exercise: BPE Tokenization</h2>
+        </div>
+
+        <p>Byte Pair Encoding is one of those algorithms that is simple to state but requires careful thinking to truly understand. The question here focuses on the comparison between sub-word tokenisation and character-level tokenisation — specifically, why BPE produces meaningful sub-word chunks rather than individual characters. The answer reveals why BPE is so powerful: it learns a vocabulary that captures the statistical structure of the language, not just its character inventory.</p>
+
+        <p>Understanding why "unhappiness" would not be tokenised character by character also builds intuition for why BPE handles out-of-vocabulary words gracefully. Any new word can be decomposed into known sub-word pieces because the algorithm preserves individual characters as the minimum unit — the worst case is character-level tokenisation, but common sub-words are always preferred when available in the vocabulary.</p>
+
+        <div class="exercise-card">
+          <div class="ex-question">
+            <span class="ex-q-badge">Q</span>
+            Why does BPE tokenise "unhappiness" as ["un", "happ", "iness"] instead of ["u","n","h","a","p","p","i","n","e","s","s"]?
+          </div>
+          <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fas fa-eye"></i> Show Solution</button>
+          <div class="solution-body">
+            <p>BPE starts from a character-level vocabulary and <strong>iteratively merges the most frequent adjacent pair</strong> of tokens across the training corpus. After thousands of merge operations:</p>
+            <p style="margin-top:0.5rem;">The sub-strings "happ" and "iness" appear very frequently together in English text (happiness, unhappy, happily, hapless…), so they have been merged into single vocabulary entries through many rounds of BPE.</p>
+            <p style="margin-top:0.5rem;">Similarly "un" is a common English prefix (unify, undo, unhappy, unlike…) and is kept as a single token.</p>
+            <p style="margin-top:0.5rem;">Character-level tokenisation would produce 11 tokens for "unhappiness"; BPE produces 3 — a 3.7× compression. This matters because longer sequences require proportionally more attention compute (O(n²) in vanilla attention). BPE also preserves sub-word meaning: "un" signals negation, "happ" signals happiness — information that single characters do not carry.</p>
+            <p style="margin-top:0.5rem;"><strong>OOV handling:</strong> because BPE retains individual characters as a fallback, it can tokenise any word — novel proper nouns, typos, scientific terminology — by decomposing it into the longest known sub-word pieces.</p>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-c-2 -->
+
+      <!-- ══════════════════
+           EXERCISE C.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-c-3">
+        <div class="lesson-header">
+          <span class="lesson-number">C.3</span>
+          <h2>Ch3 Exercise: Attention Scaling</h2>
+        </div>
+
+        <p>The scaling factor of √d_k in attention is one of the most commonly cited but least intuitively understood details in transformer architecture. This exercise works through the mathematics of why large dot products are problematic and why dividing by √d_k exactly fixes the variance. The answer connects probability theory (variance of dot products), neural network training dynamics (gradient flow through softmax), and architectural decisions (the choice of d_k).</p>
+
+        <p>Once you understand why large pre-softmax logits cause softmax to become nearly one-hot — and why a nearly one-hot softmax has near-zero gradient — you will never forget the scaling factor. It is not an arbitrary constant; it is the exact correction needed to keep attention trainable at any dimension d_k.</p>
+
+        <div class="exercise-card">
+          <div class="ex-question">
+            <span class="ex-q-badge">Q</span>
+            A model with d_k=64 computes Q·K^T. What is the expected magnitude of these dot products before scaling, and why does this cause problems?
+          </div>
+          <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fas fa-eye"></i> Show Solution</button>
+          <div class="solution-body">
+            <p><strong>Expected variance:</strong> For two random unit vectors q and k in ℝ^d_k, the dot product q·k is a sum of d_k independent random variables each with mean 0 and variance 1. By the central limit theorem, the sum has variance = d_k.</p>
+            <div class="sol-step"><span class="sol-label">Var(q·k)</span> = d_k = 64, so std ≈ 8</div>
+            <p style="margin-top:0.5rem;"><strong>The problem:</strong> These dot products with std≈8 are passed into softmax. Softmax maps logits via exp(x_i)/Σ exp(x_j). When logits have large magnitude:</p>
+            <ul style="margin:0.4rem 0 0.4rem 1.2rem;font-size:0.82rem;">
+              <li>The largest logit dominates exp() exponentially</li>
+              <li>Softmax output approaches a one-hot distribution</li>
+              <li>The gradient of softmax ≈ 0 (saturated region)</li>
+              <li>Gradients vanish during backpropagation — the model cannot learn</li>
+            </ul>
+            <p style="margin-top:0.5rem;"><strong>The fix:</strong> Divide by √d_k = √64 = 8. This scales the dot products to have unit variance (std=1), keeping softmax in its unsaturated operating range where gradients flow cleanly.</p>
+            <div class="sol-step"><span class="sol-label">Var(q·k / √d_k)</span> = Var(q·k) / d_k = d_k / d_k = 1 ✓</div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-c-3 -->
+
+      <!-- ══════════════════
+           EXERCISE C.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-c-4">
+        <div class="lesson-header">
+          <span class="lesson-number">C.4</span>
+          <h2>Ch4 Exercise: Parameter Count</h2>
+        </div>
+
+        <p>Being able to count the parameters in a transformer model from first principles is a surprisingly useful skill. It lets you sanity-check model implementations, compare configurations, understand memory requirements, and estimate training cost. GPT-2 Small with its 124M parameters is the canonical reference point — every number in the calculation below is worth memorising as a sense check for future architectural work.</p>
+
+        <p>The most important insight from this calculation is that the token embedding matrix (50,257 × 768 ≈ 38.6M parameters) is comparable in size to the entire stack of 12 transformer blocks (≈ 85M parameters) — a fact that surprises most people encountering it for the first time. Weight tying, which shares this matrix with the output projection, is therefore a significant design decision that saves ~38.6M parameters and also improves the model's ability to generalise (the embedding and unembedding spaces are the same).</p>
+
+        <div class="exercise-card">
+          <div class="ex-question">
+            <span class="ex-q-badge">Q</span>
+            Calculate the approximate parameter count of GPT-2 Small (vocab=50257, d_model=768, layers=12, heads=12, context=1024).
+          </div>
+          <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fas fa-eye"></i> Show Solution</button>
+          <div class="solution-body">
+            <table class="calc-table">
+              <thead>
+                <tr><th>Component</th><th>Formula</th><th>Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Token embedding</td><td>50,257 × 768</td><td>38.6M</td></tr>
+                <tr><td>Positional embedding</td><td>1,024 × 768</td><td>0.79M</td></tr>
+                <tr><td>Attention per block</td><td>4 × 768²</td><td>2.36M</td></tr>
+                <tr><td>FFN per block</td><td>2 × 768 × 3072</td><td>4.72M</td></tr>
+                <tr><td>LayerNorm per block</td><td>2 × 2 × 768</td><td>0.003M</td></tr>
+                <tr><td>Per block total</td><td>—</td><td>~7.08M</td></tr>
+                <tr><td>12 blocks</td><td>12 × 7.08M</td><td>~85M</td></tr>
+                <tr><td>Final LN + lm_head</td><td>tied to tok_emb</td><td>0 (shared)</td></tr>
+                <tr><td><strong>Total (with weight tying)</strong></td><td></td><td><strong>~124M</strong></td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.8rem;color:var(--text-muted);">Weight tying saves ~38.6M params vs counting lm_head separately. Without tying, total would be ~163M.</p>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-c-4 -->
+
+      <!-- ══════════════════
+           EXERCISE C.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-c-5">
+        <div class="lesson-header">
+          <span class="lesson-number">C.5</span>
+          <h2>Ch5 Exercise: Perplexity</h2>
+        </div>
+
+        <p>Perplexity is the standard evaluation metric for language models, but its intuitive meaning is often glossed over. This exercise forces you to compute it from a cross-entropy loss value and then interpret what the number means at a human level. The key insight is that perplexity measures how "confused" the model is — an exponential of the entropy — and can be interpreted as the effective vocabulary size the model is choosing from at each step.</p>
+
+        <p>Knowing some reference perplexity values is essential context for evaluating results. A random model over GPT-2's 50,257-token vocabulary has perplexity ≈ 50,257. A strong GPT-2 model achieves ~29 perplexity on WebText (its training distribution). Human text achieves roughly perplexity ~30–50 depending on domain. A perplexity of 20.1 (from a loss of 3.0) means the model is performing better than a typical GPT-2 checkpoint on its own training data — a strong result for a from-scratch implementation.</p>
+
+        <div class="exercise-card">
+          <div class="ex-question">
+            <span class="ex-q-badge">Q</span>
+            A model has cross-entropy loss of 3.0 on the validation set. What is the perplexity, and what does it mean intuitively?
+          </div>
+          <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fas fa-eye"></i> Show Solution</button>
+          <div class="solution-body">
+            <div class="sol-step"><span class="sol-label">Formula:</span> Perplexity = e^(cross_entropy_loss)</div>
+            <div class="sol-step"><span class="sol-label">Value:</span> PPL = e^3.0 ≈ 20.09</div>
+            <p style="margin-top:0.6rem;"><strong>Intuitive meaning:</strong> The model is as "confused" as if it were choosing uniformly among ~20 equally likely next tokens at each step. In other words, on average the model narrows the candidate next tokens from the full vocabulary of 50,257 down to ~20 plausible options.</p>
+            <p style="margin-top:0.5rem;"><strong>Reference points:</strong></p>
+            <ul style="margin:0.35rem 0 0 1.2rem;font-size:0.82rem;">
+              <li>Random model: PPL ≈ 50,257 (no information about the language)</li>
+              <li>GPT-2 Small on WebText: PPL ≈ 29</li>
+              <li>GPT-2 XL on WebText: PPL ≈ 18</li>
+              <li>A PPL of ~20 is an excellent result for a from-scratch implementation</li>
+            </ul>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-c-5 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Appendix C — Key Takeaways</h3>
+        <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:1rem;">Work through exercises to solidify understanding — the struggle is the learning.</p>
+        <ul>
+          <li><strong>Encoder vs Decoder:</strong> BERT uses bidirectional attention (sees all tokens); GPT uses causal masking (sees only past tokens). This determines whether the model is suitable for understanding or generation.</li>
+          <li><strong>BPE tokenisation</strong> avoids OOV by decomposing words into frequent sub-word pieces. Character-level tokenisation is the fallback — any word can always be tokenised, never OOV.</li>
+          <li><strong>Attention scaling by √d_k</strong> normalises dot product variance to 1, preventing softmax saturation and vanishing gradients. It is not arbitrary — it is the exact correction needed.</li>
+          <li><strong>GPT-2 Small has ~124M parameters</strong> — the token embedding (~38.6M) is comparable in size to the entire transformer stack (~85M). Weight tying saves ~38.6M by sharing the embedding and output projection.</li>
+          <li><strong>Perplexity = e^loss</strong> measures how many equally likely options the model considers at each step. A loss of 3.0 gives PPL ≈ 20 — far better than random (PPL ≈ 50,257) and comparable to strong GPT-2 checkpoints.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Appendix C Quiz</h3>
+        <p class="quiz-subtitle">Test your comprehension of the exercise concepts — attention scaling, parameter counts, BPE, weight tying, and perplexity. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Appendix Mind Map — click a node to explore</div>
+        <style>
+          @keyframes mmFadeInC { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+          #mm-app-c .mm-node { cursor:pointer; transition:opacity 0.25s; }
+          #mm-app-c.dim-others .mm-branch { opacity:0.18; }
+          #mm-app-c.dim-others .mm-branch.active { opacity:1; }
+          #mm-app-c .mm-center { cursor:pointer; }
+          #mm-app-c g { animation: mmFadeInC 0.45s ease both; }
+          #mm-app-c g:nth-child(2) { animation-delay:0.05s; }
+          #mm-app-c g:nth-child(3) { animation-delay:0.10s; }
+          #mm-app-c g:nth-child(4) { animation-delay:0.15s; }
+          #mm-app-c g:nth-child(5) { animation-delay:0.20s; }
+          #mm-app-c g:nth-child(6) { animation-delay:0.25s; }
+          #mm-app-c g:nth-child(7) { animation-delay:0.30s; }
+        </style>
+        <svg id="mm-app-c" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Branch lines -->
+          <!-- Enc vs Dec → top-left -->
+          <line x1="400" y1="300" x2="170" y2="120" stroke="#4f6ef7" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="120" x2="62"  y2="72"  stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="120" x2="62"  y2="108" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="120" x2="62"  y2="144" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- BPE → top-right -->
+          <line x1="400" y1="300" x2="630" y2="120" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="120" x2="730" y2="72"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="120" x2="730" y2="108" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="120" x2="730" y2="144" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Attention Scaling → left -->
+          <line x1="400" y1="300" x2="148" y2="300" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+          <line x1="148" y1="300" x2="54"  y2="258" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="148" y1="300" x2="54"  y2="296" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="148" y1="300" x2="54"  y2="334" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Param Count → bottom-left -->
+          <line x1="400" y1="300" x2="170" y2="470" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="470" x2="62"  y2="420" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="62"  y2="458" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="62"  y2="496" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Perplexity → bottom-right -->
+          <line x1="400" y1="300" x2="630" y2="470" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="470" x2="730" y2="420" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="730" y2="458" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="730" y2="496" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- CENTER NODE -->
+          <g class="mm-center" onclick="mmResetC()">
+            <circle cx="400" cy="300" r="50" fill="#4f6ef7" opacity="0.95"/>
+            <text x="400" y="296" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Exercises</text>
+            <text x="400" y="314" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">(click to reset)</text>
+          </g>
+
+          <!-- BRANCH 1: Encoder vs Decoder -->
+          <g class="mm-branch mm-node" data-branch="encdec-c" onclick="mmSelectC(this)">
+            <ellipse cx="170" cy="120" rx="72" ry="22" fill="#4f6ef7" opacity="0.15"/>
+            <ellipse cx="170" cy="120" rx="72" ry="22" fill="none" stroke="#4f6ef7" stroke-width="1.8"/>
+            <text x="170" y="124" text-anchor="middle" font-size="12" font-weight="600" fill="#4f6ef7">Enc vs Decoder</text>
+            <rect x="4"  y="58"  width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="61" y="73"  text-anchor="middle" font-size="10" fill="#4f6ef7">bidirectional</text>
+            <rect x="4"  y="94"  width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="61" y="109" text-anchor="middle" font-size="10" fill="#4f6ef7">causal masking</text>
+            <rect x="4"  y="130" width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="61" y="145" text-anchor="middle" font-size="10" fill="#4f6ef7">BERT vs GPT</text>
+          </g>
+
+          <!-- BRANCH 2: BPE Tokenization -->
+          <g class="mm-branch mm-node" data-branch="bpe-c" onclick="mmSelectC(this)">
+            <ellipse cx="630" cy="120" rx="72" ry="22" fill="#f59e0b" opacity="0.15"/>
+            <ellipse cx="630" cy="120" rx="72" ry="22" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="630" y="124" text-anchor="middle" font-size="12" font-weight="600" fill="#f59e0b">BPE Tokenization</text>
+            <rect x="672" y="58"  width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="73"  text-anchor="middle" font-size="10" fill="#f59e0b">subword units</text>
+            <rect x="672" y="94"  width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="109" text-anchor="middle" font-size="10" fill="#f59e0b">merge rules</text>
+            <rect x="672" y="130" width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="145" text-anchor="middle" font-size="10" fill="#f59e0b">OOV-free</text>
+          </g>
+
+          <!-- BRANCH 3: Attention Scaling -->
+          <g class="mm-branch mm-node" data-branch="attnscale-c" onclick="mmSelectC(this)">
+            <ellipse cx="148" cy="300" rx="74" ry="22" fill="#10b981" opacity="0.12"/>
+            <ellipse cx="148" cy="300" rx="74" ry="22" fill="none" stroke="#10b981" stroke-width="1.8"/>
+            <text x="148" y="304" text-anchor="middle" font-size="12" font-weight="600" fill="#10b981">Attn Scaling</text>
+            <rect x="2"  y="244" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="56" y="259" text-anchor="middle" font-size="10" fill="#10b981">√d_k</text>
+            <rect x="2"  y="282" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="56" y="297" text-anchor="middle" font-size="10" fill="#10b981">variance=d_k</text>
+            <rect x="2"  y="320" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="56" y="335" text-anchor="middle" font-size="10" fill="#10b981">softmax saturation</text>
+          </g>
+
+          <!-- BRANCH 4: Parameter Count -->
+          <g class="mm-branch mm-node" data-branch="params-c" onclick="mmSelectC(this)">
+            <ellipse cx="170" cy="470" rx="72" ry="22" fill="#a855f7" opacity="0.12"/>
+            <ellipse cx="170" cy="470" rx="72" ry="22" fill="none" stroke="#a855f7" stroke-width="1.8"/>
+            <text x="170" y="474" text-anchor="middle" font-size="12" font-weight="600" fill="#a855f7">Param Count</text>
+            <rect x="4"  y="406" width="114" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="61" y="421" text-anchor="middle" font-size="9"  fill="#a855f7">50257×768=38.6M</text>
+            <rect x="4"  y="444" width="114" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="61" y="459" text-anchor="middle" font-size="10" fill="#a855f7">12 blocks</text>
+            <rect x="4"  y="482" width="114" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="61" y="497" text-anchor="middle" font-size="10" fill="#a855f7">weight tying</text>
+          </g>
+
+          <!-- BRANCH 5: Perplexity -->
+          <g class="mm-branch mm-node" data-branch="ppl-c" onclick="mmSelectC(this)">
+            <ellipse cx="630" cy="470" rx="66" ry="22" fill="#ef4444" opacity="0.12"/>
+            <ellipse cx="630" cy="470" rx="66" ry="22" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+            <text x="630" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#ef4444">Perplexity</text>
+            <rect x="672" y="406" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="421" text-anchor="middle" font-size="11" fill="#ef4444">e^loss</text>
+            <rect x="672" y="444" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="459" text-anchor="middle" font-size="9"  fill="#ef4444">~20 = 20 equal choices</text>
+            <rect x="672" y="482" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="497" text-anchor="middle" font-size="10" fill="#ef4444">GPT-2 ≈ ~29</text>
+          </g>
+
+        </svg>
+        <script>
+          function mmSelectC(el) {
+            const svg = document.getElementById('mm-app-c');
+            svg.classList.add('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+          }
+          function mmResetC() {
+            const svg = document.getElementById('mm-app-c');
+            svg.classList.remove('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+          }
+        </script>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="app-b.html" class="nav-prev" aria-label="Previous appendix">
+        <i class="fas fa-arrow-left"></i> App B: References
+      </a>
+      <a href="app-d.html" class="nav-next" aria-label="Next appendix">
+        App D: Training Extras <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Solution toggle — Appendix C
+    ───────────────────────────────────────── */
+    function toggleSolution(btn) {
+      const body = btn.nextElementSibling;
+      if (body.classList.contains('open')) {
+        body.classList.remove('open');
+        btn.innerHTML = '<i class="fas fa-eye"></i> Show Solution';
+      } else {
+        body.classList.add('open');
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Solution';
+      }
+    }
+
+    /* ─────────────────────────────────────────
+       Quiz questions — Appendix C
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "What is the expected dot product variance for Q·K^T vectors in d_k=64 dimensional space?",
+        options: [
+          "1",
+          "8",
+          "64",
+          "512"
+        ],
+        correct: 2,
+        explanation: "For random unit vectors in d_k dimensions, the dot product has variance = d_k. At d_k=64, variance=64 (std≈8). This is why we divide by √d_k=8 to normalise variance back to 1."
+      },
+      {
+        question: "In GPT-2 Small (124M params), approximately how many parameters are in the token embedding matrix?",
+        options: [
+          "~1M",
+          "~19M",
+          "~38.6M",
+          "~85M"
+        ],
+        correct: 2,
+        explanation: "Token embedding = vocab_size × d_model = 50,257 × 768 ≈ 38.6M parameters. This is the single largest parameter matrix in the model, and it is shared (weight-tied) with the output projection."
+      },
+      {
+        question: "If a model has a validation cross-entropy loss of 4.0, what is its perplexity?",
+        options: [
+          "4.0",
+          "~20",
+          "~55",
+          "400"
+        ],
+        correct: 2,
+        explanation: "Perplexity = e^loss = e^4.0 ≈ 54.6. This means the model is choosing among ~55 equally likely tokens at each step on average."
+      },
+      {
+        question: "Why does BPE tokenisation avoid the out-of-vocabulary (OOV) problem?",
+        options: [
+          "It has a very large vocabulary",
+          "It uses sub-word units that can represent any word by combining frequent pieces",
+          "It replaces OOV words with synonyms",
+          "It converts all text to lowercase"
+        ],
+        correct: 1,
+        explanation: "BPE builds sub-word pieces from the training corpus. Any new word can be decomposed into known sub-word units (worst case: individual characters), so OOV is impossible."
+      },
+      {
+        question: "What does weight tying in GPT-2 accomplish?",
+        options: [
+          "Freezes embedding weights during training",
+          "Shares the token embedding matrix with the output projection, saving ~38.6M parameters",
+          "Ties the weights of all transformer blocks together",
+          "Prevents overfitting in the attention layers"
+        ],
+        correct: 1,
+        explanation: "Weight tying makes lm_head.weight = tok_emb.weight. Both map between d_model space and vocab_size space, so sharing makes semantic sense and reduces the parameter count by ~38.6M."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

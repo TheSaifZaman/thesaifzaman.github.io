@@ -103,6 +103,16 @@ var PAGES_DATA = [
         tags: ["mentorship", "developers", "career", "guidance", "ummah"]
     },
     {
+        title: "Visual Books",
+        description: "Complex books transformed into interactive visual study companions — lessons, visualizations & quizzes. First up: Build an LLM From Scratch.",
+        href: "../visual-books/index.html",
+        icon: "fas fa-book-open",
+        color: "blue",
+        category: "Knowledge",
+        tags: ["llm", "ai", "machine-learning", "deep-learning", "pytorch", "gpt", "transformers", "book", "visual"],
+        featured: true
+    },
+    {
         title: "DSA & ML/AI Visualizer",
         description: "224 interactive algorithm visualizations with complexity analysis, code implementations, and curated LeetCode problems for SWE interview prep.",
         href: "../dsa/index.html",

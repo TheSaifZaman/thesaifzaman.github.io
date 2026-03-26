@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch7: Instruction Fine-tuning — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Prompt format comparison grid ── */
+    .format-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 520px) {
+      .format-grid { grid-template-columns: 1fr; }
+    }
+    .format-card {
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+    }
+    .format-card .fc-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.65rem;
+    }
+    .format-card.fc-alpaca { border-color: rgba(79,110,247,0.35); }
+    .format-card.fc-alpaca .fc-header { color: var(--accent); }
+    .format-card.fc-phi3   { border-color: rgba(16,185,129,0.35); }
+    .format-card.fc-phi3   .fc-header { color: var(--accent-3); }
+    .format-card pre {
+      margin: 0;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface-2);
+      border-radius: 7px;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      overflow-x: auto;
+    }
+
+    /* ── Token mask viz ── */
+    .token-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.65rem 0;
+    }
+    .tok {
+      padding: 0.25rem 0.55rem;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+    .tok-prompt {
+      background: rgba(239,68,68,0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+    .tok-response {
+      background: rgba(16,185,129,0.12);
+      color: var(--accent-3);
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+    .tok-pad {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+    }
+    .token-legend {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+    }
+    .token-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+    .tok-swatch {
+      width: 14px; height: 14px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* ── Pipeline steps ── */
+    .viz-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1rem auto;
+      max-width: 420px;
+    }
+    .viz-node {
+      width: 100%;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      position: relative;
+    }
+    .viz-node .vn-sub {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      opacity: 0.75;
+      display: block;
+      margin-top: 0.1rem;
+    }
+    .viz-arrow {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .vn-data    { background: rgba(79,110,247,0.12);  color: var(--accent);   border: 1.5px solid rgba(79,110,247,0.3); }
+    .vn-collate { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+    .vn-model   { background: rgba(168,85,247,0.10);  color: #a855f7;         border: 1.5px solid rgba(168,85,247,0.25); }
+    .vn-loss    { background: rgba(239,68,68,0.10);   color: #ef4444;         border: 1.5px solid rgba(239,68,68,0.25); }
+    .vn-gen     { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .vn-eval    { background: rgba(79,110,247,0.18);  color: var(--accent);   border: 2px solid rgba(79,110,247,0.4); }
+
+    /* ── Dataset example cards ── */
+    .dataset-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 0.8rem 0;
+    }
+    .ds-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 0.75rem 1rem;
+    }
+    .ds-card .ds-type {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .ds-card dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      row-gap: 0.2rem;
+      column-gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .ds-card dt {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .ds-card dd {
+      margin: 0;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+    }
+    .ds-card.ds-code { border-color: rgba(245,158,11,0.35); }
+    .ds-card.ds-code .ds-type { color: var(--accent-2); }
+    .ds-card.ds-qa   { border-color: rgba(79,110,247,0.35); }
+
+    /* ── LLM pipeline summary (lesson 7.9) ── */
+    .pipeline-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+    .ps-item {
+      border-radius: 9px;
+      padding: 0.75rem 0.9rem;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 0.82rem;
+    }
+    .ps-item .ps-num {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .ps-item .ps-label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+    .ps-item .ps-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body data-chapter="ch7">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">Ch7: Instruction Fine-tuning</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Chapter 7</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 7</div>
+      <h1>Fine-tuning to Follow Instructions</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 9 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 8-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span class="tag">Instruction Tuning</span>
+        <span class="tag">RLHF</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>Chapter 6 demonstrated how to convert a pretrained GPT model into a text classifier by swapping its language head for a compact class-score layer. That approach is powerful for bounded decision problems where the output belongs to a known, finite set. But the most impactful real-world use of large language models is something richer and more open-ended: responding helpfully to arbitrary natural-language instructions. "Translate this sentence to Spanish." "Summarise this research paper in three bullet points." "Explain why this Python function raises a KeyError and fix it." A classification head cannot produce these answers — only the full language model, generating one token at a time, can.</p>
+
+      <p>This chapter completes the LLM development pipeline introduced throughout the book by walking through instruction fine-tuning from first principles. You will learn how to structure and format an instruction dataset, build a custom collate function that masks prompt tokens so the model trains only on response generation, load a pretrained GPT-2 as the starting point, run the fine-tuning loop with the identical cross-entropy objective used in pretraining (but with masked labels), extract clean responses at inference, and evaluate quality using another LLM as an automated judge. Along the way you will see exactly how models like ChatGPT and Claude learn to be helpful assistants rather than raw text completers — and exactly what you would need to build one yourself.</p>
+
+      <!-- ══════════════════
+           LESSON 7.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-1">
+        <div class="lesson-header">
+          <span class="lesson-number">7.1</span>
+          <h2>Instruction Fine-tuning Introduction</h2>
+        </div>
+
+        <p>A pretrained language model is an extraordinarily capable pattern-matcher: given a prompt, it can continue the text in a fluent, contextually appropriate way. But text completion is not the same as instruction following. If you type "Summarise the following article:" into a raw pretrained GPT, it is just as likely to generate another article as it is to produce a summary — because its training objective was simply to predict the next token, with no distinction between instructions and the responses they are meant to elicit. <strong>Instruction fine-tuning</strong> teaches the model to recognise the structural pattern of a task description followed by a response, so that when it sees an instruction at inference time it generates a helpful completion rather than wandering off into unconstrained text continuation.</p>
+
+        <p>The training data for instruction fine-tuning consists of carefully curated <strong>instruction–response pairs</strong>: thousands (or hundreds of thousands) of examples where each example contains a natural-language instruction and the ideal response. The training objective is the same cross-entropy loss used in pretraining — predict the next token correctly — but applied only over the response tokens. The prompt is fed to the model so it has full context, but the loss is masked to zero over the prompt portion. This forces the model to learn what constitutes a good response to each type of instruction without also memorising how to reconstruct the prompt it was already given. The result, after even a modest fine-tuning run, is a model that behaves like an assistant rather than a text completer.</p>
+
+        <p>Critically, no architectural changes are needed compared to the pretrained base model. The language modelling head — a linear projection from hidden dimension to full vocabulary size — is kept intact. The model still generates text one token at a time using autoregressive decoding with the same sampling or greedy strategies used for ordinary text generation. What changes is purely the distribution of training data: rather than seeing raw internet text during pretraining, the model now sees instruction–response pairs in a controlled format. Stanford's Alpaca project demonstrated just how powerful this is: fine-tuning LLaMA-7B on only 52,000 GPT-generated instruction pairs produced a capable instruction-following assistant competitive with much larger models at the time. The leverage comes entirely from the rich representations already built during pretraining — instruction tuning redirects them rather than rebuilds them.</p>
+
+        <div class="insight-box">
+          <div class="insight-title"><i class="fas fa-lightbulb"></i> Key Insight</div>
+          <p>The instruction-tuned model learns to be an assistant, not just a text completer. Stanford Alpaca showed that 52,000 instruction pairs fine-tuned on LLaMA-7B were enough to transform a raw base model into a capable assistant — demonstrating that quality and format of training data matters more than sheer quantity once pretraining representations are already strong.</p>
+        </div>
+
+      </section><!-- /#lesson-7-1 -->
+
+      <!-- ══════════════════
+           LESSON 7.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-2">
+        <div class="lesson-header">
+          <span class="lesson-number">7.2</span>
+          <h2>Instruction Dataset Format</h2>
+        </div>
+
+        <p>Each sample in an instruction fine-tuning dataset contains three fields. The <strong>instruction</strong> describes the task in natural language — it is what the user says to the model. The <strong>input</strong> is an optional context field that provides additional material the instruction refers to: the article to be summarised, the code to be debugged, the sentence to be translated. When no additional context is needed (for example, "What is the capital of France?"), the input field is left empty. The <strong>response</strong> is the expected output — what a helpful, accurate assistant would produce. Building a high-quality dataset requires either human annotators producing these pairs, or using a capable model like GPT-3.5 to generate responses at scale from a seed set of hand-written instructions (the approach Alpaca used).</p>
+
+        <p>Dataset diversity is as important as dataset size. A model trained exclusively on factual question-answering will not learn to write code, summarise documents, or follow creative writing prompts — even if it sees millions of QA pairs. The instruction fine-tuning dataset should cover the range of tasks the deployed model will encounter: factual queries, code generation, code debugging, creative writing, translation, summarisation, mathematical reasoning, and open-ended conversation. Each category requires different response styles and structures, so the model must see representative examples from all of them to develop genuine versatility. The book uses a relatively small illustrative dataset; production models like ChatGPT use millions of diverse, human-curated instruction pairs.</p>
+
+        <p>The JSON format below is the simplest and most common representation for instruction datasets. It is easy to load with Python's built-in <code>json</code> module, easy to inspect and validate, and directly compatible with tools like Hugging Face Datasets. Notice that the input field is an empty string when no additional context is required — this signals the collate function that no context block should be inserted into the formatted prompt template.</p>
+
+        <div class="dataset-examples">
+          <div class="ds-card ds-qa">
+            <div class="ds-type"><i class="fas fa-circle-question"></i> Factual QA</div>
+            <dl>
+              <dt>instruction</dt><dd>"What is the capital of France?"</dd>
+              <dt>input</dt><dd>""</dd>
+              <dt>response</dt><dd>"The capital of France is Paris."</dd>
+            </dl>
+          </div>
+          <div class="ds-card ds-code">
+            <div class="ds-type"><i class="fas fa-code"></i> Code Debugging</div>
+            <dl>
+              <dt>instruction</dt><dd>"Fix the bug in this Python function."</dd>
+              <dt>input</dt><dd>"def add(a, b):\n    return a - b"</dd>
+              <dt>response</dt><dd>"def add(a, b):\n    return a + b"</dd>
+            </dl>
+          </div>
+        </div>
+
+        <pre class="code-block"><code><span class="cmt"># JSON structure for instruction dataset</span>
+[
+  {
+    <span class="str">"instruction"</span>: <span class="str">"What is the capital of France?"</span>,
+    <span class="str">"input"</span>: <span class="str">""</span>,
+    <span class="str">"response"</span>: <span class="str">"The capital of France is Paris."</span>
+  },
+  {
+    <span class="str">"instruction"</span>: <span class="str">"Fix the bug in this Python function."</span>,
+    <span class="str">"input"</span>: <span class="str">"def add(a, b):\n    return a - b"</span>,
+    <span class="str">"response"</span>: <span class="str">"def add(a, b):\n    return a + b"</span>
+  }
+]</code></pre>
+
+      </section><!-- /#lesson-7-2 -->
+
+      <!-- ══════════════════
+           LESSON 7.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-3">
+        <div class="lesson-header">
+          <span class="lesson-number">7.3</span>
+          <h2>Alpaca vs Phi-3 Prompt Styles</h2>
+        </div>
+
+        <p>Instruction–response pairs cannot be fed to the model as bare text — the model needs a consistent structural pattern that clearly delineates where the instruction ends and where it should begin generating. Different projects have established different <strong>prompt templates</strong> for this purpose, and each is essentially a mini-language that the model learns during fine-tuning. The <strong>Alpaca format</strong>, developed at Stanford, wraps each sample in a structured template with clearly labelled sections ("### Instruction:", "### Input:", "### Response:"). These section markers act as landmarks that the model learns to recognise — when it sees "### Response:", it knows it is time to generate the answer. The simplicity of this format makes it easy to implement and widely adopted for smaller, research-oriented fine-tuning runs.</p>
+
+        <p>The <strong>Phi-3 format</strong> (and related chat formats like ChatML) uses special tokens to delimit turns rather than text-based markers. The special tokens <code>&lt;|user|&gt;</code>, <code>&lt;|assistant|&gt;</code>, and <code>&lt;|end|&gt;</code> are embedded directly in the token vocabulary as reserved IDs. This approach is more robust against edge cases where the instruction itself happens to contain the string "### Response:" — a text-based delimiter is ambiguous in that scenario, whereas a true special token ID never appears in natural text. Production models from Microsoft, OpenAI, and Anthropic all use special-token-based formats for exactly this reason. The trade-off is that the tokeniser must support these special tokens, which complicates using an off-the-shelf GPT-2 tokeniser without modification.</p>
+
+        <p>The most important operational rule: <strong>the template used at inference must be identical to the template used during training.</strong> The model learns to associate the structural pattern of the template with the task of generating a response. If you train with the Alpaca format but query with the Phi-3 format at inference, the model sees an unfamiliar structure and the quality degrades dramatically — it may produce responses in the wrong location, fail to stop at the right token, or generate incoherent output. Template consistency is one of the most common sources of bugs when adapting fine-tuned models from notebooks to production.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Prompt Template Comparison</div>
+
+          <div class="format-grid">
+            <div class="format-card fc-alpaca">
+              <div class="fc-header"><i class="fas fa-hashtag"></i> Alpaca Format</div>
+              <pre>### Instruction:
+What is the capital
+of France?
+
+### Response:
+The capital of France
+is Paris.</pre>
+            </div>
+            <div class="format-card fc-phi3">
+              <div class="fc-header"><i class="fas fa-comment-dots"></i> Phi-3 Format</div>
+              <pre>&lt;|user|&gt;
+What is the capital
+of France?&lt;|end|&gt;
+&lt;|assistant|&gt;
+The capital of France
+is Paris.&lt;|end|&gt;</pre>
+            </div>
+          </div>
+
+          <div class="viz-caption">Alpaca uses text-based section markers; Phi-3 uses special token IDs. Both create a clear instruction/response boundary — the critical requirement is consistency between training and inference.</div>
+        </div>
+
+      </section><!-- /#lesson-7-3 -->
+
+      <!-- ══════════════════
+           LESSON 7.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-4">
+        <div class="lesson-header">
+          <span class="lesson-number">7.4</span>
+          <h2>Batching with Custom Collate</h2>
+        </div>
+
+        <p>Instruction–response pairs vary enormously in length. A factual QA sample may be 40 tokens total; a code debugging sample with a long function and a detailed explanation may be 500 tokens. Batching these together naively would either fail (due to shape mismatch) or waste compute (due to massive padding). The <strong>custom collate function</strong> is the right place to handle this: it processes each sample in the batch, applies the prompt template, encodes the full string, truncates to a configured maximum length, pads within the batch to the length of the longest sample, and returns two tensors — <code>input_ids</code> for the forward pass and <code>labels</code> for the loss.</p>
+
+        <p>The critical detail that distinguishes instruction fine-tuning from pretraining is the <strong>label masking</strong> step. After encoding the full string (prompt + response + end token), the collate function computes the length of the prompt portion alone. It then constructs the labels tensor by filling the prompt positions with <code>-100</code> — PyTorch's convention for "ignore this position in the loss computation." Cross-entropy's <code>ignore_index=-100</code> argument ensures these positions contribute zero gradient, so the model never receives a training signal to reconstruct the instruction it was given. It only receives gradients from the response tokens, learning to generate good answers rather than to memorise question phrasing. Padding positions are also set to <code>-100</code> for the same reason.</p>
+
+        <p>Getting the prompt length computation right is essential. If you compute it from the formatted string rather than the raw instruction, you must be careful to include all template markers (the "### Instruction:\n" prefix, any "### Input:\n" block, and the "### Response:\n" suffix) in the count — otherwise you will accidentally train on or accidentally mask the wrong tokens. A single off-by-one in the prompt length shifts the mask by one token and silently corrupts the training signal. The book recommends always encoding the prompt alone, measuring its token count, and using that count to slice the labels array — this is the most direct and least error-prone approach.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">instruction_collate</span>(batch, tokenizer, max_len=<span class="num">256</span>, pad_id=<span class="num">50256</span>):
+    inputs, labels = [], []
+    <span class="kw">for</span> item <span class="kw">in</span> batch:
+        prompt = <span class="fn">format_prompt</span>(item[<span class="str">'instruction'</span>], item[<span class="str">'input'</span>])
+        full   = prompt + item[<span class="str">'response'</span>] + <span class="str">'&lt;|endoftext|&gt;'</span>
+        enc    = tokenizer.<span class="fn">encode</span>(full)[:max_len]
+        prompt_len = <span class="fn">len</span>(tokenizer.<span class="fn">encode</span>(prompt))
+        <span class="cmt"># Mask prompt tokens in labels</span>
+        lbl = [<span class="num">-100</span>] * prompt_len + enc[prompt_len:]
+        <span class="cmt"># Pad both to max_len</span>
+        pad_len = max_len - <span class="fn">len</span>(enc)
+        enc = enc + [pad_id] * pad_len
+        lbl = lbl + [<span class="num">-100</span>]   * pad_len
+        inputs.<span class="fn">append</span>(enc)
+        labels.<span class="fn">append</span>(lbl)
+    <span class="kw">return</span> torch.<span class="fn">tensor</span>(inputs), torch.<span class="fn">tensor</span>(labels)</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-grip-horizontal"></i> Token Masking: Input IDs vs Labels</div>
+
+          <div style="margin-bottom:0.4rem;font-size:0.8rem;font-weight:600;color:var(--text-muted);">input_ids (all tokens fed to model):</div>
+          <div class="token-row">
+            <span class="tok tok-prompt">###</span>
+            <span class="tok tok-prompt">Inst</span>
+            <span class="tok tok-prompt">:</span>
+            <span class="tok tok-prompt">What</span>
+            <span class="tok tok-prompt">is</span>
+            <span class="tok tok-prompt">the</span>
+            <span class="tok tok-prompt">capital</span>
+            <span class="tok tok-prompt">?</span>
+            <span class="tok tok-prompt">###</span>
+            <span class="tok tok-prompt">Resp</span>
+            <span class="tok tok-prompt">:</span>
+            <span class="tok tok-response">The</span>
+            <span class="tok tok-response">capital</span>
+            <span class="tok tok-response">is</span>
+            <span class="tok tok-response">Paris</span>
+            <span class="tok tok-response">.</span>
+            <span class="tok tok-response">&lt;|eos|&gt;</span>
+            <span class="tok tok-pad">&lt;pad&gt;</span>
+            <span class="tok tok-pad">&lt;pad&gt;</span>
+          </div>
+
+          <div style="margin-top:0.7rem;margin-bottom:0.4rem;font-size:0.8rem;font-weight:600;color:var(--text-muted);">labels (what the model is trained to predict):</div>
+          <div class="token-row">
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-prompt">-100</span>
+            <span class="tok tok-response">The</span>
+            <span class="tok tok-response">capital</span>
+            <span class="tok tok-response">is</span>
+            <span class="tok tok-response">Paris</span>
+            <span class="tok tok-response">.</span>
+            <span class="tok tok-response">&lt;|eos|&gt;</span>
+            <span class="tok tok-pad">-100</span>
+            <span class="tok tok-pad">-100</span>
+          </div>
+
+          <div class="token-legend">
+            <span class="token-legend-item"><span class="tok-swatch" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.35);"></span> Prompt tokens — masked (-100), no gradient</span>
+            <span class="token-legend-item"><span class="tok-swatch" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);"></span> Response tokens — trained on</span>
+            <span class="token-legend-item"><span class="tok-swatch" style="background:var(--surface-2);border:1px dashed var(--border);"></span> Padding — masked (-100)</span>
+          </div>
+
+          <div class="viz-caption">The model sees the full input_ids for context but is only supervised on response tokens. Prompt tokens and padding positions are masked with -100 so cross_entropy(ignore_index=-100) skips them.</div>
+        </div>
+
+      </section><!-- /#lesson-7-4 -->
+
+      <!-- ══════════════════
+           LESSON 7.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-5">
+        <div class="lesson-header">
+          <span class="lesson-number">7.5</span>
+          <h2>Loading the Pretrained LLM</h2>
+        </div>
+
+        <p>Unlike classification fine-tuning, instruction fine-tuning requires no architectural modification. The pretrained GPT-2 model is loaded exactly as it was used for text generation in Chapter 5 — token embeddings, positional embeddings, all transformer blocks, the final LayerNorm, and the full <code>lm_head</code> projecting from hidden dimension to <code>vocab_size</code>. The language head is kept precisely because the task is still text generation: the model must produce a probability distribution over the vocabulary at every decoding step. This makes the weight-loading process identical to Chapter 5's procedure — load the checkpoint, map the parameter names, and verify shapes match.</p>
+
+        <p>Model size matters more for instruction fine-tuning than for classification fine-tuning. Classification fine-tuning adds a tiny head on top of fixed or partially-fixed representations, so even GPT-2 Small (117M parameters) can be an effective classifier for many tasks. Instruction fine-tuning, however, requires the base model to have strong enough pretrained representations to generalise from a few thousand instruction examples to arbitrary unseen instructions. Larger models — GPT-2 Medium (345M), GPT-2 Large (774M), or GPT-2 XL (1.5B) — have substantially better emergent reasoning and follow diverse instructions more reliably. The book uses GPT-2 Small for illustration, but notes that GPT-2 Medium is a better practical choice if compute allows. For production-grade assistants, even larger starting points such as LLaMA or Mistral are standard.</p>
+
+        <p>If training from scratch on your own hardware is not feasible, the Hugging Face <code>transformers</code> library provides a one-liner: <code>AutoModelForCausalLM.from_pretrained('gpt2-medium')</code>. The book implements weight loading manually to expose every mapping decision — which OpenAI checkpoint key maps to which layer index, how the attention weight matrices are split, how the layer normalisations are matched. Understanding this mapping is valuable beyond the book itself: it is the same skill needed to load weights from any external checkpoint format into a custom architecture, which comes up constantly in LLM research and production engineering.</p>
+
+        <pre class="code-block"><code><span class="cmt"># Load pretrained GPT-2 for instruction fine-tuning</span>
+<span class="cmt"># No architecture changes — lm_head stays (vocab_size output)</span>
+model = <span class="fn">GPTModel</span>(GPT2_CONFIG_124M)
+model.<span class="fn">load_state_dict</span>(torch.<span class="fn">load</span>(<span class="str">'gpt2_pretrained.pt'</span>))
+
+<span class="cmt"># Optionally: use GPT-2 Medium for better instruction following</span>
+<span class="cmt"># GPT2_MEDIUM = {"emb_dim": 1024, "n_layers": 24, "n_heads": 16, ...}</span>
+<span class="cmt"># model = GPTModel(GPT2_MEDIUM)</span>
+<span class="cmt"># model.load_state_dict(load_gpt2_weights('gpt2-medium'))</span>
+
+model.<span class="fn">to</span>(device)
+<span class="fn">print</span>(<span class="str">f"Parameters: {sum(p.numel() for p in model.parameters()):,}"</span>)</code></pre>
+
+      </section><!-- /#lesson-7-5 -->
+
+      <!-- ══════════════════
+           LESSON 7.6
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-6">
+        <div class="lesson-header">
+          <span class="lesson-number">7.6</span>
+          <h2>The Instruction Fine-tuning Loop</h2>
+        </div>
+
+        <p>The instruction fine-tuning training loop is structurally identical to the pretraining loop from Chapter 5. The optimizer is AdamW; the loss is cross-entropy; gradient clipping at 1.0 prevents instability; the model is set to train mode at the top of each epoch and eval mode for validation. The critical difference is a single argument in the loss computation: <code>ignore_index=-100</code>. This tells PyTorch's cross-entropy implementation to skip any position in the labels tensor that is set to <code>-100</code>, computing the loss and gradient only over the response tokens. Without this argument, the model would receive gradients to reconstruct the prompt — wasting capacity and potentially teaching the model to mirror instructions back rather than respond to them.</p>
+
+        <p>The learning rate for instruction fine-tuning is typically lower than for pretraining — <code>5e-5</code> is the standard starting point. Unlike classification fine-tuning, where you might freeze most of the model and only unfreeze the head, instruction fine-tuning generally benefits from fine-tuning all parameters. The model needs to adjust its generation behavior throughout the full stack — not just learn a narrow classification boundary — and the pretrained representations are strong enough that even full-parameter fine-tuning with a modest learning rate does not cause catastrophic forgetting. Training typically runs for two to five epochs over the instruction dataset, which is far shorter than pretraining's many thousands of steps over massive corpora. Early stopping based on validation loss is recommended.</p>
+
+        <p>Monitoring the training loss alone is insufficient for instruction fine-tuning. The cross-entropy loss (computed only over response tokens) can decrease smoothly even as the model learns to generate plausible-sounding but factually incorrect or off-topic responses. The most informative signal is periodic qualitative inspection: every N steps, run inference on a fixed set of probe instructions — one factual QA, one code task, one creative writing task — and examine the actual generated text. This qualitative check catches mode collapse (the model starts generating the same generic response to everything), repetition loops, and format failures (the model stops using the template) far earlier than the loss curve does.</p>
+
+        <pre class="code-block"><code>optimizer = torch.optim.<span class="fn">AdamW</span>(model.<span class="fn">parameters</span>(), lr=<span class="num">5e-5</span>)
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(num_epochs):
+    model.<span class="fn">train</span>()
+    <span class="kw">for</span> input_ids, label_ids <span class="kw">in</span> instruction_loader:
+        optimizer.<span class="fn">zero_grad</span>()
+        logits = <span class="fn">model</span>(input_ids)          <span class="cmt"># [B, T, vocab_size]</span>
+        loss = F.<span class="fn">cross_entropy</span>(
+            logits.<span class="fn">view</span>(<span class="num">-1</span>, logits.<span class="fn">size</span>(<span class="num">-1</span>)),
+            label_ids.<span class="fn">view</span>(<span class="num">-1</span>),
+            ignore_index=<span class="num">-100</span>              <span class="cmt"># skip masked prompt tokens</span>
+        )
+        loss.<span class="fn">backward</span>()
+        torch.nn.utils.<span class="fn">clip_grad_norm_</span>(model.<span class="fn">parameters</span>(), <span class="num">1.0</span>)
+        optimizer.<span class="fn">step</span>()
+    <span class="fn">print</span>(<span class="str">f"Epoch {epoch+1} loss: {loss.item():.4f}"</span>)</code></pre>
+
+      </section><!-- /#lesson-7-6 -->
+
+      <!-- ══════════════════
+           LESSON 7.7
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-7">
+        <div class="lesson-header">
+          <span class="lesson-number">7.7</span>
+          <h2>Extracting Responses</h2>
+        </div>
+
+        <p>At inference time, the procedure is: format the instruction using the same template as training, encode it to token IDs, run the autoregressive generation loop (identical to the generation function from Chapter 5), decode the output token IDs to a string, and then <strong>extract just the response portion</strong> from the full generated text. The last step is often overlooked but is essential. The model's output is the full formatted string — template markers and all. Returning the full string to the user exposes the internal template structure and may confuse downstream parsing. A simple string split on "### Response:" followed by stripping whitespace and truncating at the first <code>&lt;|endoftext|&gt;</code> is all that is needed for the Alpaca format.</p>
+
+        <p>Generation should stop when the model produces the <code>&lt;|endoftext|&gt;</code> token — this is what the model was trained to emit at the end of each response. If you run the generation loop for a fixed number of steps without checking for this stop token, the model will typically start generating a new instruction–response pair after the first one ends (since it has learned that the end-of-text token is followed by more formatted samples from the training distribution). Proper early stopping at the end-of-text token prevents this. Most generation functions already support a <code>stop_token</code> or <code>eos_token_id</code> argument; if yours does not, add a break condition inside the loop.</p>
+
+        <p>Response extraction quality has an outsized impact on perceived model quality. A perfectly fine-tuned model can appear broken if the extraction function returns the wrong portion of the generated text, strips too aggressively (removing trailing punctuation), or fails to handle edge cases (instructions that accidentally contain "### Response:" in the input context). Testing the extraction function independently on a range of generated outputs — including pathological ones — before deploying the inference pipeline is an important engineering step that saves significant debugging time later.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">generate_response</span>(model, tokenizer, instruction, input_text=<span class="str">""</span>):
+    prompt = <span class="fn">format_prompt</span>(instruction, input_text)
+    input_ids = torch.<span class="fn">tensor</span>([tokenizer.<span class="fn">encode</span>(prompt)])
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        output_ids = <span class="fn">generate</span>(model, input_ids, max_new_tokens=<span class="num">200</span>)
+    full_text = tokenizer.<span class="fn">decode</span>(output_ids[<span class="num">0</span>].<span class="fn">tolist</span>())
+    <span class="cmt"># Extract just the response</span>
+    response = full_text.<span class="fn">split</span>(<span class="str">"### Response:"</span>)[<span class="num">-1</span>].<span class="fn">strip</span>()
+    <span class="kw">return</span> response.<span class="fn">split</span>(<span class="str">"&lt;|endoftext|&gt;"</span>)[<span class="num">0</span>].<span class="fn">strip</span>()</code></pre>
+
+      </section><!-- /#lesson-7-7 -->
+
+      <!-- ══════════════════
+           LESSON 7.8
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-8">
+        <div class="lesson-header">
+          <span class="lesson-number">7.8</span>
+          <h2>Evaluating with Another LLM</h2>
+        </div>
+
+        <p>Evaluating instruction-tuned models is substantially harder than evaluating classifiers. A classifier's output is a label — you compare it to the ground truth and count correct predictions. An instruction-tuned model's output is open-ended text. The "correct" response to "Explain quantum entanglement for a 10-year-old" does not have a single canonical answer; it has a space of valid responses that vary in vocabulary, length, analogies used, and pedagogical approach. Automated string-matching metrics like <strong>BLEU</strong> and <strong>ROUGE</strong>, designed for machine translation and summarisation, measure lexical overlap between the generated text and a reference response. They consistently rank verbose, repetitive responses as high quality simply because they share more words with the reference — and they completely miss the difference between a response that is technically word-for-word identical but factually wrong versus one that uses different words to express the same correct idea.</p>
+
+        <p><strong>Human evaluation</strong> is the gold standard — have raters score responses on helpfulness, accuracy, and fluency — but it is expensive, slow, and difficult to scale. A practical middle ground that has emerged in recent years is <strong>LLM-as-evaluator</strong>: use a capable model like GPT-4 or Claude as an automated judge. You provide the judge with the instruction, the model's response, and an evaluation rubric, then ask it to assign a score or compare two responses and pick the better one. LLM judges correlate well with human preference in controlled studies, can process thousands of examples per hour, and can be asked to explain their ratings — giving you actionable feedback about what the model is getting wrong (too verbose, factually incorrect, wrong tone). The main caveat is that LLM judges have their own biases, particularly toward longer, more formal-sounding responses and toward outputs that match the judge model's own style.</p>
+
+        <p>A practical evaluation workflow: generate responses on a fixed held-out set of instructions spanning all task categories in the training data, run them through an LLM judge with a structured rubric, and track the average score across epochs and model versions. This lets you compare fine-tuning configurations objectively — different learning rates, different dataset sizes, different numbers of epochs — and catch regressions when you update the training data. Tracking score by task category separately (factual QA, code, creative writing) often reveals that changes that improve one category degrade another, a signal that the training distribution balance needs adjustment.</p>
+
+        <pre class="code-block"><code><span class="cmt"># Example judge prompt for LLM-as-evaluator</span>
+judge_prompt = <span class="str">"""Given the instruction: "{instruction}"
+The model responded: "{response}"
+Rate the quality on a scale of 1-10 and explain why.
+Score: [1-10]"""</span>
+
+<span class="cmt"># Call GPT-4 / Claude API with judge_prompt</span>
+<span class="cmt"># Parse the Score: line from the response</span>
+<span class="kw">def</span> <span class="fn">parse_score</span>(judge_output):
+    <span class="kw">for</span> line <span class="kw">in</span> judge_output.<span class="fn">split</span>(<span class="str">'\n'</span>):
+        <span class="kw">if</span> line.<span class="fn">startswith</span>(<span class="str">'Score:'</span>):
+            <span class="kw">return</span> <span class="fn">int</span>(line.<span class="fn">split</span>()[<span class="num">1</span>])
+    <span class="kw">return</span> <span class="kw">None</span></code></pre>
+
+      </section><!-- /#lesson-7-8 -->
+
+      <!-- ══════════════════
+           LESSON 7.9
+      ══════════════════ -->
+      <section class="lesson" id="lesson-7-9">
+        <div class="lesson-header">
+          <span class="lesson-number">7.9</span>
+          <h2>Conclusions and Next Steps</h2>
+        </div>
+
+        <p>This chapter closed the loop on the full LLM development pipeline introduced in Chapter 1 and built step by step throughout the book. Pretraining (Chapters 5) gave the model its general language understanding; classification fine-tuning (Chapter 6) redirected that understanding toward bounded decisions; instruction fine-tuning (this chapter) redirected it toward open-ended assistant behavior. The entire pipeline — from a randomly initialised model to a capable instruction-following assistant — is now implementable by anyone with access to a GPU and a few thousand hours of training compute. Beyond what the book covers, the field has developed several important techniques for further improving aligned language models. <strong>RLHF (Reinforcement Learning from Human Feedback)</strong> adds a second fine-tuning stage: human raters compare pairs of model responses and indicate which they prefer, a reward model is trained to predict human preference, and then the LLM is further fine-tuned using PPO (Proximal Policy Optimization) to maximize the reward model's score. RLHF is how GPT-3 became InstructGPT and how the earliest versions of ChatGPT were aligned.</p>
+
+        <p><strong>Constitutional AI</strong>, developed by Anthropic for Claude, replaces expensive human preference labels with AI-generated critiques. The model is given a set of principles (the "constitution") and instructed to critique its own outputs against those principles, then revise them. This dramatically reduces reliance on human labellers and can produce more consistent alignment with a broader set of values than pairwise human preferences alone can capture. <strong>Direct Preference Optimization (DPO)</strong> is a more recent alternative to RLHF that eliminates the separate reward model entirely, training the LLM directly on preference pairs using a closed-form objective that is simpler to implement and often more stable. These methods are advancing rapidly; the core intuition — teach the model what humans prefer, not just what the next token is — remains constant across all of them.</p>
+
+        <p><strong>Parameter-efficient fine-tuning</strong> methods like <strong>LoRA</strong> (Low-Rank Adaptation, covered in Appendix E) make instruction fine-tuning accessible at any scale. Rather than updating all parameters of a 7B or 70B model — which requires multiple high-end GPUs just to store the gradients — LoRA adds small trainable rank-decomposition matrices alongside the frozen original weights. Only these tiny adapter matrices are updated during fine-tuning, reducing the number of trainable parameters by a factor of 100x or more while achieving performance close to full fine-tuning. A single consumer GPU can instruction-fine-tune a 7B model with LoRA. This democratisation of fine-tuning is one of the most significant practical developments in the LLM field since the release of GPT-2.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-road"></i> What You Can Now Build</div>
+
+          <div class="pipeline-summary">
+            <div class="ps-item">
+              <span class="ps-num">1</span>
+              <span class="ps-label">GPT-2 from Scratch</span>
+              <span class="ps-sub">Attention, FFN, LayerNorm, tokenizer</span>
+            </div>
+            <div class="ps-item">
+              <span class="ps-num">2</span>
+              <span class="ps-label">Pretrain on Data</span>
+              <span class="ps-sub">Next-token prediction at scale</span>
+            </div>
+            <div class="ps-item">
+              <span class="ps-num">3</span>
+              <span class="ps-label">Load GPT-2 Weights</span>
+              <span class="ps-sub">Map OpenAI checkpoint keys</span>
+            </div>
+            <div class="ps-item">
+              <span class="ps-num">4</span>
+              <span class="ps-label">Classify Fine-tune</span>
+              <span class="ps-sub">Spam, sentiment, toxicity</span>
+            </div>
+            <div class="ps-item">
+              <span class="ps-num">5</span>
+              <span class="ps-label">Instruction Fine-tune</span>
+              <span class="ps-sub">Assistant behavior from pairs</span>
+            </div>
+            <div class="ps-item">
+              <span class="ps-num">6</span>
+              <span class="ps-label">Read 90% of Papers</span>
+              <span class="ps-sub">Architecture, training, alignment</span>
+            </div>
+          </div>
+
+          <div class="viz-caption">With the knowledge from this book you can implement the full LLM pipeline, understand modern architecture papers, and apply the same patterns to production fine-tuning using LoRA or full fine-tuning on larger models.</div>
+        </div>
+
+        <div class="insight-box">
+          <div class="insight-title"><i class="fas fa-lightbulb"></i> Key Insight</div>
+          <p>RLHF, Constitutional AI, and DPO all build on top of instruction fine-tuning — they assume the model already knows how to follow instructions and push it further toward human preferences. Instruction fine-tuning is not the end of alignment training; it is the necessary foundation for every advanced alignment technique that follows.</p>
+        </div>
+
+      </section><!-- /#lesson-7-9 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Chapter 7 — Key Takeaways</h3>
+        <ul>
+          <li><strong>Instruction fine-tuning</strong> teaches models to respond helpfully to natural-language instructions — not just complete arbitrary text. No architectural change is needed from the pretrained base model.</li>
+          <li><strong>The training objective is still cross-entropy</strong>, computed over the full vocabulary at each step — but only over the response tokens. Prompt tokens are masked with <code>-100</code> so <code>F.cross_entropy(ignore_index=-100)</code> skips them entirely.</li>
+          <li><strong>Prompt templates</strong> (Alpaca, Phi-3, ChatML) must be identical between training and inference — the model learns to recognise the template boundary as the cue to start generating the response.</li>
+          <li><strong>Custom collate functions</strong> handle variable-length instruction–response pairs: encode, truncate, pad within the batch, mask prompt tokens in labels, and return ready-to-train tensor pairs.</li>
+          <li><strong>LLM-as-evaluator</strong> (using GPT-4 or Claude as a judge) is a practical alternative to expensive human evaluation — it scales to thousands of examples per hour and correlates well with human preference.</li>
+          <li><strong>Larger base models</strong> respond better to instruction fine-tuning — instruction tuning redirects existing capabilities rather than building them from scratch, so stronger pretrained representations lead to stronger instruction following.</li>
+          <li><strong>RLHF and Constitutional AI</strong> extend instruction fine-tuning with preference learning — they assume the model already knows how to follow instructions and further align it with human values.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Chapter 7 Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of instruction fine-tuning, label masking, prompt templates, and evaluation. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click a node to explore</div>
+        <svg id="mindmap-ch7" viewBox="0 0 900 660" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+          <style>
+            #mindmap-ch7 .mm-branch { cursor:pointer; transition:opacity 0.3s; }
+            #mindmap-ch7 .mm-branch.dimmed { opacity:0.15; }
+            #mindmap-ch7 .mm-branch.highlighted .mm-branch-node rect { filter:brightness(1.2); }
+            #mindmap-ch7 .mm-center { cursor:pointer; }
+            #mindmap-ch7 .mm-sub { animation: mmFadeIn7 0.5s ease both; }
+            @keyframes mmFadeIn7 { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+            #mindmap-ch7 text { font-family: Inter, sans-serif; }
+          </style>
+          <defs>
+            <filter id="mm7-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0004"/>
+            </filter>
+          </defs>
+          <!-- Center node -->
+          <g class="mm-center" id="mm7-center">
+            <rect x="310" y="275" width="230" height="80" rx="16" fill="#6c63ff" filter="url(#mm7-shadow)"/>
+            <text x="425" y="306" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Instruction</text>
+            <text x="425" y="324" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Fine-tuning</text>
+            <text x="425" y="342" text-anchor="middle" fill="#ffffffcc" font-size="10">Ch 7</text>
+          </g>
+          <!-- Branch 1: Goal (top-left) -->
+          <g class="mm-branch" id="mm7-b1">
+            <line x1="355" y1="285" x2="210" y2="190" stroke="#f97316" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="120" y="162" width="180" height="42" rx="10" fill="#f97316"/>
+              <text x="210" y="182" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Goal</text>
+              <text x="210" y="197" text-anchor="middle" fill="#ffffffcc" font-size="10">assistant behaviour</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="162" y1="175" x2="108" y2="125" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="40" y="108" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="108" y="128" text-anchor="middle" fill="#b45309" font-size="10">assistant behavior</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="210" y1="162" x2="210" y2="112" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="142" y="82" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="210" y="102" text-anchor="middle" fill="#b45309" font-size="10">not text completion</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="258" y1="175" x2="312" y2="125" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="244" y="108" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="312" y="128" text-anchor="middle" fill="#b45309" font-size="10">Alpaca 52K</text>
+            </g>
+          </g>
+          <!-- Branch 2: Dataset Format (top) -->
+          <g class="mm-branch" id="mm7-b2">
+            <line x1="425" y1="275" x2="425" y2="188" stroke="#10b981" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="335" y="160" width="180" height="42" rx="10" fill="#10b981"/>
+              <text x="425" y="180" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Dataset Format</text>
+              <text x="425" y="195" text-anchor="middle" fill="#ffffffcc" font-size="10">structured pairs</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="380" y1="165" x2="330" y2="118" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="262" y="100" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="330" y="120" text-anchor="middle" fill="#065f46" font-size="10">instruction + input</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="425" y1="160" x2="425" y2="110" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="357" y="80" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="425" y="100" text-anchor="middle" fill="#065f46" font-size="10">+ response</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="470" y1="165" x2="520" y2="118" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="452" y="100" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="520" y="120" text-anchor="middle" fill="#065f46" font-size="10">JSON pairs</text>
+            </g>
+          </g>
+          <!-- Branch 3: Prompt Templates (top-right) -->
+          <g class="mm-branch" id="mm7-b3">
+            <line x1="495" y1="285" x2="635" y2="190" stroke="#3b82f6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="550" y="162" width="170" height="42" rx="10" fill="#3b82f6"/>
+              <text x="635" y="182" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Prompt Templates</text>
+              <text x="635" y="197" text-anchor="middle" fill="#ffffffcc" font-size="10">formatting</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="590" y1="172" x2="555" y2="125" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="487" y="108" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="555" y="128" text-anchor="middle" fill="#1e40af" font-size="10">Alpaca ### format</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="635" y1="162" x2="635" y2="112" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="567" y="82" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="635" y="102" text-anchor="middle" fill="#1e40af" font-size="10">Phi-3 chat tokens</text>
+            </g>
+          </g>
+          <!-- Branch 4: Collate Function (right) -->
+          <g class="mm-branch" id="mm7-b4">
+            <line x1="540" y1="315" x2="680" y2="315" stroke="#ec4899" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="680" y="293" width="170" height="42" rx="10" fill="#ec4899"/>
+              <text x="765" y="313" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Collate Function</text>
+              <text x="765" y="328" text-anchor="middle" fill="#ffffffcc" font-size="10">batching</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="715" y1="293" x2="695" y2="255" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="627" y="225" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="695" y="245" text-anchor="middle" fill="#9d174d" font-size="10">padding</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="765" y1="293" x2="765" y2="255" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="697" y="225" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="765" y="245" text-anchor="middle" fill="#9d174d" font-size="10">-100 prompt masking</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="815" y1="330" x2="820" y2="380" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="752" y="373" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="820" y="393" text-anchor="middle" fill="#9d174d" font-size="10">ignore_index</text>
+            </g>
+          </g>
+          <!-- Branch 5: Training Loop (bottom-right) -->
+          <g class="mm-branch" id="mm7-b5">
+            <line x1="510" y1="345" x2="615" y2="450" stroke="#f59e0b" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="535" y="428" width="160" height="42" rx="10" fill="#f59e0b"/>
+              <text x="615" y="448" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Training Loop</text>
+              <text x="615" y="463" text-anchor="middle" fill="#ffffffcc" font-size="10">optimization</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="570" y1="466" x2="540" y2="506" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="472" y="490" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="540" y="510" text-anchor="middle" fill="#92400e" font-size="10">same as pretraining</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="615" y1="470" x2="615" y2="510" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="547" y="493" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="615" y="513" text-anchor="middle" fill="#92400e" font-size="10">response-only loss</text>
+            </g>
+          </g>
+          <!-- Branch 6: Evaluation (bottom) -->
+          <g class="mm-branch" id="mm7-b6">
+            <line x1="425" y1="355" x2="425" y2="455" stroke="#8b5cf6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="335" y="455" width="180" height="42" rx="10" fill="#8b5cf6"/>
+              <text x="425" y="475" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Evaluation</text>
+              <text x="425" y="490" text-anchor="middle" fill="#ffffffcc" font-size="10">quality metrics</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="380" y1="494" x2="330" y2="534" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="262" y="517" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="330" y="537" text-anchor="middle" fill="#4c1d95" font-size="10">LLM-as-judge</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="425" y1="497" x2="425" y2="537" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="357" y="520" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="425" y="540" text-anchor="middle" fill="#4c1d95" font-size="10">BLEU / ROUGE</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="470" y1="494" x2="520" y2="534" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="452" y="517" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="520" y="537" text-anchor="middle" fill="#4c1d95" font-size="10">human preference</text>
+            </g>
+          </g>
+          <!-- Branch 7: Next Steps (bottom-left) -->
+          <g class="mm-branch" id="mm7-b7">
+            <line x1="340" y1="345" x2="235" y2="450" stroke="#06b6d4" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="145" y="428" width="180" height="42" rx="10" fill="#06b6d4"/>
+              <text x="235" y="448" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Next Steps</text>
+              <text x="235" y="463" text-anchor="middle" fill="#ffffffcc" font-size="10">beyond fine-tuning</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="180" y1="466" x2="148" y2="506" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+              <rect x="80" y="490" width="136" height="30" rx="7" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+              <text x="148" y="510" text-anchor="middle" fill="#164e63" font-size="10">RLHF</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="235" y1="470" x2="235" y2="510" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+              <rect x="167" y="493" width="136" height="30" rx="7" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+              <text x="235" y="513" text-anchor="middle" fill="#164e63" font-size="10">Constitutional AI</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="290" y1="466" x2="322" y2="506" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+              <rect x="254" y="490" width="136" height="30" rx="7" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+              <text x="322" y="510" text-anchor="middle" fill="#164e63" font-size="10">LoRA</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <script>
+    (function(){
+      var svg = document.getElementById('mindmap-ch7');
+      if (!svg) return;
+      var branches = svg.querySelectorAll('.mm-branch');
+      var center   = svg.querySelector('.mm-center');
+      function resetAll() {
+        branches.forEach(function(b){ b.classList.remove('dimmed','highlighted'); });
+      }
+      branches.forEach(function(branch) {
+        branch.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isHighlighted = branch.classList.contains('highlighted');
+          resetAll();
+          if (!isHighlighted) {
+            branches.forEach(function(b){ b.classList.add('dimmed'); });
+            branch.classList.remove('dimmed');
+            branch.classList.add('highlighted');
+          }
+        });
+      });
+      center.addEventListener('click', function(){ resetAll(); });
+    })();
+    </script>
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="ch6.html" class="nav-prev" aria-label="Previous chapter">
+        <i class="fas fa-arrow-left"></i> Ch6: Classification Fine-tuning
+      </a>
+      <a href="app-a.html" class="nav-next" aria-label="Next chapter">
+        App A: PyTorch Intro <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions — Chapter 7
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "Why are prompt tokens masked with -100 in the labels during instruction fine-tuning?",
+        options: [
+          "To save memory",
+          "So cross-entropy ignores the prompt — the model only learns to generate the response, not reconstruct its own input",
+          "To prevent gradient explosion",
+          "To enable bidirectional attention on the prompt"
+        ],
+        correct: 1,
+        explanation: "Setting labels to -100 for prompt tokens causes F.cross_entropy(ignore_index=-100) to skip those positions. The model learns to generate the response portion only, not to memorise the instruction it was given."
+      },
+      {
+        question: "What is the key difference between instruction fine-tuning and classification fine-tuning?",
+        options: [
+          "Instruction tuning is unsupervised",
+          "Instruction tuning keeps the full vocabulary output and generates text; classification replaces it with num_classes output",
+          "Instruction tuning requires more layers",
+          "Classification tuning uses RLHF"
+        ],
+        correct: 1,
+        explanation: "Classification fine-tuning swaps lm_head for a small num_classes projection. Instruction fine-tuning keeps the full vocab_size lm_head and trains the model to generate text responses following a prompt template."
+      },
+      {
+        question: "Why must the prompt template at inference be identical to the one used during training?",
+        options: [
+          "To save tokens",
+          "The model learns to recognise the structural pattern of instruction vs response — a different format breaks this learned boundary",
+          "Different templates produce different token IDs for the same text",
+          "To avoid out-of-vocabulary errors"
+        ],
+        correct: 1,
+        explanation: "The model learns that everything after '### Response:' (or the equivalent) is where it should generate. If you use a different template at inference, the model sees an unfamiliar pattern and the quality degrades."
+      },
+      {
+        question: "What is 'LLM-as-evaluator' and why is it used?",
+        options: [
+          "Using the same model to evaluate its own outputs",
+          "Using a capable LLM (e.g., GPT-4) as an automated judge to score instruction-following quality at scale",
+          "A benchmark that tests LLMs on reasoning",
+          "Fine-tuning an LLM on evaluation rubrics"
+        ],
+        correct: 1,
+        explanation: "Human evaluation is expensive and slow. Automated metrics like BLEU/ROUGE measure word overlap but not actual quality. Using a strong LLM as a judge scales evaluation while correlating reasonably well with human preference."
+      },
+      {
+        question: "What is RLHF and how does it extend instruction fine-tuning?",
+        options: [
+          "A new attention mechanism",
+          "Reinforcement Learning from Human Feedback — trains a reward model on human preference pairs, then uses RL to maximise that reward",
+          "A regularisation technique for transformers",
+          "A method for compressing model weights"
+        ],
+        correct: 1,
+        explanation: "RLHF collects human comparisons of model responses, trains a reward model to predict preference, then fine-tunes the LLM using PPO to maximise the reward. This further aligns the model with human values beyond instruction tuning."
+      },
+      {
+        question: "The Alpaca dataset fine-tuned LLaMA-7B into a capable assistant using how many instruction pairs?",
+        options: [
+          "~500",
+          "~5,000",
+          "~52,000",
+          "~5,000,000"
+        ],
+        correct: 2,
+        explanation: "Stanford Alpaca used 52,000 instruction–response pairs generated by GPT-3.5 to instruction-fine-tune LLaMA-7B, demonstrating that modest datasets of high-quality instruction pairs can produce capable assistants."
+      },
+      {
+        question: "During instruction fine-tuning, what loss function is used?",
+        options: [
+          "Mean squared error",
+          "Binary cross-entropy",
+          "Cross-entropy with ignore_index=-100 for prompt tokens",
+          "Contrastive loss"
+        ],
+        correct: 2,
+        explanation: "Cross-entropy is used — the same objective as pretraining, over the full vocabulary. The key difference is ignore_index=-100 which masks the prompt tokens so the loss is only computed over the response tokens."
+      },
+      {
+        question: "Why are larger pretrained models generally better starting points for instruction fine-tuning?",
+        options: [
+          "They train faster",
+          "Larger models have more capacity to learn complex instruction patterns and have better emergent reasoning from pretraining",
+          "Smaller models overfit the instruction dataset",
+          "Larger models have better tokenisers"
+        ],
+        correct: 1,
+        explanation: "Instruction tuning is more about redirecting capabilities than building them from scratch. Larger models with stronger pretrained representations learn instruction following more robustly and generalise better to unseen instructions."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

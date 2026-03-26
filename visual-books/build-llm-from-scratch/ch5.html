@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5: Pretraining — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Loss flow diagram ── */
+    .viz-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1rem auto;
+      max-width: 380px;
+    }
+    .viz-node {
+      width: 100%;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      position: relative;
+    }
+    .viz-node .vn-sub {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      opacity: 0.75;
+      display: block;
+      margin-top: 0.1rem;
+    }
+    .viz-arrow {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .vn-forward  { background: rgba(79,110,247,0.12);  color: var(--accent);   border: 1.5px solid rgba(79,110,247,0.3); }
+    .vn-flatten  { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+    .vn-loss     { background: rgba(239,68,68,0.10);   color: #ef4444;         border: 1.5px solid rgba(239,68,68,0.25); }
+    .vn-mean     { background: rgba(168,85,247,0.10);  color: #a855f7;         border: 1.5px solid rgba(168,85,247,0.25); }
+    .vn-backward { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .vn-optim    { background: rgba(79,110,247,0.18);  color: var(--accent);   border: 2px solid rgba(79,110,247,0.4); }
+
+    /* ── Loss curve SVG ── */
+    .loss-svg-wrap {
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .loss-legend {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+    }
+    .loss-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+    .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+
+    /* ── GPT-2 family table ── */
+    .gpt2-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+      margin: 1rem 0;
+    }
+    .gpt2-table th {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .gpt2-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .gpt2-table tr:last-child td { border-bottom: none; }
+    .gpt2-table td:first-child { color: var(--accent); font-weight: 600; font-family: 'Inter', sans-serif; }
+    .gpt2-table tr.highlight-row td { background: rgba(79,110,247,0.06); }
+
+    /* ── Temperature slider viz ── */
+    .temp-viz {
+      margin: 1rem 0;
+    }
+    .temp-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .temp-controls label {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .temp-controls input[type="range"] {
+      flex: 1;
+      min-width: 120px;
+      max-width: 260px;
+      accent-color: var(--accent);
+    }
+    .temp-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent);
+      width: 36px;
+      text-align: right;
+    }
+    .temp-bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .temp-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .temp-bar-label {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      width: 56px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .temp-bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--surface-2);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    .temp-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.18s ease;
+    }
+    .temp-bar-pct {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      width: 40px;
+      flex-shrink: 0;
+      text-align: left;
+    }
+    .temp-mode-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+    }
+    .tag-greedy    { background: rgba(239,68,68,0.12);  color: #ef4444; }
+    .tag-balanced  { background: rgba(79,110,247,0.12); color: var(--accent); }
+    .tag-creative  { background: rgba(16,185,129,0.12); color: var(--accent-3); }
+
+    @media (max-width: 500px) {
+      .temp-controls { gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body data-chapter="ch5">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">Ch5: Pretraining</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Chapter 5</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 5</div>
+      <h1>Pretraining on Unlabeled Data</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 7 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 7-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~22 min read</span>
+        <span class="tag">Training</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>Chapter 4 left us with a fully assembled GPT model — every layer wired up, every weight randomly initialised. At this point the model exists but knows nothing; it will produce incoherent nonsense for any prompt you give it. Pretraining is the process that turns random noise into a model capable of fluent, coherent language. This chapter covers the entire pretraining loop from end to end: computing a meaningful loss signal, running gradient updates that push weights in the right direction, tracking progress with both training and validation curves, and finally generating text using several different decoding strategies once training is underway.</p>
+
+      <p>By the end of the chapter you will also know how to checkpoint your model mid-training (so you can resume if something crashes) and how to load OpenAI's publicly released GPT-2 weights into your own custom architecture — giving you a shortcut to a high-quality starting point without running the full pretraining yourself. These skills form the practical backbone of everything that follows in the book, from supervised fine-tuning to RLHF.</p>
+
+      <!-- ══════════════════
+           LESSON 5.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-1">
+        <div class="lesson-header">
+          <span class="lesson-number">5.1</span>
+          <h2>Text Generation Recap</h2>
+        </div>
+
+        <p>Before diving into the training machinery, it is worth revisiting exactly what the GPT model produces during a forward pass. Given a batch of token-ID sequences of shape <code>[B, T]</code>, the model outputs a tensor of <strong>logits</strong> with shape <code>[B, T, vocab_size]</code>. Each of the T positions holds a raw, unnormalised score for every token in the vocabulary — essentially the model's "vote" for what token should come next. At inference time, you take the logits at the final position (index T-1), apply softmax to turn the scores into a probability distribution, then either pick the argmax (greedy decoding) or sample from the distribution to obtain the next token ID.</p>
+
+        <p>During training, however, we exploit a critical advantage: we already know the correct next token at every position in the sequence. We can therefore compute T separate next-token predictions in a single forward pass and compare each one against its ground-truth label. This technique is called <strong>teacher forcing</strong>. Concretely, if your input token sequence is <code>[t₀, t₁, t₂, …, t_{T-1}]</code>, the corresponding target sequence is shifted one position right: <code>[t₁, t₂, t₃, …, t_T]</code>. The model sees the full input, predicts a distribution at each position, and is immediately supervised against the next real token — all in one vectorised operation.</p>
+
+        <p>Teacher forcing is highly efficient but it does introduce a subtle training-inference mismatch. During inference the model conditions on its own (potentially imperfect) previous outputs, whereas during training it always has the perfect ground-truth context. For large language models this so-called <em>exposure bias</em> is rarely a practical problem because the enormous diversity of the training corpus means the model sees enough variation to generalise, but it is worth keeping in mind when analysing failure modes of smaller models trained on narrow datasets.</p>
+
+      </section><!-- /#lesson-5-1 -->
+
+      <!-- ══════════════════
+           LESSON 5.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-2">
+        <div class="lesson-header">
+          <span class="lesson-number">5.2</span>
+          <h2>Cross-Entropy Loss</h2>
+        </div>
+
+        <p>Cross-entropy loss is the standard objective for next-token prediction, and understanding it intuitively helps you debug training runs. The formula for a single token is simple: <code>−log(p_correct_token)</code>, where <code>p_correct_token</code> is the probability the model assigned to the token that actually appeared next in the text. If the model is perfectly confident and correct, it assigns probability 1.0 and the loss contribution is <code>−log(1) = 0</code>. Any uncertainty or incorrect prediction pushes the loss above zero. Because the logarithm grows very steeply near zero, assigning even a tiny probability to the wrong token incurs a large penalty — this is by design, as it strongly encourages the model to concentrate probability mass on the correct answer.</p>
+
+        <p>A useful sanity check is to compute the expected loss at initialisation. A freshly initialised model with random weights will distribute probability roughly uniformly across all 50,257 tokens in GPT-2's vocabulary, giving each token a probability of about <code>1/50257 ≈ 1.99 × 10⁻⁵</code>. Plugging that into the formula: <code>−log(1.99 × 10⁻⁵) ≈ 10.82</code>. Whenever you start training a GPT-style model you should see an initial loss very close to this value — if the starting loss is dramatically higher or lower, something is wrong with the initialisation or the data pipeline. In practice we flatten the <code>[B, T, V]</code> logit tensor to <code>[B*T, V]</code> so PyTorch's <code>F.cross_entropy</code> can vectorise the computation across all token positions in a single efficient call.</p>
+
+        <p>One subtlety is how PyTorch handles the reduction. By default <code>F.cross_entropy</code> averages the per-token losses across the entire flattened batch, giving a single scalar. This means the effective loss scale depends on the sequence length and batch size — two hyperparameters that may change across experiments. Some practitioners use <code>reduction='sum'</code> instead and divide manually to get more explicit control, but for most purposes the default mean reduction works well and matches the convention used by OpenAI's original GPT training code.</p>
+
+        <pre class="code-block"><code>logits = <span class="fn">model</span>(input_ids)               <span class="cmt"># [B, T, vocab_size]</span>
+loss = F.<span class="fn">cross_entropy</span>(
+    logits.<span class="fn">view</span>(<span class="num">-1</span>, logits.<span class="fn">size</span>(<span class="num">-1</span>)),   <span class="cmt"># [B*T, vocab_size]</span>
+    targets.<span class="fn">view</span>(<span class="num">-1</span>)                    <span class="cmt"># [B*T]</span>
+)</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-project-diagram"></i> 6-Step Training Pass</div>
+
+          <div class="viz-flow" id="lossFlowDiagram">
+            <div class="viz-node vn-forward">① Forward pass → logits
+              <span class="vn-sub">[B, T, vocab_size]</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-flatten">② Flatten logits &amp; targets
+              <span class="vn-sub">[B*T, vocab_size]  and  [B*T]</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-loss">③ Cross-entropy: −log(p[correct])
+              <span class="vn-sub">one scalar loss per token position</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-mean">④ Mean over batch
+              <span class="vn-sub">single scalar loss value</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-backward">⑤ loss.backward()
+              <span class="vn-sub">compute gradients for every parameter</span>
+            </div>
+            <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="viz-node vn-optim">⑥ optimizer.step()
+              <span class="vn-sub">update weights in direction of −∇loss</span>
+            </div>
+          </div>
+
+          <div class="viz-caption">Every training step follows this 6-stage cycle. Steps ①–④ are the forward pass; ⑤–⑥ are the backward pass and parameter update.</div>
+        </div>
+
+      </section><!-- /#lesson-5-2 -->
+
+      <!-- ══════════════════
+           LESSON 5.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-3">
+        <div class="lesson-header">
+          <span class="lesson-number">5.3</span>
+          <h2>Train / Validation Loss Curves</h2>
+        </div>
+
+        <p>Tracking loss on a held-out validation set is one of the most important habits in machine learning, and it becomes especially critical during LLM pretraining where a single run can take days or weeks. The validation set is a slice of text that is never used to compute gradients — it exists purely as an unbiased measuring stick for how well the model generalises to unseen data. You evaluate it periodically (say, every 100 or 500 steps) and record both the training loss (averaged over recent batches) and the validation loss. Plotting both gives you the famous train/val loss curve that tells the complete story of your training run at a glance.</p>
+
+        <p>The relationship between the two curves reveals whether training is healthy. Ideally both curves slope downward together, indicating the model is genuinely learning patterns that transfer to new text rather than memorising the specific sequences it was trained on. When the training loss continues to fall but the validation loss stops improving or begins to creep back up, the model has entered the overfitting regime — it is getting better at the training data specifically rather than at language in general. This is also called the <strong>generalisation gap</strong>, and a growing gap is a clear signal to stop training or apply regularisation. At true LLM pretraining scale (hundreds of billions of tokens), both curves typically improve together for a very long time, because the massive dataset dwarfs the model's capacity to memorise individual examples.</p>
+
+        <p>In the book's toy example you will see the gap emerge relatively quickly because the training corpus is tiny (a few chapters of a novel). This is intentional — it lets you witness overfitting in a short training run so you can recognise the pattern. One practical trick: log loss in <em>nats</em> (base-e) rather than <em>bits</em> (base-2) to stay consistent with PyTorch's default, and convert to perplexity (<code>exp(val_loss)</code>) for a more interpretable metric. A perplexity of 10 means the model is, on average, as uncertain as if it were choosing uniformly among 10 equally likely tokens at each position.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Train vs Validation Loss</div>
+
+          <div class="loss-svg-wrap">
+            <svg id="lossCurveSvg" viewBox="0 0 500 220" width="100%" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="loss-legend">
+            <span class="loss-legend-item"><span class="legend-line" style="background:#4f6ef7;"></span> Train loss</span>
+            <span class="loss-legend-item"><span class="legend-line" style="background:#f59e0b;"></span> Val loss</span>
+          </div>
+
+          <div class="viz-caption">Both loss curves trend downward during healthy pretraining. A growing gap between train (blue) and val (amber) signals overfitting — the model memorizes rather than generalizes.</div>
+        </div>
+
+      </section><!-- /#lesson-5-3 -->
+
+      <!-- ══════════════════
+           LESSON 5.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-4">
+        <div class="lesson-header">
+          <span class="lesson-number">5.4</span>
+          <h2>The Training Loop</h2>
+        </div>
+
+        <pre class="code-block"><code>model.<span class="fn">train</span>()
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(num_epochs):
+    <span class="kw">for</span> input_ids, target_ids <span class="kw">in</span> train_loader:
+        optimizer.<span class="fn">zero_grad</span>()
+        logits = <span class="fn">model</span>(input_ids)
+        loss = F.<span class="fn">cross_entropy</span>(
+            logits.<span class="fn">view</span>(<span class="num">-1</span>, logits.<span class="fn">size</span>(<span class="num">-1</span>)),
+            target_ids.<span class="fn">view</span>(<span class="num">-1</span>)
+        )
+        loss.<span class="fn">backward</span>()
+        torch.nn.utils.<span class="fn">clip_grad_norm_</span>(model.<span class="fn">parameters</span>(), <span class="num">1.0</span>)
+        optimizer.<span class="fn">step</span>()</code></pre>
+
+        <p>The training loop above may look simple, but every single line is load-bearing. The call to <code>optimizer.zero_grad()</code> at the top is essential because PyTorch, by default, <em>accumulates</em> gradients into each parameter's <code>.grad</code> attribute rather than overwriting them. This behaviour exists to support advanced techniques like gradient checkpointing, where you deliberately sum gradients across multiple micro-batches before stepping. In a standard per-batch loop, however, you must explicitly zero the accumulated gradients at the start of each step, or you will be mixing gradient signals from the current batch with leftover signals from previous batches — a subtle bug that causes training to diverge in unpredictable ways.</p>
+
+        <p>Gradient clipping via <code>clip_grad_norm_</code> guards against a different failure mode: <strong>exploding gradients</strong>. Early in training, or whenever the loss surface has very high curvature, the backward pass can compute gradient vectors with extremely large magnitudes. A single step of unconstrained gradient descent in this situation can fling the parameters far from any sensible region of the loss landscape, often destroying all the progress made in previous steps. Gradient clipping rescales the entire gradient vector (across all parameters at once) so that its L2 norm never exceeds the threshold — 1.0 is the value used in the GPT-2 paper and is almost universally adopted. Crucially, it rescales proportionally rather than clipping per-parameter, so the <em>direction</em> of the update is preserved; only the magnitude is capped.</p>
+
+        <p>The choice of <strong>AdamW</strong> as the optimizer deserves its own explanation. Adam tracks both the first moment (mean gradient) and the second moment (variance of gradients) for each parameter, which produces adaptive per-parameter learning rates that work far better than a single global learning rate for the heterogeneous parameters in a Transformer. However, vanilla Adam's original weight decay implementation is flawed at scale — weight decay is applied to the update that already includes the adaptive learning rate scaling, which means parameters with small gradients receive less regularisation than parameters with large gradients, an unintended asymmetry. AdamW fixes this by applying weight decay directly to the raw parameter values, completely decoupled from the gradient update. For large models this distinction meaningfully affects both final quality and training stability.</p>
+
+      </section><!-- /#lesson-5-4 -->
+
+      <!-- ══════════════════
+           LESSON 5.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-5">
+        <div class="lesson-header">
+          <span class="lesson-number">5.5</span>
+          <h2>Decoding Strategies</h2>
+        </div>
+
+        <p>Once training is underway, you will want to periodically generate text from the model to qualitatively assess progress. The strategy you use to pick the next token — the <strong>decoding strategy</strong> — has a profound effect on what you observe, entirely independent of the model's learned weights. Understanding the trade-off between determinism and diversity is therefore critical both for evaluating your model during training and for building useful generation pipelines afterwards. The same model can sound robotically repetitive or refreshingly creative depending entirely on how you decode its output distribution.</p>
+
+        <p><strong>Greedy decoding</strong> is the simplest strategy: always select the token with the highest probability, i.e. <code>argmax</code> over the logits. This is fully deterministic — the same prompt always produces the same output — and it is fast because no sampling is needed. The downside is a strong tendency toward repetitive loops. Once the model finds a locally high-probability phrase it tends to repeat it indefinitely, because at each step the same token keeps winning the argmax. <strong>Temperature sampling</strong> addresses this by dividing the raw logits by a scalar <code>T</code> before applying softmax. When <code>T &lt; 1</code>, differences between logit values are amplified, making the distribution sharper (the highest-probability tokens dominate even more), which produces more focused but still stochastic outputs. When <code>T &gt; 1</code>, logit differences are compressed, flattening the distribution so lower-probability tokens get a real chance — outputs become more varied and surprising, though also potentially less coherent. Setting <code>T = 1.0</code> leaves the original distribution untouched.</p>
+
+        <pre class="code-block"><code>probs    = F.<span class="fn">softmax</span>(logits / temperature, dim=<span class="num">-1</span>)
+idx_next = torch.<span class="fn">multinomial</span>(probs, num_samples=<span class="num">1</span>)</code></pre>
+
+        <p><strong>Top-k sampling</strong> constrains the sampling pool to only the <code>k</code> most probable tokens at each step, setting all other logits to <code>-infinity</code> (which becomes zero after softmax). This prevents the model from ever accidentally sampling a low-probability token that happens to be grammatically or factually wrong. A typical value is <code>k = 50</code>. Temperature and top-k are commonly combined: apply top-k first to restrict the candidate set, then apply temperature to reshape the distribution over those k candidates. This layered approach gives fine-grained control — you can have creative diversity (high temperature) while still excluding obvious garbage tokens (low k). A related technique, <strong>top-p (nucleus) sampling</strong>, dynamically adjusts the cutoff by taking only enough of the most probable tokens to cover a cumulative probability mass of <code>p</code> (e.g. 0.9), which adapts better to situations where the model is very confident (few tokens needed to reach 0.9) versus very uncertain (many tokens needed).</p>
+
+        <p>In practice, production systems almost always combine temperature with either top-k or top-p, and sometimes both. The exact values to use are not determined by theory — they are tuned empirically by running human evaluations on model outputs. For the purposes of this book, starting with <code>temperature = 1.0</code> and <code>top_k = 50</code> gives reasonable outputs from a partially trained model and makes qualitative progress easy to observe as training continues.</p>
+
+        <pre class="code-block"><code>top_k_logits, _ = torch.<span class="fn">topk</span>(logits, k)
+logits[logits &lt; top_k_logits[..., <span class="num">-1</span>:]] = <span class="fn">float</span>(<span class="str">'-inf'</span>)
+probs = F.<span class="fn">softmax</span>(logits, dim=<span class="num">-1</span>)</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sliders-h"></i> Temperature Effect on Token Distribution</div>
+
+          <div class="temp-viz">
+            <div class="temp-controls">
+              <label for="tempSlider">Temperature:</label>
+              <input type="range" id="tempSlider" min="0.1" max="2.0" step="0.1" value="1.0" />
+              <span class="temp-value" id="tempValue">1.0</span>
+              <span class="temp-mode-tag tag-balanced" id="tempModeTag">Balanced</span>
+            </div>
+            <div class="temp-bar-chart" id="tempBarChart"></div>
+          </div>
+
+          <div class="viz-caption">Drag the slider to adjust temperature. Lower values make the model more confident (peaked distribution); higher values spread probability more evenly across tokens.</div>
+        </div>
+
+      </section><!-- /#lesson-5-5 -->
+
+      <!-- ══════════════════
+           LESSON 5.6
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-6">
+        <div class="lesson-header">
+          <span class="lesson-number">5.6</span>
+          <h2>Saving and Loading Weights</h2>
+        </div>
+
+        <p>Pretraining runs can last hours or days even on reasonably powerful hardware, which makes checkpointing — periodically saving the model's state to disk — absolutely essential. The most common disaster scenario is a job crash or GPU out-of-memory error partway through training: without checkpoints you would have to restart from scratch. Beyond crash recovery, checkpoints let you compare models from different points in training (sometimes an earlier checkpoint generalises better to your specific downstream task than the final one), and they are the artifacts you share with collaborators or deploy to production. The habit of saving checkpoints regularly is one of the most valuable practices you can build from your very first training run.</p>
+
+        <p>There is an important detail about <em>what</em> to save. It is tempting to save only the model's <code>state_dict</code> (the parameter tensors), but this is insufficient if you ever want to resume training rather than just run inference. The optimizer — especially AdamW — maintains internal momentum buffers for every parameter, representing a running average of past gradients. These buffers encode "momentum" that took many steps to build up. If you restart training without them, the optimizer effectively starts cold and you often see a brief but harmful spike in the loss before it recovers. Always save both the model state and the optimizer state, along with the current epoch and loss value for bookkeeping. The <code>map_location='cpu'</code> argument when loading ensures the checkpoint can be read on any machine, regardless of whether a GPU is present — PyTorch will move tensors to the appropriate device after loading.</p>
+
+        <p>For production-scale models there are more sophisticated checkpointing strategies. Large models (tens of billions of parameters) have checkpoints too big to save after every step, so practitioners save every few thousand steps and use <em>rolling checkpoints</em> that keep only the last N saved states to avoid filling up disk. Frameworks like DeepSpeed and FSDP have their own sharded checkpoint formats for distributed training, where parameters are spread across multiple GPUs. The principles remain the same — save model state, optimizer state, and training metadata — but the implementation details become more complex as you scale up.</p>
+
+        <pre class="code-block"><code><span class="cmt"># Save</span>
+torch.<span class="fn">save</span>({
+    <span class="str">'model_state'</span>:     model.<span class="fn">state_dict</span>(),
+    <span class="str">'optimizer_state'</span>: optimizer.<span class="fn">state_dict</span>(),
+    <span class="str">'epoch'</span>:           epoch,
+    <span class="str">'loss'</span>:            loss
+}, <span class="str">'gpt2_checkpoint.pt'</span>)
+
+<span class="cmt"># Load</span>
+checkpoint = torch.<span class="fn">load</span>(<span class="str">'gpt2_checkpoint.pt'</span>, map_location=<span class="str">'cpu'</span>)
+model.<span class="fn">load_state_dict</span>(checkpoint[<span class="str">'model_state'</span>])</code></pre>
+
+      </section><!-- /#lesson-5-6 -->
+
+      <!-- ══════════════════
+           LESSON 5.7
+      ══════════════════ -->
+      <section class="lesson" id="lesson-5-7">
+        <div class="lesson-header">
+          <span class="lesson-number">5.7</span>
+          <h2>Loading OpenAI GPT-2 Weights</h2>
+        </div>
+
+        <p>Training a GPT-2-scale model from scratch on a consumer GPU would take weeks or months. Fortunately, OpenAI released the GPT-2 weights publicly in 2019, and loading them into your own from-scratch implementation is a powerful shortcut. Rather than initialising your model randomly and pretraining from zero, you can start with weights that already encode a rich understanding of English language, factual knowledge, and basic reasoning. From this standing start you can fine-tune on your own task in a matter of hours. This is one of the earliest and most important demonstrations of the value of publicly releasing pretrained language model weights — a practice that has since become a cornerstone of the open-source AI ecosystem.</p>
+
+        <p>The mechanics of loading external weights require careful attention to naming conventions. When you build a GPT model from scratch using your own module names, the keys in your <code>state_dict</code> will look different from the keys in OpenAI's checkpoint. For example, OpenAI stores the combined query-key-value projection as <code>h.0.attn.c_attn.weight</code> using a 1D convolution representation, whereas your implementation might use a standard <code>nn.Linear</code> with a name like <code>blocks.0.attn.qkv.weight</code>. You need to write a mapping function that iterates through both dictionaries and copies tensor values from matching layers by hand. An additional gotcha: OpenAI uses a transposed weight convention for some linear layers (a legacy of their Conv1D implementation), so you will need to transpose certain tensors before copying them or your matrix multiplications will compute the wrong thing. The book walks through this mapping procedure step by step, which is a useful exercise for building intuition about how model internals connect to saved checkpoint files.</p>
+
+        <p>Once the weights are loaded successfully, you can verify the transfer worked by running the model on a simple prompt and checking that it produces fluent, coherent text immediately — without any training on your machine. You can also compare the validation loss against the baseline: a correctly loaded GPT-2 Small should achieve a validation perplexity consistent with OpenAI's published evaluation results. Any significant deviation signals that some weights were mapped incorrectly. This sanity-check habit — verify that loaded weights produce expected metrics before doing anything else — is standard practice in the field and will save you from many hours of confusing debugging downstream.</p>
+
+        <pre class="code-block"><code><span class="kw">from</span> transformers <span class="kw">import</span> GPT2Model
+gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2'</span>)
+<span class="cmt"># Map weights to your custom model architecture</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table"></i> GPT-2 Model Family</div>
+
+          <table class="gpt2-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Params</th>
+                <th>Layers</th>
+                <th>Heads</th>
+                <th>d_model</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row">
+                <td>Small</td>
+                <td>124M</td>
+                <td>12</td>
+                <td>12</td>
+                <td>768</td>
+              </tr>
+              <tr>
+                <td>Medium</td>
+                <td>355M</td>
+                <td>24</td>
+                <td>16</td>
+                <td>1,024</td>
+              </tr>
+              <tr>
+                <td>Large</td>
+                <td>774M</td>
+                <td>36</td>
+                <td>20</td>
+                <td>1,280</td>
+              </tr>
+              <tr>
+                <td>XL</td>
+                <td>1.5B</td>
+                <td>48</td>
+                <td>25</td>
+                <td>1,600</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="viz-caption">All four GPT-2 variants share the same architecture — only scale differs. The book uses Small (124M) throughout. Loading any variant's weights follows the same weight-mapping procedure.</div>
+        </div>
+
+      </section><!-- /#lesson-5-7 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Chapter 5 — Key Takeaways</h3>
+        <ul>
+          <li><strong>Cross-entropy loss</strong> measures prediction quality: <code>−log(p_correct)</code>. Random baseline ≈ 10.8 for a 50k-token vocabulary. Lower is better.</li>
+          <li><strong>Training loop:</strong> forward → loss → backward → clip → step → repeat. This is the complete cycle for every batch.</li>
+          <li><strong>AdamW + gradient clipping</strong> (norm = 1.0) is the standard pretraining setup. AdamW decouples weight decay; clipping prevents exploding gradients.</li>
+          <li><strong>Temperature</strong> controls output randomness; <strong>top-k</strong> restricts the sampling vocabulary at each decoding step. Both can be combined.</li>
+          <li><strong>Always track both train and val loss</strong> to detect overfitting early. Healthy pretraining shows both curves declining together.</li>
+          <li><strong>GPT-2 weights are public</strong> and reusable. Loading pretrained weights via weight-name mapping gives your custom model a strong starting point for fine-tuning.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Chapter 5 Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of pretraining, loss, and decoding. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click a node to explore</div>
+        <svg id="mindmap-ch5" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+          <style>
+            #mindmap-ch5 .mm-branch { cursor:pointer; transition:opacity 0.3s; }
+            #mindmap-ch5 .mm-branch.dimmed { opacity:0.15; }
+            #mindmap-ch5 .mm-branch.highlighted .mm-branch-node rect,
+            #mindmap-ch5 .mm-branch.highlighted .mm-center rect { filter:brightness(1.2); }
+            #mindmap-ch5 .mm-center { cursor:pointer; }
+            #mindmap-ch5 .mm-sub { animation: mmFadeIn 0.5s ease both; }
+            @keyframes mmFadeIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+            #mindmap-ch5 text { font-family: Inter, sans-serif; }
+          </style>
+          <!-- Center node -->
+          <g class="mm-center" id="mm5-center">
+            <rect x="310" y="265" width="180" height="70" rx="16" fill="#6c63ff" filter="url(#mm5-shadow)"/>
+            <text x="400" y="296" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Pretraining</text>
+            <text x="400" y="315" text-anchor="middle" fill="#ffffffcc" font-size="11">Ch 5</text>
+          </g>
+          <defs>
+            <filter id="mm5-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0004"/>
+            </filter>
+          </defs>
+          <!-- Branch 1: Cross-Entropy Loss (top-left) -->
+          <g class="mm-branch" id="mm5-b1">
+            <line x1="350" y1="280" x2="195" y2="175" stroke="#f97316" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="100" y="148" width="190" height="42" rx="10" fill="#f97316"/>
+              <text x="195" y="168" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Cross-Entropy Loss</text>
+              <text x="195" y="183" text-anchor="middle" fill="#ffffffcc" font-size="10">loss signal</text>
+            </g>
+            <!-- Sub-nodes -->
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="145" y1="165" x2="88" y2="115" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="20" y="98" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="88" y="118" text-anchor="middle" fill="#b45309" font-size="10">next-token prediction</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="195" y1="148" x2="195" y2="98" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="127" y="68" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="195" y="88" text-anchor="middle" fill="#b45309" font-size="10">-log(p_correct)</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="245" y1="165" x2="302" y2="115" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+              <rect x="234" y="98" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
+              <text x="302" y="118" text-anchor="middle" fill="#b45309" font-size="10">~10.8 random baseline</text>
+            </g>
+          </g>
+          <!-- Branch 2: Train/Val Loss (top-right) -->
+          <g class="mm-branch" id="mm5-b2">
+            <line x1="450" y1="280" x2="590" y2="185" stroke="#10b981" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="510" y="158" width="160" height="42" rx="10" fill="#10b981"/>
+              <text x="590" y="178" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Train/Val Loss</text>
+              <text x="590" y="193" text-anchor="middle" fill="#ffffffcc" font-size="10">monitoring</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="545" y1="172" x2="510" y2="120" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="442" y="103" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="510" y="123" text-anchor="middle" fill="#065f46" font-size="10">teacher forcing</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="590" y1="158" x2="590" y2="108" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="522" y="78" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="590" y="98" text-anchor="middle" fill="#065f46" font-size="10">overfitting signal</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="635" y1="172" x2="665" y2="120" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+              <rect x="597" y="103" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
+              <text x="665" y="123" text-anchor="middle" fill="#065f46" font-size="10">perplexity</text>
+            </g>
+          </g>
+          <!-- Branch 3: Training Loop (right) -->
+          <g class="mm-branch" id="mm5-b3">
+            <line x1="490" y1="300" x2="630" y2="300" stroke="#3b82f6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="630" y="278" width="155" height="42" rx="10" fill="#3b82f6"/>
+              <text x="707" y="298" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Training Loop</text>
+              <text x="707" y="313" text-anchor="middle" fill="#ffffffcc" font-size="10">gradient updates</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="707" y1="278" x2="707" y2="248" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="639" y="218" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="707" y="238" text-anchor="middle" fill="#1e40af" font-size="10">zero_grad / forward</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="755" y1="295" x2="760" y2="248" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="692" y="218" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" transform="translate(0 30)"/>
+              <text x="760" y="268" text-anchor="middle" fill="#1e40af" font-size="10">backward / clip_grad</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="755" y1="315" x2="760" y2="355" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="692" y="348" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="760" y="368" text-anchor="middle" fill="#1e40af" font-size="10">optimizer step</text>
+            </g>
+          </g>
+          <!-- Branch 4: Decoding Strategies (bottom-right) -->
+          <g class="mm-branch" id="mm5-b4">
+            <line x1="450" y1="320" x2="575" y2="430" stroke="#ec4899" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="495" y="408" width="170" height="42" rx="10" fill="#ec4899"/>
+              <text x="580" y="428" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Decoding Strategies</text>
+              <text x="580" y="443" text-anchor="middle" fill="#ffffffcc" font-size="10">text generation</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="530" y1="445" x2="500" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="432" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="500" y="495" text-anchor="middle" fill="#9d174d" font-size="10">greedy argmax</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="580" y1="450" x2="580" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="512" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="580" y="495" text-anchor="middle" fill="#9d174d" font-size="10">temperature</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="630" y1="445" x2="660" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+              <rect x="592" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
+              <text x="660" y="495" text-anchor="middle" fill="#9d174d" font-size="10">top-k sampling</text>
+            </g>
+          </g>
+          <!-- Branch 5: Saving Weights (bottom-left) -->
+          <g class="mm-branch" id="mm5-b5">
+            <line x1="350" y1="320" x2="225" y2="430" stroke="#f59e0b" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="135" y="408" width="160" height="42" rx="10" fill="#f59e0b"/>
+              <text x="215" y="428" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Saving Weights</text>
+              <text x="215" y="443" text-anchor="middle" fill="#ffffffcc" font-size="10">persistence</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="170" y1="445" x2="130" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="62" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="130" y="495" text-anchor="middle" fill="#92400e" font-size="10">state_dict</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="215" y1="450" x2="215" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="147" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="215" y="495" text-anchor="middle" fill="#92400e" font-size="10">checkpoint</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="260" y1="445" x2="300" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+              <rect x="232" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="300" y="495" text-anchor="middle" fill="#92400e" font-size="10">optimizer state</text>
+            </g>
+          </g>
+          <!-- Branch 6: GPT-2 Weights (left) -->
+          <g class="mm-branch" id="mm5-b6">
+            <line x1="310" y1="300" x2="175" y2="300" stroke="#8b5cf6" stroke-width="2.5" opacity="0.7"/>
+            <g class="mm-branch-node">
+              <rect x="15" y="278" width="160" height="42" rx="10" fill="#8b5cf6"/>
+              <text x="95" y="298" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">GPT-2 Weights</text>
+              <text x="95" y="313" text-anchor="middle" fill="#ffffffcc" font-size="10">pretrained loading</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.05s">
+              <line x1="55" y1="278" x2="55" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="-13" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="55" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">pretrained weights</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.1s">
+              <line x1="95" y1="278" x2="95" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="27" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="95" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">weight mapping</text>
+            </g>
+            <g class="mm-sub" style="animation-delay:0.15s">
+              <line x1="135" y1="278" x2="135" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+              <rect x="67" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="135" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">124M–1.5B</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <script>
+    (function(){
+      var svg = document.getElementById('mindmap-ch5');
+      if (!svg) return;
+      var branches = svg.querySelectorAll('.mm-branch');
+      var center   = svg.querySelector('.mm-center');
+      function resetAll() {
+        branches.forEach(function(b){ b.classList.remove('dimmed','highlighted'); });
+      }
+      branches.forEach(function(branch) {
+        branch.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isHighlighted = branch.classList.contains('highlighted');
+          resetAll();
+          if (!isHighlighted) {
+            branches.forEach(function(b){ b.classList.add('dimmed'); });
+            branch.classList.remove('dimmed');
+            branch.classList.add('highlighted');
+          }
+        });
+      });
+      center.addEventListener('click', function(){ resetAll(); });
+    })();
+    </script>
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="ch4.html" class="nav-prev" aria-label="Previous chapter">
+        <i class="fas fa-arrow-left"></i> Ch4: GPT from Scratch
+      </a>
+      <a href="ch6.html" class="nav-next" aria-label="Next chapter">
+        Ch6: Fine-tuning for Classification <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions — Chapter 5
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "What is the cross-entropy loss for a model making a completely random prediction over 50,257 tokens?",
+        options: ["0.0", "~1.0", "~10.8", "~100"],
+        correct: 2,
+        explanation: "Random prediction assigns probability 1/50257 ≈ 0.0000199 to the correct token. −log(0.0000199) ≈ 10.8. This is the starting loss you'd expect from an untrained GPT model."
+      },
+      {
+        question: "Why do we call optimizer.zero_grad() at the start of each training step?",
+        options: ["To reset the model weights", "Because PyTorch accumulates gradients by default — not resetting would add gradients from multiple steps", "To speed up backpropagation", "To clear GPU memory"],
+        correct: 1,
+        explanation: "PyTorch adds gradients to existing .grad tensors (accumulation is useful for gradient checkpointing). In standard training you want fresh gradients per step, so zero_grad() is required."
+      },
+      {
+        question: "What does temperature=0.1 do to the output distribution compared to temperature=1.0?",
+        options: ["Makes it more uniform (random)", "Makes it more peaked (deterministic — top tokens dominate)", "Has no effect", "Inverts probabilities"],
+        correct: 1,
+        explanation: "Dividing logits by T<1 amplifies differences before softmax, making the distribution peakier. T=0.1 behaves almost like greedy. T>1 flattens the distribution for more randomness."
+      },
+      {
+        question: "What problem does gradient clipping (clip_grad_norm_) solve?",
+        options: ["Vanishing gradients", "Exploding gradients — abnormally large gradient updates that destabilize training", "Slow convergence", "Overfitting"],
+        correct: 1,
+        explanation: "Gradient clipping caps the global gradient norm at a threshold (typically 1.0). If the norm exceeds it, all gradients are rescaled proportionally. This prevents catastrophic parameter updates."
+      },
+      {
+        question: "What does top-k sampling do?",
+        options: ["Samples from the full vocabulary", "Restricts sampling to only the k highest-probability tokens", "Takes the average of top-k logits", "Uses k separate models"],
+        correct: 1,
+        explanation: "Top-k filters the vocabulary to the k most likely tokens, sets all others to -infinity (→ 0 after softmax), then samples from that reduced distribution. Prevents low-probability garbage tokens."
+      },
+      {
+        question: "What is the sign that a model is overfitting during LLM pretraining?",
+        options: ["Both train and val loss increase", "Train loss decreases but validation loss stops improving or increases", "Validation loss drops faster than train loss", "Loss oscillates between epochs"],
+        correct: 1,
+        explanation: "Overfitting = model memorizes training data rather than learning generalizable patterns. Train loss keeps improving; val loss plateaus or worsens. At LLM pretraining scale, both curves usually improve together."
+      },
+      {
+        question: "What optimizer is standard for LLM pretraining?",
+        options: ["SGD with momentum", "Adam", "AdamW (Adam with decoupled weight decay)", "RMSprop"],
+        correct: 2,
+        explanation: "AdamW decouples weight decay from the gradient update (unlike Adam where weight decay is entangled with the adaptive learning rates). This is critical for large models to avoid regularization artifacts."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+
+    /* ─────────────────────────────────────────
+       Loss curve SVG (Lesson 5.3)
+    ───────────────────────────────────────── */
+    (function() {
+      const svg = document.getElementById('lossCurveSvg');
+      const W = 500, H = 220;
+      const PAD = { top: 20, bottom: 35, left: 48, right: 20 };
+      const plotW = W - PAD.left - PAD.right;
+      const plotH = H - PAD.top - PAD.bottom;
+
+      // Epoch range: 0–9; Loss range: 0.5–11.5
+      const xMin = 0, xMax = 9;
+      const yMin = 0.5, yMax = 11.5;
+
+      function xS(x) { return PAD.left + (x - xMin) / (xMax - xMin) * plotW; }
+      function yS(y) { return PAD.top + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
+
+      // Draw grid lines + axes
+      const yAxis = PAD.left;
+      const xAxis = PAD.top + plotH;
+      svg.innerHTML += `<line x1="${yAxis}" y1="${PAD.top}" x2="${yAxis}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
+      svg.innerHTML += `<line x1="${yAxis}" y1="${xAxis}" x2="${W - PAD.right}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
+
+      // Y-axis labels
+      [2, 4, 6, 8, 10].forEach(yv => {
+        const sy = yS(yv);
+        svg.innerHTML += `<line x1="${yAxis}" y1="${sy}" x2="${W - PAD.right}" y2="${sy}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
+        svg.innerHTML += `<text x="${yAxis - 6}" y="${sy + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${yv}</text>`;
+      });
+
+      // X-axis labels
+      for (let ep = 0; ep <= 9; ep++) {
+        const sx = xS(ep);
+        svg.innerHTML += `<text x="${sx}" y="${xAxis + 14}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${ep}</text>`;
+      }
+      svg.innerHTML += `<text x="${xS(4.5)}" y="${H}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="Inter, sans-serif">epoch</text>`;
+
+      // Train loss points: steeply decreasing
+      const trainPts = [
+        [0, 10.8], [1, 7.2], [2, 5.1], [3, 3.8], [4, 2.9],
+        [5, 2.2], [6, 1.8], [7, 1.5], [8, 1.3], [9, 1.1]
+      ];
+      // Val loss: slightly higher, flattens a bit at end
+      const valPts = [
+        [0, 10.9], [1, 7.5], [2, 5.4], [3, 4.1], [4, 3.3],
+        [5, 2.7], [6, 2.4], [7, 2.2], [8, 2.1], [9, 2.0]
+      ];
+
+      function toPolyline(pts) {
+        return pts.map(([x, y]) => `${xS(x).toFixed(1)},${yS(y).toFixed(1)}`).join(' ');
+      }
+
+      svg.innerHTML += `<polyline points="${toPolyline(trainPts)}" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      svg.innerHTML += `<polyline points="${toPolyline(valPts)}"   fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>`;
+
+      // Dots on train
+      trainPts.forEach(([x, y]) => {
+        svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3" fill="#4f6ef7"/>`;
+      });
+      // Dots on val
+      valPts.forEach(([x, y]) => {
+        svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3" fill="#f59e0b"/>`;
+      });
+    })();
+
+    /* ─────────────────────────────────────────
+       Temperature slider viz (Lesson 5.5)
+    ───────────────────────────────────────── */
+    (function() {
+      // 6 representative tokens with base logit scores
+      const TOKENS = [
+        { label: '"the"',    logit: 4.2 },
+        { label: '"a"',      logit: 3.1 },
+        { label: '"is"',     logit: 2.5 },
+        { label: '"model"',  logit: 1.8 },
+        { label: '"GPT"',    logit: 1.1 },
+        { label: '"other"',  logit: 0.3 },
+      ];
+
+      const COLORS = [
+        'rgba(79,110,247,0.75)',
+        'rgba(16,185,129,0.7)',
+        'rgba(245,158,11,0.7)',
+        'rgba(239,68,68,0.65)',
+        'rgba(168,85,247,0.65)',
+        'rgba(107,114,128,0.55)',
+      ];
+
+      const slider    = document.getElementById('tempSlider');
+      const valueEl   = document.getElementById('tempValue');
+      const modeTag   = document.getElementById('tempModeTag');
+      const chartEl   = document.getElementById('tempBarChart');
+
+      function softmax(logits) {
+        const maxL = Math.max(...logits);
+        const exps = logits.map(l => Math.exp(l - maxL));
+        const sum  = exps.reduce((a, b) => a + b, 0);
+        return exps.map(e => e / sum);
+      }
+
+      function render(temperature) {
+        const scaledLogits = TOKENS.map(t => t.logit / temperature);
+        const probs = softmax(scaledLogits);
+
+        chartEl.innerHTML = '';
+        probs.forEach((p, i) => {
+          const row = document.createElement('div');
+          row.className = 'temp-bar-row';
+
+          const lbl = document.createElement('div');
+          lbl.className = 'temp-bar-label';
+          lbl.textContent = TOKENS[i].label;
+          row.appendChild(lbl);
+
+          const track = document.createElement('div');
+          track.className = 'temp-bar-track';
+
+          const fill = document.createElement('div');
+          fill.className = 'temp-bar-fill';
+          fill.style.width = (p * 100).toFixed(1) + '%';
+          fill.style.background = COLORS[i];
+          track.appendChild(fill);
+          row.appendChild(track);
+
+          const pct = document.createElement('div');
+          pct.className = 'temp-bar-pct';
+          pct.textContent = (p * 100).toFixed(1) + '%';
+          row.appendChild(pct);
+
+          chartEl.appendChild(row);
+        });
+      }
+
+      function updateMode(t) {
+        if (t <= 0.4) {
+          modeTag.textContent = 'Greedy-like';
+          modeTag.className = 'temp-mode-tag tag-greedy';
+        } else if (t <= 1.2) {
+          modeTag.textContent = 'Balanced';
+          modeTag.className = 'temp-mode-tag tag-balanced';
+        } else {
+          modeTag.textContent = 'Creative';
+          modeTag.className = 'temp-mode-tag tag-creative';
+        }
+      }
+
+      slider.addEventListener('input', function() {
+        const t = parseFloat(this.value);
+        valueEl.textContent = t.toFixed(1);
+        updateMode(t);
+        render(t);
+      });
+
+      // Initial render
+      render(1.0);
+      updateMode(1.0);
+    })();
+  </script>
+</body>
+</html>

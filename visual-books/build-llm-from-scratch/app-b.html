@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App B: References — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.25rem;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-right: 0.25rem;
+    }
+    .filter-btn {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Reference cards ── */
+    .ref-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin: 0.5rem 0 1.5rem;
+    }
+    .ref-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      transition: border-color 0.18s;
+    }
+    .ref-card:hover {
+      border-color: var(--accent);
+    }
+    .ref-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .ref-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      flex: 1;
+    }
+    .ref-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tag-foundation { background: rgba(79,110,247,0.12); color: var(--accent); border: 1px solid rgba(79,110,247,0.3); }
+    .tag-training    { background: rgba(245,158,11,0.12); color: var(--accent-2); border: 1px solid rgba(245,158,11,0.3); }
+    .tag-tooling     { background: rgba(16,185,129,0.12); color: var(--accent-3); border: 1px solid rgba(16,185,129,0.3); }
+    .tag-learning    { background: rgba(168,85,247,0.12); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+
+    .ref-meta {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .ref-summary {
+      font-size: 0.82rem;
+      color: var(--text);
+      margin-top: 0.4rem;
+      line-height: 1.55;
+    }
+
+    /* ── Tool cards ── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.7rem;
+      margin: 0.75rem 0;
+    }
+    .tool-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .tool-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    .tool-url {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.35rem;
+    }
+    .tool-desc {
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body data-chapter="app-b">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">App B: References</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Appendix B</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Appendix B</div>
+      <h1>References &amp; Further Reading</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-book"></i> 3 Sections</span>
+        <span><i class="fas fa-file-alt"></i> 8 Papers + 9 Resources</span>
+        <span><i class="fas fa-clock"></i> ~20 min read</span>
+        <span class="tag">Papers</span>
+        <span class="tag">Tools</span>
+        <span class="tag">Learning</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>This appendix collects the foundational papers, tools, and learning resources that underpin the concepts in this book. Understanding where the ideas came from — and who the people are who developed them — gives you the context to read new research papers with confidence. The field moves quickly; the papers listed here are the stable foundations that every new development builds upon.</p>
+
+      <p>Use the topic filters below to browse by category. Each paper card shows the authors, year, and a one-sentence description of the core contribution. The tools and learning sections point you to the most practical next steps for hands-on experimentation beyond this book.</p>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label"><i class="fas fa-filter"></i> Filter:</span>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Foundation">Foundation</button>
+        <button class="filter-btn" data-filter="Training">Training</button>
+        <button class="filter-btn" data-filter="Tooling">Tooling</button>
+        <button class="filter-btn" data-filter="Learning">Learning</button>
+      </div>
+
+      <!-- ══════════════════
+           SECTION B.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-b-1">
+        <div class="lesson-header">
+          <span class="lesson-number">B.1</span>
+          <h2>Foundational Papers</h2>
+        </div>
+
+        <p>The eight papers below form the intellectual lineage of modern large language models. Reading them in chronological order tells the story of how the field evolved from the Transformer architecture in 2017 to the instruction-following and parameter-efficient fine-tuning methods in use today. Each paper is publicly available on arXiv. Starting with the original Transformer paper ("Attention Is All You Need") and working forward through GPT, BERT, and their successors is the single highest-leverage reading you can do to understand everything in this book at a deeper level.</p>
+
+        <p>The pace of progress captured in these eight papers is remarkable. In six years (2017–2023), the field went from introducing attention as a replacement for recurrence, to demonstrating that scale alone enables few-shot learning at 175 billion parameters, to showing that efficient fine-tuning of open-weight models could match the performance of full fine-tuning at a fraction of the cost. Each of these papers is short enough to read in an afternoon and is written for a technical audience — if you can follow the code in this book, you can follow these papers.</p>
+
+        <div class="ref-list" id="refList">
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"Attention Is All You Need"</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Vaswani, Shazeer, Parmar et al. &nbsp;·&nbsp; 2017 &nbsp;·&nbsp; Google Brain / Google Research</div>
+            <div class="ref-summary">Introduced the Transformer architecture — replacing recurrent networks entirely with multi-head self-attention and positional encodings.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Devlin, Chang, Lee, Toutanova &nbsp;·&nbsp; 2018 &nbsp;·&nbsp; Google AI Language</div>
+            <div class="ref-summary">Bidirectional encoder trained on masked language modelling and next-sentence prediction, establishing the pretraining + fine-tuning paradigm for NLP.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"Improving Language Understanding by Generative Pre-Training" (GPT)</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Radford, Narasimhan, Salimans, Sutskever &nbsp;·&nbsp; 2018 &nbsp;·&nbsp; OpenAI</div>
+            <div class="ref-summary">The first GPT model — demonstrated that generative pretraining on unlabelled text followed by fine-tuning on downstream tasks achieves strong performance across language benchmarks.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"Language Models are Unsupervised Multitask Learners" (GPT-2)</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Radford, Wu, Child et al. &nbsp;·&nbsp; 2019 &nbsp;·&nbsp; OpenAI</div>
+            <div class="ref-summary">Scaled to 1.5B parameters and showed emergent zero-shot task performance — the model can perform tasks it was never explicitly trained on by conditioning on natural-language task descriptions.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"Language Models are Few-Shot Learners" (GPT-3)</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Brown, Mann, Ryder et al. &nbsp;·&nbsp; 2020 &nbsp;·&nbsp; OpenAI</div>
+            <div class="ref-summary">Scaled to 175B parameters and demonstrated strong few-shot learning — providing a few examples in the prompt is sufficient for competitive performance on many NLP tasks without any gradient updates.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Training">
+            <div class="ref-card-header">
+              <span class="ref-title">"Training Language Models to Follow Instructions with Human Feedback" (InstructGPT)</span>
+              <span class="ref-tag tag-training">Training</span>
+            </div>
+            <div class="ref-meta">Ouyang, Wu, Jiang et al. &nbsp;·&nbsp; 2022 &nbsp;·&nbsp; OpenAI</div>
+            <div class="ref-summary">Introduced RLHF (Reinforcement Learning from Human Feedback) to align GPT-3 with human intent, transforming a text completer into a helpful assistant — the foundation of ChatGPT.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Foundation">
+            <div class="ref-card-header">
+              <span class="ref-title">"LLaMA: Open and Efficient Foundation Language Models"</span>
+              <span class="ref-tag tag-foundation">Foundation</span>
+            </div>
+            <div class="ref-meta">Touvron, Lavril, Izacard et al. &nbsp;·&nbsp; 2023 &nbsp;·&nbsp; Meta AI</div>
+            <div class="ref-summary">Open-weight LLMs from 7B to 65B parameters that match or exceed GPT-3 on benchmarks with far fewer parameters, enabling community-driven research and fine-tuning.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Training">
+            <div class="ref-card-header">
+              <span class="ref-title">"LoRA: Low-Rank Adaptation of Large Language Models"</span>
+              <span class="ref-tag tag-training">Training</span>
+            </div>
+            <div class="ref-meta">Hu, Shen, Wallis et al. &nbsp;·&nbsp; 2021 &nbsp;·&nbsp; Microsoft Research</div>
+            <div class="ref-summary">Introduced low-rank decomposition matrices injected into attention layers, reducing trainable parameters by ~10,000× while matching full fine-tuning quality — making LLM fine-tuning accessible on consumer hardware.</div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-b-1 -->
+
+      <!-- ══════════════════
+           SECTION B.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-b-2">
+        <div class="lesson-header">
+          <span class="lesson-number">B.2</span>
+          <h2>Tools and Libraries</h2>
+        </div>
+
+        <p>The following tools are the standard toolkit for LLM development in 2024–2025. PyTorch is the foundation; everything else builds on top of it. Hugging Face's Transformers library gives you access to hundreds of pretrained models with a consistent API — once you understand GPT-2 architecture from this book, you can load any Hugging Face model and fine-tune it using the same patterns. The tiktoken tokeniser is OpenAI's production BPE implementation and is what the book uses to reproduce GPT-2 tokenisation exactly.</p>
+
+        <p>Weights &amp; Biases (wandb) is essential for any serious training run. It automatically logs your loss curves, learning rates, gradient norms, and system metrics (GPU utilisation, memory) in real time and stores the history so you can compare runs. After your first week of training without experiment tracking, you will never train without it again — it is simply impossible to debug training instabilities or compare hyperparameter configurations without seeing the curves. The free tier is more than sufficient for individual researchers.</p>
+
+        <div class="tool-grid" id="toolGrid">
+          <div class="tool-card" data-tags="Tooling">
+            <div class="ref-tag tag-tooling" style="margin-bottom:0.5rem;display:inline-block;">Tooling</div>
+            <div class="tool-name">PyTorch</div>
+            <div class="tool-url">pytorch.org</div>
+            <div class="tool-desc">The core deep learning framework used throughout this book. Provides tensors, autograd, nn.Module, optimizers, and GPU support.</div>
+          </div>
+          <div class="tool-card" data-tags="Tooling">
+            <div class="ref-tag tag-tooling" style="margin-bottom:0.5rem;display:inline-block;">Tooling</div>
+            <div class="tool-name">Hugging Face Transformers</div>
+            <div class="tool-url">huggingface.co/docs/transformers</div>
+            <div class="tool-desc">The standard library for pretrained LLMs. Provides consistent APIs for hundreds of models including GPT-2, LLaMA, Mistral, and fine-tuning with LoRA via PEFT.</div>
+          </div>
+          <div class="tool-card" data-tags="Tooling">
+            <div class="ref-tag tag-tooling" style="margin-bottom:0.5rem;display:inline-block;">Tooling</div>
+            <div class="tool-name">tiktoken</div>
+            <div class="tool-url">github.com/openai/tiktoken</div>
+            <div class="tool-desc">OpenAI's fast BPE tokeniser used by all GPT models. Used in this book to reproduce GPT-2 tokenisation with the exact same vocabulary and merge rules.</div>
+          </div>
+          <div class="tool-card" data-tags="Tooling">
+            <div class="ref-tag tag-tooling" style="margin-bottom:0.5rem;display:inline-block;">Tooling</div>
+            <div class="tool-name">Weights &amp; Biases</div>
+            <div class="tool-url">wandb.ai</div>
+            <div class="tool-desc">Experiment tracking for ML. Logs loss curves, GPU metrics, hyperparameters, and model checkpoints. Essential for comparing training runs and debugging instabilities.</div>
+          </div>
+          <div class="tool-card" data-tags="Tooling">
+            <div class="ref-tag tag-tooling" style="margin-bottom:0.5rem;display:inline-block;">Tooling</div>
+            <div class="tool-name">LiteLLM</div>
+            <div class="tool-url">github.com/BerriAI/litellm</div>
+            <div class="tool-desc">Unified Python API for 100+ LLM providers (OpenAI, Anthropic, Cohere, etc.). Useful for LLM-as-evaluator patterns where you call multiple providers interchangeably.</div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-b-2 -->
+
+      <!-- ══════════════════
+           SECTION B.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-b-3">
+        <div class="lesson-header">
+          <span class="lesson-number">B.3</span>
+          <h2>Further Learning</h2>
+        </div>
+
+        <p>The resources below represent the best free learning materials available for going deeper after finishing this book. Andrej Karpathy's nanoGPT repository is probably the most valuable single resource for anyone who wants to see a clean, minimal, production-quality implementation of GPT. It is approximately 300 lines of PyTorch, fully documented, and has been used to train models up to GPT-2 scale. Reading nanoGPT after completing this book is an excellent way to consolidate your understanding and see how the patterns scale to real training runs.</p>
+
+        <p>The Annotated Transformer (Harvard NLP) walks through the original Transformer paper equation by equation with PyTorch code side by side. Lilian Weng's blog posts on attention mechanisms and transformers are among the most thorough and well-organised explanations in the field — her post "Attention? Attention!" alone will solidify your intuition for why multi-head attention works the way it does. Fast.ai's Practical Deep Learning course teaches neural networks bottom-up with a focus on getting things working before explaining the theory — a complementary perspective to this book's top-down approach.</p>
+
+        <div class="ref-list">
+          <div class="ref-card" data-tags="Learning">
+            <div class="ref-card-header">
+              <span class="ref-title">nanoGPT — Andrej Karpathy</span>
+              <span class="ref-tag tag-learning">Learning</span>
+            </div>
+            <div class="ref-meta">github.com/karpathy/nanoGPT</div>
+            <div class="ref-summary">A minimal, clean, ~300-line implementation of GPT in PyTorch used to train real models. The best reference for seeing how all the pieces fit together in practice.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Learning">
+            <div class="ref-card-header">
+              <span class="ref-title">The Annotated Transformer — Harvard NLP</span>
+              <span class="ref-tag tag-learning">Learning</span>
+            </div>
+            <div class="ref-meta">nlp.seas.harvard.edu/annotated-transformer</div>
+            <div class="ref-summary">The original Transformer paper re-presented with PyTorch code interleaved with each equation — the definitive guide for understanding the architecture from first principles.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Learning">
+            <div class="ref-card-header">
+              <span class="ref-title">Lilian Weng's Blog — Attention and Transformer Mechanisms</span>
+              <span class="ref-tag tag-learning">Learning</span>
+            </div>
+            <div class="ref-meta">lilianweng.github.io</div>
+            <div class="ref-summary">Comprehensive, mathematically rigorous blog posts on attention mechanisms, transformers, and alignment — widely considered some of the best technical writing in ML.</div>
+          </div>
+
+          <div class="ref-card" data-tags="Learning">
+            <div class="ref-card-header">
+              <span class="ref-title">Practical Deep Learning for Coders — fast.ai</span>
+              <span class="ref-tag tag-learning">Learning</span>
+            </div>
+            <div class="ref-meta">course.fast.ai</div>
+            <div class="ref-summary">A free course teaching deep learning from a practitioner perspective — build working models first, understand the theory second. Excellent complement to this book's architecture-first approach.</div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-b-3 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Appendix B — Reading List</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1rem;">Use this appendix as a reading list to deepen your understanding of the concepts in each chapter.</p>
+        <ul>
+          <li><strong>Start with "Attention Is All You Need" (Vaswani et al., 2017)</strong> — it is the foundation of everything. Read it alongside The Annotated Transformer for maximum comprehension.</li>
+          <li><strong>GPT → GPT-2 → GPT-3</strong> traces the scaling story: from task-specific fine-tuning, to zero-shot capability, to few-shot learning at massive scale.</li>
+          <li><strong>InstructGPT (Ouyang et al., 2022)</strong> explains how RLHF transforms a raw text completer into an assistant — the most practically impactful alignment technique deployed to date.</li>
+          <li><strong>LoRA (Hu et al., 2021)</strong> is the key to democratised fine-tuning. Understanding it unlocks the ability to fine-tune 7B+ models on a single consumer GPU.</li>
+          <li><strong>Tools: PyTorch + Hugging Face + tiktoken + wandb</strong> form the standard LLM development stack. Familiarity with all four is expected in production ML roles.</li>
+          <li><strong>nanoGPT</strong> is the single best follow-up project after this book — implement it yourself from scratch without looking at the code, then compare your result to Karpathy's.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Appendix B Quiz</h3>
+        <p style="color:var(--text-muted);text-align:center;padding:2rem 0;">No quiz for this reference appendix.</p>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Appendix Mind Map — click a node to explore</div>
+        <style>
+          @keyframes mmFadeInB { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+          #mm-app-b .mm-node { cursor:pointer; transition:opacity 0.25s; }
+          #mm-app-b.dim-others .mm-branch { opacity:0.18; }
+          #mm-app-b.dim-others .mm-branch.active { opacity:1; }
+          #mm-app-b .mm-center { cursor:pointer; }
+          #mm-app-b g { animation: mmFadeInB 0.45s ease both; }
+          #mm-app-b g:nth-child(2) { animation-delay:0.05s; }
+          #mm-app-b g:nth-child(3) { animation-delay:0.10s; }
+          #mm-app-b g:nth-child(4) { animation-delay:0.15s; }
+          #mm-app-b g:nth-child(5) { animation-delay:0.20s; }
+          #mm-app-b g:nth-child(6) { animation-delay:0.25s; }
+        </style>
+        <svg id="mm-app-b" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Branch lines -->
+          <!-- Foundation → top-left -->
+          <line x1="400" y1="280" x2="175" y2="120" stroke="#4f6ef7" stroke-width="2" opacity="0.5"/>
+          <line x1="175" y1="120" x2="66"  y2="72"  stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="175" y1="120" x2="66"  y2="108" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="175" y1="120" x2="66"  y2="144" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="175" y1="120" x2="66"  y2="180" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Scale → top-right -->
+          <line x1="400" y1="280" x2="625" y2="120" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+          <line x1="625" y1="120" x2="730" y2="72"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="625" y1="120" x2="730" y2="108" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="625" y1="120" x2="730" y2="144" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Efficient FT → bottom-left -->
+          <line x1="400" y1="280" x2="175" y2="440" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+          <line x1="175" y1="440" x2="66"  y2="392" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="175" y1="440" x2="66"  y2="428" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="175" y1="440" x2="66"  y2="464" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Tools → bottom-right -->
+          <line x1="400" y1="280" x2="625" y2="440" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
+          <line x1="625" y1="440" x2="730" y2="392" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="625" y1="440" x2="730" y2="428" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="625" y1="440" x2="730" y2="464" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="625" y1="440" x2="730" y2="500" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- CENTER NODE -->
+          <g class="mm-center" onclick="mmResetB()">
+            <circle cx="400" cy="280" r="50" fill="#4f6ef7" opacity="0.95"/>
+            <text x="400" y="276" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Key Papers</text>
+            <text x="400" y="294" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">(click to reset)</text>
+          </g>
+
+          <!-- BRANCH 1: Foundation -->
+          <g class="mm-branch mm-node" data-branch="foundation-b" onclick="mmSelectB(this)">
+            <ellipse cx="175" cy="120" rx="66" ry="22" fill="#4f6ef7" opacity="0.15"/>
+            <ellipse cx="175" cy="120" rx="66" ry="22" fill="none" stroke="#4f6ef7" stroke-width="1.8"/>
+            <text x="175" y="124" text-anchor="middle" font-size="13" font-weight="600" fill="#4f6ef7">Foundation</text>
+            <rect x="6"  y="58"  width="118" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="65" y="73"  text-anchor="middle" font-size="10" fill="#4f6ef7">Attention Is All You Need</text>
+            <rect x="6"  y="94"  width="118" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="65" y="109" text-anchor="middle" font-size="11" fill="#4f6ef7">BERT</text>
+            <rect x="6"  y="130" width="118" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="65" y="145" text-anchor="middle" font-size="11" fill="#4f6ef7">GPT</text>
+            <rect x="6"  y="166" width="118" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="65" y="181" text-anchor="middle" font-size="11" fill="#4f6ef7">GPT-2</text>
+          </g>
+
+          <!-- BRANCH 2: Scale -->
+          <g class="mm-branch mm-node" data-branch="scale-b" onclick="mmSelectB(this)">
+            <ellipse cx="625" cy="120" rx="58" ry="22" fill="#f59e0b" opacity="0.15"/>
+            <ellipse cx="625" cy="120" rx="58" ry="22" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="625" y="124" text-anchor="middle" font-size="13" font-weight="600" fill="#f59e0b">Scale</text>
+            <rect x="672" y="58"  width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="73"  text-anchor="middle" font-size="10" fill="#f59e0b">GPT-3 175B</text>
+            <rect x="672" y="94"  width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="109" text-anchor="middle" font-size="10" fill="#f59e0b">InstructGPT RLHF</text>
+            <rect x="672" y="130" width="116" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="730" y="145" text-anchor="middle" font-size="10" fill="#f59e0b">LLaMA open weights</text>
+          </g>
+
+          <!-- BRANCH 3: Efficient FT -->
+          <g class="mm-branch mm-node" data-branch="eft-b" onclick="mmSelectB(this)">
+            <ellipse cx="175" cy="440" rx="66" ry="22" fill="#10b981" opacity="0.12"/>
+            <ellipse cx="175" cy="440" rx="66" ry="22" fill="none" stroke="#10b981" stroke-width="1.8"/>
+            <text x="175" y="444" text-anchor="middle" font-size="13" font-weight="600" fill="#10b981">Efficient FT</text>
+            <rect x="6"  y="378" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="64" y="393" text-anchor="middle" font-size="10" fill="#10b981">LoRA low-rank</text>
+            <rect x="6"  y="414" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="64" y="429" text-anchor="middle" font-size="11" fill="#10b981">PEFT library</text>
+            <rect x="6"  y="450" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="64" y="465" text-anchor="middle" font-size="10" fill="#10b981">QLoRA 4-bit</text>
+          </g>
+
+          <!-- BRANCH 4: Tools -->
+          <g class="mm-branch mm-node" data-branch="tools-b" onclick="mmSelectB(this)">
+            <ellipse cx="625" cy="440" rx="56" ry="22" fill="#a855f7" opacity="0.12"/>
+            <ellipse cx="625" cy="440" rx="56" ry="22" fill="none" stroke="#a855f7" stroke-width="1.8"/>
+            <text x="625" y="444" text-anchor="middle" font-size="13" font-weight="600" fill="#a855f7">Tools</text>
+            <rect x="672" y="378" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="730" y="393" text-anchor="middle" font-size="11" fill="#a855f7">PyTorch</text>
+            <rect x="672" y="414" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="730" y="429" text-anchor="middle" font-size="10" fill="#a855f7">Hugging Face</text>
+            <rect x="672" y="450" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="730" y="465" text-anchor="middle" font-size="11" fill="#a855f7">tiktoken</text>
+            <rect x="672" y="486" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="730" y="501" text-anchor="middle" font-size="11" fill="#a855f7">W&amp;B</text>
+          </g>
+
+        </svg>
+        <script>
+          function mmSelectB(el) {
+            const svg = document.getElementById('mm-app-b');
+            svg.classList.add('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+          }
+          function mmResetB() {
+            const svg = document.getElementById('mm-app-b');
+            svg.classList.remove('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+          }
+        </script>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="app-a.html" class="nav-prev" aria-label="Previous appendix">
+        <i class="fas fa-arrow-left"></i> App A: PyTorch Intro
+      </a>
+      <a href="app-c.html" class="nav-next" aria-label="Next appendix">
+        App C: Exercises <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Filter logic — Appendix B
+    ───────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const refCards   = document.querySelectorAll('#refList .ref-card');
+      const toolCards  = document.querySelectorAll('#toolGrid .tool-card');
+
+      function applyFilter(tag) {
+        [...refCards, ...toolCards].forEach(card => {
+          const cardTags = card.dataset.tags || '';
+          if (tag === 'all' || cardTags.includes(tag)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          applyFilter(btn.dataset.filter);
+        });
+      });
+    });
+
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

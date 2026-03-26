@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App E: LoRA Fine-tuning — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── LoRA matrix decomposition diagram ── */
+    .lora-diagram {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .lora-matrix {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .lora-matrix-row {
+      display: flex;
+      gap: 0.15rem;
+    }
+    .lora-cell {
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 2px;
+    }
+    .lc-frozen { background: rgba(100,116,139,0.3); border: 1px solid rgba(100,116,139,0.4); }
+    .lc-a      { background: rgba(79,110,247,0.45); border: 1px solid rgba(79,110,247,0.6); }
+    .lc-b      { background: rgba(16,185,129,0.45); border: 1px solid rgba(16,185,129,0.6); }
+    .lora-op {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1;
+    }
+    .lora-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .lora-label strong {
+      color: var(--text);
+    }
+
+    /* ── Comparison table ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 0.75rem 0;
+    }
+    .comparison-table th {
+      background: var(--surface);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .comparison-table td {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .comparison-table tr:nth-child(even) td {
+      background: var(--surface-2);
+    }
+    .ct-good { color: var(--accent-3); font-weight: 700; }
+    .ct-mid  { color: var(--accent-2); font-weight: 700; }
+    .ct-warn { color: #ef4444; font-weight: 700; }
+
+    /* ── Workflow steps ── */
+    .workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 0.75rem auto;
+      max-width: 460px;
+    }
+    .wf-step {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      position: relative;
+    }
+    .wf-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 1.35rem;
+      bottom: -0.6rem;
+      width: 2px;
+      height: 0.6rem;
+      background: var(--border);
+    }
+    .wf-num {
+      width: 1.7rem;
+      height: 1.7rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+    .wf-text {
+      font-size: 0.85rem;
+    }
+    .wf-text strong {
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+    .wf-text span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .wf-step.wf-freeze { background: rgba(100,116,139,0.06); }
+    .wf-step.wf-inject { background: rgba(79,110,247,0.06); }
+    .wf-step.wf-train  { background: rgba(16,185,129,0.06); }
+    .wf-step.wf-merge  { background: rgba(245,158,11,0.06); }
+  </style>
+</head>
+<body data-chapter="app-e">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">App E: LoRA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Appendix E</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Appendix E</div>
+      <h1>LoRA Fine-tuning</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 5 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 6-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~20 min read</span>
+        <span class="tag">LoRA</span>
+        <span class="tag">PEFT</span>
+        <span class="tag">Fine-tuning</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>LoRA (Low-Rank Adaptation) is arguably the most practically impactful technique to emerge from LLM research since GPT-2. It makes fine-tuning large language models accessible on consumer hardware — a single GPU — without sacrificing meaningful performance. Before LoRA, fine-tuning a 7B-parameter model required storing full model weights, optimizer states, and gradients: roughly 56 GB in fp32, far exceeding what consumer GPUs can hold. After LoRA, the same 7B model can be fine-tuned on a 24 GB GPU with results that approach full fine-tuning quality.</p>
+
+      <p>This appendix explains the mathematical foundation of LoRA, how to implement it in PyTorch, the training workflow, and what the empirical results look like compared to full fine-tuning. By the end you will be able to apply LoRA to any transformer model and understand the rank–quality trade-off that governs its behaviour.</p>
+
+      <!-- ══════════════════
+           LESSON E.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-e-1">
+        <div class="lesson-header">
+          <span class="lesson-number">E.1</span>
+          <h2>Why LoRA? The Parameter Efficiency Problem</h2>
+        </div>
+
+        <p>Fine-tuning GPT-3 (175 billion parameters) in full float32 precision requires roughly <strong>700 GB</strong> of GPU memory for model weights alone — before accounting for optimizer states (Adam requires 2× the weights for momentum and variance estimates, another 1.4 TB) and activation gradients. In practice, the total memory requirement for full fine-tuning GPT-3 exceeds 2 TB. Even with bfloat16 mixed precision and modern distributed training, you need dozens of A100 GPUs. This is simply not accessible to individuals, startups, or research labs without cloud-scale infrastructure.</p>
+
+        <p><strong>LoRA (Low-Rank Adaptation, Hu et al. 2021)</strong> solves this by observing that the weight changes during fine-tuning are low-rank — they lie in a much smaller subspace than the full weight matrix. Instead of updating W (a large matrix), LoRA freezes W and adds a small trainable decomposition ΔW = A·B, where A and B are tiny matrices. Only A and B are trained, reducing the trainable parameter count by 100–10,000× depending on the rank chosen.</p>
+
+        <p>The practical impact is dramatic. A 7B-parameter model fine-tuned with LoRA (rank=8) on the Query and Value projections adds roughly 33 million new trainable parameters — just 0.47% of the original. This fits easily on a single 24 GB GPU. Optimizer states for those 33M parameters require only ~250 MB, compared to ~56 GB for the full model. The fine-tuned model achieves results that are competitive with full fine-tuning across a wide range of tasks.</p>
+
+        <div class="insight-box">
+          <div class="insight-title"><i class="fas fa-lightbulb"></i> Key Insight</div>
+          <p>A 7B-parameter model fine-tuned with LoRA (rank=8) requires only ~33M new parameters — 240× fewer than full fine-tuning. The pretrained weights are frozen and stored once; only the tiny A and B matrices are trained, stored in optimizer states, and saved as the fine-tuned model checkpoint.</p>
+        </div>
+
+      </section><!-- /#lesson-e-1 -->
+
+      <!-- ══════════════════
+           LESSON E.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-e-2">
+        <div class="lesson-header">
+          <span class="lesson-number">E.2</span>
+          <h2>Low-Rank Decomposition</h2>
+        </div>
+
+        <p>Every weight matrix W in a neural network is an m×n matrix. A low-rank approximation of a change ΔW factors it as <strong>ΔW = A · B</strong> where A ∈ ℝ^(m×r) and B ∈ ℝ^(r×n), with rank r much smaller than min(m, n). For a typical attention projection in GPT-2 where m=n=768, a full ΔW would have 768×768 = 589,824 parameters. With rank r=8, A has 768×8 = 6,144 parameters and B has 8×768 = 6,144 parameters — a total of 12,288, representing a 48× reduction.</p>
+
+        <p>During the forward pass, the computation becomes: <code>output = xW + x(AB) = x(W + AB)</code>. W is frozen — it never changes. A and B are trainable. The addition W + AB is what the fine-tuned model computes, without any architectural change to the network structure. At initialisation, A is sampled from a Gaussian distribution and B is set to <strong>all zeros</strong>, which ensures that ΔW = A·B = 0 at the start of training. This means the LoRA layers initialise as exact copies of the pretrained model, with zero perturbation — a critical property for stable fine-tuning.</p>
+
+        <p>The rank r is the key hyperparameter. Higher rank means more expressive power (ΔW can capture more complex adaptations) but more trainable parameters and memory. Lower rank is more parameter-efficient but may underfit complex tasks. Typical choices are r=4 for fast, lightweight fine-tuning; r=8 as the balanced default; r=64 for tasks that need near-full-fine-tuning quality. A common heuristic: start with r=8 and only increase if you observe clear underfitting on the validation set.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table-cells"></i> Weight Decomposition: W + A·B</div>
+          <div class="lora-diagram">
+            <!-- Frozen W: 6x6 grid -->
+            <div>
+              <div class="lora-matrix" id="wMatrix"></div>
+              <div class="lora-label"><strong>W</strong><br>m×n (frozen)</div>
+            </div>
+            <div class="lora-op">+</div>
+            <!-- A: 6x2 -->
+            <div>
+              <div class="lora-matrix" id="aMatrix"></div>
+              <div class="lora-label"><strong>A</strong><br>m×r (trainable)</div>
+            </div>
+            <div class="lora-op">·</div>
+            <!-- B: 2x6 -->
+            <div>
+              <div class="lora-matrix" id="bMatrix"></div>
+              <div class="lora-label"><strong>B</strong><br>r×n (trainable)</div>
+            </div>
+          </div>
+          <div class="viz-caption">W is large and frozen (grey). A (blue) and B (green) are tiny trainable matrices with rank r. Their product AB has the same shape as W but is parameterised by far fewer values.</div>
+        </div>
+
+      </section><!-- /#lesson-e-2 -->
+
+      <!-- ══════════════════
+           LESSON E.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-e-3">
+        <div class="lesson-header">
+          <span class="lesson-number">E.3</span>
+          <h2>Implementing LoRA Layers</h2>
+        </div>
+
+        <p>Implementing LoRA requires replacing the target linear layers in the model with a custom <code>LoRALinear</code> module that wraps the original layer. The implementation is compact: freeze the original weight, add two small parameter matrices lora_A and lora_B, and add their contribution to the forward pass. The scaling factor <code>alpha/rank</code> is applied to the LoRA output to keep the update magnitude stable regardless of which rank value you choose. Without this scaling, using rank=8 vs rank=64 would require retuning the learning rate — the scaling factor normalises the update magnitude across rank choices.</p>
+
+        <p>The initialisation of lora_A and lora_B follows a specific convention: A is initialised with a small Gaussian (standard deviation of 0.01) and B is initialised to <strong>exactly zero</strong>. Because B=0, the initial ΔW = A·B = 0 regardless of A's values. This is mathematically equivalent to starting fine-tuning from the exact pretrained model weights, with zero perturbation. If B were initialised non-zero, the model's behaviour at the start of fine-tuning would be different from the pretrained model — potentially harming performance on tasks the model already handles well.</p>
+
+        <p>In practice, LoRA is typically applied to the Query (W_q) and Value (W_v) projection matrices in the attention mechanism. Hu et al. found that this configuration alone captures most of the fine-tuning benefit. Adding LoRA to W_k and W_o provides marginal improvements on some tasks but roughly doubles the number of LoRA parameters. The feed-forward layers are usually left unchanged, as they appear to be less sensitive to task-specific adaptation — though this remains an active area of study.</p>
+
+        <pre class="code-block"><code><span class="kw">class</span> <span class="fn">LoRALinear</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_features, out_features, rank=<span class="num">8</span>, alpha=<span class="num">16</span>):
+        <span class="fn">super</span>().__init__()
+        self.linear = nn.<span class="fn">Linear</span>(in_features, out_features, bias=<span class="kw">False</span>)
+        self.linear.weight.requires_grad = <span class="kw">False</span>  <span class="cmt"># freeze original</span>
+
+        <span class="cmt"># LoRA matrices</span>
+        self.lora_A = nn.<span class="fn">Parameter</span>(torch.<span class="fn">randn</span>(rank, in_features) * <span class="num">0.01</span>)
+        self.lora_B = nn.<span class="fn">Parameter</span>(torch.<span class="fn">zeros</span>(out_features, rank))  <span class="cmt"># B=0</span>
+        self.scale = alpha / rank  <span class="cmt"># normalisation factor</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="cmt"># base output + scaled LoRA update</span>
+        <span class="kw">return</span> self.linear(x) + self.scale * (x @ self.lora_A.T @ self.lora_B.T)</code></pre>
+
+      </section><!-- /#lesson-e-3 -->
+
+      <!-- ══════════════════
+           LESSON E.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-e-4">
+        <div class="lesson-header">
+          <span class="lesson-number">E.4</span>
+          <h2>Training with LoRA</h2>
+        </div>
+
+        <p>The LoRA training workflow involves four steps. First, load the full pretrained model — all parameters at their pretrained values. Second, replace the target layers (W_q and W_v in each attention block) with LoRALinear instances. Third, freeze all original weights by setting <code>requires_grad=False</code> — the original W matrices will never receive gradient updates. Fourth, run the standard training loop; only the A and B matrices have <code>requires_grad=True</code>, so the backward pass only computes gradients for them. The Adam optimizer only maintains momentum and variance for these small matrices.</p>
+
+        <p>Memory savings come from two sources. First, the frozen weights do not need gradient storage (saving one copy of the weights per parameter). Second, the optimizer states are only maintained for the LoRA parameters (33M instead of 7B for a 7B model), saving another ~250 MB vs ~56 GB. The forward and backward activations are similar in size to full fine-tuning (they depend on batch size and sequence length, not the number of trainable parameters), but with a smaller batch size — which fits in the reduced memory budget — the total memory can drop by 10–20× compared to full fine-tuning.</p>
+
+        <p>After training, the LoRA weights can be <strong>merged</strong> back into the base weights to eliminate any inference overhead. The merged weight is simply W_merged = W + (alpha/rank) × B·A. This merged model is architecturally identical to the original — no LoRA layers, no extra computation at inference. The only difference is the values of the W_q and W_v matrices, which now encode both the pretrained representations and the fine-tuned adaptations. Serving the merged model has exactly the same latency as the base model.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">apply_lora</span>(model, rank=<span class="num">8</span>, alpha=<span class="num">16</span>):
+    <span class="kw">for</span> block <span class="kw">in</span> model.trf_blocks:
+        d = block.attn.d_model
+        <span class="cmt"># Replace Q and V projections with LoRA versions</span>
+        block.attn.W_q = <span class="fn">LoRALinear</span>(d, d, rank, alpha)
+        block.attn.W_v = <span class="fn">LoRALinear</span>(d, d, rank, alpha)
+    <span class="cmt"># Collect only trainable parameters (A and B matrices)</span>
+    trainable = [p <span class="kw">for</span> p <span class="kw">in</span> model.<span class="fn">parameters</span>() <span class="kw">if</span> p.requires_grad]
+    <span class="kw">return</span> trainable
+
+<span class="cmt"># Training loop — identical to full fine-tuning</span>
+trainable_params = <span class="fn">apply_lora</span>(model, rank=<span class="num">8</span>, alpha=<span class="num">16</span>)
+optimizer = torch.optim.<span class="fn">Adam</span>(trainable_params, lr=<span class="num">2e-4</span>)
+
+<span class="kw">for</span> x, y <span class="kw">in</span> dataloader:
+    optimizer.<span class="fn">zero_grad</span>()
+    loss = F.<span class="fn">cross_entropy</span>(<span class="fn">model</span>(x), y)
+    loss.<span class="fn">backward</span>()  <span class="cmt"># only A, B receive gradients</span>
+    optimizer.<span class="fn">step</span>()</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-route"></i> LoRA Training Workflow</div>
+          <div class="workflow">
+            <div class="wf-step wf-freeze">
+              <div class="wf-num">1</div>
+              <div class="wf-text">
+                <strong>Load pretrained weights</strong>
+                <span>All W matrices at their pretrained values. Set requires_grad=False on all original parameters.</span>
+              </div>
+            </div>
+            <div class="wf-step wf-inject">
+              <div class="wf-num">2</div>
+              <div class="wf-text">
+                <strong>Inject LoRA layers (W_q, W_v)</strong>
+                <span>Replace target projections with LoRALinear. A is random Gaussian, B=0 — model output unchanged at step 0.</span>
+              </div>
+            </div>
+            <div class="wf-step wf-train">
+              <div class="wf-num">3</div>
+              <div class="wf-text">
+                <strong>Train only A and B matrices</strong>
+                <span>Standard forward → loss → backward → step loop. Optimizer state is only for the ~33M LoRA parameters.</span>
+              </div>
+            </div>
+            <div class="wf-step wf-merge">
+              <div class="wf-num">4</div>
+              <div class="wf-text">
+                <strong>Merge weights for deployment</strong>
+                <span>W_merged = W + scale × B·A. Result is a standard model — no LoRA overhead at inference.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-e-4 -->
+
+      <!-- ══════════════════
+           LESSON E.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-e-5">
+        <div class="lesson-header">
+          <span class="lesson-number">E.5</span>
+          <h2>Results Comparison</h2>
+        </div>
+
+        <p>LoRA consistently matches or closely approaches full fine-tuning quality across a wide range of tasks — instruction tuning, code generation, GLUE benchmarks, summarisation — while requiring dramatically fewer resources. Hu et al. demonstrated this on GPT-3 scale (175B) and the results generalise to smaller models. For instruction tuning a 7B-parameter model, LoRA with rank=8 applied to Q and V projections achieves performance within 2–3% of full fine-tuning on most benchmarks while using 50× less training memory.</p>
+
+        <p>The rank hyperparameter governs the quality–efficiency trade-off. Rank 4 is extremely lightweight — fewer than 15 million parameters for a 7B model — and works well for simple task adaptations where the pretrained model already has relevant capabilities. Rank 8 is the practical sweet spot for most instruction tuning and domain adaptation tasks, providing most of the benefit of higher ranks at much lower cost. Rank 64 approaches full fine-tuning quality for complex tasks but at the cost of more parameters and memory — at this point, the savings versus full fine-tuning are less dramatic, though still significant.</p>
+
+        <p>One empirical finding that is particularly important: applying LoRA to more weight matrices (Q, K, V, O, and possibly FFN) can improve results on tasks that require broad adaptation, but the returns diminish quickly. For most instruction tuning scenarios, W_q + W_v is sufficient. The intuition is that Q and V control what information is retrieved and how it is processed, while K is less critical for adapting to new task formats, and the FFN layers already capture much of the task-relevant knowledge during pretraining.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table"></i> Full Fine-tuning vs LoRA Comparison</div>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Trainable Params (7B model)</th>
+                <th>GPU Memory</th>
+                <th>Training Time</th>
+                <th>Quality</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Full Fine-tuning</strong></td>
+                <td>7,000M (100%)</td>
+                <td class="ct-warn">~56 GB (fp32)</td>
+                <td class="ct-warn">Baseline</td>
+                <td class="ct-good">100%</td>
+              </tr>
+              <tr>
+                <td><strong>LoRA (r=4)</strong></td>
+                <td class="ct-good">~17M (0.24%)</td>
+                <td class="ct-good">~6 GB</td>
+                <td class="ct-good">~5× faster</td>
+                <td class="ct-mid">~95%</td>
+              </tr>
+              <tr>
+                <td><strong>LoRA (r=8)</strong></td>
+                <td class="ct-good">~33M (0.47%)</td>
+                <td class="ct-good">~8 GB</td>
+                <td class="ct-good">~4× faster</td>
+                <td class="ct-mid">~97%</td>
+              </tr>
+              <tr>
+                <td><strong>LoRA (r=64)</strong></td>
+                <td class="ct-mid">~262M (3.7%)</td>
+                <td class="ct-mid">~18 GB</td>
+                <td class="ct-mid">~2× faster</td>
+                <td class="ct-good">~99%</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="viz-caption">Quality figures are approximate averages over instruction tuning benchmarks. Memory includes optimizer states. LoRA (r=8) is the standard default — near-full quality at a fraction of the cost.</div>
+        </div>
+
+        <div class="insight-box">
+          <div class="insight-title"><i class="fas fa-lightbulb"></i> Key Insight</div>
+          <p>After training, merge the LoRA weights into the base model: W_merged = W + (alpha/rank) × B·A. The merged model has exactly the same architecture and inference cost as the base model — no LoRA overhead, no adapter loading, no latency penalty. LoRA's efficiency benefits apply only at training time, not deployment time.</p>
+        </div>
+
+      </section><!-- /#lesson-e-5 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Appendix E — Key Takeaways</h3>
+        <ul>
+          <li><strong>LoRA (Low-Rank Adaptation)</strong> freezes pretrained weights and injects trainable low-rank decomposition matrices A·B into attention layers, reducing trainable parameters by 100–10,000×.</li>
+          <li><strong>B is initialised to zero</strong>, ensuring ΔW = A·B = 0 at the start of training — the model begins fine-tuning from the exact pretrained state with no perturbation.</li>
+          <li><strong>The alpha/rank scaling factor</strong> normalises the LoRA update magnitude so that changing rank does not require retuning the learning rate.</li>
+          <li><strong>Apply LoRA to W_q and W_v</strong> in attention — this captures most fine-tuning benefit. Adding W_k and W_o provides marginal gains; FFN layers are usually left frozen.</li>
+          <li><strong>Merge weights after training</strong>: W_merged = W + (alpha/rank) × B·A. The merged model has zero inference overhead — same architecture and latency as the base model.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Appendix E Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of LoRA fine-tuning, low-rank decomposition, and parameter efficiency. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Appendix Mind Map — click a node to explore</div>
+        <style>
+          @keyframes mmFadeInE { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+          #mm-app-e .mm-node { cursor:pointer; transition:opacity 0.25s; }
+          #mm-app-e.dim-others .mm-branch { opacity:0.18; }
+          #mm-app-e.dim-others .mm-branch.active { opacity:1; }
+          #mm-app-e .mm-center { cursor:pointer; }
+          #mm-app-e g { animation: mmFadeInE 0.45s ease both; }
+          #mm-app-e g:nth-child(2) { animation-delay:0.05s; }
+          #mm-app-e g:nth-child(3) { animation-delay:0.10s; }
+          #mm-app-e g:nth-child(4) { animation-delay:0.15s; }
+          #mm-app-e g:nth-child(5) { animation-delay:0.20s; }
+          #mm-app-e g:nth-child(6) { animation-delay:0.25s; }
+          #mm-app-e g:nth-child(7) { animation-delay:0.30s; }
+        </style>
+        <svg id="mm-app-e" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Branch lines -->
+          <!-- Problem → top-left -->
+          <line x1="400" y1="300" x2="170" y2="120" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="120" x2="62"  y2="72"  stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="120" x2="62"  y2="108" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="120" x2="62"  y2="144" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Low-Rank → top-right -->
+          <line x1="400" y1="300" x2="630" y2="120" stroke="#4f6ef7" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="120" x2="728" y2="72"  stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="120" x2="728" y2="108" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="120" x2="728" y2="144" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Implementation → left -->
+          <line x1="400" y1="300" x2="148" y2="300" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+          <line x1="148" y1="300" x2="52"  y2="258" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="148" y1="300" x2="52"  y2="296" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="148" y1="300" x2="52"  y2="334" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Training → bottom-left -->
+          <line x1="400" y1="300" x2="170" y2="470" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="470" x2="62"  y2="420" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="62"  y2="458" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="62"  y2="496" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="62"  y2="534" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Results → bottom-right -->
+          <line x1="400" y1="300" x2="630" y2="470" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="470" x2="728" y2="420" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="728" y2="458" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="728" y2="496" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- CENTER NODE -->
+          <g class="mm-center" onclick="mmResetE()">
+            <circle cx="400" cy="300" r="48" fill="#4f6ef7" opacity="0.95"/>
+            <text x="400" y="296" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">LoRA</text>
+            <text x="400" y="314" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">(click to reset)</text>
+          </g>
+
+          <!-- BRANCH 1: Problem -->
+          <g class="mm-branch mm-node" data-branch="problem-e" onclick="mmSelectE(this)">
+            <ellipse cx="170" cy="120" rx="64" ry="22" fill="#ef4444" opacity="0.15"/>
+            <ellipse cx="170" cy="120" rx="64" ry="22" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+            <text x="170" y="124" text-anchor="middle" font-size="13" font-weight="600" fill="#ef4444">Problem</text>
+            <rect x="4"  y="58"  width="114" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="61" y="73"  text-anchor="middle" font-size="10" fill="#ef4444">175B params</text>
+            <rect x="4"  y="94"  width="114" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="61" y="109" text-anchor="middle" font-size="10" fill="#ef4444">2TB memory</text>
+            <rect x="4"  y="130" width="114" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="61" y="145" text-anchor="middle" font-size="9"  fill="#ef4444">impractical full FT</text>
+          </g>
+
+          <!-- BRANCH 2: Low-Rank -->
+          <g class="mm-branch mm-node" data-branch="lowrank-e" onclick="mmSelectE(this)">
+            <ellipse cx="630" cy="120" rx="66" ry="22" fill="#4f6ef7" opacity="0.15"/>
+            <ellipse cx="630" cy="120" rx="66" ry="22" fill="none" stroke="#4f6ef7" stroke-width="1.8"/>
+            <text x="630" y="124" text-anchor="middle" font-size="13" font-weight="600" fill="#4f6ef7">Low-Rank</text>
+            <rect x="670" y="58"  width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="728" y="73"  text-anchor="middle" font-size="10" fill="#4f6ef7">W + ΔW = A·B</text>
+            <rect x="670" y="94"  width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="728" y="109" text-anchor="middle" font-size="9"  fill="#4f6ef7">rank r&lt;&lt;min(m,n)</text>
+            <rect x="670" y="130" width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="728" y="145" text-anchor="middle" font-size="10" fill="#4f6ef7">0.1–1% params</text>
+          </g>
+
+          <!-- BRANCH 3: Implementation -->
+          <g class="mm-branch mm-node" data-branch="impl-e" onclick="mmSelectE(this)">
+            <ellipse cx="148" cy="300" rx="74" ry="22" fill="#10b981" opacity="0.12"/>
+            <ellipse cx="148" cy="300" rx="74" ry="22" fill="none" stroke="#10b981" stroke-width="1.8"/>
+            <text x="148" y="304" text-anchor="middle" font-size="12" font-weight="600" fill="#10b981">Implementation</text>
+            <rect x="2"  y="244" width="106" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="55" y="259" text-anchor="middle" font-size="10" fill="#10b981">LoRALinear</text>
+            <rect x="2"  y="282" width="106" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="55" y="297" text-anchor="middle" font-size="10" fill="#10b981">B init=0</text>
+            <rect x="2"  y="320" width="106" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="55" y="335" text-anchor="middle" font-size="9"  fill="#10b981">alpha/rank scaling</text>
+          </g>
+
+          <!-- BRANCH 4: Training -->
+          <g class="mm-branch mm-node" data-branch="train-e" onclick="mmSelectE(this)">
+            <ellipse cx="170" cy="470" rx="64" ry="22" fill="#f59e0b" opacity="0.15"/>
+            <ellipse cx="170" cy="470" rx="64" ry="22" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="170" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#f59e0b">Training</text>
+            <rect x="4"  y="406" width="114" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="61" y="421" text-anchor="middle" font-size="10" fill="#f59e0b">freeze W</text>
+            <rect x="4"  y="444" width="114" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="61" y="459" text-anchor="middle" font-size="10" fill="#f59e0b">train A+B</text>
+            <rect x="4"  y="482" width="114" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="61" y="497" text-anchor="middle" font-size="11" fill="#f59e0b">AdamW</text>
+            <rect x="4"  y="520" width="114" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="61" y="535" text-anchor="middle" font-size="10" fill="#f59e0b">merge at inference</text>
+          </g>
+
+          <!-- BRANCH 5: Results -->
+          <g class="mm-branch mm-node" data-branch="results-e" onclick="mmSelectE(this)">
+            <ellipse cx="630" cy="470" rx="62" ry="22" fill="#a855f7" opacity="0.12"/>
+            <ellipse cx="630" cy="470" rx="62" ry="22" fill="none" stroke="#a855f7" stroke-width="1.8"/>
+            <text x="630" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#a855f7">Results</text>
+            <rect x="670" y="406" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="728" y="421" text-anchor="middle" font-size="9"  fill="#a855f7">matches full FT</text>
+            <rect x="670" y="444" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="728" y="459" text-anchor="middle" font-size="10" fill="#a855f7">r=8 balanced</text>
+            <rect x="670" y="482" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="728" y="497" text-anchor="middle" font-size="9"  fill="#a855f7">r=64 close to full</text>
+          </g>
+
+        </svg>
+        <script>
+          function mmSelectE(el) {
+            const svg = document.getElementById('mm-app-e');
+            svg.classList.add('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+          }
+          function mmResetE() {
+            const svg = document.getElementById('mm-app-e');
+            svg.classList.remove('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+          }
+        </script>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="app-d.html" class="nav-prev" aria-label="Previous appendix">
+        <i class="fas fa-arrow-left"></i> App D: Training Extras
+      </a>
+      <a href="index.html" class="nav-next" aria-label="Book index">
+        Back to Index <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       LoRA matrix diagram generation
+    ───────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      // W matrix: 6x6 frozen (grey)
+      const wEl = document.getElementById('wMatrix');
+      if (wEl) {
+        for (let r = 0; r < 6; r++) {
+          const row = document.createElement('div');
+          row.className = 'lora-matrix-row';
+          for (let c = 0; c < 6; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'lora-cell lc-frozen';
+            row.appendChild(cell);
+          }
+          wEl.appendChild(row);
+        }
+      }
+
+      // A matrix: 6x2 (blue, trainable)
+      const aEl = document.getElementById('aMatrix');
+      if (aEl) {
+        for (let r = 0; r < 6; r++) {
+          const row = document.createElement('div');
+          row.className = 'lora-matrix-row';
+          for (let c = 0; c < 2; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'lora-cell lc-a';
+            row.appendChild(cell);
+          }
+          aEl.appendChild(row);
+        }
+      }
+
+      // B matrix: 2x6 (green, trainable)
+      const bEl = document.getElementById('bMatrix');
+      if (bEl) {
+        for (let r = 0; r < 2; r++) {
+          const row = document.createElement('div');
+          row.className = 'lora-matrix-row';
+          for (let c = 0; c < 6; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'lora-cell lc-b';
+            row.appendChild(cell);
+          }
+          bEl.appendChild(row);
+        }
+      }
+    });
+
+    /* ─────────────────────────────────────────
+       Quiz questions — Appendix E
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "What does LoRA stand for?",
+        options: [
+          "Low-Rank Approximation",
+          "Low-Rank Adaptation",
+          "Layer-wise Regularisation Algorithm",
+          "Learned Output Rank Adjustment"
+        ],
+        correct: 1,
+        explanation: "LoRA = Low-Rank Adaptation. It adapts pretrained models by injecting trainable low-rank decomposition matrices (A·B) into attention weight matrices, freezing the original weights."
+      },
+      {
+        question: "At initialisation, what value does the B matrix in LoRA have, and why?",
+        options: [
+          "Random Gaussian, to maximise gradient flow",
+          "All zeros, so ΔW=A·B=0 at the start — no disruption to the pretrained model",
+          "Identity matrix, for stable initialisation",
+          "Copied from the frozen weight matrix"
+        ],
+        correct: 1,
+        explanation: "B=0 ensures ΔW = A·B = 0 at initialisation. The LoRA layers start as exact copies of the frozen weights. This is crucial: if B were non-zero, the pretrained model's behaviour would be disrupted from the first step."
+      },
+      {
+        question: "What is the role of the alpha/rank scaling factor in LoRA?",
+        options: [
+          "Sets the learning rate",
+          "Scales the LoRA update so training is stable regardless of the rank hyperparameter choice",
+          "Controls dropout probability",
+          "Determines which layers receive LoRA"
+        ],
+        correct: 1,
+        explanation: "alpha/rank normalises the LoRA update magnitude. Without scaling, changing rank would require retuning the learning rate. With alpha/rank, you can change rank without significantly changing the effective learning rate."
+      },
+      {
+        question: "In a 7B model fine-tuned with LoRA (rank=8) applied to Q and V projections, approximately what fraction of parameters are trained?",
+        options: [
+          "~50%",
+          "~10%",
+          "~0.1–1%",
+          "~5%"
+        ],
+        correct: 2,
+        explanation: "LoRA injects tiny A and B matrices (e.g., 4096×8 and 8×4096 for each layer). Across all layers, this typically totals 0.1–1% of the full model's parameters, enabling massive memory and compute savings."
+      },
+      {
+        question: "How can LoRA weights be merged for zero-overhead inference?",
+        options: [
+          "By loading both the base model and LoRA weights separately at inference",
+          "By computing W_merged = W + scale × B·A and using the merged model",
+          "By distilling the LoRA model into a smaller model",
+          "LoRA weights cannot be merged"
+        ],
+        correct: 1,
+        explanation: "After training, W_merged = W + (alpha/rank) × B·A. This merged weight can replace the original W, resulting in a standard model with no LoRA overhead at inference — same speed as the base model."
+      },
+      {
+        question: "Which weight matrices does LoRA typically target in transformer attention?",
+        options: [
+          "Only the feed-forward layers",
+          "The Query (W_q) and Value (W_v) projection matrices",
+          "Only the output projection W_o",
+          "All four attention matrices and all FFN layers"
+        ],
+        correct: 1,
+        explanation: "Hu et al. found that applying LoRA to W_q and W_v alone captures most of the fine-tuning benefit. Adding W_k and W_o provides marginal gains. The FFN layers are usually left unchanged."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

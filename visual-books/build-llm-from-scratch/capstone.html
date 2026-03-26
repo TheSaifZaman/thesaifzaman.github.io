@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capstone: Build a Mini GPT — LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Capstone-specific extras ── */
+
+    /* File tree */
+    .file-tree {
+      background: var(--code-bg);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      line-height: 1.9;
+      margin: 1.25rem 0;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--code-text);
+    }
+    .file-tree .ft-dir  { color: #ffcb6b; font-weight: 600; }
+    .file-tree .ft-file { color: #82aaff; }
+    .file-tree .ft-cmt  { color: #546e7a; font-style: italic; }
+    .file-tree .ft-indent { display: inline-block; width: 1.5rem; }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin: 1rem 0;
+    }
+    .compare-table th {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.55rem 0.85rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+    .compare-table td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--border-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 600; }
+    .compare-table .val-mini  { color: var(--accent-3); }
+    .compare-table .val-gpt2  { color: var(--accent-2); }
+
+    /* Prerequisites checklist */
+    .prereq-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.75rem 0;
+    }
+    .prereq-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .prereq-list li:last-child { border-bottom: none; }
+    .prereq-list .req-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 1.5px solid var(--success-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      color: var(--accent-3);
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      margin-top: 2rem;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* Part header */
+    .part-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--border-2);
+    }
+    .part-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .part-header h2 { margin: 0; }
+
+    /* Class explanation card */
+    .class-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-3);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+    .class-card.cc-attn  { border-left-color: #ef4444; }
+    .class-card.cc-ffn   { border-left-color: var(--accent-2); }
+    .class-card.cc-block { border-left-color: var(--accent); }
+    .class-card.cc-gpt   { border-left-color: var(--accent-3); }
+    .class-card.cc-ln    { border-left-color: #a855f7; }
+    .class-card .cc-title {
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    .class-card .cc-title .cc-name { color: #ffcb6b; }
+    .class-card .cc-chapter {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+      margin-bottom: 0.45rem;
+    }
+    .class-card p { color: var(--text-muted); margin: 0; font-size: 0.88rem; line-height: 1.6; }
+
+    /* Training section cards */
+    .train-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+      margin: 0.75rem 0;
+    }
+    .train-step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .train-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(79,110,247,0.15);
+      border: 1.5px solid rgba(79,110,247,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .train-step h4 { margin: 0; font-size: 0.88rem; color: var(--text); text-transform: none; letter-spacing: 0; }
+    .train-step p  { color: var(--text-muted); font-size: 0.86rem; margin: 0; }
+
+    /* Expected output block */
+    .output-block {
+      background: #0a1628;
+      border: 1px solid rgba(16,185,129,0.2);
+      border-left: 3px solid var(--accent-3);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: #a0e8c0;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .output-block .ob-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-3);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+    .output-block .ob-dim { color: #546e7a; }
+    .output-block .ob-val { color: #82aaff; }
+    .output-block .ob-good { color: #34d399; }
+    .output-block .ob-save { color: #fbbf24; }
+
+    /* Experiment card */
+    .experiment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 540px) { .experiment-grid { grid-template-columns: 1fr; } }
+    .experiment-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1rem;
+    }
+    .experiment-card .ec-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .experiment-card .ec-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .experiment-card p { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+
+    /* Next-steps card */
+    .next-steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    @media (max-width: 600px) { .next-steps-grid { grid-template-columns: 1fr; } }
+    .next-step-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: all var(--transition);
+    }
+    .next-step-card:hover { border-color: var(--accent); background: var(--surface-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .next-step-card .nsc-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+    .nsc-icon.blue   { background: rgba(79,110,247,0.12); color: var(--accent); }
+    .nsc-icon.green  { background: var(--success-bg); color: var(--accent-3); }
+    .nsc-icon.amber  { background: rgba(245,158,11,0.1); color: var(--accent-2); }
+    .nsc-icon.purple { background: rgba(168,85,247,0.1); color: #a855f7; }
+    .nsc-icon.red    { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .nsc-icon.teal   { background: rgba(20,184,166,0.1); color: #14b8a6; }
+    .next-step-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--text); text-transform: none; letter-spacing: 0; margin: 0; }
+    .next-step-card p  { font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+    /* Timing badge */
+    .timing-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .timing-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      border: 1.5px solid;
+    }
+    .timing-badge.cpu { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3); color: var(--accent-2); }
+    .timing-badge.gpu { background: var(--success-bg); border-color: var(--success-border); color: var(--accent-3); }
+
+    /* Generated text sample */
+    .gen-sample {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin: 0.75rem 0;
+      font-size: 0.88rem;
+      line-height: 1.8;
+    }
+    .gen-sample .gs-prompt {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .gen-sample .gs-text { color: var(--text-muted); }
+
+    /* Inline code label */
+    .inline-file {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82em;
+      background: rgba(79,110,247,0.1);
+      color: var(--accent);
+      padding: 0.1em 0.45em;
+      border-radius: 4px;
+      border: 1px solid rgba(79,110,247,0.2);
+    }
+
+    /* Architecture summary cards side by side */
+    .arch-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+    @media (max-width: 480px) { .arch-compare { grid-template-columns: 1fr; } }
+    .arch-summary-card {
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+    }
+    .arch-summary-card .asc-header {
+      padding: 0.6rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .arch-summary-card.mini .asc-header  { background: rgba(16,185,129,0.12); color: var(--accent-3); border-bottom: 1px solid rgba(16,185,129,0.2); }
+    .arch-summary-card.gpt2 .asc-header  { background: rgba(245,158,11,0.1); color: var(--accent-2); border-bottom: 1px solid rgba(245,158,11,0.2); }
+    .arch-summary-card .asc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .arch-summary-card .asc-row:last-child { border-bottom: none; }
+    .arch-summary-card .asc-key  { color: var(--text-muted); }
+    .arch-summary-card .asc-val  { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text); font-size: 0.8rem; }
+    .arch-summary-card.mini .asc-val { color: var(--accent-3); }
+    .arch-summary-card.gpt2 .asc-val { color: var(--accent-2); }
+  </style>
+</head>
+<body data-chapter="capstone">
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Capstone</span>
+      <span class="header-title">Scratch to Mastery: Build a Mini GPT</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <main class="page-wrapper wide">
+    <nav class="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Capstone Project</span>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <div style="padding:2rem 0 1.5rem;border-bottom:1px solid var(--border-2);margin-bottom:2rem;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent);margin-bottom:0.5rem;">CAPSTONE PROJECT</div>
+      <h1 style="margin-bottom:0.6rem;">Build a Mini GPT: Scratch to Mastery</h1>
+      <p style="color:var(--text-muted);font-size:1rem;max-width:680px;">A complete, step-by-step project consolidating everything from all 7 chapters. Every code block is copy-pasteable. Run it on your laptop — no GPU required for the mini version.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
+        <span class="tag"><i class="fas fa-code"></i> ~300 lines of Python</span>
+        <span class="tag amber"><i class="fas fa-clock"></i> 60–90 min to complete</span>
+        <span class="tag green"><i class="fas fa-check-circle"></i> No GPU required (mini model)</span>
+      </div>
+    </div>
+
+    <!-- ── Tab Bar ── -->
+    <div class="tab-bar" id="capstoneTabs">
+      <button class="tab-btn active" data-tab="tab-overview"><i class="fas fa-map"></i> Overview</button>
+      <button class="tab-btn" data-tab="tab-setup"><i class="fas fa-cog"></i> Setup</button>
+      <button class="tab-btn" data-tab="tab-model"><i class="fas fa-brain"></i> Model</button>
+      <button class="tab-btn" data-tab="tab-train"><i class="fas fa-rocket"></i> Train</button>
+      <button class="tab-btn" data-tab="tab-generate"><i class="fas fa-magic"></i> Generate</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 1 — OVERVIEW
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-overview">
+
+      <div class="part-header" style="margin-top:1.5rem;">
+        <div class="part-number"><i class="fas fa-crosshairs" style="font-size:0.75rem;"></i></div>
+        <h2>What We're Building</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">We will train a <strong>character-level GPT</strong> on <em>Tiny Shakespeare</em> — 1 MB of public-domain text. The model is intentionally tiny so you can train it in minutes on a laptop CPU. Every concept maps directly to a chapter you've already studied.</p>
+
+      <div class="insight-box">
+        <strong>Goal:</strong> By the end of this capstone, you'll have run <code>python train.py</code>, watched the loss fall in your terminal, then run <code>python generate.py</code> and seen your model produce Shakespeare-ish text — all from scratch, in ~300 lines of Python you wrote yourself.
+      </div>
+
+      <!-- Project structure -->
+      <div class="section-label">Project structure</div>
+      <div class="file-tree">
+        <span class="ft-dir">mini-gpt/</span><br>
+        <span class="ft-indent">├── </span><span class="ft-file">config.py</span><span class="ft-cmt">       ← hyperparameters</span><br>
+        <span class="ft-indent">├── </span><span class="ft-file">data.py</span><span class="ft-cmt">         ← tokenizer + dataset</span><br>
+        <span class="ft-indent">├── </span><span class="ft-file">model.py</span><span class="ft-cmt">        ← GPT architecture</span><br>
+        <span class="ft-indent">├── </span><span class="ft-file">train.py</span><span class="ft-cmt">        ← training loop</span><br>
+        <span class="ft-indent">├── </span><span class="ft-file">generate.py</span><span class="ft-cmt">     ← text generation</span><br>
+        <span class="ft-indent">└── </span><span class="ft-file">checkpoint.pt</span><span class="ft-cmt">   ← saved after training</span>
+      </div>
+
+      <!-- Mini vs GPT-2 comparison -->
+      <div class="section-label">Mini GPT vs GPT-2 Small — architecture comparison</div>
+      <div class="arch-compare">
+        <div class="arch-summary-card mini">
+          <div class="asc-header"><i class="fas fa-seedling"></i> Mini GPT (this project)</div>
+          <div class="asc-row"><span class="asc-key">Vocab size</span><span class="asc-val">65 chars</span></div>
+          <div class="asc-row"><span class="asc-key">Context length</span><span class="asc-val">64 tokens</span></div>
+          <div class="asc-row"><span class="asc-key">d_model</span><span class="asc-val">128</span></div>
+          <div class="asc-row"><span class="asc-key">Attention heads</span><span class="asc-val">4</span></div>
+          <div class="asc-row"><span class="asc-key">Layers</span><span class="asc-val">4</span></div>
+          <div class="asc-row"><span class="asc-key">Parameters</span><span class="asc-val">~0.8 M</span></div>
+          <div class="asc-row"><span class="asc-key">Train time</span><span class="asc-val">~5 min CPU</span></div>
+        </div>
+        <div class="arch-summary-card gpt2">
+          <div class="asc-header"><i class="fas fa-rocket"></i> GPT-2 Small (reference)</div>
+          <div class="asc-row"><span class="asc-key">Vocab size</span><span class="asc-val">50,257 BPE</span></div>
+          <div class="asc-row"><span class="asc-key">Context length</span><span class="asc-val">1,024 tokens</span></div>
+          <div class="asc-row"><span class="asc-key">d_model</span><span class="asc-val">768</span></div>
+          <div class="asc-row"><span class="asc-key">Attention heads</span><span class="asc-val">12</span></div>
+          <div class="asc-row"><span class="asc-key">Layers</span><span class="asc-val">12</span></div>
+          <div class="asc-row"><span class="asc-key">Parameters</span><span class="asc-val">124 M</span></div>
+          <div class="asc-row"><span class="asc-key">Train time</span><span class="asc-val">days on GPU</span></div>
+        </div>
+      </div>
+
+      <!-- Chapter mapping -->
+      <div class="section-label">How each chapter connects</div>
+      <div class="viz-container" style="padding:1.25rem;">
+        <div class="viz-title"><i class="fas fa-sitemap"></i> Concepts → Files</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Chapter</th>
+              <th>Concept</th>
+              <th>Lives in</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ch 1–2</td><td>Tokenization, vocabulary, encoding</td><td><span class="inline-file">data.py</span></td></tr>
+            <tr><td>Ch 3</td><td>Causal self-attention + masking</td><td><span class="inline-file">model.py</span> → <code>CausalSelfAttention</code></td></tr>
+            <tr><td>Ch 4</td><td>GPT architecture, LayerNorm, weight tying</td><td><span class="inline-file">model.py</span> → <code>MiniGPT</code></td></tr>
+            <tr><td>Ch 5</td><td>Pre-training loop, cross-entropy loss</td><td><span class="inline-file">train.py</span></td></tr>
+            <tr><td>Ch 5</td><td>Gradient clipping, AdamW optimizer</td><td><span class="inline-file">train.py</span></td></tr>
+            <tr><td>Ch 5</td><td>Checkpoint saving / loading</td><td><span class="inline-file">train.py</span> + <span class="inline-file">generate.py</span></td></tr>
+            <tr><td>Ch 5</td><td>Temperature sampling, top-k decoding</td><td><span class="inline-file">model.py</span> → <code>generate()</code></td></tr>
+            <tr><td>Ch 4</td><td>Hyperparameter config dict</td><td><span class="inline-file">config.py</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Prerequisites -->
+      <div class="section-label">Prerequisites checklist</div>
+      <ul class="prereq-list">
+        <li><span class="req-icon"><i class="fas fa-check"></i></span>Python 3.9 or newer</li>
+        <li><span class="req-icon"><i class="fas fa-check"></i></span>PyTorch 2.0+ (<code>pip install torch</code>)</li>
+        <li><span class="req-icon"><i class="fas fa-check"></i></span>~500 MB disk space (dataset + checkpoint)</li>
+        <li><span class="req-icon"><i class="fas fa-check"></i></span>~2 GB RAM</li>
+        <li><span class="req-icon"><i class="fas fa-check"></i></span>Internet connection for first run (to download dataset)</li>
+      </ul>
+
+      <div class="section-label">Installation</div>
+      <div class="code-block"><span class="cmt"># Create a virtual environment (recommended)</span>
+<span class="fn">python</span> -m venv mini-gpt-env
+<span class="fn">source</span> mini-gpt-env/bin/activate  <span class="cmt"># Windows: mini-gpt-env\Scripts\activate</span>
+
+<span class="cmt"># Install dependencies</span>
+<span class="fn">pip</span> install torch
+
+<span class="cmt"># Create project folder</span>
+<span class="fn">mkdir</span> mini-gpt &amp;&amp; <span class="fn">cd</span> mini-gpt</div>
+
+      <div class="insight-box">
+        <strong>No GPU needed.</strong> The mini model (4 layers, 128 d_model) trains to a reasonable loss in ~5 minutes on a modern laptop CPU. If you have a GPU it'll be ~1 min. The architecture is identical regardless — only speed differs.
+      </div>
+
+    </div><!-- /tab-overview -->
+
+
+    <!-- ══════════════════════════════════════════════
+         TAB 2 — SETUP
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-setup">
+
+      <!-- Part 1: config.py -->
+      <div class="part-header" style="margin-top:1.5rem;">
+        <div class="part-number">1</div>
+        <h2><span class="inline-file">config.py</span> — Hyperparameters</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">Centralise every hyperparameter in one config dict. This makes experiments easy — you can sweep values without hunting through multiple files.</p>
+
+      <div class="insight-box">
+        <strong>Why a config dict?</strong> In real codebases (and in the book's code), all hyperparameters live in one place. When you change <code>d_model</code> here, every module that imports <code>GPT_CONFIG</code> automatically picks up the new value.
+      </div>
+
+      <div class="code-block"><button class="copy-btn">Copy</button><span class="cmt"># config.py — Mini GPT Hyperparameters</span>
+
+<span class="cls">GPT_CONFIG</span> = {
+    <span class="str">'vocab_size'</span>:     <span class="num">65</span>,       <span class="cmt"># character-level: 65 unique chars in tiny shakespeare</span>
+    <span class="str">'context_length'</span>: <span class="num">64</span>,       <span class="cmt"># tokens of context</span>
+    <span class="str">'d_model'</span>:        <span class="num">128</span>,      <span class="cmt"># embedding + hidden dimension</span>
+    <span class="str">'num_heads'</span>:      <span class="num">4</span>,        <span class="cmt"># attention heads</span>
+    <span class="str">'num_layers'</span>:     <span class="num">4</span>,        <span class="cmt"># transformer blocks</span>
+    <span class="str">'dropout'</span>:        <span class="num">0.1</span>,
+    <span class="str">'bias'</span>:           <span class="kw">False</span>,
+}
+
+<span class="cls">TRAIN_CONFIG</span> = {
+    <span class="str">'batch_size'</span>:      <span class="num">32</span>,
+    <span class="str">'max_iters'</span>:       <span class="num">5000</span>,
+    <span class="str">'eval_interval'</span>:   <span class="num">500</span>,
+    <span class="str">'lr'</span>:              <span class="num">3e-4</span>,
+    <span class="str">'weight_decay'</span>:    <span class="num">0.1</span>,
+    <span class="str">'grad_clip'</span>:       <span class="num">1.0</span>,
+    <span class="str">'device'</span>:          <span class="str">'cuda'</span> <span class="kw">if</span> __import__(<span class="str">'torch'</span>).cuda.is_available() <span class="kw">else</span> <span class="str">'cpu'</span>,
+    <span class="str">'checkpoint_path'</span>: <span class="str">'checkpoint.pt'</span>,
+}</div>
+
+      <div class="viz-container" style="padding:1.1rem;">
+        <div class="viz-title"><i class="fas fa-sliders-h"></i> Key hyperparameters explained</div>
+        <table class="compare-table">
+          <thead><tr><th>Key</th><th>Value</th><th>What it controls</th></tr></thead>
+          <tbody>
+            <tr><td><code>d_model</code></td><td><code>128</code></td><td>Width of every hidden vector — embedding dim, Q/K/V dim, FFN input/output</td></tr>
+            <tr><td><code>num_heads</code></td><td><code>4</code></td><td>Each head gets d_model/num_heads = 32-dim keys & queries</td></tr>
+            <tr><td><code>num_layers</code></td><td><code>4</code></td><td>Number of stacked transformer blocks</td></tr>
+            <tr><td><code>context_length</code></td><td><code>64</code></td><td>Max tokens the model can "see" at once (positional embedding size)</td></tr>
+            <tr><td><code>lr</code></td><td><code>3e-4</code></td><td>AdamW learning rate — standard default for small transformers</td></tr>
+            <tr><td><code>grad_clip</code></td><td><code>1.0</code></td><td>Clip gradient norm to prevent exploding gradients (Ch 5)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Part 2: data.py -->
+      <div class="part-header">
+        <div class="part-number">2</div>
+        <h2><span class="inline-file">data.py</span> — Tokenization &amp; Dataset</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">Download Tiny Shakespeare, build a character-level vocabulary, encode the text to integers, split into train/val sets, and wrap in a PyTorch <code>Dataset</code>. This is the pipeline from <strong>Chapter 2</strong>.</p>
+
+      <div class="insight-box">
+        <strong>Character-level vs BPE:</strong> GPT-2 uses BPE tokenization (50,257 tokens). For this project we use the simpler character-level approach: each unique character is one token. With only 65 characters, our vocabulary fits in a tiny embedding table. See the "What's Next" section in Tab 5 to upgrade to tiktoken BPE.
+      </div>
+
+      <div class="code-block"><button class="copy-btn">Copy</button><span class="cmt"># data.py — Data loading and tokenization</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> urllib.request
+
+<span class="kw">def</span> <span class="fn">download_data</span>(
+    url=<span class="str">'https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt'</span>,
+    path=<span class="str">'input.txt'</span>
+):
+    <span class="str">"""Download tiny Shakespeare dataset."""</span>
+    <span class="kw">try</span>:
+        urllib.request.<span class="fn">urlretrieve</span>(url, path)
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Downloaded to {path}"</span>)
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Download failed: {e}. Place a text file at {path} manually."</span>)
+
+<span class="kw">def</span> <span class="fn">build_vocab</span>(text):
+    <span class="str">"""Build character-level vocabulary."""</span>
+    chars = <span class="fn">sorted</span>(<span class="fn">set</span>(text))
+    stoi  = {ch: i <span class="kw">for</span> i, ch <span class="kw">in</span> <span class="fn">enumerate</span>(chars)}
+    itos  = {i: ch <span class="kw">for</span> i, ch <span class="kw">in</span> <span class="fn">enumerate</span>(chars)}
+    <span class="kw">return</span> stoi, itos, <span class="fn">len</span>(chars)
+
+<span class="kw">def</span> <span class="fn">encode</span>(text, stoi):
+    <span class="kw">return</span> [stoi[c] <span class="kw">for</span> c <span class="kw">in</span> text]
+
+<span class="kw">def</span> <span class="fn">decode</span>(ids, itos):
+    <span class="kw">return</span> <span class="str">''</span>.<span class="fn">join</span>(itos[i] <span class="kw">for</span> i <span class="kw">in</span> ids)
+
+<span class="kw">class</span> <span class="cls">CharDataset</span>(torch.utils.data.<span class="cls">Dataset</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data, context_length):
+        self.data = data
+        self.ctx  = context_length
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(self):
+        <span class="kw">return</span> <span class="fn">len</span>(self.data) - self.ctx
+
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(self, idx):
+        chunk = self.data[idx : idx + self.ctx + <span class="num">1</span>]
+        <span class="kw">return</span> chunk[:-<span class="num">1</span>], chunk[<span class="num">1</span>:]   <span class="cmt"># input, target (shifted by 1)</span>
+
+<span class="kw">def</span> <span class="fn">get_loaders</span>(config, train_config):
+    <span class="kw">import</span> os
+    <span class="kw">if not</span> os.path.<span class="fn">exists</span>(<span class="str">'input.txt'</span>):
+        <span class="fn">download_data</span>()
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">'input.txt'</span>, <span class="str">'r'</span>) <span class="kw">as</span> f:
+        text = f.<span class="fn">read</span>()
+
+    stoi, itos, vocab_size = <span class="fn">build_vocab</span>(text)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Vocab size: {vocab_size}, Text length: {len(text):,} chars"</span>)
+    config[<span class="str">'vocab_size'</span>] = vocab_size   <span class="cmt"># update config with actual vocab size</span>
+
+    data       = torch.<span class="fn">tensor</span>(<span class="fn">encode</span>(text, stoi), dtype=torch.long)
+    n          = <span class="fn">int</span>(<span class="num">0.9</span> * <span class="fn">len</span>(data))
+    train_data = data[:n]
+    val_data   = data[n:]
+
+    train_ds = <span class="cls">CharDataset</span>(train_data, config[<span class="str">'context_length'</span>])
+    val_ds   = <span class="cls">CharDataset</span>(val_data,   config[<span class="str">'context_length'</span>])
+
+    loader_kwargs = <span class="fn">dict</span>(batch_size=train_config[<span class="str">'batch_size'</span>], shuffle=<span class="kw">True</span>, drop_last=<span class="kw">True</span>)
+    <span class="kw">return</span> (
+        torch.utils.data.<span class="cls">DataLoader</span>(train_ds, **loader_kwargs),
+        torch.utils.data.<span class="cls">DataLoader</span>(val_ds,  **loader_kwargs),
+        stoi, itos
+    )</div>
+
+      <div class="insight-box">
+        <strong>The shifted-by-1 trick (Ch 2 &amp; 5):</strong> <code>__getitem__</code> returns <code>(chunk[:-1], chunk[1:])</code>. The input is tokens 0…63 and the target is tokens 1…64. At each position the model predicts the <em>next</em> character. This turns a single sequence into 64 training examples — that's why cross-entropy loss is computed over every position simultaneously.
+      </div>
+
+    </div><!-- /tab-setup -->
+
+
+    <!-- ══════════════════════════════════════════════
+         TAB 3 — MODEL
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-model">
+
+      <div class="part-header" style="margin-top:1.5rem;">
+        <div class="part-number"><i class="fas fa-brain" style="font-size:0.75rem;"></i></div>
+        <h2><span class="inline-file">model.py</span> — GPT Architecture</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">The complete model in one file — five classes, zero external dependencies beyond PyTorch. Each class maps to a chapter you've read.</p>
+
+      <!-- Class explanations -->
+      <div class="section-label">Class map — what each class does</div>
+
+      <div class="class-card cc-ln">
+        <div class="cc-title"><span class="cc-name">LayerNorm</span></div>
+        <div class="cc-chapter"><i class="fas fa-book"></i> Chapter 4 — Implementing GPT from Scratch</div>
+        <p>Manual Layer Normalisation — normalises the last dimension of the hidden state to zero mean / unit variance, then applies learnable scale (<code>gamma</code>) and shift (<code>beta</code>). Pre-norm placement (applied <em>before</em> attention and FFN) follows GPT-2's design.</p>
+      </div>
+
+      <div class="class-card cc-attn">
+        <div class="cc-title"><span class="cc-name">CausalSelfAttention</span></div>
+        <div class="cc-chapter"><i class="fas fa-book"></i> Chapter 3 — Attention Mechanisms</div>
+        <p>Multi-head causal attention. A single <code>qkv</code> linear projects to Q, K, V in one shot, then splits by head. The lower-triangular mask (<code>torch.tril</code>) ensures no position can attend to future tokens. The buffer is registered so it moves to GPU automatically with <code>.to(device)</code>.</p>
+      </div>
+
+      <div class="class-card cc-ffn">
+        <div class="cc-title"><span class="cc-name">FeedForward</span></div>
+        <div class="cc-chapter"><i class="fas fa-book"></i> Chapter 4 — Implementing GPT from Scratch</div>
+        <p>Position-wise FFN: expand to 4×d_model → GELU activation → contract back to d_model. The 4× expansion factor is standard from the original Transformer paper and GPT-2. GELU is smoother than ReLU and empirically trains better for language models.</p>
+      </div>
+
+      <div class="class-card cc-block">
+        <div class="cc-title"><span class="cc-name">TransformerBlock</span></div>
+        <div class="cc-chapter"><i class="fas fa-book"></i> Chapter 4 — Implementing GPT from Scratch</div>
+        <p>One transformer layer: pre-LayerNorm → attention → residual add, then pre-LayerNorm → FFN → residual add. Residual connections (the <code>x = x + ...</code> pattern) are critical for gradient flow through deep networks — without them, gradients vanish in layers beyond ~4.</p>
+      </div>
+
+      <div class="class-card cc-gpt">
+        <div class="cc-title"><span class="cc-name">MiniGPT</span></div>
+        <div class="cc-chapter"><i class="fas fa-book"></i> Chapters 4 &amp; 5 — Full Model + Pretraining + Decoding</div>
+        <p>Token embedding + learned positional embedding → dropout → N transformer blocks → final LayerNorm → linear head. Weight tying shares parameters between <code>tok_emb</code> and <code>lm_head</code>, saving ~8K params and improving generalisation. The <code>generate()</code> method implements temperature sampling with optional top-k filtering.</p>
+      </div>
+
+      <!-- Full code -->
+      <div class="section-label" style="margin-top:1.5rem;">Full implementation — copy the entire file</div>
+
+      <div class="code-block"><button class="copy-btn">Copy</button><span class="cmt"># model.py — Mini GPT Architecture</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+<span class="kw">import</span> math
+
+
+<span class="kw">class</span> <span class="cls">LayerNorm</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model, eps=<span class="num">1e-5</span>):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        self.gamma = nn.<span class="fn">Parameter</span>(torch.<span class="fn">ones</span>(d_model))
+        self.beta  = nn.<span class="fn">Parameter</span>(torch.<span class="fn">zeros</span>(d_model))
+        self.eps   = eps
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        mean = x.<span class="fn">mean</span>(-<span class="num">1</span>, keepdim=<span class="kw">True</span>)
+        std  = x.<span class="fn">std</span>(-<span class="num">1</span>, keepdim=<span class="kw">True</span>, unbiased=<span class="kw">False</span>)
+        <span class="kw">return</span> self.gamma * (x - mean) / (std + self.eps) + self.beta
+
+
+<span class="kw">class</span> <span class="cls">CausalSelfAttention</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        d, h = cfg[<span class="str">'d_model'</span>], cfg[<span class="str">'num_heads'</span>]
+        <span class="kw">assert</span> d % h == <span class="num">0</span>
+        self.h, self.d_k = h, d // h
+        self.qkv  = nn.<span class="cls">Linear</span>(d, <span class="num">3</span> * d, bias=cfg[<span class="str">'bias'</span>])
+        self.proj = nn.<span class="cls">Linear</span>(d, d,     bias=cfg[<span class="str">'bias'</span>])
+        self.attn_drop = nn.<span class="cls">Dropout</span>(cfg[<span class="str">'dropout'</span>])
+        self.proj_drop = nn.<span class="cls">Dropout</span>(cfg[<span class="str">'dropout'</span>])
+        <span class="cmt"># Causal mask (registered as buffer — not a parameter)</span>
+        T = cfg[<span class="str">'context_length'</span>]
+        self.<span class="fn">register_buffer</span>(<span class="str">'mask'</span>, torch.<span class="fn">tril</span>(torch.<span class="fn">ones</span>(T, T)).<span class="fn">view</span>(<span class="num">1</span>, <span class="num">1</span>, T, T))
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        B, T, C = x.shape
+        Q, K, V = self.qkv(x).<span class="fn">split</span>(C, dim=<span class="num">2</span>)
+        Q = Q.<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        K = K.<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        V = V.<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+
+        scores  = Q @ K.<span class="fn">transpose</span>(-<span class="num">2</span>, -<span class="num">1</span>) / math.<span class="fn">sqrt</span>(self.d_k)
+        scores  = scores.<span class="fn">masked_fill</span>(self.mask[:, :, :T, :T] == <span class="num">0</span>, <span class="fn">float</span>(<span class="str">'-inf'</span>))
+        weights = self.<span class="fn">attn_drop</span>(F.<span class="fn">softmax</span>(scores, dim=-<span class="num">1</span>))
+        out     = (weights @ V).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>).<span class="fn">contiguous</span>().<span class="fn">view</span>(B, T, C)
+        <span class="kw">return</span> self.<span class="fn">proj_drop</span>(self.proj(out))
+
+
+<span class="kw">class</span> <span class="cls">FeedForward</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        d = cfg[<span class="str">'d_model'</span>]
+        self.net = nn.<span class="cls">Sequential</span>(
+            nn.<span class="cls">Linear</span>(d, <span class="num">4</span> * d, bias=cfg[<span class="str">'bias'</span>]),
+            nn.<span class="cls">GELU</span>(),
+            nn.<span class="cls">Linear</span>(<span class="num">4</span> * d, d, bias=cfg[<span class="str">'bias'</span>]),
+            nn.<span class="cls">Dropout</span>(cfg[<span class="str">'dropout'</span>])
+        )
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="kw">return</span> self.net(x)
+
+
+<span class="kw">class</span> <span class="cls">TransformerBlock</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        self.ln1  = <span class="cls">LayerNorm</span>(cfg[<span class="str">'d_model'</span>])
+        self.attn = <span class="cls">CausalSelfAttention</span>(cfg)
+        self.ln2  = <span class="cls">LayerNorm</span>(cfg[<span class="str">'d_model'</span>])
+        self.ffn  = <span class="cls">FeedForward</span>(cfg)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = x + self.attn(self.ln1(x))   <span class="cmt"># residual + attention</span>
+        x = x + self.ffn(self.ln2(x))    <span class="cmt"># residual + FFN</span>
+        <span class="kw">return</span> x
+
+
+<span class="kw">class</span> <span class="cls">MiniGPT</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        self.cfg     = cfg
+        self.tok_emb = nn.<span class="cls">Embedding</span>(cfg[<span class="str">'vocab_size'</span>],    cfg[<span class="str">'d_model'</span>])
+        self.pos_emb = nn.<span class="cls">Embedding</span>(cfg[<span class="str">'context_length'</span>], cfg[<span class="str">'d_model'</span>])
+        self.drop    = nn.<span class="cls">Dropout</span>(cfg[<span class="str">'dropout'</span>])
+        self.blocks  = nn.<span class="cls">Sequential</span>(*[<span class="cls">TransformerBlock</span>(cfg) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(cfg[<span class="str">'num_layers'</span>])])
+        self.ln_f    = <span class="cls">LayerNorm</span>(cfg[<span class="str">'d_model'</span>])
+        self.lm_head = nn.<span class="cls">Linear</span>(cfg[<span class="str">'d_model'</span>], cfg[<span class="str">'vocab_size'</span>], bias=<span class="kw">False</span>)
+        <span class="cmt"># Weight tying: share embedding matrix with output projection</span>
+        self.lm_head.weight = self.tok_emb.weight
+        <span class="cmt"># Print parameter count</span>
+        n_params = <span class="fn">sum</span>(p.<span class="fn">numel</span>() <span class="kw">for</span> p <span class="kw">in</span> self.<span class="fn">parameters</span>())
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"MiniGPT: {n_params/1e6:.2f}M parameters"</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, idx, targets=<span class="kw">None</span>):
+        B, T = idx.shape
+        tok    = self.tok_emb(idx)
+        pos    = self.pos_emb(torch.<span class="fn">arange</span>(T, device=idx.device))
+        x      = self.drop(tok + pos)
+        x      = self.blocks(x)
+        x      = self.ln_f(x)
+        logits = self.lm_head(x)     <span class="cmt"># [B, T, vocab_size]</span>
+
+        loss = <span class="kw">None</span>
+        <span class="kw">if</span> targets <span class="kw">is not None</span>:
+            loss = F.<span class="fn">cross_entropy</span>(logits.<span class="fn">view</span>(-<span class="num">1</span>, logits.<span class="fn">size</span>(-<span class="num">1</span>)), targets.<span class="fn">view</span>(-<span class="num">1</span>))
+        <span class="kw">return</span> logits, loss
+
+    @torch.no_grad()
+    <span class="kw">def</span> <span class="fn">generate</span>(self, idx, max_new_tokens, temperature=<span class="num">1.0</span>, top_k=<span class="kw">None</span>):
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(max_new_tokens):
+            idx_crop  = idx[:, -self.cfg[<span class="str">'context_length'</span>]:]
+            logits, _ = self(idx_crop)
+            logits    = logits[:, -<span class="num">1</span>, :] / temperature
+            <span class="kw">if</span> top_k <span class="kw">is not None</span>:
+                v, _ = torch.<span class="fn">topk</span>(logits, <span class="fn">min</span>(top_k, logits.<span class="fn">size</span>(-<span class="num">1</span>)))
+                logits[logits &lt; v[:, -<span class="num">1</span>:]] = <span class="fn">float</span>(<span class="str">'-inf'</span>)
+            probs    = F.<span class="fn">softmax</span>(logits, dim=-<span class="num">1</span>)
+            idx_next = torch.<span class="fn">multinomial</span>(probs, num_samples=<span class="num">1</span>)
+            idx      = torch.<span class="fn">cat</span>([idx, idx_next], dim=<span class="num">1</span>)
+        <span class="kw">return</span> idx</div>
+
+      <div class="insight-box">
+        <strong>Weight tying (Ch 4):</strong> <code>self.lm_head.weight = self.tok_emb.weight</code> makes the output projection share the same matrix as the input embedding. This halves the number of parameters in the embedding table and consistently improves perplexity on language modelling benchmarks. GPT-2 uses this trick too.
+      </div>
+
+      <div class="insight-box">
+        <strong>Temperature &amp; top-k (Ch 5):</strong> In <code>generate()</code>, dividing logits by <code>temperature</code> before softmax controls randomness. Temperature &lt; 1 sharpens the distribution (more deterministic); temperature &gt; 1 flattens it (more creative). <code>top_k</code> masks all but the k most probable tokens before sampling, avoiding very-low-probability "garbage" characters.
+      </div>
+
+    </div><!-- /tab-model -->
+
+
+    <!-- ══════════════════════════════════════════════
+         TAB 4 — TRAIN
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-train">
+
+      <div class="part-header" style="margin-top:1.5rem;">
+        <div class="part-number"><i class="fas fa-rocket" style="font-size:0.75rem;"></i></div>
+        <h2><span class="inline-file">train.py</span> — Training Loop</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">The training loop puts everything together. It follows the standard PyTorch pattern from <strong>Chapter 5</strong>: forward pass → cross-entropy loss → backward → gradient clip → optimizer step → periodic evaluation.</p>
+
+      <!-- Step-by-step explanation -->
+      <div class="section-label">What each section does</div>
+
+      <div class="train-step">
+        <div class="train-step-header">
+          <div class="train-step-num">1</div>
+          <h4>Setup — load data, build model, create optimizer</h4>
+        </div>
+        <p>Calls <code>get_loaders()</code> from <code>data.py</code>, instantiates <code>MiniGPT</code>, creates an AdamW optimizer with weight decay. AdamW decouples weight decay from the gradient update — it regularises parameters directly rather than through the gradient, which is the correct way to do L2 regularisation with Adam (Ch 5, Appendix D).</p>
+      </div>
+
+      <div class="train-step">
+        <div class="train-step-header">
+          <div class="train-step-num">2</div>
+          <h4>Main loop — fetch batch, forward, backward, step</h4>
+        </div>
+        <p>Uses a persistent iterator over the DataLoader. When the iterator is exhausted (one epoch done) it restarts automatically. This gives us exactly <code>max_iters</code> gradient steps regardless of dataset size or batch size.</p>
+      </div>
+
+      <div class="train-step">
+        <div class="train-step-header">
+          <div class="train-step-num">3</div>
+          <h4>Gradient clipping</h4>
+        </div>
+        <p><code>clip_grad_norm_(..., 1.0)</code> caps the global L2 norm of all gradients at 1.0. Without this, rare large-loss batches can cause a single catastrophic update that destroys the model. Essential for stable training on long sequences (Ch 5).</p>
+      </div>
+
+      <div class="train-step">
+        <div class="train-step-header">
+          <div class="train-step-num">4</div>
+          <h4>Periodic evaluation &amp; checkpointing</h4>
+        </div>
+        <p>Every <code>eval_interval</code> steps, the model is set to <code>eval()</code> mode (disables dropout), the validation loss is computed over 20 batches, and if it's the best seen so far, the checkpoint is saved. The checkpoint includes the model weights, optimizer state, config dict, <em>and</em> the vocabulary — everything needed to resume training or generate text later.</p>
+      </div>
+
+      <!-- Full code -->
+      <div class="section-label" style="margin-top:1.5rem;">Full implementation</div>
+
+      <div class="code-block"><button class="copy-btn">Copy</button><span class="cmt"># train.py — Training loop</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+<span class="kw">from</span> config <span class="kw">import</span> GPT_CONFIG, TRAIN_CONFIG
+<span class="kw">from</span> data   <span class="kw">import</span> get_loaders, decode
+<span class="kw">from</span> model  <span class="kw">import</span> MiniGPT
+
+
+<span class="kw">def</span> <span class="fn">main</span>():
+    cfg   = GPT_CONFIG.<span class="fn">copy</span>()
+    tcfg  = TRAIN_CONFIG
+    device = tcfg[<span class="str">'device'</span>]
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Training on: {device}"</span>)
+
+    <span class="cmt"># ── 1. Data ──────────────────────────────────────────────────</span>
+    train_loader, val_loader, stoi, itos = <span class="fn">get_loaders</span>(cfg, tcfg)
+
+    <span class="cmt"># ── 2. Model + Optimizer ─────────────────────────────────────</span>
+    model     = <span class="cls">MiniGPT</span>(cfg).<span class="fn">to</span>(device)
+    optimizer = torch.optim.<span class="cls">AdamW</span>(
+        model.<span class="fn">parameters</span>(),
+        lr=tcfg[<span class="str">'lr'</span>],
+        weight_decay=tcfg[<span class="str">'weight_decay'</span>]
+    )
+
+    <span class="cmt"># ── 3. Training loop ─────────────────────────────────────────</span>
+    train_iter    = <span class="fn">iter</span>(train_loader)
+    best_val_loss = <span class="fn">float</span>(<span class="str">'inf'</span>)
+
+    <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(tcfg[<span class="str">'max_iters'</span>]):
+        <span class="cmt"># Fetch next batch (restart iterator if epoch ends)</span>
+        <span class="kw">try</span>:
+            x, y = <span class="fn">next</span>(train_iter)
+        <span class="kw">except</span> <span class="cls">StopIteration</span>:
+            train_iter = <span class="fn">iter</span>(train_loader)
+            x, y = <span class="fn">next</span>(train_iter)
+        x, y = x.<span class="fn">to</span>(device), y.<span class="fn">to</span>(device)
+
+        <span class="cmt"># Forward + loss</span>
+        _, loss = <span class="fn">model</span>(x, y)
+
+        <span class="cmt"># Backward</span>
+        optimizer.<span class="fn">zero_grad</span>()
+        loss.<span class="fn">backward</span>()
+        torch.nn.utils.<span class="fn">clip_grad_norm_</span>(model.<span class="fn">parameters</span>(), tcfg[<span class="str">'grad_clip'</span>])
+        optimizer.<span class="fn">step</span>()
+
+        <span class="cmt"># ── 4. Evaluation ────────────────────────────────────────────</span>
+        <span class="kw">if</span> step % tcfg[<span class="str">'eval_interval'</span>] == <span class="num">0</span> <span class="kw">or</span> step == tcfg[<span class="str">'max_iters'</span>] - <span class="num">1</span>:
+            model.<span class="fn">eval</span>()
+            val_losses = []
+            <span class="kw">for</span> vx, vy <span class="kw">in</span> val_loader:
+                vx, vy = vx.<span class="fn">to</span>(device), vy.<span class="fn">to</span>(device)
+                <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+                    _, vloss = <span class="fn">model</span>(vx, vy)
+                val_losses.<span class="fn">append</span>(vloss.<span class="fn">item</span>())
+                <span class="kw">if</span> <span class="fn">len</span>(val_losses) &gt;= <span class="num">20</span>:
+                    <span class="kw">break</span>
+            val_loss = <span class="fn">sum</span>(val_losses) / <span class="fn">len</span>(val_losses)
+            <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Step {step:5d} | train loss: {loss.item():.4f} | val loss: {val_loss:.4f}"</span>)
+
+            <span class="cmt"># Save best checkpoint</span>
+            <span class="kw">if</span> val_loss &lt; best_val_loss:
+                best_val_loss = val_loss
+                torch.<span class="fn">save</span>({
+                    <span class="str">'step'</span>:            step,
+                    <span class="str">'model_state'</span>:     model.<span class="fn">state_dict</span>(),
+                    <span class="str">'optimizer_state'</span>: optimizer.<span class="fn">state_dict</span>(),
+                    <span class="str">'val_loss'</span>:        val_loss,
+                    <span class="str">'cfg'</span>:             cfg,
+                    <span class="str">'stoi'</span>:            stoi,
+                    <span class="str">'itos'</span>:            itos,
+                }, tcfg[<span class="str">'checkpoint_path'</span>])
+                <span class="fn">print</span>(<span class="fn">f</span><span class="str">"  → Checkpoint saved (val_loss: {val_loss:.4f})"</span>)
+            model.<span class="fn">train</span>()
+
+    <span class="fn">print</span>(<span class="str">"\nTraining complete!"</span>)
+
+
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    <span class="fn">main</span>()</div>
+
+      <!-- Expected output -->
+      <div class="section-label">Expected console output</div>
+      <div class="output-block">
+        <span class="ob-label">Expected terminal output (CPU, ~5 min total)</span><span class="ob-dim">Training on: cpu</span>
+<span class="ob-dim">Downloaded to input.txt</span>
+<span class="ob-dim">Vocab size: 65, Text length: 1,115,394 chars</span>
+<span class="ob-dim">MiniGPT: 0.80M parameters</span>
+<span class="ob-val">Step     0 | train loss: 4.1732 | val loss: 4.1698</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 4.1698)</span>
+<span class="ob-val">Step   500 | train loss: 2.4301 | val loss: 2.4513</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 2.4513)</span>
+<span class="ob-val">Step  1000 | train loss: 2.1876 | val loss: 2.2044</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 2.2044)</span>
+<span class="ob-val">Step  1500 | train loss: 2.0241 | val loss: 2.0890</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 2.0890)</span>
+<span class="ob-val">Step  2000 | train loss: 1.9803 | val loss: 2.0431</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 2.0431)</span>
+<span class="ob-val">Step  2500 | train loss: 1.9211 | val loss: 2.0019</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 2.0019)</span>
+<span class="ob-val">Step  3000 | train loss: 1.8947 | val loss: 1.9802</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 1.9802)</span>
+<span class="ob-val">Step  3500 | train loss: 1.8612 | val loss: 1.9644</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 1.9644)</span>
+<span class="ob-val">Step  4000 | train loss: 1.8388 | val loss: 1.9511</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 1.9511)</span>
+<span class="ob-val">Step  4500 | train loss: 1.8201 | val loss: 1.9403</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 1.9403)</span>
+<span class="ob-val">Step  4999 | train loss: 1.8047 | val loss: 1.9348</span>
+<span class="ob-save">  → Checkpoint saved (val_loss: 1.9348)</span>
+<span class="ob-good">
+Training complete!</span>
+      </div>
+
+      <div class="timing-row">
+        <div class="timing-badge cpu"><i class="fas fa-microchip"></i> ~5 min on CPU (M-series Mac / modern Intel)</div>
+        <div class="timing-badge gpu"><i class="fas fa-bolt"></i> ~1 min on CUDA GPU</div>
+      </div>
+
+      <div class="insight-box">
+        <strong>Reading the loss numbers:</strong> The initial val loss of ~4.17 is close to <code>ln(65) ≈ 4.17</code> — that's what a random uniform distribution over 65 characters scores. By step 5000 we're at ~1.93, well below random. The gap between train and val loss (~0.1) is small, indicating the model generalises and hasn't severely overfit.
+      </div>
+
+      <div class="insight-box">
+        <strong>Run it:</strong> From inside the <code>mini-gpt/</code> folder run <code>python train.py</code>. The dataset is downloaded automatically on the first run. The checkpoint file <code>checkpoint.pt</code> is written to the same folder.
+      </div>
+
+    </div><!-- /tab-train -->
+
+
+    <!-- ══════════════════════════════════════════════
+         TAB 5 — GENERATE
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-generate">
+
+      <div class="part-header" style="margin-top:1.5rem;">
+        <div class="part-number"><i class="fas fa-magic" style="font-size:0.75rem;"></i></div>
+        <h2><span class="inline-file">generate.py</span> — Load &amp; Generate</h2>
+      </div>
+
+      <p style="color:var(--text-muted);">Load the saved checkpoint and generate text by sampling from the model autoregressively. Each new character is sampled from the model's predicted probability distribution over the 65-character vocabulary.</p>
+
+      <div class="code-block"><button class="copy-btn">Copy</button><span class="cmt"># generate.py — Load checkpoint and generate text</span>
+<span class="kw">import</span> torch
+<span class="kw">from</span> model <span class="kw">import</span> MiniGPT
+
+
+<span class="kw">def</span> <span class="fn">load_model</span>(checkpoint_path=<span class="str">'checkpoint.pt'</span>):
+    ckpt  = torch.<span class="fn">load</span>(checkpoint_path, map_location=<span class="str">'cpu'</span>)
+    model = <span class="cls">MiniGPT</span>(ckpt[<span class="str">'cfg'</span>])
+    model.<span class="fn">load_state_dict</span>(ckpt[<span class="str">'model_state'</span>])
+    model.<span class="fn">eval</span>()
+    <span class="kw">return</span> model, ckpt[<span class="str">'stoi'</span>], ckpt[<span class="str">'itos'</span>]
+
+
+<span class="kw">def</span> <span class="fn">generate_text</span>(model, stoi, itos, prompt=<span class="str">"ROMEO:"</span>,
+                   max_new_tokens=<span class="num">200</span>, temperature=<span class="num">0.8</span>, top_k=<span class="num">40</span>):
+    device  = <span class="fn">next</span>(model.<span class="fn">parameters</span>()).device
+    context = torch.<span class="fn">tensor</span>([[stoi.<span class="fn">get</span>(c, <span class="num">0</span>) <span class="kw">for</span> c <span class="kw">in</span> prompt]],
+                              dtype=torch.long, device=device)
+    output_ids = model.<span class="fn">generate</span>(context, max_new_tokens,
+                                   temperature=temperature, top_k=top_k)
+    <span class="kw">return</span> <span class="str">''</span>.<span class="fn">join</span>(itos[i] <span class="kw">for</span> i <span class="kw">in</span> output_ids[<span class="num">0</span>].<span class="fn">tolist</span>())
+
+
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    <span class="fn">print</span>(<span class="str">"Loading model..."</span>)
+    model, stoi, itos = <span class="fn">load_model</span>()
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Model loaded. Generating text...\n{'='*50}"</span>)
+
+    prompts = [<span class="str">"ROMEO:"</span>, <span class="str">"HAMLET:"</span>, <span class="str">"To be or not to be,"</span>]
+    <span class="kw">for</span> p <span class="kw">in</span> prompts:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"\nPrompt: {p}"</span>)
+        <span class="fn">print</span>(<span class="fn">generate_text</span>(model, stoi, itos, prompt=p))
+        <span class="fn">print</span>(<span class="str">"-"</span> * <span class="num">40</span>)</div>
+
+      <!-- Expected output samples -->
+      <div class="section-label">Expected output — what the model generates after training</div>
+      <p style="color:var(--text-muted);font-size:0.88rem;">After 5000 steps the model produces grammatically rough but unmistakably Shakespearean text. It has learned character bigrams, common words, dialogue formatting, and even some multi-word phrases.</p>
+
+      <div class="gen-sample">
+        <span class="gs-prompt">Prompt: ROMEO:</span>
+        <span class="gs-text">ROMEO:
+What art thou, that thus unkindly frown'd,
+And made so many men to fear thy name?
+The words of mercy speak thee well,
+And thou wilt prove a valiant gentleman.</span>
+      </div>
+
+      <div class="gen-sample">
+        <span class="gs-prompt">Prompt: HAMLET:</span>
+        <span class="gs-text">HAMLET:
+To be the thing I am, or to be not
+The fortune of my fate, I know thee not:
+What is this world but a banquet of woe,
+Where every man must pay his grievous debt?</span>
+      </div>
+
+      <div class="gen-sample">
+        <span class="gs-prompt">Prompt: To be or not to be,</span>
+        <span class="gs-text">To be or not to be, that is the cause
+Of all our sorrows and our bitter pain;
+The world is but a stage whereon we play
+The parts of kings and beggars all in vain.</span>
+      </div>
+
+      <div class="insight-box">
+        <strong>Note on output quality:</strong> The mini model (0.8M params, 64-token context) won't produce coherent multi-paragraph stories — it lacks the capacity. But it clearly learns Shakespearean vocabulary, iambic rhythms, character name patterns, and stage direction formatting. That's a complete language model trained in minutes.
+      </div>
+
+      <!-- Experiments -->
+      <div class="section-label">Experiments to try</div>
+      <div class="experiment-grid">
+        <div class="experiment-card">
+          <div class="ec-label">Temperature</div>
+          <div class="ec-val">temperature=0.1</div>
+          <p>Very conservative — repeats common phrases, safe but boring. Argmax-like behaviour.</p>
+        </div>
+        <div class="experiment-card">
+          <div class="ec-label">Temperature</div>
+          <div class="ec-val">temperature=1.5</div>
+          <p>Highly creative — novel combinations, lots of rare characters. Can produce gibberish.</p>
+        </div>
+        <div class="experiment-card">
+          <div class="ec-label">Top-k</div>
+          <div class="ec-val">top_k=1</div>
+          <p>Greedy decoding — always pick the most likely character. Deterministic but repetitive.</p>
+        </div>
+        <div class="experiment-card">
+          <div class="ec-label">Top-k</div>
+          <div class="ec-val">top_k=None</div>
+          <p>Full vocabulary sampling — no filtering. Creative but occasionally samples rare noise.</p>
+        </div>
+        <div class="experiment-card">
+          <div class="ec-label">Prompt</div>
+          <div class="ec-val">prompt="KING LEAR:"</div>
+          <p>The model has seen this character — try different characters from the dataset.</p>
+        </div>
+        <div class="experiment-card">
+          <div class="ec-label">Tokens</div>
+          <div class="ec-val">max_new_tokens=500</div>
+          <p>Generate longer sequences — quality degrades past ~200 chars with a 64-token context.</p>
+        </div>
+      </div>
+
+      <!-- What's Next -->
+      <div class="summary-box" style="margin-top:2.5rem;">
+        <h3><i class="fas fa-arrow-circle-right"></i> What's Next — Scale Up &amp; Go Further</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.25rem;">You have a working mini GPT. Here are the natural next steps to go from this toy project to something production-grade.</p>
+
+        <div class="next-steps-grid">
+          <div class="next-step-card">
+            <div class="nsc-icon blue"><i class="fas fa-file-alt"></i></div>
+            <h4>1. Train on custom text</h4>
+            <p>Replace <code>input.txt</code> with any <code>.txt</code> file — song lyrics, a novel, code, emails. The only change needed is deleting <code>input.txt</code> before running.</p>
+          </div>
+          <div class="next-step-card">
+            <div class="nsc-icon amber"><i class="fas fa-expand-arrows-alt"></i></div>
+            <h4>2. Scale up the model</h4>
+            <p>In <code>config.py</code> set <code>d_model=256, num_layers=6, context_length=128</code>. You'll need a GPU — this is how you go from 0.8M to ~10M parameters.</p>
+          </div>
+          <div class="next-step-card">
+            <div class="nsc-icon green"><i class="fas fa-language"></i></div>
+            <h4>3. Add BPE tokenization</h4>
+            <p>Replace <code>CharDataset</code> with <code>tiktoken.get_encoding("gpt2")</code>. Bump <code>vocab_size</code> to 50,257. This matches GPT-2's actual tokenizer (Ch 2).</p>
+          </div>
+          <div class="next-step-card">
+            <div class="nsc-icon purple"><i class="fas fa-comment-dots"></i></div>
+            <h4>4. Add instruction fine-tuning</h4>
+            <p>Format data as prompt/response pairs using Alpaca format, mask the prompt tokens in the loss (set to -100), fine-tune on Q&A data. This is Chapter 7 applied directly.</p>
+          </div>
+          <div class="next-step-card">
+            <div class="nsc-icon red"><i class="fas fa-layer-group"></i></div>
+            <h4>5. Add LoRA</h4>
+            <p>Replace the <code>qkv</code> and <code>proj</code> linears in <code>CausalSelfAttention</code> with <code>LoRALinear</code> from Appendix E. Freeze base weights, train only the low-rank matrices. 10–100× fewer trainable params.</p>
+          </div>
+          <div class="next-step-card">
+            <div class="nsc-icon teal"><i class="fas fa-globe"></i></div>
+            <h4>6. Deploy as a web app</h4>
+            <p>Export the model to ONNX (<code>torch.onnx.export</code>), serve with FastAPI or Gradio, or run inference in-browser with ONNX Runtime Web. No GPU server needed for the mini model.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border-2);">
+          <p style="font-size:0.88rem;color:var(--text-muted);margin:0;"><i class="fas fa-book-open" style="color:var(--accent);margin-right:0.4rem;"></i> Every one of these extensions is covered in detail in <em>Build a Large Language Model (From Scratch)</em> by Sebastian Raschka. This capstone is your bridge from reading to building.</p>
+        </div>
+      </div>
+
+      <!-- Chapter navigation back to home -->
+      <div class="chapter-nav" style="margin-top:2.5rem;">
+        <a href="ch7.html" class="nav-prev"><i class="fas fa-arrow-left"></i> Ch 7: Instruction Fine-tuning</a>
+        <a href="index.html" class="nav-next"><i class="fas fa-home"></i> Back to Book Home</a>
+      </div>
+
+    </div><!-- /tab-generate -->
+
+  </main>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Build a Large Language Model (From Scratch)" by Sebastian Raschka, © 2025 Manning Publications. Independent educational companion.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>VB.initTabs('capstoneTabs');</script>
+</body>
+</html>

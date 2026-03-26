@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App A: PyTorch Intro — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── Tensor table ── */
+    .tensor-table {
+      border-collapse: collapse;
+      margin: 0.75rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .tensor-table td {
+      width: 2.8rem;
+      height: 2.4rem;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    .tensor-table td.t-hi {
+      background: rgba(79,110,247,0.13);
+      color: var(--accent);
+      border-color: rgba(79,110,247,0.35);
+    }
+
+    /* ── Reshape demo ── */
+    .reshape-demo {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 0.75rem 0;
+    }
+    .reshape-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .reshape-arrow {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Computation graph ── */
+    .comp-graph {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1rem auto;
+      max-width: 300px;
+    }
+    .cg-node {
+      padding: 0.45rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+    }
+    .cg-arrow {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 3px 0;
+    }
+    .cg-back {
+      font-size: 0.7rem;
+      color: #ef4444;
+      font-family: 'JetBrains Mono', monospace;
+      display: block;
+    }
+    .cg-input   { background: rgba(79,110,247,0.12);  color: var(--accent);   border: 1.5px solid rgba(79,110,247,0.3); }
+    .cg-op      { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+    .cg-output  { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .cg-grad    { background: rgba(239,68,68,0.10);   color: #ef4444;         border: 1.5px solid rgba(239,68,68,0.25); }
+
+    /* ── Training loop steps ── */
+    .viz-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1rem auto;
+      max-width: 420px;
+    }
+    .viz-node {
+      width: 100%;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      position: relative;
+    }
+    .viz-node .vn-sub {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      opacity: 0.75;
+      display: block;
+      margin-top: 0.1rem;
+    }
+    .viz-arrow {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .vn-data    { background: rgba(79,110,247,0.12);  color: var(--accent);   border: 1.5px solid rgba(79,110,247,0.3); }
+    .vn-model   { background: rgba(168,85,247,0.10);  color: #a855f7;         border: 1.5px solid rgba(168,85,247,0.25); }
+    .vn-loss    { background: rgba(239,68,68,0.10);   color: #ef4444;         border: 1.5px solid rgba(239,68,68,0.25); }
+    .vn-step    { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .vn-gpu     { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+  </style>
+</head>
+<body data-chapter="app-a">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">App A: PyTorch Intro</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Appendix A</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Appendix A</div>
+      <h1>Introduction to PyTorch</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 5 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 5-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~20 min read</span>
+        <span class="tag">PyTorch</span>
+        <span class="tag">Tensors</span>
+        <span class="tag">Autograd</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>PyTorch is the dominant deep learning framework for research and, increasingly, production. It provides two essential building blocks: tensors (multi-dimensional arrays that can run on GPU) and automatic differentiation (the ability to compute gradients through arbitrary computational graphs). Everything in this book — tokenisation, attention, pretraining, fine-tuning — is implemented in PyTorch. This appendix covers the five foundational concepts you need to read and write PyTorch code confidently: tensor operations, autograd, the training loop pattern, GPU usage, and the Dataset/DataLoader abstraction.</p>
+
+      <p>If you have used NumPy before, PyTorch tensors will feel immediately familiar. The key additions are GPU support (move a tensor to the GPU with <code>.to('cuda')</code> and all operations run on the GPU transparently) and automatic differentiation (set <code>requires_grad=True</code> and PyTorch tracks every operation for gradient computation). These two features, combined with a rich neural network API in <code>torch.nn</code>, make PyTorch the tool of choice for building language models from scratch.</p>
+
+      <!-- ══════════════════
+           LESSON A.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-a-1">
+        <div class="lesson-header">
+          <span class="lesson-number">A.1</span>
+          <h2>Tensors</h2>
+        </div>
+
+        <p>A <strong>tensor</strong> is PyTorch's core data structure: a multi-dimensional array that supports GPU acceleration and automatic differentiation. Scalars are 0-dimensional tensors, vectors are 1-dimensional, matrices are 2-dimensional, and neural network activations (batch × sequence × features) are typically 3-dimensional. PyTorch provides a rich set of tensor creation functions — <code>torch.tensor</code> for explicit values, <code>torch.zeros</code> and <code>torch.ones</code> for constant initialisation, <code>torch.randn</code> for Gaussian random values — and all standard mathematical operations apply element-wise or broadcast over dimensions following NumPy semantics.</p>
+
+        <p>The <strong>dtype</strong> of a tensor matters significantly in LLM work. Model weights are typically <code>float32</code> (or <code>float16</code>/<code>bfloat16</code> for mixed precision), while token IDs are <code>int64</code>. Mixing dtypes in an operation raises an error, so explicit casting with <code>.float()</code> or <code>.long()</code> is often necessary. Shape manipulation — <code>view</code> and <code>reshape</code> — are among the most frequently used operations in transformer code: they reorganise the underlying data without copying it (in most cases). The difference between the two is that <code>view</code> requires the tensor to be contiguous in memory, while <code>reshape</code> will make a copy if necessary.</p>
+
+        <p>Indexing and slicing follow Python/NumPy conventions. <code>x[0]</code> selects the first element along dimension 0, <code>x[:, 2]</code> selects column 2 across all rows, and <code>x[..., -1]</code> selects the last element along the final dimension (a pattern used constantly in transformer attention code). Matrix multiplication — the workhorse of neural networks — can be expressed as <code>x @ y</code> (Python operator), <code>torch.matmul(x, y)</code>, or <code>torch.bmm(x, y)</code> for batched 3D tensors.</p>
+
+        <pre class="code-block"><code><span class="kw">import</span> torch
+x = torch.<span class="fn">tensor</span>([[<span class="num">1.0</span>, <span class="num">2.0</span>], [<span class="num">3.0</span>, <span class="num">4.0</span>]])
+<span class="fn">print</span>(x.shape)   <span class="cmt"># torch.Size([2, 2])</span>
+<span class="fn">print</span>(x.dtype)   <span class="cmt"># torch.float32</span>
+y = x.T          <span class="cmt"># transpose</span>
+z = x @ y        <span class="cmt"># matrix multiply → [[5,11],[11,25]]</span>
+
+<span class="cmt"># Reshaping</span>
+a = torch.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">3</span>)
+b = a.<span class="fn">view</span>(<span class="num">9</span>)       <span class="cmt"># 3×3 → flat vector of 9</span>
+c = b.<span class="fn">view</span>(<span class="num">1</span>, <span class="num">9</span>)    <span class="cmt"># 9 → 1×9 row</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table"></i> 3×3 Tensor and Reshape</div>
+          <div class="reshape-demo">
+            <div>
+              <table class="tensor-table">
+                <tr><td class="t-hi">1.2</td><td>-0.5</td><td class="t-hi">0.8</td></tr>
+                <tr><td>0.3</td><td class="t-hi">2.1</td><td>-1.0</td></tr>
+                <tr><td class="t-hi">0.7</td><td>-0.2</td><td class="t-hi">1.5</td></tr>
+              </table>
+              <div class="reshape-label">shape: (3, 3)</div>
+            </div>
+            <div class="reshape-arrow">→</div>
+            <div>
+              <table class="tensor-table">
+                <tr><td class="t-hi">1.2</td></tr>
+                <tr><td>-0.5</td></tr>
+                <tr><td class="t-hi">0.8</td></tr>
+                <tr><td>0.3</td></tr>
+                <tr><td class="t-hi">2.1</td></tr>
+                <tr><td>-1.0</td></tr>
+                <tr><td class="t-hi">0.7</td></tr>
+                <tr><td>-0.2</td></tr>
+                <tr><td class="t-hi">1.5</td></tr>
+              </table>
+              <div class="reshape-label">view(9)</div>
+            </div>
+            <div class="reshape-arrow">→</div>
+            <div>
+              <table class="tensor-table">
+                <tr>
+                  <td class="t-hi">1.2</td><td>-0.5</td><td class="t-hi">0.8</td>
+                  <td>0.3</td><td class="t-hi">2.1</td><td>-1.0</td>
+                  <td class="t-hi">0.7</td><td>-0.2</td><td class="t-hi">1.5</td>
+                </tr>
+              </table>
+              <div class="reshape-label">view(1, 9)</div>
+            </div>
+          </div>
+          <div class="viz-caption">Reshape operations reorganise the same data — no copying. The tensor's underlying values are identical across all three shapes.</div>
+        </div>
+
+      </section><!-- /#lesson-a-1 -->
+
+      <!-- ══════════════════
+           LESSON A.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-a-2">
+        <div class="lesson-header">
+          <span class="lesson-number">A.2</span>
+          <h2>Automatic Differentiation (Autograd)</h2>
+        </div>
+
+        <p>PyTorch's <strong>autograd</strong> system is what makes training neural networks practical. When you create a tensor with <code>requires_grad=True</code>, PyTorch begins recording every operation performed on it in a dynamic <strong>computation graph</strong>. When you call <code>.backward()</code> on the loss tensor, PyTorch traverses this graph in reverse (backpropagation) and computes the gradient of the loss with respect to every leaf tensor that has <code>requires_grad=True</code>. These gradients are stored in the <code>.grad</code> attribute and used by the optimizer to update the weights.</p>
+
+        <p>The computation graph is <strong>dynamic</strong> — it is rebuilt fresh for each forward pass. This means you can use regular Python control flow (if statements, loops) inside your model's <code>forward()</code> method and PyTorch will correctly differentiate through whatever execution path was taken. This is a major advantage over static graph frameworks like early TensorFlow. The trade-off is slightly higher memory overhead, since the graph must be retained until <code>.backward()</code> is called.</p>
+
+        <p>A critical detail: PyTorch <strong>accumulates</strong> gradients rather than replacing them. Each call to <code>.backward()</code> adds to the existing <code>.grad</code> value. In a standard training loop where you want fresh gradients per step, you must call <code>optimizer.zero_grad()</code> (or explicitly set <code>.grad = None</code>) at the start of each iteration. Forgetting this is one of the most common PyTorch bugs: your gradients will silently sum across steps, producing incorrect parameter updates.</p>
+
+        <pre class="code-block"><code>x = torch.<span class="fn">tensor</span>([<span class="num">2.0</span>], requires_grad=<span class="kw">True</span>)
+y = x ** <span class="num">2</span> + <span class="num">3</span> * x + <span class="num">1</span>   <span class="cmt"># y = x² + 3x + 1</span>
+y.<span class="fn">backward</span>()              <span class="cmt"># compute dy/dx</span>
+<span class="fn">print</span>(x.grad)             <span class="cmt"># dy/dx = 2x + 3 = 7.0 at x=2</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-diagram-project"></i> Computation Graph</div>
+          <div class="comp-graph">
+            <div class="cg-node cg-input">x = 2.0 <span class="cg-back">← grad = 7.0</span></div>
+            <div class="cg-arrow">↓ forward</div>
+            <div class="cg-node cg-op">x² node <span style="font-size:0.7rem;font-weight:400;opacity:0.75;display:block;">4.0</span></div>
+            <div class="cg-arrow">↓</div>
+            <div class="cg-node cg-op">3×x node <span style="font-size:0.7rem;font-weight:400;opacity:0.75;display:block;">6.0</span></div>
+            <div class="cg-arrow">↓</div>
+            <div class="cg-node cg-output">y = 4 + 6 + 1 = 11</div>
+            <div class="cg-arrow" style="color:#ef4444;">↑ .backward()</div>
+            <div class="cg-node cg-grad">gradient = 2x+3 = 7.0</div>
+          </div>
+          <div class="viz-caption">Forward pass builds the graph (downward). .backward() traverses it in reverse via chain rule to compute x.grad = 7.0.</div>
+        </div>
+
+      </section><!-- /#lesson-a-2 -->
+
+      <!-- ══════════════════
+           LESSON A.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-a-3">
+        <div class="lesson-header">
+          <span class="lesson-number">A.3</span>
+          <h2>Building a Simple Training Loop</h2>
+        </div>
+
+        <p>All PyTorch neural networks subclass <code>nn.Module</code>. You define two methods: <code>__init__</code>, where you declare the learnable layers (e.g., <code>nn.Linear</code>, <code>nn.Embedding</code>), and <code>forward</code>, where you specify the computation that transforms the input into the output. When you call <code>model(input)</code>, PyTorch internally calls <code>model.forward(input)</code> while also handling hooks and autograd bookkeeping — which is why you should always call the model as a callable rather than invoking <code>forward()</code> directly.</p>
+
+        <p>The <strong>training loop</strong> follows an invariant four-step pattern for every batch. Step 1: call <code>optimizer.zero_grad()</code> to clear accumulated gradients from the previous step. Step 2: run the forward pass by calling <code>model(x)</code> to get predictions, then compute the loss. Step 3: call <code>loss.backward()</code> to compute gradients for all parameters with <code>requires_grad=True</code>. Step 4: call <code>optimizer.step()</code> to update each parameter by subtracting <code>lr * grad</code> (or the equivalent Adam update). This four-step cycle repeats for every batch in every epoch.</p>
+
+        <p>The optimizer accumulates state beyond just the learning rate. <code>torch.optim.SGD</code> optionally maintains momentum buffers. <code>torch.optim.Adam</code> maintains per-parameter first and second moment estimates that adapt the effective learning rate for each weight. This is why Adam typically converges much faster than vanilla SGD for transformer models — the adaptive per-parameter learning rates compensate for the wide variation in gradient magnitudes across different parts of the network.</p>
+
+        <pre class="code-block"><code><span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="kw">class</span> <span class="fn">SimpleNet</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        <span class="fn">super</span>().__init__()
+        self.fc1 = nn.<span class="fn">Linear</span>(<span class="num">2</span>, <span class="num">4</span>)
+        self.fc2 = nn.<span class="fn">Linear</span>(<span class="num">4</span>, <span class="num">1</span>)
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="kw">return</span> self.fc2(torch.<span class="fn">relu</span>(self.fc1(x)))
+
+model = <span class="fn">SimpleNet</span>()
+optimizer = torch.optim.<span class="fn">Adam</span>(model.<span class="fn">parameters</span>(), lr=<span class="num">1e-3</span>)
+
+<span class="kw">for</span> x, y <span class="kw">in</span> dataloader:
+    optimizer.<span class="fn">zero_grad</span>()                    <span class="cmt"># 1. clear gradients</span>
+    loss = F.<span class="fn">mse_loss</span>(<span class="fn">model</span>(x), y)           <span class="cmt"># 2. forward + loss</span>
+    loss.<span class="fn">backward</span>()                           <span class="cmt"># 3. backprop</span>
+    optimizer.<span class="fn">step</span>()                          <span class="cmt"># 4. update weights</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-rotate"></i> The 4-Step Training Loop</div>
+          <div class="viz-flow">
+            <div class="viz-node vn-step">1. zero_grad() <span class="vn-sub">Clear accumulated gradients from last step</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-model">2. model(x) → loss <span class="vn-sub">Forward pass + compute loss function</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-loss">3. loss.backward() <span class="vn-sub">Backpropagate — fill .grad for all parameters</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-step">4. optimizer.step() <span class="vn-sub">Update weights: w -= lr * w.grad</span></div>
+          </div>
+          <div class="viz-caption">This four-step cycle is identical for every model — from a two-layer MLP to GPT-2. The loss function changes; the loop structure does not.</div>
+        </div>
+
+      </section><!-- /#lesson-a-3 -->
+
+      <!-- ══════════════════
+           LESSON A.4
+      ══════════════════ -->
+      <section class="lesson" id="lesson-a-4">
+        <div class="lesson-header">
+          <span class="lesson-number">A.4</span>
+          <h2>GPU Usage</h2>
+        </div>
+
+        <p>Neural network training is dominated by large matrix multiplications — exactly the kind of massively parallel operation that GPUs are designed for. A modern GPU like the NVIDIA A100 can perform 312 teraflops of FP16 matrix operations per second, compared to roughly 1 teraflop for a CPU. For a model like GPT-2 (117M parameters), a single forward pass on CPU takes ~3 seconds; on GPU, the same pass takes ~15 milliseconds — 200× faster. Training without GPU access would make the experiments in this book infeasible in reasonable time.</p>
+
+        <p>In PyTorch, moving a tensor or model to the GPU is a single operation: <code>.to(device)</code> where <code>device</code> is a <code>torch.device</code> object. The canonical pattern is to detect the best available device at the top of your script and move everything there consistently. The critical rule is that <strong>all tensors participating in an operation must reside on the same device</strong>. Mixing CPU tensors with GPU tensors raises a <code>RuntimeError</code> — the fix is always to check that both <code>x.device</code> and <code>model.device</code> match before the operation.</p>
+
+        <p>Apple Silicon Macs (M1/M2/M3/M4) support a third device: <code>'mps'</code> (Metal Performance Shaders). MPS provides GPU acceleration via the Mac's unified memory architecture and is compatible with most PyTorch operations used in this book. For multi-GPU setups, <code>torch.nn.DataParallel</code> replicates the model on each GPU and splits the batch, while <code>DistributedDataParallel</code> (DDP) is the recommended approach for serious multi-GPU training, as it avoids the GIL bottleneck of DataParallel.</p>
+
+        <pre class="code-block"><code>device = torch.<span class="fn">device</span>(<span class="str">'cuda'</span> <span class="kw">if</span> torch.cuda.<span class="fn">is_available</span>() <span class="kw">else</span> <span class="str">'cpu'</span>)
+<span class="cmt"># On Mac: device = torch.device('mps') if torch.backends.mps.is_available()</span>
+
+model = model.<span class="fn">to</span>(device)  <span class="cmt"># move all parameters to GPU</span>
+
+<span class="kw">for</span> x, y <span class="kw">in</span> dataloader:
+    x, y = x.<span class="fn">to</span>(device), y.<span class="fn">to</span>(device)  <span class="cmt"># move batch to GPU</span>
+    logits = <span class="fn">model</span>(x)                   <span class="cmt"># GPU computation</span>
+    loss = F.<span class="fn">cross_entropy</span>(logits, y)
+    loss.<span class="fn">backward</span>()
+    optimizer.<span class="fn">step</span>()</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-microchip"></i> Device Management Pattern</div>
+          <div class="viz-flow">
+            <div class="viz-node vn-gpu">Detect device <span class="vn-sub">cuda → mps → cpu (fallback chain)</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-model">model.to(device) <span class="vn-sub">Move all parameters and buffers</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-data">x.to(device), y.to(device) <span class="vn-sub">Move each batch from CPU RAM to GPU VRAM</span></div>
+            <div class="viz-arrow">↓</div>
+            <div class="viz-node vn-step">model(x) → loss → backward → step <span class="vn-sub">Entire training step runs on GPU</span></div>
+          </div>
+          <div class="viz-caption">The model moves once; batches move every step. Forgetting to move either the model or a batch tensor to the same device is the most common GPU-related error.</div>
+        </div>
+
+      </section><!-- /#lesson-a-4 -->
+
+      <!-- ══════════════════
+           LESSON A.5
+      ══════════════════ -->
+      <section class="lesson" id="lesson-a-5">
+        <div class="lesson-header">
+          <span class="lesson-number">A.5</span>
+          <h2>Datasets and DataLoaders</h2>
+        </div>
+
+        <p>PyTorch's <code>torch.utils.data.Dataset</code> is an abstract base class that provides a uniform interface for data sources. To create a custom dataset, you subclass it and implement exactly two methods: <code>__len__</code> (returns the total number of samples) and <code>__getitem__(idx)</code> (returns the sample at index <code>idx</code>). The rest of the data pipeline — batching, shuffling, parallel loading — is handled automatically by the <code>DataLoader</code> wrapper. This separation of concerns (Dataset defines what the data is; DataLoader handles how it is delivered to the model) is one of the cleanest design patterns in the PyTorch ecosystem.</p>
+
+        <p>For language modelling, the Dataset typically stores a flat array of token IDs (the entire training corpus concatenated after tokenisation) and returns overlapping windows of length <code>seq_len</code>. The input <code>x</code> is tokens <code>[i:i+seq_len]</code> and the target <code>y</code> is tokens <code>[i+1:i+seq_len+1]</code> — a one-position shift. This means the model is trained to predict every next token in the sequence simultaneously, making maximum use of each training example. A sequence of length 1024 provides 1024 training signal tokens in a single forward pass.</p>
+
+        <p>The <code>DataLoader</code>'s <code>num_workers</code> parameter controls how many CPU worker processes are used to load and preprocess data in parallel while the GPU is busy computing. Setting <code>num_workers=4</code> (or matching your CPU core count) keeps the GPU fed and avoids the common bottleneck where training is CPU-bound rather than GPU-bound. The <code>shuffle=True</code> argument ensures batches are drawn in a random order each epoch, which is critical for generalisation — training on the same sequence order repeatedly leads to poor learning.</p>
+
+        <pre class="code-block"><code><span class="kw">from</span> torch.utils.data <span class="kw">import</span> Dataset, DataLoader
+
+<span class="kw">class</span> <span class="fn">TextDataset</span>(Dataset):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, token_ids, seq_len):
+        self.data = token_ids
+        self.seq_len = seq_len
+    <span class="kw">def</span> <span class="fn">__len__</span>(self):
+        <span class="kw">return</span> <span class="fn">len</span>(self.data) - self.seq_len
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(self, idx):
+        x = torch.<span class="fn">tensor</span>(self.data[idx : idx+self.seq_len])
+        y = torch.<span class="fn">tensor</span>(self.data[idx+<span class="num">1</span> : idx+self.seq_len+<span class="num">1</span>])
+        <span class="kw">return</span> x, y
+
+dataset = <span class="fn">TextDataset</span>(token_ids, seq_len=<span class="num">1024</span>)
+loader = <span class="fn">DataLoader</span>(dataset, batch_size=<span class="num">32</span>, shuffle=<span class="kw">True</span>, num_workers=<span class="num">4</span>)</code></pre>
+
+        <div class="insight-box">
+          <div class="insight-title"><i class="fas fa-lightbulb"></i> Key Insight</div>
+          <p>The sliding-window approach to language modelling is extremely data-efficient. A 1024-token sequence yields 1024 training examples simultaneously — every token predicts the next. A dataset with 1 billion tokens, tokenised and sliced into 1024-length windows, provides roughly 1 million training batches per epoch with a batch size of 1000.</p>
+        </div>
+
+      </section><!-- /#lesson-a-5 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Appendix A — Key Takeaways</h3>
+        <ul>
+          <li><strong>Tensors</strong> are PyTorch's fundamental data structure — multi-dimensional arrays with GPU acceleration and autograd support. Dtype matters: <code>float32</code> for weights, <code>int64</code> for token IDs.</li>
+          <li><strong>Autograd</strong> tracks operations and computes gradients automatically via <code>.backward()</code>. PyTorch accumulates gradients — call <code>optimizer.zero_grad()</code> every step to avoid incorrect gradient accumulation.</li>
+          <li><strong>All models subclass <code>nn.Module</code></strong> — define layers in <code>__init__</code>, computation in <code>forward()</code>. Always call <code>model(input)</code>, never <code>model.forward(input)</code> directly.</li>
+          <li><strong>Always move both model and data to the same device</strong> before operations. Use <code>device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')</code> for portable code.</li>
+          <li><strong>DataLoader handles batching, shuffling, and parallel data loading</strong> for efficient training. Implement <code>__len__</code> and <code>__getitem__</code> in your custom Dataset; let DataLoader handle the rest.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Appendix A Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of PyTorch tensors, autograd, training loops, GPU usage, and DataLoaders. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Appendix Mind Map — click a node to explore</div>
+        <style>
+          @keyframes mmFadeInA { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+          #mm-app-a .mm-node { cursor:pointer; transition:opacity 0.25s; }
+          #mm-app-a .mm-node:hover text { font-weight:700; }
+          #mm-app-a.dim-others .mm-branch { opacity:0.18; }
+          #mm-app-a.dim-others .mm-branch.active { opacity:1; }
+          #mm-app-a .mm-center { cursor:pointer; }
+          #mm-app-a g { animation: mmFadeInA 0.45s ease both; }
+          #mm-app-a g:nth-child(2) { animation-delay:0.05s; }
+          #mm-app-a g:nth-child(3) { animation-delay:0.10s; }
+          #mm-app-a g:nth-child(4) { animation-delay:0.15s; }
+          #mm-app-a g:nth-child(5) { animation-delay:0.20s; }
+          #mm-app-a g:nth-child(6) { animation-delay:0.25s; }
+          #mm-app-a g:nth-child(7) { animation-delay:0.30s; }
+        </style>
+        <svg id="mm-app-a" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Branch lines -->
+          <!-- Tensors → top-left -->
+          <line x1="400" y1="300" x2="170" y2="130" stroke="#4f6ef7" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="130" x2="72"  y2="80"  stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="130" x2="72"  y2="118" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="130" x2="72"  y2="156" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="130" x2="72"  y2="194" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Autograd → top-right -->
+          <line x1="400" y1="300" x2="630" y2="130" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="130" x2="730" y2="80"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="130" x2="730" y2="118" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="130" x2="730" y2="156" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="130" x2="730" y2="194" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- nn.Module → left -->
+          <line x1="400" y1="300" x2="150" y2="300" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+          <line x1="150" y1="300" x2="62"  y2="258" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="150" y1="300" x2="62"  y2="296" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="150" y1="300" x2="62"  y2="334" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- GPU Usage → bottom-left -->
+          <line x1="400" y1="300" x2="170" y2="470" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
+          <line x1="170" y1="470" x2="72"  y2="420" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="72"  y2="458" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="170" y1="470" x2="72"  y2="496" stroke="#a855f7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- DataLoader → bottom-right -->
+          <line x1="400" y1="300" x2="630" y2="470" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+          <line x1="630" y1="470" x2="730" y2="420" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="730" y2="458" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="730" y2="496" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="630" y1="470" x2="730" y2="534" stroke="#ef4444" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- CENTER NODE -->
+          <g class="mm-center" onclick="mmResetA()">
+            <circle cx="400" cy="300" r="48" fill="#4f6ef7" opacity="0.95"/>
+            <text x="400" y="296" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">PyTorch</text>
+            <text x="400" y="314" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">(click to reset)</text>
+          </g>
+
+          <!-- BRANCH 1: Tensors -->
+          <g class="mm-branch mm-node" data-branch="tensors-a" onclick="mmSelectA(this)">
+            <ellipse cx="170" cy="130" rx="58" ry="22" fill="#4f6ef7" opacity="0.18"/>
+            <ellipse cx="170" cy="130" rx="58" ry="22" fill="none" stroke="#4f6ef7" stroke-width="1.8"/>
+            <text x="170" y="134" text-anchor="middle" font-size="13" font-weight="600" fill="#4f6ef7">Tensors</text>
+            <!-- leaf nodes -->
+            <rect x="12" y="66" width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="70" y="81" text-anchor="middle" font-size="11" fill="#4f6ef7">multi-dim arrays</text>
+            <rect x="12" y="104" width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="70" y="119" text-anchor="middle" font-size="11" fill="#4f6ef7">dtype</text>
+            <rect x="12" y="142" width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="70" y="157" text-anchor="middle" font-size="11" fill="#4f6ef7">device</text>
+            <rect x="12" y="180" width="116" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="70" y="195" text-anchor="middle" font-size="11" fill="#4f6ef7">GPU</text>
+          </g>
+
+          <!-- BRANCH 2: Autograd -->
+          <g class="mm-branch mm-node" data-branch="autograd-a" onclick="mmSelectA(this)">
+            <ellipse cx="630" cy="130" rx="60" ry="22" fill="#f59e0b" opacity="0.15"/>
+            <ellipse cx="630" cy="130" rx="60" ry="22" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="630" y="134" text-anchor="middle" font-size="13" font-weight="600" fill="#f59e0b">Autograd</text>
+            <rect x="672" y="66" width="118" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="731" y="81" text-anchor="middle" font-size="11" fill="#f59e0b">computation graph</text>
+            <rect x="672" y="104" width="118" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="731" y="119" text-anchor="middle" font-size="11" fill="#f59e0b">.backward()</text>
+            <rect x="672" y="142" width="118" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="731" y="157" text-anchor="middle" font-size="11" fill="#f59e0b">.grad</text>
+            <rect x="672" y="180" width="118" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="731" y="195" text-anchor="middle" font-size="11" fill="#f59e0b">requires_grad</text>
+          </g>
+
+          <!-- BRANCH 3: nn.Module -->
+          <g class="mm-branch mm-node" data-branch="nnmodule-a" onclick="mmSelectA(this)">
+            <ellipse cx="150" cy="300" rx="64" ry="22" fill="#10b981" opacity="0.12"/>
+            <ellipse cx="150" cy="300" rx="64" ry="22" fill="none" stroke="#10b981" stroke-width="1.8"/>
+            <text x="150" y="304" text-anchor="middle" font-size="13" font-weight="600" fill="#10b981">nn.Module</text>
+            <rect x="2" y="244" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="60" y="259" text-anchor="middle" font-size="11" fill="#10b981">__init__ layers</text>
+            <rect x="2" y="282" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="60" y="297" text-anchor="middle" font-size="11" fill="#10b981">forward()</text>
+            <rect x="2" y="320" width="116" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="60" y="335" text-anchor="middle" font-size="11" fill="#10b981">Sequential</text>
+          </g>
+
+          <!-- BRANCH 4: GPU Usage -->
+          <g class="mm-branch mm-node" data-branch="gpu-a" onclick="mmSelectA(this)">
+            <ellipse cx="170" cy="470" rx="62" ry="22" fill="#a855f7" opacity="0.12"/>
+            <ellipse cx="170" cy="470" rx="62" ry="22" fill="none" stroke="#a855f7" stroke-width="1.8"/>
+            <text x="170" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#a855f7">GPU Usage</text>
+            <rect x="12" y="406" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="70" y="421" text-anchor="middle" font-size="11" fill="#a855f7">.to(device)</text>
+            <rect x="12" y="444" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="70" y="459" text-anchor="middle" font-size="11" fill="#a855f7">cuda / mps</text>
+            <rect x="12" y="482" width="116" height="22" rx="6" fill="rgba(168,85,247,0.10)" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="70" y="497" text-anchor="middle" font-size="11" fill="#a855f7">DataParallel</text>
+          </g>
+
+          <!-- BRANCH 5: DataLoader -->
+          <g class="mm-branch mm-node" data-branch="dataloader-a" onclick="mmSelectA(this)">
+            <ellipse cx="630" cy="470" rx="64" ry="22" fill="#ef4444" opacity="0.12"/>
+            <ellipse cx="630" cy="470" rx="64" ry="22" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+            <text x="630" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#ef4444">DataLoader</text>
+            <rect x="672" y="406" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="421" text-anchor="middle" font-size="11" fill="#ef4444">Dataset</text>
+            <rect x="672" y="444" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="459" text-anchor="middle" font-size="11" fill="#ef4444">__getitem__</text>
+            <rect x="672" y="482" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="497" text-anchor="middle" font-size="11" fill="#ef4444">batch_size</text>
+            <rect x="672" y="520" width="116" height="22" rx="6" fill="rgba(239,68,68,0.10)" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="730" y="535" text-anchor="middle" font-size="11" fill="#ef4444">shuffle</text>
+          </g>
+
+        </svg>
+        <script>
+          function mmSelectA(el) {
+            const svg = document.getElementById('mm-app-a');
+            svg.classList.add('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+          }
+          function mmResetA() {
+            const svg = document.getElementById('mm-app-a');
+            svg.classList.remove('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+          }
+        </script>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="ch7.html" class="nav-prev" aria-label="Previous chapter">
+        <i class="fas fa-arrow-left"></i> Ch7: Instruction Fine-tuning
+      </a>
+      <a href="app-b.html" class="nav-next" aria-label="Next appendix">
+        App B: References <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions — Appendix A
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "What does requires_grad=True do in PyTorch?",
+        options: [
+          "Moves the tensor to GPU",
+          "Marks the tensor to be tracked in the computation graph for gradient computation",
+          "Makes the tensor immutable",
+          "Converts the tensor to float32"
+        ],
+        correct: 1,
+        explanation: "requires_grad=True tells PyTorch to track operations on this tensor and include it in the computation graph. After .backward(), the .grad attribute holds ∂loss/∂tensor."
+      },
+      {
+        question: "Why must you call optimizer.zero_grad() at the start of each training step?",
+        options: [
+          "To reset the model weights",
+          "PyTorch accumulates gradients — not zeroing them adds gradients from multiple steps",
+          "To clear GPU memory",
+          "To reinitialise the optimizer's momentum"
+        ],
+        correct: 1,
+        explanation: "By default, PyTorch adds new gradients to existing .grad values. In standard training, you want fresh gradients per step, so zero_grad() prevents incorrect gradient accumulation."
+      },
+      {
+        question: "What two methods must a custom Dataset implement?",
+        options: [
+          "__init__ and __call__",
+          "__len__ and __getitem__",
+          "__repr__ and __str__",
+          "__enter__ and __exit__"
+        ],
+        correct: 1,
+        explanation: "DataLoader calls __len__ to know the dataset size (for shuffling and indexing) and __getitem__(idx) to retrieve individual samples. Both must be implemented for DataLoader to work."
+      },
+      {
+        question: "What error occurs if a tensor is on CPU but the model is on GPU?",
+        options: [
+          "ValueError: dtype mismatch",
+          "RuntimeError: Expected all tensors to be on the same device",
+          "CUDA out of memory",
+          "AttributeError: no GPU found"
+        ],
+        correct: 1,
+        explanation: "All tensors participating in an operation must reside on the same device. The fix: x = x.to(device) before passing to the model."
+      },
+      {
+        question: "In nn.Module, where do you define the forward computation?",
+        options: [
+          "In __init__",
+          "In the forward() method",
+          "In a compute() method",
+          "In __call__"
+        ],
+        correct: 1,
+        explanation: "The forward() method defines what happens when you call model(input). PyTorch's __call__ internally calls forward() while handling hooks and autograd. Never call forward() directly — always use model(input)."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

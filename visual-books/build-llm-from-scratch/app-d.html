@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App D: Training Loop Extras — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ── LR chart ── */
+    .lr-chart-wrap {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 0.75rem 0;
+    }
+    .lr-chart-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Gradient vector diagram ── */
+    .grad-diagram {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5rem;
+      justify-content: center;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .grad-diagram .gd-item {
+      text-align: center;
+    }
+    .grad-diagram .gd-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* ── Recipe highlight ── */
+    .recipe-box {
+      background: rgba(79,110,247,0.07);
+      border: 1.5px solid rgba(79,110,247,0.3);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+    .recipe-box strong {
+      color: var(--accent);
+    }
+    .recipe-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+    }
+    .recipe-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .recipe-step .rs-num {
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body data-chapter="app-d">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">App D: Training Extras</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Appendix D</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Appendix D</div>
+      <h1>Training Loop Extras</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 3 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 5-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~15 min read</span>
+        <span class="tag">LR Warmup</span>
+        <span class="tag">Cosine Decay</span>
+        <span class="tag">Gradient Clipping</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar" id="chapterTabs">
+      <button class="tab-btn active" data-tab="tab-lessons">
+        <i class="fas fa-book-reader"></i> Lessons
+      </button>
+      <button class="tab-btn" data-tab="tab-summary">
+        <i class="fas fa-list-check"></i> Summary
+      </button>
+      <button class="tab-btn" data-tab="tab-quiz">
+        <i class="fas fa-question-circle"></i> Quiz
+      </button>
+      <button class="tab-btn" data-tab="tab-mindmap">
+        <i class="fas fa-project-diagram"></i> Mind Map
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB: LESSONS
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <p>The core training loop — forward, loss, backward, step — works for toy models, but production LLM training requires three additional techniques to be stable and efficient. Learning rate warmup prevents catastrophic early updates. Cosine learning rate decay ensures the model converges smoothly. Gradient clipping prevents the occasional large gradient spikes from transformer attention from destabilising training. Together, these three techniques form the standard training recipe used by GPT-3, LLaMA, and virtually every large language model trained since 2020.</p>
+
+      <p>Understanding why each technique is needed — rather than just using them mechanically — lets you debug training instabilities when they arise. A loss spike followed by recovery usually indicates a gradient clipping threshold that is too high. A model that trains well early but plateaus without improving typically needs better learning rate scheduling. A model that diverges immediately from step 1 almost certainly needs warmup. These patterns are worth recognising.</p>
+
+      <!-- ══════════════════
+           LESSON D.1
+      ══════════════════ -->
+      <section class="lesson" id="lesson-d-1">
+        <div class="lesson-header">
+          <span class="lesson-number">D.1</span>
+          <h2>Learning Rate Warmup</h2>
+        </div>
+
+        <p><strong>Learning rate warmup</strong> addresses a fundamental instability in neural network training: at step 0, all model weights are randomly initialised. The gradients computed from this random initialisation can be large and point in conflicting directions across different layers — the model has no useful signal yet. If you start training with a large learning rate (e.g., 6e-4, typical for GPT-2), the first few gradient steps can take enormous strides in parameter space and land in a poor region that is hard to recover from. The model may even diverge immediately.</p>
+
+        <p>The solution is <strong>linear warmup</strong>: start the learning rate at 0 (or a very small value), and increase it linearly over the first <code>warmup_steps</code> training steps until it reaches the target maximum. During warmup, the model makes cautious, small updates. By the time the LR reaches its maximum value, the weights have moved away from their random initialisation into a region where the loss landscape is more predictable and large steps are safer. GPT-3 uses 375 million token warmup (375 steps with batch size 1 million tokens); the original Transformer paper uses 4000 steps. The exact length is a hyperparameter, but a range of 1–5% of total training steps is typical.</p>
+
+        <p>The original Transformer paper used an elegant combined schedule: linear warmup followed by inverse-square-root decay. The formula <code>d_model^-0.5 × min(step^-0.5, step × warmup_steps^-1.5)</code> increases like a ramp during warmup and then decays like 1/√step afterward. Modern LLMs typically use this warmup phase combined with cosine decay rather than inverse-square-root decay — cosine decay is smoother and allows tuning the final LR explicitly.</p>
+
+        <pre class="code-block"><code><span class="kw">def</span> <span class="fn">get_lr</span>(step, d_model, warmup_steps=<span class="num">4000</span>):
+    <span class="cmt"># Original Transformer paper schedule</span>
+    arg1 = step ** <span class="num">-0.5</span>
+    arg2 = step * (warmup_steps ** <span class="num">-1.5</span>)
+    <span class="kw">return</span> d_model ** <span class="num">-0.5</span> * <span class="fn">min</span>(arg1, arg2)
+
+scheduler = torch.optim.lr_scheduler.<span class="fn">LambdaLR</span>(
+    optimizer,
+    lr_lambda=<span class="kw">lambda</span> step: <span class="fn">get_lr</span>(step+<span class="num">1</span>, d_model=<span class="num">768</span>)
+)</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Learning Rate: Linear Warmup Phase</div>
+          <div class="lr-chart-wrap">
+            <svg viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg">
+              <!-- axes -->
+              <line x1="40" y1="110" x2="400" y2="110" stroke="var(--border)" stroke-width="1.5"/>
+              <line x1="40" y1="20"  x2="40"  y2="110" stroke="var(--border)" stroke-width="1.5"/>
+              <!-- labels -->
+              <text x="220" y="132" text-anchor="middle" font-size="10" fill="var(--text-muted)">Training Steps</text>
+              <text x="14" y="68" text-anchor="middle" font-size="10" fill="var(--text-muted)" transform="rotate(-90,14,68)">LR</text>
+              <!-- warmup zone shading -->
+              <rect x="40" y="20" width="100" height="90" fill="rgba(79,110,247,0.06)" rx="2"/>
+              <text x="90" y="35" text-anchor="middle" font-size="9" fill="var(--accent)">warmup</text>
+              <!-- LR curve: ramp up 0→max, then inverse sqrt decay -->
+              <polyline
+                points="40,110 140,30 200,42 260,52 320,60 380,68"
+                fill="none"
+                stroke="var(--accent)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <!-- max LR marker -->
+              <line x1="140" y1="30" x2="140" y2="110" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+              <text x="144" y="108" font-size="9" fill="var(--accent)">peak LR</text>
+              <!-- annotations -->
+              <text x="60" y="75" font-size="9" fill="var(--accent)" opacity="0.8">linear ramp</text>
+              <text x="220" y="45" font-size="9" fill="var(--text-muted)">decay after warmup</text>
+            </svg>
+          </div>
+          <div class="viz-caption">Linear warmup (blue zone) ramps LR from 0 to max. After warmup, LR decays — either inverse-sqrt or cosine (see D.2). The ramp prevents unstable early updates.</div>
+        </div>
+
+      </section><!-- /#lesson-d-1 -->
+
+      <!-- ══════════════════
+           LESSON D.2
+      ══════════════════ -->
+      <section class="lesson" id="lesson-d-2">
+        <div class="lesson-header">
+          <span class="lesson-number">D.2</span>
+          <h2>Cosine Learning Rate Decay</h2>
+        </div>
+
+        <p>After the warmup phase, the learning rate should decrease over training — but how? Step decay (dropping LR by a fixed factor at predefined steps) creates sharp discontinuities that can cause loss spikes. Exponential decay decreases too rapidly early and too slowly late. <strong>Cosine decay</strong> is the solution: the learning rate follows a half-cosine curve from <code>max_lr</code> down to <code>min_lr</code> (typically 10% of max_lr). The cosine function decreases slowly at the extremes and faster in the middle, which happens to match the natural pace of neural network training — fast progress early, slowing as the model approaches its optimum.</p>
+
+        <p>Cosine decay has two key properties that make it the dominant schedule for LLM training. First, it is <strong>smooth</strong> — no sharp drops means no sudden changes in the gradient dynamics. Second, it is <strong>predictable</strong> — given the total number of training steps, you know exactly where the LR will be at any point. This allows you to plan training budgets and stop-and-resume checkpointing without perturbing the schedule. GPT-3 uses cosine decay from max_lr=6e-4 to min_lr=6e-5 (exactly 10%) over the entire training run. LLaMA uses the same structure. It has become the default because it consistently performs well across a wide range of model sizes and datasets.</p>
+
+        <p>A subtlety worth noting: the <code>min_lr</code> floor matters. Decaying to 0 would mean the model stops learning entirely at the end of training — useful if you want the model to fully converge. But setting <code>min_lr</code> to 10% of max keeps a small amount of learning happening until the very end, which helps with the long tail of rare training examples. The exact ratio is an empirical finding rather than a theoretical result, and 10% is widely used without strong justification beyond "it works well."</p>
+
+        <pre class="code-block"><code><span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">cosine_lr</span>(step, warmup_steps, max_steps, max_lr, min_lr):
+    <span class="cmt"># Linear warmup phase</span>
+    <span class="kw">if</span> step &lt; warmup_steps:
+        <span class="kw">return</span> max_lr * step / warmup_steps
+    <span class="cmt"># Cosine decay phase</span>
+    progress = (step - warmup_steps) / (max_steps - warmup_steps)
+    <span class="kw">return</span> min_lr + <span class="num">0.5</span> * (max_lr - min_lr) * (<span class="num">1</span> + math.<span class="fn">cos</span>(math.pi * progress))
+
+<span class="cmt"># Example: max_lr=6e-4, min_lr=6e-5, warmup=100 steps, total=10000</span>
+<span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10000</span>):
+    lr = <span class="fn">cosine_lr</span>(step, <span class="num">100</span>, <span class="num">10000</span>, <span class="num">6e-4</span>, <span class="num">6e-5</span>)
+    <span class="kw">for</span> param_group <span class="kw">in</span> optimizer.param_groups:
+        param_group[<span class="str">'lr'</span>] = lr</code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-area"></i> Warmup + Cosine Decay Combined Schedule</div>
+          <div class="lr-chart-wrap">
+            <svg viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- axes -->
+              <line x1="40" y1="120" x2="400" y2="120" stroke="var(--border)" stroke-width="1.5"/>
+              <line x1="40" y1="20"  x2="40"  y2="120" stroke="var(--border)" stroke-width="1.5"/>
+              <!-- labels -->
+              <text x="220" y="142" text-anchor="middle" font-size="10" fill="var(--text-muted)">Training Steps</text>
+              <text x="14" y="73" text-anchor="middle" font-size="10" fill="var(--text-muted)" transform="rotate(-90,14,73)">LR</text>
+              <!-- warmup zone -->
+              <rect x="40" y="20" width="80" height="100" fill="rgba(79,110,247,0.06)" rx="2"/>
+              <text x="80" y="36" text-anchor="middle" font-size="9" fill="var(--accent)">warmup</text>
+              <!-- cosine decay zone -->
+              <rect x="120" y="20" width="280" height="100" fill="rgba(16,185,129,0.04)" rx="2"/>
+              <text x="260" y="36" text-anchor="middle" font-size="9" fill="var(--accent-3)">cosine decay</text>
+              <!-- LR curve -->
+              <!-- Warmup: linear 40,120 → 120,30 -->
+              <!-- Cosine: 120,30 down to 380,102 following cosine -->
+              <path
+                d="M40,120 L120,30
+                   C160,30 180,40 200,55
+                   C230,75 270,95 320,103
+                   C350,107 370,108 380,109"
+                fill="none"
+                stroke="var(--accent)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <!-- min_lr dashed line -->
+              <line x1="120" y1="109" x2="400" y2="109" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+              <text x="383" y="107" font-size="9" fill="var(--accent-3)">min_lr</text>
+              <!-- max_lr marker -->
+              <line x1="40" y1="30" x2="400" y2="30" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+              <text x="43" y="28" font-size="9" fill="var(--text-muted)">max_lr</text>
+            </svg>
+          </div>
+          <div class="viz-caption">Linear warmup ramps from 0 to max_lr. Cosine decay then smoothly reduces LR to min_lr (10% of max). No sharp discontinuities — training remains stable throughout.</div>
+        </div>
+
+      </section><!-- /#lesson-d-2 -->
+
+      <!-- ══════════════════
+           LESSON D.3
+      ══════════════════ -->
+      <section class="lesson" id="lesson-d-3">
+        <div class="lesson-header">
+          <span class="lesson-number">D.3</span>
+          <h2>Gradient Clipping</h2>
+        </div>
+
+        <p><strong>Gradient clipping</strong> addresses a different problem from learning rate scheduling: occasional catastrophic gradient spikes. In transformer training, the attention mechanism can sometimes produce very large attention weights — if a single key-query pair has an extremely high similarity score, the softmax concentrates nearly all weight on that pair. When this concentration is very sharp, the gradient through the softmax with respect to the keys and queries can be enormous. One such spike can update the weights by a large amount in a random direction, destroying previously learned representations and causing the loss to jump upward — a training instability that can be hard to recover from.</p>
+
+        <p>Gradient clipping prevents this by monitoring the <strong>global gradient norm</strong>: the Euclidean norm across all parameter gradients treated as one long vector. If this norm exceeds a threshold (typically 1.0), all gradients are scaled down by the factor <code>threshold / norm</code>. Critically, all gradients are scaled by the <strong>same factor</strong>, so the direction of the update vector is preserved — only its magnitude is capped. This is fundamentally different from per-parameter gradient clamping, which would distort the direction of the update.</p>
+
+        <p>In PyTorch, gradient clipping is a single line: <code>torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)</code>. It must be called <strong>after</strong> <code>loss.backward()</code> (which populates the gradients) and <strong>before</strong> <code>optimizer.step()</code> (which uses them). The threshold of 1.0 is the standard for transformer training; values like 0.1 are overly aggressive and slow convergence, while 10.0 is too permissive to prevent spikes. If you find that gradient clipping triggers very frequently (you can monitor the norm), it is a signal that the learning rate may be too high or the model may have numerical issues.</p>
+
+        <pre class="code-block"><code><span class="kw">for</span> x, y <span class="kw">in</span> dataloader:
+    optimizer.<span class="fn">zero_grad</span>()
+    loss = F.<span class="fn">cross_entropy</span>(<span class="fn">model</span>(x), y)
+    loss.<span class="fn">backward</span>()                            <span class="cmt"># 1. compute gradients</span>
+
+    <span class="cmt"># 2. clip gradients (BEFORE optimizer.step)</span>
+    grad_norm = torch.nn.utils.<span class="fn">clip_grad_norm_</span>(
+        model.<span class="fn">parameters</span>(), max_norm=<span class="num">1.0</span>
+    )
+    <span class="cmt"># grad_norm is the UNCLIPPED norm (useful for logging)</span>
+
+    optimizer.<span class="fn">step</span>()                            <span class="cmt"># 3. update weights</span></code></pre>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-compress-arrows-alt"></i> Gradient Clipping: Direction Preserved</div>
+          <div class="grad-diagram">
+            <div class="gd-item">
+              <svg viewBox="0 0 100 100" width="120" height="120">
+                <defs>
+                  <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+                  </marker>
+                </defs>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+                <line x1="50" y1="50" x2="90" y2="10" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+                <text x="50" y="96" text-anchor="middle" font-size="11" fill="var(--text-muted)">clip circle</text>
+              </svg>
+              <div class="gd-label">Unclipped<br>norm &gt; 1.0 → outside circle</div>
+            </div>
+            <div style="font-size:1.5rem;color:var(--text-muted);align-self:center;">→</div>
+            <div class="gd-item">
+              <svg viewBox="0 0 100 100" width="120" height="120">
+                <defs>
+                  <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/>
+                  </marker>
+                </defs>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+                <line x1="50" y1="50" x2="77" y2="23" stroke="var(--accent-3)" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+                <text x="50" y="96" text-anchor="middle" font-size="11" fill="var(--text-muted)">clip circle</text>
+              </svg>
+              <div class="gd-label">Clipped<br>same direction, shorter</div>
+            </div>
+          </div>
+          <div class="viz-caption">Gradient clipping rescales the gradient vector so its norm equals the threshold. The direction is unchanged — only the magnitude is capped. This prevents large spikes while preserving the correct update direction.</div>
+        </div>
+
+        <div class="recipe-box">
+          <strong><i class="fas fa-flask"></i> The Standard LLM Training Recipe</strong>
+          <div class="recipe-steps">
+            <div class="recipe-step">
+              <span class="rs-num">1</span>
+              <span>Linear LR warmup for the first 1–5% of training steps (ramp from 0 → max_lr)</span>
+            </div>
+            <div class="recipe-step">
+              <span class="rs-num">2</span>
+              <span>Cosine LR decay from max_lr down to min_lr (10% of max) over the remaining steps</span>
+            </div>
+            <div class="recipe-step">
+              <span class="rs-num">3</span>
+              <span>Gradient clipping with max_norm=1.0 at every training step</span>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /#lesson-d-3 -->
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: SUMMARY
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-summary">
+
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Appendix D — Key Takeaways</h3>
+        <ul>
+          <li><strong>Learning rate warmup</strong> prevents unstable early updates when weights are randomly initialised. Linear warmup from 0 to max_lr over the first 1–5% of training steps is standard.</li>
+          <li><strong>Cosine decay</strong> smoothly reduces the LR from max_lr to min_lr (typically 10% of max) following a half-cosine curve. Used by GPT-3, LLaMA, and most modern LLMs.</li>
+          <li><strong>Gradient clipping</strong> (max_norm=1.0) caps the global gradient norm to prevent catastrophic spikes from transformer attention. It preserves gradient direction — only magnitude is scaled.</li>
+          <li>Gradient clipping must be called <strong>after loss.backward()</strong> and <strong>before optimizer.step()</strong>. Calling it in the wrong order has no effect.</li>
+          <li><strong>The standard recipe: warmup + cosine decay + clipping</strong> is stable across model sizes from 100M to 100B parameters. It is not the only valid recipe, but it is the safe default.</li>
+        </ul>
+      </div>
+
+    </div><!-- /#tab-summary -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: QUIZ
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-quiz">
+
+      <div class="quiz-box glass">
+        <h3><i class="fas fa-circle-question"></i> Appendix D Quiz</h3>
+        <p class="quiz-subtitle">Test your understanding of LR warmup, cosine decay, and gradient clipping. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+        <div id="quizContainer"></div>
+      </div>
+
+    </div><!-- /#tab-quiz -->
+
+    <!-- ══════════════════════════════════════════
+         TAB: MIND MAP
+    ══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Appendix Mind Map — click a node to explore</div>
+        <style>
+          @keyframes mmFadeInD { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+          #mm-app-d .mm-node { cursor:pointer; transition:opacity 0.25s; }
+          #mm-app-d.dim-others .mm-branch { opacity:0.18; }
+          #mm-app-d.dim-others .mm-branch.active { opacity:1; }
+          #mm-app-d .mm-center { cursor:pointer; }
+          #mm-app-d g { animation: mmFadeInD 0.45s ease both; }
+          #mm-app-d g:nth-child(2) { animation-delay:0.05s; }
+          #mm-app-d g:nth-child(3) { animation-delay:0.10s; }
+          #mm-app-d g:nth-child(4) { animation-delay:0.15s; }
+          #mm-app-d g:nth-child(5) { animation-delay:0.20s; }
+        </style>
+        <svg id="mm-app-d" viewBox="0 0 800 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Branch lines -->
+          <!-- LR Warmup → left -->
+          <line x1="400" y1="220" x2="168" y2="220" stroke="#4f6ef7" stroke-width="2" opacity="0.5"/>
+          <line x1="168" y1="220" x2="60"  y2="162" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="168" y1="220" x2="60"  y2="200" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="168" y1="220" x2="60"  y2="238" stroke="#4f6ef7" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Cosine Decay → top-right -->
+          <line x1="400" y1="220" x2="620" y2="100" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+          <line x1="620" y1="100" x2="720" y2="50"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="620" y1="100" x2="720" y2="88"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="620" y1="100" x2="720" y2="126" stroke="#f59e0b" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <!-- Gradient Clipping → bottom-right -->
+          <line x1="400" y1="220" x2="620" y2="340" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+          <line x1="620" y1="340" x2="720" y2="292" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="620" y1="340" x2="720" y2="330" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+          <line x1="620" y1="340" x2="720" y2="368" stroke="#10b981" stroke-width="1.5" opacity="0.35" stroke-dasharray="4,3"/>
+
+          <!-- CENTER NODE -->
+          <g class="mm-center" onclick="mmResetD()">
+            <circle cx="400" cy="220" r="52" fill="#4f6ef7" opacity="0.95"/>
+            <text x="400" y="214" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">LR &amp;</text>
+            <text x="400" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Gradients</text>
+            <text x="400" y="248" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">(click to reset)</text>
+          </g>
+
+          <!-- BRANCH 1: LR Warmup -->
+          <g class="mm-branch mm-node" data-branch="warmup-d" onclick="mmSelectD(this)">
+            <ellipse cx="168" cy="220" rx="72" ry="22" fill="#4f6ef7" opacity="0.15"/>
+            <ellipse cx="168" cy="220" rx="72" ry="22" fill="none" stroke="#4f6ef7" stroke-width="1.8"/>
+            <text x="168" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#4f6ef7">LR Warmup</text>
+            <rect x="2"  y="148" width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="59" y="163" text-anchor="middle" font-size="11" fill="#4f6ef7">start at 0</text>
+            <rect x="2"  y="186" width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="59" y="201" text-anchor="middle" font-size="10" fill="#4f6ef7">linear increase</text>
+            <rect x="2"  y="224" width="114" height="22" rx="6" fill="rgba(79,110,247,0.10)" stroke="#4f6ef7" stroke-width="1.2"/>
+            <text x="59" y="239" text-anchor="middle" font-size="10" fill="#4f6ef7">warmup_steps</text>
+          </g>
+
+          <!-- BRANCH 2: Cosine Decay -->
+          <g class="mm-branch mm-node" data-branch="cosine-d" onclick="mmSelectD(this)">
+            <ellipse cx="620" cy="100" rx="72" ry="22" fill="#f59e0b" opacity="0.15"/>
+            <ellipse cx="620" cy="100" rx="72" ry="22" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="620" y="104" text-anchor="middle" font-size="13" font-weight="600" fill="#f59e0b">Cosine Decay</text>
+            <rect x="668" y="36"  width="108" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="722" y="51"  text-anchor="middle" font-size="10" fill="#f59e0b">smooth curve</text>
+            <rect x="668" y="74"  width="108" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="722" y="89"  text-anchor="middle" font-size="10" fill="#f59e0b">min_lr=10%</text>
+            <rect x="668" y="112" width="108" height="22" rx="6" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2"/>
+            <text x="722" y="127" text-anchor="middle" font-size="9"  fill="#f59e0b">GPT-3/LLaMA standard</text>
+          </g>
+
+          <!-- BRANCH 3: Gradient Clipping -->
+          <g class="mm-branch mm-node" data-branch="clip-d" onclick="mmSelectD(this)">
+            <ellipse cx="620" cy="340" rx="78" ry="22" fill="#10b981" opacity="0.12"/>
+            <ellipse cx="620" cy="340" rx="78" ry="22" fill="none" stroke="#10b981" stroke-width="1.8"/>
+            <text x="620" y="344" text-anchor="middle" font-size="12" font-weight="600" fill="#10b981">Gradient Clipping</text>
+            <rect x="668" y="278" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="722" y="293" text-anchor="middle" font-size="10" fill="#10b981">clip norm=1.0</text>
+            <rect x="668" y="316" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="722" y="331" text-anchor="middle" font-size="10" fill="#10b981">preserve direction</text>
+            <rect x="668" y="354" width="108" height="22" rx="6" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2"/>
+            <text x="722" y="369" text-anchor="middle" font-size="9"  fill="#10b981">prevent explosion</text>
+          </g>
+
+        </svg>
+        <script>
+          function mmSelectD(el) {
+            const svg = document.getElementById('mm-app-d');
+            svg.classList.add('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+          }
+          function mmResetD() {
+            const svg = document.getElementById('mm-app-d');
+            svg.classList.remove('dim-others');
+            svg.querySelectorAll('.mm-branch').forEach(b => b.classList.remove('active'));
+          }
+        </script>
+      </div>
+    </div><!-- /#tab-mindmap -->
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV (outside tabs)
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="app-c.html" class="nav-prev" aria-label="Previous appendix">
+        <i class="fas fa-arrow-left"></i> App C: Exercises
+      </a>
+      <a href="app-e.html" class="nav-next" aria-label="Next appendix">
+        App E: LoRA <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ─────────────────────────────────────────
+       Quiz questions — Appendix D
+    ───────────────────────────────────────── */
+    const QUESTIONS = [
+      {
+        question: "What problem does learning rate warmup solve?",
+        options: [
+          "Prevents overfitting",
+          "Avoids unstable updates at the start of training when weights are randomly initialised",
+          "Speeds up convergence",
+          "Reduces GPU memory usage"
+        ],
+        correct: 1,
+        explanation: "At initialisation, weights are random and gradients can be large. Starting with a small LR and increasing gradually avoids catastrophic early updates that can damage the initial optimisation landscape."
+      },
+      {
+        question: "What shape does cosine decay produce for the learning rate over training steps?",
+        options: [
+          "Linear decrease",
+          "Step-function drops",
+          "A smooth half-cosine curve from max_lr to min_lr",
+          "Exponential decay"
+        ],
+        correct: 2,
+        explanation: "Cosine decay follows 0.5*(max_lr - min_lr)*(1 + cos(π*progress)) + min_lr — a smooth curve that starts at max_lr, gently decreases through the middle, and approaches min_lr at the end of training."
+      },
+      {
+        question: "Gradient clipping rescales gradients when the global norm exceeds the threshold. What property is preserved?",
+        options: [
+          "Gradient magnitude",
+          "Gradient direction",
+          "Individual parameter gradients",
+          "Learning rate"
+        ],
+        correct: 1,
+        explanation: "Clipping scales ALL gradients by the same factor (threshold/norm). Every gradient shrinks proportionally, so the direction of the update vector is unchanged — only its magnitude is capped."
+      },
+      {
+        question: "What is the typical gradient clipping threshold for transformer training?",
+        options: [
+          "0.01",
+          "0.1",
+          "1.0",
+          "10.0"
+        ],
+        correct: 2,
+        explanation: "max_norm=1.0 is the standard. If the gradient norm exceeds 1.0, all gradients are scaled down. Values like 0.1 are too aggressive; 10.0 is too permissive for transformer training."
+      },
+      {
+        question: "Which learning rate schedule is used by GPT-3, LLaMA, and most modern large language models?",
+        options: [
+          "Constant LR",
+          "Step decay",
+          "Linear warmup followed by cosine decay",
+          "Cyclical LR"
+        ],
+        correct: 2,
+        explanation: "Linear warmup (hundreds to thousands of steps) followed by cosine decay to ~10% of max_lr is the standard recipe. It stabilises early training and smoothly reduces LR as the model converges."
+      }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>
