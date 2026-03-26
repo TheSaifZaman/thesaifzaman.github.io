@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch1: Understanding LLMs — Build an LLM Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Chapter-local extras ── */
+    .chapter-hero {
+      padding: 2.5rem 0 1.5rem;
+    }
+    .chapter-hero .ch-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .chapter-hero h1 {
+      margin-bottom: 0.6rem;
+    }
+    .chapter-hero .ch-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .chapter-hero .ch-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* AI Landscape SVG rings */
+    .rings-svg text { font-family: 'Inter', sans-serif; font-weight: 600; }
+
+    /* Application cards grid */
+    .app-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0;
+    }
+    .app-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      text-align: center;
+      transition: all var(--transition);
+    }
+    .app-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: var(--shadow); }
+    .app-card .app-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .app-card .app-name { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+    .app-card .app-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      margin: 1rem 0;
+    }
+    .compare-table th {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      background: rgba(79,110,247,0.08);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--border);
+    }
+    .compare-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border-2);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { font-weight: 600; color: var(--text); width: 28%; }
+    .compare-table tr:hover td { background: rgba(79,110,247,0.03); }
+
+    /* Transformer stack diagram */
+    .tf-columns {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0.5rem 0;
+    }
+    .tf-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      min-width: 140px;
+    }
+    .tf-col-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .tf-block {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 0.79rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      position: relative;
+    }
+    .tf-block.shared { border-color: rgba(79,110,247,0.4); background: rgba(79,110,247,0.08); color: var(--accent); }
+    .tf-block.enc-only { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); color: var(--accent-3); }
+    .tf-block.dec-only { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); color: var(--accent-2); }
+    .tf-arrow-down {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1;
+    }
+
+    /* GPT model sizes bar chart */
+    .gpt-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+    .gpt-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .gpt-bar-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      min-width: 100px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gpt-bar-track {
+      flex: 1;
+      height: 28px;
+      background: var(--border-2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gpt-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+      transition: width 1s ease;
+    }
+    .gpt-bar-fill.b1 { background: linear-gradient(90deg, #4f6ef7, #6b8aff); width: 8%; }
+    .gpt-bar-fill.b2 { background: linear-gradient(90deg, #4f6ef7, #a855f7); width: 24%; }
+    .gpt-bar-fill.b3 { background: linear-gradient(90deg, #a855f7, #ec4899); width: 52%; }
+    .gpt-bar-fill.b4 { background: linear-gradient(90deg, #ec4899, #f59e0b); width: 100%; }
+
+    /* Next-token prediction animation */
+    #predDemo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      padding: 1rem 0 0.5rem;
+      min-height: 56px;
+    }
+    .pred-candidates {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      min-height: 48px;
+    }
+    .pred-candidate {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: all 0.3s ease;
+    }
+    .pred-candidate.show { opacity: 1; transform: translateY(0); }
+    .pred-candidate.top  { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.1); color: var(--accent-3); }
+    .pred-candidate .prob {
+      font-size: 0.72rem;
+      opacity: 0.75;
+    }
+    .thinking-dots span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: bounce 1.2s infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-6px); opacity: 1; }
+    }
+    .pred-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .thinking-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body data-chapter="ch1">
+
+  <!-- ══════════════════════════════════════════
+       STICKY HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">Ch1: Understanding LLMs</span>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      <a href="index.html" class="btn-icon" title="Home">
+        <i class="fas fa-home"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
+      <span class="sep">›</span>
+      <span class="current">Chapter 1</span>
+    </nav>
+
+    <!-- Chapter progress bar -->
+    <div class="chapter-progress">
+      <div class="chapter-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Chapter title hero -->
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 1</div>
+      <h1>Understanding Large Language Models</h1>
+      <div class="ch-meta">
+        <span><i class="fas fa-layer-group"></i> 6 Lessons</span>
+        <span><i class="fas fa-question-circle"></i> 6-Question Quiz</span>
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span class="tag">Foundations</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════
+         LESSON 1.1
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-1">
+      <div class="lesson-header">
+        <span class="lesson-number">1.1</span>
+        <h2>What Is a Large Language Model?</h2>
+      </div>
+
+      <p>A <strong>Large Language Model (LLM)</strong> is a type of deep neural network trained on enormous quantities of text data to understand and generate human language. At their core, LLMs are sophisticated statistical machines: they learn the probability distribution of text by observing billions of tokens — words, subwords, or characters — and learning which sequences tend to follow which. The "large" in the name refers both to the sheer number of learnable parameters (often hundreds of millions to hundreds of billions) and to the scale of data used during training.</p>
+
+      <p>Modern LLMs almost universally rest on the <strong>transformer architecture</strong>, a design introduced in 2017 that replaced earlier recurrent approaches with a mechanism called <em>self-attention</em>. Rather than reading text one word at a time like a person skimming left-to-right, a transformer considers every token in a sequence simultaneously, computing rich relationships between all pairs. This parallel, context-aware processing is what gives LLMs their remarkable ability to maintain long-range coherence and nuanced meaning.</p>
+
+      <p>The training objective sounds deceptively simple: given a sequence of tokens, predict the next one. But running this objective across trillions of tokens forces the model to develop internal representations of grammar, facts, logical reasoning, stylistic patterns, and even rudimentary world knowledge — capabilities that were never explicitly programmed. This phenomenon, where abilities that were not directly trained for suddenly appear at sufficient scale, is known as <strong>emergent capability</strong>.</p>
+
+      <p>Well-known examples of LLMs include <strong>GPT-4</strong> (OpenAI), <strong>Claude</strong> (Anthropic), <strong>Gemini</strong> (Google DeepMind), and the open-weight <strong>LLaMA</strong> family (Meta). Each differs in architectural details, training data, and fine-tuning approach, but all share the same foundational recipe: transformer backbone + massive pretraining corpus + scale.</p>
+
+      <div class="insight-box">
+        <strong>Key Insight:</strong> The emergent capabilities of LLMs — reasoning, coding, translation, summarisation — are not hand-coded. They arise naturally from learning to predict the next token at scale. Scale + data = capabilities that surprise even their creators.
+      </div>
+
+      <!-- Visualization: nested rings -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-circle-nodes"></i> The AI Landscape — From Broad to Narrow</div>
+        <svg class="rings-svg" viewBox="0 0 520 340" width="520" height="340" aria-label="Nested rings diagram showing AI hierarchy">
+          <!-- Outer ring: Artificial Intelligence -->
+          <ellipse cx="260" cy="170" rx="250" ry="155" fill="rgba(107,138,255,0.07)" stroke="rgba(107,138,255,0.35)" stroke-width="2"/>
+          <!-- Machine Learning -->
+          <ellipse cx="260" cy="180" rx="185" ry="115" fill="rgba(245,158,11,0.07)" stroke="rgba(245,158,11,0.4)" stroke-width="2"/>
+          <!-- Deep Learning -->
+          <ellipse cx="260" cy="190" rx="125" ry="78" fill="rgba(16,185,129,0.09)" stroke="rgba(16,185,129,0.45)" stroke-width="2"/>
+          <!-- Core: LLMs -->
+          <ellipse cx="260" cy="198" rx="72" ry="44" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.5)" stroke-width="2.5"/>
+
+          <!-- Labels -->
+          <text x="50" y="38" font-size="13" fill="rgba(107,138,255,0.9)">Artificial Intelligence</text>
+          <text x="50" y="56" font-size="10" fill="rgba(107,138,255,0.6)">Expert Systems · Search · Planning · Robotics</text>
+
+          <text x="78" y="92" font-size="12" fill="rgba(245,158,11,0.9)">Machine Learning</text>
+          <text x="78" y="108" font-size="10" fill="rgba(245,158,11,0.65)">SVMs · Decision Trees · Clustering</text>
+
+          <text x="118" y="142" font-size="11" fill="rgba(16,185,129,0.95)">Deep Learning</text>
+          <text x="118" y="157" font-size="9.5" fill="rgba(16,185,129,0.7)">CNNs · RNNs · GANs</text>
+
+          <text x="222" y="202" font-size="11" fill="rgba(239,68,68,0.95)" font-weight="bold">LLMs</text>
+
+          <!-- Example models annotation -->
+          <text x="310" y="290" font-size="9.5" fill="rgba(239,68,68,0.7)">GPT-4 · Claude · Gemini · LLaMA</text>
+          <line x1="330" y1="242" x2="305" y2="284" stroke="rgba(239,68,68,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        </svg>
+        <div class="viz-caption">LLMs occupy the innermost circle — a specialised subset of deep learning, which itself is a subset of machine learning and AI.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 1.2
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-2">
+      <div class="lesson-header">
+        <span class="lesson-number">1.2</span>
+        <h2>Applications of LLMs</h2>
+      </div>
+
+      <p>LLMs have rapidly moved from research curiosities to production systems powering a remarkable breadth of real-world applications. Their ability to flexibly encode and decode language makes them suitable for tasks that previously required entirely separate, purpose-built models. Understanding the landscape of applications also helps clarify <em>why</em> the field distinguishes between different architectural flavours — encoder-only models versus decoder-only models — each optimised for a different style of task.</p>
+
+      <p><strong>Encoder-based models</strong> like <em>BERT</em> (Bidirectional Encoder Representations from Transformers, Google, 2018) read an entire input sequence in both directions before producing a contextual representation. This makes them excellent at understanding and classification tasks: sentiment analysis, named entity recognition, question answering over a context passage, and natural language inference. They do not generate free-form text.</p>
+
+      <p><strong>Decoder-based models</strong> like <em>GPT</em> (Generative Pre-trained Transformer) read tokens left-to-right in a causal (autoregressive) fashion and are optimised for generation. Every output token depends only on the tokens that precede it. This design excels at open-ended text generation, code completion, machine translation (when fine-tuned), and conversational agents. The book you are studying focuses exclusively on the GPT (decoder-only) lineage.</p>
+
+      <p>Many enterprise use-cases combine both flavours — a retrieval system (encoder) paired with a generative model (decoder) — to produce systems that are both factually grounded and fluent writers.</p>
+
+      <div class="insight-box">
+        <strong>BERT vs GPT:</strong> BERT sees the whole sentence (bidirectional) → great for understanding. GPT sees only the past (causal) → great for generation. Both are transformers; they differ in which part of the architecture they use and how they are trained.
+      </div>
+
+      <!-- Application cards grid -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-grid-2"></i> Six Core Application Domains</div>
+        <div class="app-card-grid">
+          <div class="app-card">
+            <div class="app-icon">🌐</div>
+            <div class="app-name">Machine Translation</div>
+            <div class="app-desc">Convert text from one language to another, preserving meaning and tone. E.g. DeepL, Google Translate.</div>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📋</div>
+            <div class="app-name">Text Summarisation</div>
+            <div class="app-desc">Condense long documents into concise summaries, either extractive or abstractive.</div>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">😊</div>
+            <div class="app-name">Sentiment Analysis</div>
+            <div class="app-desc">Classify the emotional tone of text — positive, negative, neutral — at scale. Used in brand monitoring and finance.</div>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">❓</div>
+            <div class="app-name">Question Answering</div>
+            <div class="app-desc">Extract or generate answers from a passage or knowledge base. E.g. customer support bots, search engines.</div>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">💻</div>
+            <div class="app-name">Code Generation</div>
+            <div class="app-desc">Write, complete, debug, and explain code across programming languages. E.g. GitHub Copilot, Cursor.</div>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">💬</div>
+            <div class="app-name">Conversational AI</div>
+            <div class="app-desc">Power dialogue systems that maintain context across multi-turn conversations. E.g. ChatGPT, Claude.</div>
+          </div>
+        </div>
+        <div class="viz-caption">Hover over a card to highlight it. Each domain leverages the same pretrained weights — only the fine-tuning data differs.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 1.3
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-3">
+      <div class="lesson-header">
+        <span class="lesson-number">1.3</span>
+        <h2>The Three Stages of Building an LLM</h2>
+      </div>
+
+      <p>Constructing a usable LLM is not a single step — it is a structured pipeline composed of three broad phases, each with its own data requirements, compute budget, and objectives. Understanding this pipeline is essential because the book you are reading takes you through all three stages, implementing each from scratch in Python and PyTorch.</p>
+
+      <p><strong>Stage 1 — Data Collection and Preprocessing.</strong> Everything begins with raw text scraped from the internet (web crawls like Common Crawl), books, code repositories, scientific papers, and other sources. This text must be cleaned (removing HTML tags, deduplicating, filtering low-quality content), then <em>tokenised</em> — split into a vocabulary of subword units using an algorithm such as Byte-Pair Encoding (BPE). The result is a long sequence of integer token IDs that the model will actually operate on. The vocabulary size and tokenisation scheme have significant downstream effects on model performance.</p>
+
+      <p><strong>Stage 2 — Pretraining.</strong> The tokenised corpus is used to train the transformer on the <em>next-token prediction</em> objective: given the first <em>k</em> tokens of a sequence, predict token <em>k+1</em>. This process is entirely <em>unsupervised</em> — no human-annotated labels are needed. The model iterates over the corpus, computes a cross-entropy loss between its predictions and the actual next tokens, and updates its parameters via backpropagation. At internet scale, this requires clusters of thousands of GPUs running for weeks or months. The resulting "base model" has absorbed broad world knowledge but has no specific task alignment.</p>
+
+      <p><strong>Stage 3 — Fine-tuning.</strong> A pretrained base model is a capable but unrefined learner. Fine-tuning adapts the model to specific behaviours using a much smaller, curated, labelled dataset. There are two main fine-tuning flavours explored in this book: <em>classification fine-tuning</em> (adding a classification head and training on labelled examples) and <em>instruction fine-tuning</em> (training the model to follow natural-language instructions using prompt–response pairs). Techniques like RLHF (Reinforcement Learning from Human Feedback) and RLAIF add a further alignment layer, rewarding models that produce helpful and safe outputs.</p>
+
+      <div class="insight-box">
+        <strong>Cost Perspective:</strong> Pretraining GPT-3 (175B parameters) is estimated to have cost $4–12 million in compute. Fine-tuning a 7B model for a specific task can be done on a single GPU in hours. This is why transfer learning — reusing pretrained weights — is transformative.
+      </div>
+
+      <!-- Flowchart visualization -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-diagram-project"></i> The LLM Build Pipeline</div>
+        <div class="viz-flow" style="justify-content:center;flex-wrap:wrap;gap:0.4rem;">
+          <div class="viz-node blue" style="text-align:center;">
+            <div style="font-size:1.1rem;margin-bottom:0.2rem;">📄</div>
+            Raw Text<br/><span style="font-size:0.72rem;font-weight:400;opacity:0.8;">Web, books, code</span>
+          </div>
+          <div class="arrow" style="color:var(--text-light);font-size:1.2rem;align-self:center;">→</div>
+          <div class="viz-node blue" style="text-align:center;">
+            <div style="font-size:1.1rem;margin-bottom:0.2rem;">🔤</div>
+            Tokenise<br/><span style="font-size:0.72rem;font-weight:400;opacity:0.8;">BPE / WordPiece</span>
+          </div>
+          <div class="arrow" style="color:var(--text-light);font-size:1.2rem;align-self:center;">→</div>
+          <div class="viz-node amber" style="text-align:center;">
+            <div style="font-size:1.1rem;margin-bottom:0.2rem;">🧠</div>
+            Pretrain<br/><span style="font-size:0.72rem;font-weight:400;opacity:0.8;">Next-token prediction</span>
+          </div>
+          <div class="arrow" style="color:var(--text-light);font-size:1.2rem;align-self:center;">→</div>
+          <div class="viz-node green" style="text-align:center;">
+            <div style="font-size:1.1rem;margin-bottom:0.2rem;">🎯</div>
+            Fine-tune<br/><span style="font-size:0.72rem;font-weight:400;opacity:0.8;">Labelled task data</span>
+          </div>
+          <div class="arrow" style="color:var(--text-light);font-size:1.2rem;align-self:center;">→</div>
+          <div class="viz-node" style="border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:var(--accent-danger);text-align:center;">
+            <div style="font-size:1.1rem;margin-bottom:0.2rem;">🚀</div>
+            Deploy<br/><span style="font-size:0.72rem;font-weight:400;opacity:0.8;">API / App</span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;flex-wrap:wrap;">
+          <span class="tag">Stage 1: Data prep</span>
+          <span class="tag amber">Stage 2: Pretraining</span>
+          <span class="tag green">Stage 3: Fine-tuning</span>
+        </div>
+        <div class="viz-caption">Blue = data preparation, Amber = pretraining (expensive), Green = fine-tuning (affordable). Each arrow represents a significant engineering effort.</div>
+      </div>
+
+      <pre class="code-block"><span class="cmt"># Simplified pseudo-code: the pretraining loop</span>
+<span class="kw">for</span> batch <span class="kw">in</span> dataloader:
+    input_ids, target_ids = batch          <span class="cmt"># e.g. shape [B, T]</span>
+    logits = model(input_ids)              <span class="cmt"># [B, T, vocab_size]</span>
+    loss = cross_entropy(logits, target_ids)
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()</pre>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 1.4
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-4">
+      <div class="lesson-header">
+        <span class="lesson-number">1.4</span>
+        <h2>The Transformer Architecture</h2>
+      </div>
+
+      <p>The modern era of LLMs began with the 2017 paper <em>"Attention Is All You Need"</em> by Vaswani et al. (Google Brain), which proposed the <strong>Transformer</strong> — a neural network architecture that relies entirely on an attention mechanism instead of recurrence or convolution. Prior sequence-to-sequence models based on Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) networks processed tokens one at a time, creating an information bottleneck and making parallelisation during training nearly impossible. The Transformer solved this fundamentally by computing attention over all positions simultaneously.</p>
+
+      <p>The original Transformer is an <strong>encoder-decoder</strong> architecture designed for tasks like machine translation, where the encoder reads the input sentence and the decoder generates the output. BERT uses only the encoder stack (bidirectional), while GPT uses only the decoder stack (causal/unidirectional). This book builds a GPT-style decoder-only model from scratch.</p>
+
+      <p>The <strong>self-attention mechanism</strong> is the heart of the transformer. For each token, it computes three vectors — a Query (Q), a Key (K), and a Value (V) — by multiplying the token's embedding by three learned weight matrices. Attention scores are computed by taking the dot product of each query with all keys, scaling by the square root of the key dimension to stabilise gradients, applying a softmax to get a probability distribution, and then using that distribution to take a weighted sum of the value vectors. The result is a context-enriched representation for each token that "knows" about every other token in the sequence.</p>
+
+      <p><strong>Multi-head attention</strong> runs this process in parallel across several independent "heads," each potentially attending to different relationship types. The outputs of all heads are concatenated and projected back to the model's hidden dimension. Stacked on top of this are feed-forward networks, layer normalisation (applied before the attention and FFN sublayers in the pre-norm variant used by GPT-2), residual connections, and a final linear + softmax output layer that maps to vocabulary probabilities.</p>
+
+      <div class="insight-box">
+        <strong>Why Not RNNs?</strong> RNNs process tokens sequentially — to understand token <em>t</em> they must pass information through all tokens 1 through <em>t–1</em>. This creates a vanishing gradient problem over long sequences and prevents parallelisation. Self-attention computes all pairwise relationships at once, with constant path length between any two tokens, regardless of distance.
+      </div>
+
+      <!-- Transformer stack diagram -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-layer-group"></i> Encoder vs Decoder Stack (Component View)</div>
+        <div class="tf-columns">
+          <!-- Encoder column -->
+          <div class="tf-col">
+            <div class="tf-col-label" style="color:var(--accent-3);">Encoder (BERT)</div>
+            <div class="tf-block shared">Input Embedding</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Positional Encoding</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block enc-only">Bi-directional Self-Attention</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Add &amp; Norm</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Feed-Forward Network</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Add &amp; Norm</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block enc-only" style="font-size:0.72rem;">Classification / MLM Head</div>
+          </div>
+
+          <!-- Decoder column -->
+          <div class="tf-col">
+            <div class="tf-col-label" style="color:var(--accent-2);">Decoder (GPT)</div>
+            <div class="tf-block shared">Input Embedding</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Positional Encoding</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block dec-only">Masked (Causal) Self-Attention</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Add &amp; Norm</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Feed-Forward Network</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block shared">Add &amp; Norm</div>
+            <div class="tf-arrow-down">↓</div>
+            <div class="tf-block dec-only" style="font-size:0.72rem;">Linear → Softmax (Vocab)</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--accent);">
+            <span style="width:12px;height:12px;border-radius:3px;background:rgba(79,110,247,0.3);display:inline-block;"></span> Shared components
+          </span>
+          <span style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--accent-3);">
+            <span style="width:12px;height:12px;border-radius:3px;background:rgba(16,185,129,0.3);display:inline-block;"></span> Encoder-only
+          </span>
+          <span style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--accent-2);">
+            <span style="width:12px;height:12px;border-radius:3px;background:rgba(245,158,11,0.3);display:inline-block;"></span> Decoder-only (GPT)
+          </span>
+        </div>
+        <div class="viz-caption">Both stacks share the embedding, positional encoding, FFN, and normalisation blocks. The key difference is the attention mask — GPT uses causal masking so each token can only attend to past tokens.</div>
+      </div>
+
+      <pre class="code-block"><span class="cmt"># Scaled dot-product attention (simplified)</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="kw">def</span> <span class="fn">scaled_dot_product_attention</span>(Q, K, V, mask=<span class="kw">None</span>):
+    d_k = Q.size(-<span class="num">1</span>)
+    scores = Q @ K.transpose(-<span class="num">2</span>, -<span class="num">1</span>) / d_k**<span class="num">0.5</span>  <span class="cmt"># [B, H, T, T]</span>
+    <span class="kw">if</span> mask <span class="kw">is not None</span>:
+        scores = scores.masked_fill(mask == <span class="num">0</span>, <span class="kw">float</span>(<span class="str">'-inf'</span>))
+    weights = F.softmax(scores, dim=-<span class="num">1</span>)
+    <span class="kw">return</span> weights @ V</pre>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 1.5
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-5">
+      <div class="lesson-header">
+        <span class="lesson-number">1.5</span>
+        <h2>Pretraining vs Fine-tuning</h2>
+      </div>
+
+      <p>One of the most powerful ideas in modern machine learning is <strong>transfer learning</strong>: train a model on a large, general-purpose task, then reuse the learned representations for a specific, narrower task. In the LLM world, this manifests as the pretraining-then-fine-tuning paradigm that dominates the field.</p>
+
+      <p><strong>Pretraining</strong> is the expensive, foundational stage. The model is exposed to a massive, diverse corpus — think the English-language Wikipedia, decades of news articles, books, academic papers, and a broad sample of the public web — and trained to predict the next token, token after token, for trillions of total tokens. No human labels are required; the text itself is both the input and the supervision signal. The model must learn to be a good language model, which forces it to implicitly encode grammar, factual knowledge, stylistic conventions, and even some reasoning patterns.</p>
+
+      <p>GPT-2, the model this book implements, was pretrained on <strong>WebText</strong> — a 40 GB dataset created by scraping all outbound links from Reddit posts that received at least 3 upvotes (a rough quality filter). This dataset, while modest by today's standards, was sufficient to demonstrate remarkably coherent long-form text generation and convinced the field that scale was the key variable.</p>
+
+      <p><strong>Fine-tuning</strong> takes the pretrained weights as a starting point and continues training on a much smaller, task-specific dataset. Because the model already "knows" language deeply, fine-tuning requires far less data and compute to produce a capable task-specific model. The intuition is that the pretrained representations capture general linguistic structure; fine-tuning merely steers these capabilities toward the target task.</p>
+
+      <p>There are two main fine-tuning strategies covered in this book. <em>Classification fine-tuning</em> replaces the language modelling head with a classification head and trains the model to predict a class label (e.g., spam or not spam). <em>Instruction fine-tuning</em> keeps the language modelling head but trains the model to follow natural-language instructions encoded in a prompt–completion format, producing a model that behaves like a helpful assistant.</p>
+
+      <!-- Comparison table -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-table-columns"></i> Pretraining vs Fine-tuning — At a Glance</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Pretraining</th>
+              <th>Fine-tuning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Data type</td>
+              <td>Vast unlabelled text (web, books, code)</td>
+              <td>Small curated labelled dataset</td>
+            </tr>
+            <tr>
+              <td>Labels needed?</td>
+              <td>No — text itself is the label</td>
+              <td>Yes — task-specific annotations required</td>
+            </tr>
+            <tr>
+              <td>Objective</td>
+              <td>Next-token prediction (causal LM)</td>
+              <td>Task loss: cross-entropy, ranking, RLHF reward</td>
+            </tr>
+            <tr>
+              <td>Compute cost</td>
+              <td>Extremely high (weeks on GPU clusters)</td>
+              <td>Low to moderate (hours on a single GPU)</td>
+            </tr>
+            <tr>
+              <td>Data scale</td>
+              <td>Hundreds of GB to tens of TB of text</td>
+              <td>Thousands to millions of labelled examples</td>
+            </tr>
+            <tr>
+              <td>Real examples</td>
+              <td>GPT-2 on WebText (40 GB); GPT-3 on 300B tokens</td>
+              <td>Fine-tuning GPT-3 → InstructGPT; BERT → SQuAD QA</td>
+            </tr>
+            <tr>
+              <td>Who does it?</td>
+              <td>AI labs with large infrastructure budgets</td>
+              <td>Researchers, startups, individual practitioners</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="viz-caption">Transfer learning makes fine-tuning accessible: you get the benefit of trillion-token training without paying for it directly.</div>
+      </div>
+
+      <div class="insight-box">
+        <strong>Parameter-Efficient Fine-tuning (PEFT):</strong> Techniques like LoRA (Low-Rank Adaptation) freeze most of the pretrained weights and only train small adapter layers, reducing fine-tuning memory requirements by 10–100x. This makes fine-tuning possible on consumer-grade hardware. Appendix E of the book covers LoRA in depth.
+      </div>
+    </section>
+
+    <!-- ══════════════════
+         LESSON 1.6
+    ══════════════════ -->
+    <section class="lesson" id="lesson-1-6">
+      <div class="lesson-header">
+        <span class="lesson-number">1.6</span>
+        <h2>GPT Architecture Overview</h2>
+      </div>
+
+      <p><strong>GPT</strong> stands for <em>Generative Pre-trained Transformer</em>. The model family began with GPT-1 (OpenAI, 2018, 117M parameters), and each subsequent version dramatically scaled both the model size and training data, culminating in GPT-4 (architecture details undisclosed). The book implements the <strong>GPT-2</strong> architecture — small enough to run on a laptop yet large enough to exhibit impressive generative capabilities and to teach every important architectural concept.</p>
+
+      <p>GPT is a <strong>decoder-only transformer</strong>. It is <em>autoregressive</em>: at inference time, the model receives a context (a sequence of input tokens), produces a probability distribution over the entire vocabulary for the next token position, samples or takes the argmax to pick a token, appends it to the context, and repeats. This loop continues until a stop condition is met (maximum length or an end-of-sequence token). Because each new token is conditioned on all previous tokens — and the model was trained to predict exactly this — the generated sequences are fluent and contextually coherent.</p>
+
+      <p>Internally, the forward pass of GPT proceeds as follows: input token IDs are passed through a <strong>token embedding table</strong> (a learned matrix of shape <code>[vocab_size, d_model]</code>) to convert each integer into a dense vector. A separate <strong>positional embedding</strong> (also learned in GPT-2, unlike the sinusoidal encoding in the original Transformer paper) is added to inject order information, since self-attention is inherently permutation-invariant. The combined embeddings flow through <em>N</em> identical transformer blocks in sequence. Each block contains a layer normalisation → masked multi-head self-attention → residual connection → layer normalisation → feed-forward network → residual connection structure. After the final block, a linear projection maps from the model's hidden dimension back to vocabulary size, and a softmax converts the logits to token probabilities.</p>
+
+      <p>GPT-2 was released in four sizes, each progressively larger. The book implements the smallest, GPT-2 Small (124M), but the code is parameterised so that running the larger configurations requires only changing a config dictionary. Understanding GPT-2 Small in full detail provides nearly complete coverage of what makes GPT-4 tick — the differences are predominantly in scale, not architecture.</p>
+
+      <!-- GPT-2 model sizes bar chart -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-chart-bar"></i> GPT-2 Model Family — Parameter Counts</div>
+        <div class="gpt-bar-wrap">
+          <div class="gpt-bar-row">
+            <div class="gpt-bar-label">GPT-2 Small</div>
+            <div class="gpt-bar-track">
+              <div class="gpt-bar-fill b1">124M</div>
+            </div>
+          </div>
+          <div class="gpt-bar-row">
+            <div class="gpt-bar-label">GPT-2 Medium</div>
+            <div class="gpt-bar-track">
+              <div class="gpt-bar-fill b2">355M</div>
+            </div>
+          </div>
+          <div class="gpt-bar-row">
+            <div class="gpt-bar-label">GPT-2 Large</div>
+            <div class="gpt-bar-track">
+              <div class="gpt-bar-fill b3">774M</div>
+            </div>
+          </div>
+          <div class="gpt-bar-row">
+            <div class="gpt-bar-label">GPT-2 XL</div>
+            <div class="gpt-bar-track">
+              <div class="gpt-bar-fill b4">1.5B</div>
+            </div>
+          </div>
+        </div>
+        <div class="viz-caption">This book builds GPT-2 Small (124M parameters) — the architecture that launched a thousand fine-tunes.</div>
+      </div>
+
+      <pre class="code-block"><span class="cmt"># GPT-2 Small configuration (as used in this book)</span>
+GPT_CONFIG_124M = {
+    <span class="str">"vocab_size"</span>: <span class="num">50257</span>,    <span class="cmt"># BPE vocabulary (GPT-2 tokenizer)</span>
+    <span class="str">"context_length"</span>: <span class="num">1024</span>, <span class="cmt"># Maximum sequence length</span>
+    <span class="str">"emb_dim"</span>: <span class="num">768</span>,          <span class="cmt"># Hidden dimension (d_model)</span>
+    <span class="str">"n_heads"</span>: <span class="num">12</span>,           <span class="cmt"># Number of attention heads</span>
+    <span class="str">"n_layers"</span>: <span class="num">12</span>,          <span class="cmt"># Number of transformer blocks</span>
+    <span class="str">"drop_rate"</span>: <span class="num">0.1</span>,        <span class="cmt"># Dropout probability</span>
+    <span class="str">"qkv_bias"</span>: <span class="kw">False</span>        <span class="cmt"># No QKV bias (matches OpenAI release)</span>
+}</pre>
+
+      <!-- Next-token prediction interactive demo -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-wand-magic-sparkles"></i> Interactive: Autoregressive Next-Token Prediction</div>
+        <div id="predDemo"></div>
+        <div class="thinking-label" id="thinkingLabel"></div>
+        <div class="pred-candidates" id="predCandidates"></div>
+        <div class="pred-controls">
+          <button class="btn btn-primary btn-sm" id="predNextBtn"><i class="fas fa-play"></i> Predict Next Token</button>
+          <button class="btn btn-ghost btn-sm" id="predResetBtn"><i class="fas fa-rotate-left"></i> Reset</button>
+        </div>
+        <div class="viz-caption">Each click simulates one autoregressive step. The model considers all previous tokens and outputs a probability distribution — the top candidates are shown above the chosen token.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SUMMARY BOX
+    ══════════════════════════════════════════ -->
+    <div class="summary-box glass">
+      <h3><i class="fas fa-bookmark"></i> Chapter 1 — Key Takeaways</h3>
+      <ul>
+        <li>LLMs are large neural networks trained on massive text corpora to predict the next token; they emerge from the transformer architecture introduced in <em>Attention Is All You Need</em> (2017).</li>
+        <li>GPT uses a <strong>decoder-only</strong> (causal) transformer architecture; BERT uses an encoder-only (bidirectional) architecture — each is optimised for a different style of task.</li>
+        <li>Building an LLM follows three stages: <strong>data preparation &amp; tokenisation → pretraining on unlabelled text → fine-tuning on labelled task data</strong>.</li>
+        <li>Pretraining is expensive (weeks on GPU clusters, terabytes of text) but unlocks broad language understanding. Fine-tuning is affordable and adapts that understanding to specific tasks.</li>
+        <li><strong>Emergent capabilities</strong> — reasoning, translation, code generation — are not programmed directly. They arise from learning the next-token prediction objective at scale.</li>
+        <li>This book implements GPT-2 Small (124M parameters) in Python/PyTorch from scratch, covering every layer and every training step.</li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         QUIZ BOX
+    ══════════════════════════════════════════ -->
+    <div class="quiz-box glass">
+      <h3><i class="fas fa-circle-question"></i> Chapter 1 Quiz</h3>
+      <p class="quiz-subtitle">Test your understanding of the concepts covered in this chapter. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         CHAPTER NAV
+    ══════════════════════════════════════════ -->
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      <a href="index.html" class="nav-prev" aria-label="Back to home">
+        <i class="fas fa-arrow-left"></i> Home
+      </a>
+      <a href="ch2.html" class="nav-next" aria-label="Next chapter">
+        Ch2: Working with Text <i class="fas fa-arrow-right"></i>
+      </a>
+    </nav>
+
+  </main><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications.</p>
+    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════ -->
+  <script src="app.js"></script>
+  <script>
+    /* ── Quiz questions ── */
+    const QUESTIONS = [
+      {
+        question: "Which architecture does GPT use?",
+        options: [
+          "Encoder-only (like BERT)",
+          "Decoder-only transformer",
+          "Encoder-decoder (like original Transformer)",
+          "Recurrent Neural Network"
+        ],
+        correct: 1,
+        explanation: "GPT uses a decoder-only transformer architecture. It processes tokens left-to-right and predicts the next token, making it ideal for generative tasks."
+      },
+      {
+        question: "What is the primary training objective of GPT during pretraining?",
+        options: [
+          "Masked language modeling",
+          "Next-sentence prediction",
+          "Next-token prediction (causal language modeling)",
+          "Named entity recognition"
+        ],
+        correct: 2,
+        explanation: "GPT is trained with causal (autoregressive) language modeling: given a sequence of tokens, predict the next token. This is done on massive unlabeled text corpora."
+      },
+      {
+        question: "Which paper introduced the Transformer architecture?",
+        options: [
+          "'BERT: Pre-training of Deep Bidirectional Transformers'",
+          "'Attention Is All You Need' (Vaswani et al., 2017)",
+          "'Language Models are Few-Shot Learners' (GPT-3)",
+          "'Improving Language Understanding by Generative Pre-Training'"
+        ],
+        correct: 1,
+        explanation: "'Attention Is All You Need' (2017) by Vaswani et al. introduced the Transformer architecture with multi-head self-attention, replacing RNNs and CNNs for sequence tasks."
+      },
+      {
+        question: "What is the key advantage of the self-attention mechanism over RNNs?",
+        options: [
+          "Uses less memory",
+          "Can process all tokens in parallel",
+          "Requires less training data",
+          "Better at memorizing short sequences"
+        ],
+        correct: 1,
+        explanation: "Self-attention computes relationships between all tokens simultaneously, enabling parallelization during training — unlike RNNs which process tokens sequentially."
+      },
+      {
+        question: "In the three-stage LLM development pipeline, what happens during fine-tuning?",
+        options: [
+          "The model learns grammar from raw text",
+          "Pretrained weights are adapted to specific tasks using labeled data",
+          "Model architecture is designed",
+          "Tokenizer vocabulary is built"
+        ],
+        correct: 1,
+        explanation: "Fine-tuning takes a pretrained model and adapts its weights to a specific task (e.g., classification, instruction following) using a smaller labeled dataset. This is much cheaper than pretraining."
+      },
+      {
+        question: "How many parameters does the smallest GPT-2 model have?",
+        options: [
+          "1.5 billion",
+          "774 million",
+          "124 million",
+          "355 million"
+        ],
+        correct: 2,
+        explanation: "GPT-2 Small has 124 million parameters. The full GPT-2 family: 124M (Small), 355M (Medium), 774M (Large), 1.5B (XL). The book implements the 124M configuration."
+      }
+    ];
+
+    /* ── Init quiz ── */
+    VB.initQuiz('quizContainer', QUESTIONS);
+
+    /* ── Next-token prediction interactive demo ── */
+    (function () {
+      const sentences = [
+        { tokens: ['The', 'quick', 'brown', 'fox'], candidates: [
+          { word: 'jumps', prob: '38%', top: true },
+          { word: 'ran',   prob: '21%', top: false },
+          { word: 'leapt', prob: '14%', top: false },
+          { word: 'sat',   prob: '9%',  top: false }
+        ]},
+        { tokens: ['The', 'quick', 'brown', 'fox', 'jumps'], candidates: [
+          { word: 'over',    prob: '52%', top: true  },
+          { word: 'across',  prob: '18%', top: false },
+          { word: 'through', prob: '12%', top: false },
+          { word: 'into',    prob: '7%',  top: false }
+        ]},
+        { tokens: ['The', 'quick', 'brown', 'fox', 'jumps', 'over'], candidates: [
+          { word: 'the',  prob: '81%', top: true  },
+          { word: 'a',    prob: '11%', top: false },
+          { word: 'each', prob: '4%',  top: false },
+          { word: 'every',prob: '2%',  top: false }
+        ]},
+        { tokens: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the'], candidates: [
+          { word: 'lazy', prob: '61%', top: true  },
+          { word: 'old',  prob: '14%', top: false },
+          { word: 'slow', prob: '9%',  top: false },
+          { word: 'big',  prob: '5%',  top: false }
+        ]},
+        { tokens: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy'], candidates: [
+          { word: 'dog',  prob: '74%', top: true  },
+          { word: 'cat',  prob: '12%', top: false },
+          { word: 'fox',  prob: '6%',  top: false },
+          { word: 'bear', prob: '3%',  top: false }
+        ]},
+        { tokens: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog'], candidates: [] }
+      ];
+
+      let step = 0;
+      const demo     = document.getElementById('predDemo');
+      const cands    = document.getElementById('predCandidates');
+      const thinking = document.getElementById('thinkingLabel');
+      const nextBtn  = document.getElementById('predNextBtn');
+      const resetBtn = document.getElementById('predResetBtn');
+
+      function renderTokens(tokenList, highlightLast) {
+        demo.innerHTML = '';
+        tokenList.forEach((t, i) => {
+          const span = document.createElement('span');
+          span.className = 'viz-token input' + (highlightLast && i === tokenList.length - 1 ? ' highlight' : '');
+          span.textContent = t;
+          demo.appendChild(span);
+        });
+      }
+
+      function renderCandidates(candidateList) {
+        cands.innerHTML = '';
+        candidateList.forEach((c, i) => {
+          const el = document.createElement('span');
+          el.className = 'pred-candidate' + (c.top ? ' top' : '');
+          el.innerHTML = c.word + ' <span class="prob">' + c.prob + '</span>';
+          cands.appendChild(el);
+          setTimeout(() => el.classList.add('show'), 60 * i);
+        });
+      }
+
+      function showThinking() {
+        thinking.innerHTML = 'Model thinking <span class="thinking-dots"><span></span><span></span><span></span></span>';
+      }
+
+      function clearThinking() {
+        thinking.innerHTML = '';
+      }
+
+      function init() {
+        renderTokens(sentences[0].tokens, false);
+        cands.innerHTML = '';
+        clearThinking();
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = '<i class="fas fa-play"></i> Predict Next Token';
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (step >= sentences.length - 1) return;
+        const current = sentences[step];
+        renderTokens(current.tokens, false);
+        showThinking();
+        cands.innerHTML = '';
+        nextBtn.disabled = true;
+
+        setTimeout(() => {
+          clearThinking();
+          renderCandidates(current.candidates);
+          setTimeout(() => {
+            step++;
+            const next = sentences[step];
+            renderTokens(next.tokens, true);
+            cands.innerHTML = '';
+            if (step >= sentences.length - 1) {
+              nextBtn.disabled = true;
+              nextBtn.innerHTML = '<i class="fas fa-check"></i> Complete!';
+              thinking.innerHTML = '<span style="color:var(--accent-3);font-weight:600;">Sequence complete — end of generation.</span>';
+            } else {
+              nextBtn.disabled = false;
+            }
+          }, 700);
+        }, 900);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        step = 0;
+        init();
+      });
+
+      init();
+    })();
+  </script>
+</body>
+</html>
