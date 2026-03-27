@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch12: The Future of Data Systems — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch12">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 12</div>
+      <h1>The Future of Data Systems</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Derived Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Data Integration</h2></div>
+        <p>No single data tool does everything well. A modern application typically needs a relational database for OLTP, a search engine for full-text search, a cache for low-latency reads, a data warehouse for analytics, and perhaps a graph database for connected data. The fundamental challenge is keeping all these systems consistent with each other.</p>
+        <p>The solution is <strong>derived data</strong>: designate one system as the <strong>system of record</strong> (source of truth), and derive all other representations from it. A change to the system of record flows through a log (like Kafka) to update the search index, invalidate the cache, and feed the data warehouse. <strong>Total ordering via the log</strong> ensures all derived systems process changes in the same order, maintaining consistency.</p>
+        <p>The <strong>Lambda architecture</strong> was an early approach: maintain a batch layer (recomputes everything periodically for accuracy) and a stream layer (processes recent events for speed). Queries merge results from both layers. While it works, running and debugging two separate systems is operationally complex. The modern trend is <strong>unifying batch and stream</strong>: treat batch as a bounded stream. Systems like Flink and Kafka Streams can handle both real-time events and historical reprocessing with the same codebase.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-project-diagram"></i> Data Integration with Derived Views</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <defs><marker id="arr12a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- System of Record -->
+            <rect x="20" y="85" width="110" height="60" rx="10" fill="var(--accent)" opacity="0.9"/>
+            <text x="75" y="110" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">System of</text>
+            <text x="75" y="126" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">Record</text>
+
+            <!-- Log -->
+            <rect x="180" y="90" width="100" height="50" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="230" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Event Log</text>
+            <text x="230" y="128" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Total ordering</text>
+
+            <line x1="130" y1="115" x2="178" y2="115" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr12a)"/>
+
+            <!-- Derived views -->
+            <rect x="340" y="15" width="120" height="36" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Search Index</text>
+
+            <rect x="340" y="65" width="120" height="36" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="88" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Cache</text>
+
+            <rect x="340" y="115" width="120" height="36" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="138" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Data Warehouse</text>
+
+            <rect x="340" y="165" width="120" height="36" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="188" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Materialized View</text>
+
+            <line x1="280" y1="105" x2="338" y2="35" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr12a)"/>
+            <line x1="280" y1="110" x2="338" y2="83" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr12a)"/>
+            <line x1="280" y1="118" x2="338" y2="133" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr12a)"/>
+            <line x1="280" y1="125" x2="338" y2="180" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr12a)"/>
+
+            <!-- Labels -->
+            <text x="510" y="38" font-family="Inter" font-size="8" fill="var(--text-muted)">Elasticsearch</text>
+            <text x="510" y="88" font-family="Inter" font-size="8" fill="var(--text-muted)">Redis</text>
+            <text x="510" y="138" font-family="Inter" font-size="8" fill="var(--text-muted)">BigQuery</text>
+            <text x="510" y="188" font-family="Inter" font-size="8" fill="var(--text-muted)">Aggregated tables</text>
+
+            <text x="75" y="170" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)">Source of truth</text>
+            <text x="230" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">Kafka / CDC</text>
+            <text x="400" y="220" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">All derived from the same log</text>
+          </svg>
+          <p class="viz-caption">One system of record produces an ordered event log. All derived views (search, cache, analytics) consume the same log, ensuring consistency across the entire data ecosystem.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Unbundling Databases</h2></div>
+        <p>A traditional database <strong>bundles</strong> many capabilities together: durable storage, secondary indexes, query processing, materialized views, replication, transactions, and access control. This is convenient, but it means you are limited to one system's implementation of each capability.</p>
+        <p>The <strong>unbundled approach</strong> separates these concerns: use specialized tools for each (e.g., Kafka for durable log, Elasticsearch for indexing, Redis for caching, PostgreSQL for transactions) and connect them via dataflow. Each tool does one thing well, and the log-based infrastructure ensures they stay consistent.</p>
+        <p><strong>Creating a new index is like adding a follower:</strong> when you create a secondary index in a database, the database scans existing data and builds the index, then keeps it updated as new writes arrive. In the unbundled world, setting up a new derived system (like a search index) works the same way: consume the log from the beginning to bootstrap, then keep consuming new events to stay up-to-date.</p>
+        <p>This shifts application design from <strong>request/response</strong> (synchronous queries) to <strong>dataflow</strong> (asynchronous event processing). Instead of querying a database and joining results in application code, data is pre-joined and materialized by stream processors, ready for low-latency reads.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Aiming for Correctness</h2></div>
+        <p>The <strong>end-to-end argument</strong> is crucial: guarantees like exactly-once processing are only meaningful at the application level, not just within a single component. For example, if a user clicks "submit" twice, the system must deduplicate at the application level -- a deduplication ID from the client must be carried through to the final database write. Exactly-once within Kafka alone does not prevent the user from seeing duplicate effects.</p>
+        <p><strong>Enforcing constraints</strong> (like uniqueness) in distributed systems is fundamentally hard. It requires some form of consensus or single-partition coordination. For example, ensuring unique usernames requires either routing all username checks to the same partition or using a distributed consensus protocol. Many systems relax uniqueness to "best effort" and handle violations after the fact.</p>
+        <p><strong>Timeliness vs integrity:</strong> These are two different dimensions of correctness. <em>Timeliness</em> means a user sees the most recent data. <em>Integrity</em> means data is not corrupted or contradictory. Integrity is far more critical -- a slightly stale read is tolerable, but permanently losing data or double-charging a customer is not. Systems should be designed to never compromise integrity, even if timeliness suffers.</p>
+        <p><strong>Auditing</strong> provides a safety net: by retaining the event log, you can always verify that derived data is correct by reprocessing the log. If a bug in a stream processor corrupted some derived data, you can fix the bug and recompute from the immutable source events.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Trust, but Verify</h2></div>
+        <p>Mature engineering practice assumes that things will go wrong -- hardware failures, software bugs, operator errors, data corruption. Rather than blindly trusting that systems are correct, we should build in verification mechanisms.</p>
+        <p><strong>Byzantine fault tolerance</strong> (where nodes actively lie or behave maliciously) within a single organization's systems is generally impractical and unnecessary. However, <strong>end-to-end verification</strong> is both practical and valuable: checksums to detect data corruption, audit logs to track who changed what and when, and cryptographic proofs (like Merkle trees) to verify data integrity.</p>
+        <p>The event sourcing and CDC approaches naturally support auditing: the immutable event log is a complete record of what happened. You can always compare derived state against a fresh computation from the source events. This is analogous to double-entry bookkeeping in accounting -- discrepancies are detectable.</p>
+        <p>As systems grow more complex, end-to-end verification becomes more important. Rather than trying to prove that every component is bug-free, we accept that bugs exist and build systems that detect and recover from their consequences.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Doing the Right Thing</h2></div>
+        <p>Technical systems do not exist in a vacuum -- they affect real people's lives. This final section addresses the ethical responsibilities of data engineers and system designers.</p>
+        <p><strong>Predictive analytics:</strong> Machine learning models trained on historical data can amplify existing biases. A model trained on biased hiring data will perpetuate discrimination. Using algorithmic decisions for credit scoring, insurance pricing, or criminal sentencing can have severe, unjust consequences for individuals -- and the affected person may have no way to understand or challenge the decision.</p>
+        <p><strong>Surveillance:</strong> Data collected for one purpose is often repurposed for another. Location data collected for navigation can be used for surveillance. Purchase history collected for recommendations can be sold to advertisers. The technical capability to collect and process data at scale creates surveillance capabilities that can be abused.</p>
+        <p><strong>Privacy:</strong> Meaningful informed consent is difficult at scale -- nobody reads terms of service. Data, once collected, can be breached, subpoenaed, or sold. The asymmetry of power between data collectors and data subjects is a structural problem that technology alone cannot solve.</p>
+        <p>Data engineers have a responsibility to consider these implications: to push back against unethical data collection, to design systems that minimize data retention, to build in user controls, and to be transparent about how data is used. Building systems that respect users is not just an ethical imperative -- it is increasingly a legal one (GDPR, CCPA).</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> The future of data systems lies in composing specialized tools via dataflow, achieving correctness through end-to-end verification rather than component-level guarantees, and building systems that respect both technical integrity and human values.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 12 Summary</h3>
+        <ul>
+          <li><strong>Data integration:</strong> Designate a system of record and derive all other representations (search, cache, warehouse) via an ordered event log.</li>
+          <li><strong>Lambda architecture:</strong> Batch layer + stream layer; modern trend unifies both by treating batch as a bounded stream.</li>
+          <li><strong>Unbundling databases:</strong> Compose specialized tools connected by dataflow rather than relying on one monolithic database for everything.</li>
+          <li><strong>Dataflow vs request/response:</strong> Pre-join and materialize data via stream processors for low-latency reads.</li>
+          <li><strong>End-to-end argument:</strong> Exactly-once semantics are only meaningful at the application level (e.g., deduplication IDs from client to database).</li>
+          <li><strong>Timeliness vs integrity:</strong> Integrity (no corruption) is more critical than timeliness (seeing the latest value). Never compromise integrity.</li>
+          <li><strong>Auditing:</strong> Immutable event logs enable reprocessing to verify and correct derived data.</li>
+          <li><strong>Trust, but verify:</strong> Use checksums, audit logs, and cryptographic proofs for end-to-end data verification.</li>
+          <li><strong>Ethics:</strong> Predictive analytics can amplify bias; surveillance risks arise from data repurposing; engineers must design systems that respect users.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Derived Data</dt><dd style="color:var(--text-muted); margin:0;">Data computed from a system of record -- search indexes, caches, materialized views.</dd>
+            <dt style="font-weight:700; color:var(--text);">Lambda Architecture</dt><dd style="color:var(--text-muted); margin:0;">Dual-layer approach: batch for accuracy, stream for speed, queries merge both.</dd>
+            <dt style="font-weight:700; color:var(--text);">Unbundling</dt><dd style="color:var(--text-muted); margin:0;">Decomposing a monolithic database into specialized tools connected by dataflow.</dd>
+            <dt style="font-weight:700; color:var(--text);">End-to-End Argument</dt><dd style="color:var(--text-muted); margin:0;">Correctness guarantees must be enforced at the application level, not just within components.</dd>
+            <dt style="font-weight:700; color:var(--text);">Integrity</dt><dd style="color:var(--text-muted); margin:0;">Data is not corrupted or contradictory -- more critical than timeliness.</dd>
+            <dt style="font-weight:700; color:var(--text);">Auditing</dt><dd style="color:var(--text-muted); margin:0;">Verifying derived data by reprocessing the immutable event log from the source of truth.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh12" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh12 .mm-node { animation: mmFadeInCH12 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH12 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh12 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh12 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh12 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh12 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="208" text-anchor="middle">Future of</text>
+            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Data Systems</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Data Integration</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Unbundling</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">End-to-End</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Correctness</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Auditing</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">Trust & Verify</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="50" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">Ethics</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch11.html"><i class="fas fa-arrow-left"></i> Ch 11</a>
+      <a href="capstone.html" class="nav-next">Capstone: System Design Challenge <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "Why does the book recommend using derived data with a single system of record?", options: ["It is cheaper", "It ensures all derived systems (search, cache, warehouse) stay consistent by processing the same ordered event log", "It simplifies the schema", "It eliminates the need for backups"], correct: 1, explanation: "A system of record produces an ordered log of changes. All derived systems consume the same log in the same order, ensuring they remain consistent with each other and the source of truth." },
+      { question: "What is the Lambda architecture?", options: ["A serverless computing framework", "A dual-layer approach with a batch layer for accuracy and a stream layer for speed, merging results at query time", "A type of database replication", "A consensus algorithm"], correct: 1, explanation: "Lambda architecture runs batch processing for complete accuracy and stream processing for low latency. Queries merge results from both layers. The complexity of maintaining two systems led to unified stream-first approaches." },
+      { question: "What does 'unbundling databases' mean?", options: ["Removing indexes from a database", "Decomposing a monolithic database's capabilities (storage, indexing, queries, transactions) into specialized tools connected by dataflow", "Splitting a database into multiple schemas", "Removing foreign keys"], correct: 1, explanation: "Instead of relying on one database for everything, use the best tool for each job (Kafka for logs, Elasticsearch for search, Redis for caching) and connect them via event streams." },
+      { question: "What is the 'end-to-end argument' for correctness?", options: ["Correctness can only be ensured at the transport layer", "Guarantees like exactly-once processing are only meaningful at the application level, not within a single component", "Each component must be individually tested", "End-to-end encryption solves all correctness problems"], correct: 1, explanation: "Even if Kafka guarantees exactly-once internally, a user clicking 'submit' twice creates a duplicate that only the application (with a deduplication ID from the client) can detect and handle." },
+      { question: "Why is integrity more critical than timeliness?", options: ["Integrity is easier to implement", "A slightly stale read is tolerable, but corrupted or contradictory data causes permanent harm (data loss, double-charges)", "Timeliness is not important at all", "Integrity affects fewer users"], correct: 1, explanation: "If a user sees a slightly old value, that is eventually resolved. But if data is corrupted -- a payment processed twice, or records permanently lost -- the damage may be irreversible." },
+      { question: "How does an immutable event log support auditing?", options: ["It encrypts all events", "It provides a complete record of what happened, allowing derived data to be verified by reprocessing from the source events", "It prevents unauthorized access", "It compresses data for storage efficiency"], correct: 1, explanation: "The immutable log preserves every event. If derived data seems wrong, you can reprocess the log to verify or rebuild it -- similar to double-entry bookkeeping in accounting." },
+      { question: "Why is enforcing uniqueness constraints hard in distributed systems?", options: ["Distributed systems cannot store unique values", "It requires consensus or routing all checks to the same partition, which limits scalability", "Uniqueness is not needed in distributed systems", "It requires too much memory"], correct: 1, explanation: "To guarantee uniqueness (e.g., unique usernames), all checks for the same key must be coordinated -- either by routing to a single partition or using a distributed consensus protocol, both of which add latency and complexity." },
+      { question: "What is a key ethical concern with predictive analytics?", options: ["It is too slow", "Models trained on biased historical data can amplify discrimination in decisions like hiring, lending, and sentencing", "It uses too much electricity", "It requires too many engineers"], correct: 1, explanation: "Machine learning models learn patterns from historical data. If that data reflects existing biases (racial, gender, socioeconomic), the model perpetuates and may amplify those biases in automated decisions." },
+      { question: "How does creating a new derived system resemble adding a database index?", options: ["Both require deleting existing data", "Both consume the log from the beginning to bootstrap, then process new events to stay current", "Both use B-trees", "Both require downtime"], correct: 1, explanation: "When you create a new secondary index, the database scans existing data to build it, then keeps it updated. Similarly, a new derived system (search index) consumes the log from the start to bootstrap, then stays current via ongoing events." },
+      { question: "What approach does the chapter recommend instead of trying to prove every component is bug-free?", options: ["Hiring more QA engineers", "Building in end-to-end verification (checksums, audit logs, reprocessing) to detect and recover from bugs", "Using only a single database", "Avoiding distributed systems entirely"], correct: 1, explanation: "Rather than assuming perfection, accept that bugs exist and build systems that detect problems (checksums, audits) and recover gracefully (reprocess from immutable logs)." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

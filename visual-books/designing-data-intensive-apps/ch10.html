@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch10: Batch Processing — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch10">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 10</div>
+      <h1>Batch Processing</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Derived Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Three Types of Systems</h2></div>
+        <p>Systems that process data can be broadly categorized into three types based on their latency characteristics. <strong>Services (online systems)</strong> handle requests as they arrive -- a client sends a request and expects a response with low latency. Response time and availability are the primary measures of performance. Web servers, REST APIs, and databases serving user-facing applications are typical examples.</p>
+        <p><strong>Batch processing systems (offline)</strong> take a large amount of input data, run a job to process it, and produce output data. Jobs typically take minutes to hours. Throughput (data processed per second) is the key metric, not latency. There is no user waiting for the result in real time.</p>
+        <p><strong>Stream processing systems (near-real-time)</strong> sit somewhere between online and batch. They consume events shortly after they are produced, with lower latency than batch but without the request/response model of services. Message queues and event processing pipelines are examples.</p>
+        <p>The <strong>Unix philosophy</strong> is a powerful precursor to modern batch processing: each program does one thing well, programs can be connected via pipes, and the uniform interface is text streams. Simple log analysis with <code>awk</code>, <code>sort</code>, <code>uniq -c</code>, and <code>head</code> demonstrates this composability -- a chain of simple tools analyzing gigabytes of logs efficiently.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-layer-group"></i> Three Types of Data Systems</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs><marker id="arr10a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Latency spectrum line -->
+            <line x1="60" y1="170" x2="560" y2="170" stroke="var(--border)" stroke-width="2"/>
+            <text x="60" y="195" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Real-time</text>
+            <text x="560" y="195" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Hours/Days</text>
+            <text x="310" y="195" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Latency Spectrum</text>
+
+            <!-- Services (Online) -->
+            <rect x="30" y="30" width="160" height="110" rx="12" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="110" y="55" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Services (Online)</text>
+            <text x="110" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Request / Response</text>
+            <text x="110" y="92" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Low latency matters</text>
+            <text x="110" y="109" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Web APIs, Databases</text>
+            <circle cx="110" cy="170" r="5" fill="var(--accent)"/>
+
+            <!-- Stream Processing -->
+            <rect x="225" y="30" width="170" height="110" rx="12" fill="var(--accent-2)" opacity="0.1" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="310" y="55" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Stream (Near-RT)</text>
+            <text x="310" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Event-driven</text>
+            <text x="310" y="92" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Seconds to minutes</text>
+            <text x="310" y="109" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Kafka, Flink</text>
+            <circle cx="310" cy="170" r="5" fill="var(--accent-2)"/>
+
+            <!-- Batch Processing -->
+            <rect x="430" y="30" width="160" height="110" rx="12" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="510" y="55" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">Batch (Offline)</text>
+            <text x="510" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Large input -> output</text>
+            <text x="510" y="92" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Throughput matters</text>
+            <text x="510" y="109" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">MapReduce, Spark</text>
+            <circle cx="510" cy="170" r="5" fill="var(--accent-3)"/>
+          </svg>
+          <p class="viz-caption">Services optimize for latency, batch for throughput, and stream processing falls in between. The Unix philosophy of composable tools inspired modern batch processing frameworks.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>MapReduce and HDFS</h2></div>
+        <p><strong>HDFS (Hadoop Distributed File System)</strong> is a distributed filesystem based on Google's GFS paper. Data is stored across many machines, with each file split into blocks (typically 128 MB) that are replicated across multiple nodes (usually 3 copies). Any machine can read any file, and HDFS handles replication and fault tolerance transparently. HDFS provides the "shared-nothing" architecture's shared storage layer.</p>
+        <p><strong>MapReduce</strong> is a programming framework for processing large datasets in parallel across a cluster. A MapReduce job proceeds in four phases:</p>
+        <p>(1) <strong>Read</strong> the input files, breaking them into records. (2) The <strong>map function</strong> is called once for each record, extracting key-value pairs. The mapper is stateless -- it processes one record at a time. (3) The framework <strong>sorts and groups</strong> (shuffles) all key-value pairs by key, so that all values for the same key end up at the same reducer. (4) The <strong>reduce function</strong> processes each group of values for a given key and produces output.</p>
+        <p>This is conceptually similar to a distributed version of Unix commands: the mapper is like <code>awk</code> extracting fields, the shuffle is like <code>sort</code>, and the reducer is like <code>uniq -c</code>. <strong>Fault tolerance</strong> comes from the fact that inputs are immutable and deterministic -- if a mapper or reducer fails, the framework simply re-runs it on the same input chunk. Failed tasks are retried automatically without affecting the rest of the job.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-cogs"></i> MapReduce Data Flow</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <defs><marker id="arr10b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Input -->
+            <rect x="10" y="80" width="80" height="80" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="50" y="110" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text)">Input</text>
+            <text x="50" y="128" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">HDFS files</text>
+            <text x="50" y="142" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">(immutable)</text>
+
+            <!-- Map -->
+            <rect x="130" y="50" width="100" height="40" rx="8" fill="var(--accent)" opacity="0.85"/>
+            <text x="180" y="75" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Map</text>
+            <rect x="130" y="100" width="100" height="40" rx="8" fill="var(--accent)" opacity="0.85"/>
+            <text x="180" y="125" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Map</text>
+            <rect x="130" y="150" width="100" height="40" rx="8" fill="var(--accent)" opacity="0.85"/>
+            <text x="180" y="175" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Map</text>
+
+            <line x1="90" y1="100" x2="128" y2="75" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="90" y1="120" x2="128" y2="120" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="90" y1="140" x2="128" y2="165" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+
+            <!-- Shuffle -->
+            <rect x="270" y="75" width="100" height="90" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="320" y="105" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Shuffle</text>
+            <text x="320" y="125" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Sort & Group</text>
+            <text x="320" y="140" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">by Key</text>
+
+            <line x1="230" y1="75" x2="268" y2="110" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="230" y1="120" x2="268" y2="120" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="230" y1="165" x2="268" y2="130" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+
+            <!-- Reduce -->
+            <rect x="410" y="70" width="100" height="40" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="460" y="95" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Reduce</text>
+            <rect x="410" y="130" width="100" height="40" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="460" y="155" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Reduce</text>
+
+            <line x1="370" y1="105" x2="408" y2="92" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="370" y1="130" x2="408" y2="148" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+
+            <!-- Output -->
+            <rect x="550" y="80" width="60" height="80" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="580" y="110" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text)">Output</text>
+            <text x="580" y="128" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">HDFS</text>
+            <text x="580" y="142" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">files</text>
+
+            <line x1="510" y1="92" x2="548" y2="110" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+            <line x1="510" y1="148" x2="548" y2="130" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr10b)"/>
+
+            <!-- Labels -->
+            <text x="180" y="210" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">Extract key-value pairs</text>
+            <text x="320" y="210" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)">Group all values by key</text>
+            <text x="460" y="210" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">Aggregate each group</text>
+          </svg>
+          <p class="viz-caption">MapReduce: input is split across mappers, shuffled by key, then reduced. Immutable inputs enable fault tolerance -- failed tasks are simply re-run.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Join Algorithms in MapReduce</h2></div>
+        <p>Many batch processing jobs need to <strong>join</strong> two datasets -- for example, joining a log of user activity with a user profile database. MapReduce supports several join strategies, each suited to different data characteristics.</p>
+        <p><strong>Reduce-side joins (sort-merge join):</strong> Both datasets are mapped to emit records keyed by the join key. The shuffle phase brings all records with the same key to the same reducer, which then performs the actual join. This works for any data sizes but requires shuffling all data across the network.</p>
+        <p><strong>Map-side joins</strong> avoid the expensive shuffle step but require specific input properties. A <strong>broadcast hash join</strong> works when one input is small enough to fit in memory: each mapper loads the small dataset into a hash table and joins it with its partition of the large dataset. A <strong>partitioned hash join</strong> works when both inputs are partitioned the same way -- each mapper only needs the corresponding partition of each input.</p>
+        <p><strong>Handling skew (hot keys):</strong> If some keys have far more records than others (e.g., a celebrity's user ID in an activity log), a single reducer gets overloaded. Solutions include: sending records for hot keys to multiple randomly chosen reducers (spreading the load), or doing a map-side join for hot keys specifically.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Beyond MapReduce</h2></div>
+        <p>MapReduce has a significant <strong>materialization overhead</strong>: each job writes its complete output to HDFS before the next job can read it. A chain of MapReduce jobs means reading and writing to distributed storage at every step, which is slow.</p>
+        <p><strong>Dataflow engines</strong> like Apache Spark, Tez, and Flink address this by treating the entire computation as a directed acyclic graph (DAG) of operators. Intermediate data is <strong>piped</strong> between operators without writing to HDFS, similar to Unix pipes. Operators can be mappers, reducers, or more flexible functions. This dramatically reduces I/O overhead.</p>
+        <p><strong>Graphs and iterative processing:</strong> Many algorithms (PageRank, shortest paths, machine learning) need to iteratively process a graph. The <strong>Pregel/BSP (Bulk Synchronous Parallel)</strong> model lets each vertex send messages to adjacent vertices in rounds, enabling distributed graph computation.</p>
+        <p><strong>High-level APIs</strong> have made batch processing more accessible: Hive provides SQL-on-Hadoop, Pig offers a dataflow scripting language, Spark SQL supports SQL and DataFrames, and Cascading provides a Java API for pipelines. These compile down to MapReduce or dataflow engine operations, optimizing the execution plan automatically.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Key Principles</h2></div>
+        <p>Several foundational principles underpin batch processing systems:</p>
+        <p><strong>Immutable inputs, new outputs:</strong> Batch jobs never modify their input -- they read input and produce new output files. This functional approach means you can always re-run a job safely, and you can keep the input around for debugging or reprocessing. It also enables easy rollback: if a job produces bad output, just delete it and re-run.</p>
+        <p><strong>Fault tolerance via recomputation:</strong> Because inputs are immutable and map/reduce functions are deterministic, any failed task can be re-executed on the same input to produce the same output. This is much simpler than trying to recover partially-completed work.</p>
+        <p><strong>Good throughput on large datasets:</strong> Batch processing is optimized for scanning through terabytes or petabytes of data efficiently. It trades latency for throughput -- individual records may take a long time to process end-to-end, but the system processes many records per second.</p>
+        <p><strong>Blurring boundaries:</strong> The line between batch processing and MPP (Massively Parallel Processing) databases like Impala, Drill, and Presto is increasingly blurry. MPP databases now run on commodity hardware clusters (like Hadoop), while batch systems now support SQL queries. The key difference is that batch systems are more flexible (arbitrary code, not just SQL) while MPP databases are more optimized for interactive queries.</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> Batch processing's power comes from its simplicity: immutable inputs + deterministic processing + recomputation for fault tolerance. This "functional" approach enables reliable processing at massive scale, and the same principles carry forward into stream processing.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 10 Summary</h3>
+        <ul>
+          <li><strong>Three system types:</strong> Services (online, low latency), batch processing (offline, high throughput), and stream processing (near-real-time).</li>
+          <li><strong>Unix philosophy:</strong> Small composable tools connected by pipes inspired the design of MapReduce and modern batch frameworks.</li>
+          <li><strong>HDFS:</strong> Distributed filesystem with block replication across commodity machines, providing the storage layer for batch processing.</li>
+          <li><strong>MapReduce:</strong> Read input, map to key-value pairs, shuffle/sort by key, reduce each group. Fault tolerant via recomputation.</li>
+          <li><strong>Join strategies:</strong> Reduce-side (sort-merge), map-side (broadcast hash join for small inputs, partitioned hash join for co-partitioned inputs).</li>
+          <li><strong>Hot key skew:</strong> Spread records for popular keys across multiple reducers to avoid bottlenecks.</li>
+          <li><strong>Dataflow engines (Spark, Flink, Tez):</strong> Pipe data between operators without materializing to HDFS, improving performance over MapReduce chains.</li>
+          <li><strong>High-level APIs:</strong> Hive, Pig, Spark SQL translate queries into optimized batch execution plans.</li>
+          <li><strong>Key principles:</strong> Immutable inputs, deterministic functions, fault tolerance via recomputation, and throughput optimization.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">MapReduce</dt><dd style="color:var(--text-muted); margin:0;">Programming model: map (extract key-value pairs) then reduce (aggregate by key) across a cluster.</dd>
+            <dt style="font-weight:700; color:var(--text);">HDFS</dt><dd style="color:var(--text-muted); margin:0;">Hadoop Distributed File System -- stores files as replicated blocks across commodity machines.</dd>
+            <dt style="font-weight:700; color:var(--text);">Shuffle</dt><dd style="color:var(--text-muted); margin:0;">The phase between map and reduce that sorts and groups records by key across the network.</dd>
+            <dt style="font-weight:700; color:var(--text);">Broadcast Hash Join</dt><dd style="color:var(--text-muted); margin:0;">Map-side join where the small dataset is loaded into memory as a hash table on every mapper.</dd>
+            <dt style="font-weight:700; color:var(--text);">Materialization</dt><dd style="color:var(--text-muted); margin:0;">Writing intermediate results to storage between processing steps (MapReduce's main overhead).</dd>
+            <dt style="font-weight:700; color:var(--text);">DAG</dt><dd style="color:var(--text-muted); margin:0;">Directed Acyclic Graph -- dataflow engines model computation as a DAG of operators.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh10" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh10 .mm-node { animation: mmFadeInCH10 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH10 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh10 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh10 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh10 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh10 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="70" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Batch Processing</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Unix Philosophy</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">MapReduce</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">HDFS</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Join Strategies</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Dataflow Engines</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">Fault Tolerance</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">High-Level APIs</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch9.html"><i class="fas fa-arrow-left"></i> Ch 9</a>
+      <a href="ch11.html" class="nav-next">Ch 11: Stream Processing <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "What are the three types of systems described in this chapter?", options: ["Read, write, and delete systems", "Services (online), batch processing (offline), and stream processing (near-real-time)", "Database, cache, and message queue", "Frontend, backend, and middleware"], correct: 1, explanation: "Services handle request/response with low latency, batch processing handles large offline jobs with high throughput, and stream processing handles events in near-real-time." },
+      { question: "What is the key performance metric for batch processing systems?", options: ["Response time", "Availability", "Throughput (data processed per second)", "Number of concurrent users"], correct: 2, explanation: "Batch systems are optimized for throughput -- processing as much data as possible per unit time -- rather than latency for individual requests." },
+      { question: "In MapReduce, what happens during the 'shuffle' phase?", options: ["Data is randomly distributed", "Records are sorted and grouped by key so all values for the same key reach the same reducer", "The map function is applied", "Output is written to HDFS"], correct: 1, explanation: "The shuffle phase sorts all key-value pairs from mappers by key and routes them so each reducer receives all values for its assigned keys." },
+      { question: "How does MapReduce achieve fault tolerance?", options: ["By keeping copies of intermediate state", "By using transactions", "By re-running failed tasks on the same immutable input (recomputation)", "By checkpointing to a database"], correct: 2, explanation: "Since inputs are immutable and functions are deterministic, a failed mapper or reducer can simply be re-run on the same input to produce the same output." },
+      { question: "When is a broadcast hash join appropriate?", options: ["When both datasets are very large", "When one dataset is small enough to fit in each mapper's memory", "When the data is not partitioned", "When you need to join more than two datasets"], correct: 1, explanation: "A broadcast hash join loads the small dataset into a hash table in memory on each mapper, then streams through the large dataset and probes the hash table for matches." },
+      { question: "What problem does 'hot key' handling solve in MapReduce?", options: ["Keys that are too long", "Keys with disproportionately many records overloading a single reducer", "Keys that change frequently", "Keys with missing values"], correct: 1, explanation: "If a join key has millions of records (like a celebrity's user ID), one reducer gets overwhelmed. Sending hot key records to multiple reducers spreads the load." },
+      { question: "What is the main advantage of dataflow engines (Spark, Flink) over MapReduce?", options: ["They support SQL", "They avoid materializing intermediate results to HDFS between operators", "They use fewer machines", "They don't need HDFS"], correct: 1, explanation: "Dataflow engines pipe data between operators in memory or via local disk, avoiding the costly read-write cycle to HDFS that MapReduce requires between each job." },
+      { question: "What computational model do Pregel and BSP use for graph processing?", options: ["MapReduce on graph edges", "Each vertex sends messages to adjacent vertices in synchronized rounds", "SQL queries on adjacency matrices", "Random walks across the graph"], correct: 1, explanation: "In Bulk Synchronous Parallel (BSP), each vertex processes incoming messages and sends messages to its neighbors in synchronized supersteps, enabling distributed graph algorithms." },
+      { question: "Why is the 'immutable inputs, new outputs' principle important?", options: ["It saves storage space", "It enables safe re-runs, easy debugging, and simple rollback of bad outputs", "It prevents data from being read", "It makes encryption easier"], correct: 1, explanation: "Never modifying input means jobs can be safely re-run, old inputs are available for debugging, and bad output can simply be deleted and regenerated." },
+      { question: "How is the boundary between batch processing and MPP databases changing?", options: ["They are becoming completely separate", "MPP databases now run on commodity clusters and batch systems support SQL, blurring the distinction", "Batch processing is disappearing", "MPP databases no longer exist"], correct: 1, explanation: "MPP databases like Impala and Presto run on Hadoop clusters, while batch systems like Spark support SQL. The key remaining difference is flexibility (arbitrary code) vs. query optimization." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

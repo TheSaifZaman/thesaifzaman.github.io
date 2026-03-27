@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3: Storage and Retrieval — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch3">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 3</div>
+      <h1>Storage and Retrieval</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Foundations</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Log-Structured Storage</h2></div>
+        <p>The simplest possible database: two bash functions. <code>db_set key value</code> appends a key-value pair to the end of a file. <code>db_get key</code> greps for the last occurrence of the key. Writes are O(1) (just append), but reads are O(n) (scan the whole file). To speed up reads, we need an <strong>index</strong>.</p>
+        <p><strong>Hash indexes (Bitcask):</strong> Keep an in-memory hash map where every key maps to a byte offset in the data file pointing to the most recent value. Writes are still fast (append + update hash map). Reads are fast (one disk seek). Limitation: all keys must fit in memory. Works well when you have many writes per key but a manageable number of distinct keys.</p>
+        <p>To avoid running out of disk space, break the log into <strong>segments</strong>. When a segment reaches a certain size, close it and start a new one. Then run <strong>compaction</strong>: throw away duplicate keys in the log, keeping only the most recent update for each key. Compacted segments can be merged together.</p>
+        <p><strong>SSTables (Sorted String Tables):</strong> Like the segment files above, but the key-value pairs are <em>sorted by key</em>. Merging segments is efficient (like merge sort). You don't need to keep all keys in memory -- a sparse in-memory index works because you can scan between two known positions to find intermediate keys.</p>
+        <p><strong>LSM-Trees (Log-Structured Merge-Trees):</strong> Writes go to an in-memory balanced tree (the <strong>memtable</strong>, typically a red-black tree or AVL tree). When the memtable exceeds a threshold, it's flushed to disk as a new SSTable segment. Reads check the memtable first, then each SSTable on disk from newest to oldest. Background compaction periodically merges and compacts SSTables. <strong>Bloom filters</strong> are used to avoid pointless disk reads for keys that don't exist.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-stream"></i> LSM-Tree Write Path</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr3a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Write -->
+            <rect x="20" y="80" width="80" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="60" y="105" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="var(--text)">Write</text>
+
+            <!-- Memtable -->
+            <rect x="150" y="60" width="120" height="80" rx="12" fill="var(--accent)" opacity="0.9"/>
+            <text x="210" y="90" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Memtable</text>
+            <text x="210" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">In-memory</text>
+            <text x="210" y="122" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">sorted tree</text>
+            <line x1="100" y1="100" x2="148" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3a)"/>
+
+            <!-- Flush arrow -->
+            <text x="310" y="95" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">flush when full</text>
+            <line x1="270" y1="100" x2="340" y2="100" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr3a)"/>
+
+            <!-- SSTables on disk -->
+            <rect x="350" y="30" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="400" y="52" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
+            <rect x="350" y="75" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="400" y="97" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
+            <rect x="350" y="120" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.55"/>
+            <text x="400" y="142" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
+
+            <!-- Compaction -->
+            <text x="500" y="95" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">compact</text>
+            <line x1="450" y1="92" x2="510" y2="92" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr3a)"/>
+
+            <rect x="520" y="60" width="90" height="70" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="565" y="88" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Merged</text>
+            <text x="565" y="104" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable</text>
+            <text x="565" y="120" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">L1+</text>
+
+            <!-- Disk label -->
+            <rect x="340" y="175" width="280" height="30" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="480" y="195" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text-muted)">On Disk (sorted by key)</text>
+          </svg>
+          <p class="viz-caption">Writes go to the in-memory memtable (sorted tree). When full, it's flushed as an SSTable. Background compaction merges SSTables into larger sorted files.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>B-Trees</h2></div>
+        <p>B-trees are the most widely used indexing structure, standard in almost all relational databases. Like SSTables, B-trees keep key-value pairs sorted by key, enabling efficient lookups and range queries. But the design is fundamentally different.</p>
+        <p>B-trees break the database into fixed-size <strong>pages</strong> (or blocks), traditionally 4 KB. Each page can be identified by an address, allowing pages to reference other pages -- like pointers on disk. One page is designated as the <strong>root</strong>. The root contains several keys and references to child pages. Each child is responsible for a contiguous range of keys. A page that contains individual keys (not references to further children) is called a <strong>leaf page</strong>.</p>
+        <p>The number of references to child pages in one page is called the <strong>branching factor</strong> -- typically several hundred. A four-level B-tree of 4 KB pages with a branching factor of 500 can store up to 256 TB.</p>
+        <p><strong>Updates:</strong> Find the leaf page containing the key, change the value, write the page back to disk. <strong>Inserts:</strong> Find the page whose range encompasses the new key. If there's space, add it. If not, <strong>split</strong> the page into two half-full pages and update the parent. This keeps the tree balanced -- a B-tree with n keys always has O(log n) depth.</p>
+        <p><strong>Crash recovery:</strong> B-trees modify pages in place, which is dangerous if a crash occurs mid-write (e.g., during a page split). A <strong>write-ahead log (WAL)</strong> records every modification before it's applied to the tree pages, enabling recovery after a crash.</p>
+        <p><strong>Concurrency:</strong> Multiple threads accessing the B-tree require careful locking. <strong>Latches</strong> (lightweight locks) protect individual tree pages during modifications.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sitemap"></i> B-Tree Structure</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr3b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Root -->
+            <rect x="230" y="15" width="160" height="40" rx="8" fill="var(--accent)" opacity="0.9"/>
+            <text x="260" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">100</text>
+            <text x="310" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">250</text>
+            <text x="360" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">400</text>
+            <text x="310" y="12" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)" font-weight="600">Root</text>
+
+            <!-- Internal nodes -->
+            <rect x="50" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="80" y="112" font-family="JetBrains Mono" font-size="9" fill="white">30</text>
+            <text x="115" y="112" font-family="JetBrains Mono" font-size="9" fill="white">70</text>
+            <text x="150" y="112" font-family="JetBrains Mono" font-size="9" fill="white">90</text>
+
+            <rect x="245" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="275" y="112" font-family="JetBrains Mono" font-size="9" fill="white">130</text>
+            <text x="315" y="112" font-family="JetBrains Mono" font-size="9" fill="white">180</text>
+            <text x="350" y="112" font-family="JetBrains Mono" font-size="9" fill="white">220</text>
+
+            <rect x="440" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="470" y="112" font-family="JetBrains Mono" font-size="9" fill="white">280</text>
+            <text x="510" y="112" font-family="JetBrains Mono" font-size="9" fill="white">330</text>
+            <text x="545" y="112" font-family="JetBrains Mono" font-size="9" fill="white">380</text>
+
+            <!-- Lines root to internal -->
+            <line x1="260" y1="55" x2="115" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
+            <line x1="310" y1="55" x2="310" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
+            <line x1="360" y1="55" x2="505" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
+
+            <!-- Leaf nodes -->
+            <rect x="20" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="55" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">10,20</text>
+            <text x="55" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
+
+            <rect x="100" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="135" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">35,50</text>
+            <text x="135" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
+
+            <rect x="180" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="215" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">75,85</text>
+            <text x="215" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
+
+            <line x1="70" y1="125" x2="55" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
+            <line x1="115" y1="125" x2="135" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
+            <line x1="155" y1="125" x2="215" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
+
+            <text x="460" y="180" font-family="Inter" font-size="9" fill="var(--text-muted)">Branching factor</text>
+            <text x="460" y="195" font-family="Inter" font-size="9" fill="var(--text-muted)">= refs per page</text>
+            <text x="460" y="210" font-family="Inter" font-size="9" fill="var(--accent)" font-weight="600">(typically ~500)</text>
+          </svg>
+          <p class="viz-caption">B-tree pages: root references internal pages, which reference leaf pages holding actual values. Balanced -- O(log n) depth.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Comparing B-Trees and LSM-Trees</h2></div>
+        <p>Both B-trees and LSM-trees are widely used, and each has trade-offs.</p>
+        <p><strong>LSM-tree advantages:</strong> Writes are sequential (append-only), which is much faster than random writes for both HDDs and SSDs. LSM-trees have lower <strong>write amplification</strong> (the ratio of bytes written to disk vs bytes written by the application) compared to B-trees, which rewrite entire pages. LSM-trees can be compressed better because there's no page fragmentation -- compaction produces tightly packed files. This means LSM-trees often use less disk space for the same dataset.</p>
+        <p><strong>B-tree advantages:</strong> Each key exists in exactly <strong>one place</strong> in the index. This makes B-trees attractive for transactional workloads needing strong isolation via locks -- you can lock a specific key range at the tree level. B-trees offer more <strong>predictable performance</strong> because there's no background compaction competing for disk I/O.</p>
+        <p><strong>LSM-tree downsides:</strong> Compaction can interfere with read/write performance, especially at high percentiles. If the rate of incoming writes consistently outpaces compaction, unmerged segments pile up on disk, slowing reads (which must check more files) and eventually running out of disk space. You need careful monitoring.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>OLTP vs OLAP</h2></div>
+        <p><strong>OLTP (Online Transaction Processing):</strong> The access pattern of most user-facing applications. Many small transactions, each reading or writing a small number of records based on a key. Examples: inserting a sale, looking up a user profile, updating an inventory count. High volume, low latency, user-interactive.</p>
+        <p><strong>OLAP (Online Analytical Processing):</strong> Business analysts run queries that scan huge numbers of records, aggregating data to compute statistics. Examples: "What was total revenue per store in January?" These queries are few but each one touches millions of rows. Read-heavy, not user-interactive.</p>
+        <p><strong>Data warehousing:</strong> Running OLAP queries directly on the OLTP database would harm its performance. The solution: <strong>ETL (Extract-Transform-Load)</strong> -- extract data from OLTP databases, transform it into an analysis-friendly schema, and load it into a separate <strong>data warehouse</strong> optimized for analytics. The warehouse can be indexed and tuned differently from the OLTP system.</p>
+        <p><strong>Star schema</strong> (dimensional modeling): A central <strong>fact table</strong> records events (e.g., each sale). Each row has foreign keys to <strong>dimension tables</strong> -- who (customer), what (product), where (store), when (date), how (promotion). Dimension tables are usually much smaller than the fact table. <strong>Snowflake schema:</strong> Like star, but dimensions are further normalized into sub-dimensions (e.g., brand and category tables referenced by the product dimension).</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-star"></i> Star Schema</div>
+          <svg viewBox="0 0 620 260" width="100%" height="260">
+            <defs><marker id="arr3c" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Fact table (center) -->
+            <rect x="225" y="85" width="170" height="90" rx="12" fill="var(--accent)" opacity="0.9"/>
+            <text x="310" y="115" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="white">fact_sales</text>
+            <text x="310" y="135" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">date_key, product_key,</text>
+            <text x="310" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">store_key, customer_key,</text>
+            <text x="310" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">quantity, net_price, ...</text>
+
+            <!-- Dimension: Date -->
+            <rect x="30" y="15" width="120" height="50" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="90" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_date</text>
+            <text x="90" y="54" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">year, month, day...</text>
+            <line x1="150" y1="50" x2="225" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
+
+            <!-- Dimension: Product -->
+            <rect x="470" y="15" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="530" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_product</text>
+            <text x="530" y="54" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, brand, category</text>
+            <line x1="470" y1="50" x2="395" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
+
+            <!-- Dimension: Store -->
+            <rect x="30" y="195" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="90" y="218" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_store</text>
+            <text x="90" y="234" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, city, state</text>
+            <line x1="150" y1="210" x2="225" y2="160" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
+
+            <!-- Dimension: Customer -->
+            <rect x="470" y="195" width="120" height="50" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="530" y="218" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_customer</text>
+            <text x="530" y="234" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, age, segment</text>
+            <line x1="470" y1="210" x2="395" y2="160" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
+          </svg>
+          <p class="viz-caption">Star schema: a central fact table (events/transactions) surrounded by dimension tables (who, what, where, when). The most common data warehouse schema.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Column-Oriented Storage</h2></div>
+        <p>Fact tables can grow to trillions of rows with hundreds of columns. A typical OLAP query accesses only 4-5 columns but across millions of rows. In a <strong>row-oriented</strong> store, the database must read entire rows from disk, loading all 100+ columns even if only 3 are needed -- an enormous waste of I/O.</p>
+        <p><strong>Column-oriented storage:</strong> Instead of storing all values from one row together, store all values from one <em>column</em> together. Each column is stored in a separate file. A query that needs only 3 columns reads only those 3 column files. This dramatically reduces the amount of data read from disk.</p>
+        <p><strong>Column compression:</strong> Columns often have many repeated values (e.g., a "product_id" column in a billion-row fact table might only have 100,000 distinct products). <strong>Bitmap encoding:</strong> Create a bitmap for each distinct value -- one bit per row, 1 if the row has that value, 0 otherwise. These bitmaps compress extremely well with <strong>run-length encoding</strong>. Compressed columns also fit more data in CPU cache and enable <strong>vectorized processing</strong> -- operating on chunks of compressed column data in a single CPU cycle.</p>
+        <p><strong>Sort order:</strong> Even though columns are stored separately, rows must maintain correspondence across column files (the 23rd entry in each column file belongs to the same row). The DBA can choose to sort by certain columns -- like a compound index. Sorting helps compression (sorted columns have long runs of repeated values) and enables fast range queries on the sort column.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Row-Oriented vs Column-Oriented Layout</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Row store -->
+            <rect x="10" y="10" width="290" height="180" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="155" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Row-Oriented</text>
+
+            <rect x="30" y="50" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.15"/>
+            <text x="40" y="65" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan1 | prod=42 | store=7 | qty=3 | $29</text>
+            <rect x="30" y="76" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.10"/>
+            <text x="40" y="91" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan1 | prod=55 | store=3 | qty=1 | $15</text>
+            <rect x="30" y="102" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.15"/>
+            <text x="40" y="117" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan2 | prod=42 | store=7 | qty=5 | $48</text>
+
+            <text x="155" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Must read ALL columns</text>
+            <text x="155" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">even if query needs only 2</text>
+
+            <!-- Column store -->
+            <rect x="320" y="10" width="290" height="180" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="465" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Column-Oriented</text>
+
+            <rect x="335" y="50" width="80" height="75" rx="6" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="375" y="68" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-2)">product_id</text>
+            <text x="375" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">42</text>
+            <text x="375" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">55</text>
+            <text x="375" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">42</text>
+
+            <rect x="425" y="50" width="60" height="75" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="455" y="68" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">quantity</text>
+            <text x="455" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">3</text>
+            <text x="455" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">1</text>
+            <text x="455" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">5</text>
+
+            <rect x="495" y="50" width="60" height="75" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="525" y="68" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">price</text>
+            <text x="525" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">29</text>
+            <text x="525" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">15</text>
+            <text x="525" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">48</text>
+
+            <text x="465" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)" font-weight="600">Read only needed columns!</text>
+            <text x="465" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">+ compresses well</text>
+          </svg>
+          <p class="viz-caption">Row store reads entire rows. Column store reads only the columns the query needs, reducing disk I/O dramatically for analytical queries.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">6</div><h2>Materialized Views</h2></div>
+        <p>A <strong>materialized view</strong> is a precomputed cache of query results stored on disk. Unlike a standard (virtual) view which re-executes the query every time, a materialized view is an actual copy of the query results. When underlying data changes, the materialized view needs to be updated (either eagerly on write or lazily/periodically).</p>
+        <p><strong>Data cubes (OLAP cubes):</strong> A special case of materialized view. Imagine a 2D grid with one axis being product and the other being date. Each cell contains an aggregate (e.g., total revenue for that product on that date). You can roll up by summing across a dimension -- sum all products to get revenue per date, or sum all dates to get revenue per product. With more dimensions (store, customer segment, promotion), you get an n-dimensional hypercube.</p>
+        <p>The trade-off: data cubes make <strong>certain aggregation queries very fast</strong> (just look up the precomputed cell). But they are <strong>inflexible</strong> -- you can only query the exact dimensions and aggregates the cube was built for. Ad-hoc queries that don't fit the cube's structure must still go to the raw data. Most data warehouses keep the raw data and use cubes/materialized views as a performance optimization for known query patterns.</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> Storage engines are optimized for different access patterns. OLTP (B-trees, LSM-trees) optimizes for reading/writing individual records by key. OLAP (column storage, compression, materialized views) optimizes for scanning large numbers of rows and aggregating. Understanding these internals helps you choose the right database for your workload.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 3 Summary</h3>
+        <ul>
+          <li><strong>Hash indexes (Bitcask):</strong> In-memory hash map pointing to byte offsets in append-only log files. Fast writes and reads, but all keys must fit in memory.</li>
+          <li><strong>SSTables & LSM-Trees:</strong> Sorted segments on disk. Writes go to in-memory memtable, flush to SSTables. Background compaction merges segments. Used by LevelDB, RocksDB, Cassandra, HBase.</li>
+          <li><strong>Bloom filters</strong> efficiently test if a key might exist, avoiding unnecessary disk reads.</li>
+          <li><strong>B-Trees:</strong> Fixed-size pages, branching factor ~500, O(log n) depth. In-place updates with WAL for crash recovery. Standard for relational DBs.</li>
+          <li><strong>LSM vs B-Tree:</strong> LSM = faster writes, better compression, sequential I/O. B-Tree = predictable latency, one key location (good for locks), no compaction interference.</li>
+          <li><strong>OLTP vs OLAP:</strong> OLTP = many small read/write transactions. OLAP = few large analytical scans. Data warehouses use ETL to separate them.</li>
+          <li><strong>Star schema:</strong> Central fact table + dimension tables. Snowflake = further normalization of dimensions.</li>
+          <li><strong>Column storage:</strong> Store each column separately. Enables reading only needed columns, bitmap compression, vectorized processing.</li>
+          <li><strong>Materialized views / data cubes:</strong> Precomputed aggregates. Fast for known queries, inflexible for ad-hoc analysis.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">LSM-Tree</dt><dd style="color:var(--text-muted); margin:0;">Log-Structured Merge-Tree: write to memtable, flush sorted segments, compact in background.</dd>
+            <dt style="font-weight:700; color:var(--text);">SSTable</dt><dd style="color:var(--text-muted); margin:0;">Sorted String Table: an immutable file of key-value pairs sorted by key.</dd>
+            <dt style="font-weight:700; color:var(--text);">Write Amplification</dt><dd style="color:var(--text-muted); margin:0;">Ratio of bytes written to disk vs bytes written by the application (lower is better).</dd>
+            <dt style="font-weight:700; color:var(--text);">WAL</dt><dd style="color:var(--text-muted); margin:0;">Write-Ahead Log: every B-tree modification is logged before applying, for crash recovery.</dd>
+            <dt style="font-weight:700; color:var(--text);">Star Schema</dt><dd style="color:var(--text-muted); margin:0;">Warehouse schema: central fact table referencing dimension tables (who, what, where, when).</dd>
+            <dt style="font-weight:700; color:var(--text);">Bitmap Index</dt><dd style="color:var(--text-muted); margin:0;">One bit per row per distinct value in a column; compresses well with run-length encoding.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh3" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh3 .mm-node { animation: mmFadeInCH3 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH3 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh3 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh3 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh3 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh3 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="120" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="580" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="100" y2="310"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="600" y2="310"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Storage & Retrieval</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="120" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="120" y="74" text-anchor="middle">LSM-Trees</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="50" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">B-Trees</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="580" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="580" y="74" text-anchor="middle">OLTP vs OLAP</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="100" cy="310" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="100" y="314" text-anchor="middle">Star Schema</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="370" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="374" text-anchor="middle">Column Storage</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="600" cy="310" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="600" y="314" text-anchor="middle">Materialized Views</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch2.html"><i class="fas fa-arrow-left"></i> Ch 2</a>
+      <a href="ch4.html" class="nav-next">Ch 4: Encoding & Evolution <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "What is the simplest possible database described in the chapter?", options: ["A B-tree index", "An append-only log file with a hash index", "A column-oriented store", "A materialized view"], correct: 1, explanation: "The simplest database is two bash functions: append key-value to a file (O(1) write) and grep for the last occurrence (O(n) read). Adding a hash index makes reads O(1)." },
+      { question: "What is the key advantage of SSTables over unsorted log segments?", options: ["They are smaller", "Keys are sorted, enabling efficient merging (merge sort) and sparse in-memory indexes", "They don't need compaction", "They support transactions"], correct: 1, explanation: "SSTables sort key-value pairs by key. This allows efficient merging of segments (like merge sort) and means you only need a sparse in-memory index -- you can scan between known positions." },
+      { question: "In an LSM-Tree, where do writes go first?", options: ["Directly to an SSTable on disk", "To a write-ahead log only", "To an in-memory balanced tree called the memtable", "To a B-tree page"], correct: 2, explanation: "Writes go to the memtable (an in-memory sorted structure like a red-black tree). When it exceeds a size threshold, it's flushed to disk as a new SSTable." },
+      { question: "What is the purpose of Bloom filters in LSM-Tree storage?", options: ["To sort data faster", "To quickly determine if a key definitely does NOT exist, avoiding unnecessary disk reads", "To compress data", "To encrypt data"], correct: 1, explanation: "Bloom filters are a memory-efficient probabilistic data structure. They can tell you if a key definitely doesn't exist (saving a disk read) or might exist (proceed to check SSTables)." },
+      { question: "What is the typical page size and branching factor of a B-tree?", options: ["1 KB pages, branching factor of 10", "4 KB pages, branching factor of several hundred", "1 MB pages, branching factor of 2", "64 KB pages, branching factor of 50"], correct: 1, explanation: "B-trees traditionally use 4 KB pages with branching factors of several hundred. A 4-level tree with branching factor 500 can store up to 256 TB." },
+      { question: "Why does a B-tree need a write-ahead log (WAL)?", options: ["For better read performance", "To recover from crashes -- since B-trees modify pages in place, a crash mid-write could corrupt the tree", "To compress data", "For replication"], correct: 1, explanation: "B-trees overwrite pages in place. If a crash occurs during a page split (which modifies multiple pages), the tree could be left in a corrupted state. The WAL enables recovery." },
+      { question: "What is the main difference between OLTP and OLAP workloads?", options: ["OLTP uses SQL, OLAP doesn't", "OLTP involves many small read/write transactions; OLAP involves few large analytical scans aggregating millions of rows", "OLAP is faster than OLTP", "There is no real difference"], correct: 1, explanation: "OLTP: many short transactions reading/writing small numbers of records (user-facing). OLAP: few queries scanning huge volumes of data for aggregation (analyst-facing)." },
+      { question: "In a star schema, what is the 'fact table'?", options: ["A table of database metadata", "The central table recording events (e.g., each sale), with foreign keys to dimension tables", "A lookup table for string values", "A table that stores query results"], correct: 1, explanation: "The fact table is the center of the star schema, recording individual events/transactions. Each row has foreign keys to dimension tables (date, product, store, customer, etc.)." },
+      { question: "Why is column-oriented storage better for OLAP queries?", options: ["It's faster for single-record lookups", "Queries typically access only a few columns across millions of rows -- column storage reads only needed columns, saving I/O", "It uses more disk space", "It's easier to implement"], correct: 1, explanation: "OLAP queries typically touch 4-5 columns out of 100+. Column storage reads only those column files, dramatically reducing disk I/O compared to row storage which reads entire rows." },
+      { question: "What is the main trade-off of data cubes (OLAP cubes)?", options: ["They are always slow", "They make certain predefined aggregation queries very fast, but are inflexible for ad-hoc queries", "They require column storage", "They cannot handle more than two dimensions"], correct: 1, explanation: "Data cubes precompute aggregates along specific dimensions, making those queries instant. But any query outside the cube's dimensions must fall back to raw data, so they're inflexible." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

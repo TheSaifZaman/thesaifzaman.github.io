@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capstone: System Design Challenge — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="capstone">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Capstone</div>
+      <h1>System Design Challenge</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~30 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Capstone Project</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>The Challenge: Design a URL Shortener at Scale</h2></div>
+        <p>Let us tie together every concept from this book by designing a <strong>URL shortener</strong> -- a service like bit.ly that takes long URLs and creates short, memorable links, then redirects users who visit the short link to the original URL.</p>
+        <p><strong>Functional requirements:</strong> (1) Given a long URL, generate a unique short URL. (2) Given a short URL, redirect to the original long URL. (3) Track analytics: click counts, geographic data, referrer information, timestamps.</p>
+        <p><strong>Non-functional requirements:</strong> (1) Handle <strong>billions of URLs</strong> in storage. (2) <strong>Low-latency redirects</strong> -- sub-10ms for cache hits, sub-50ms including a database lookup. (3) <strong>High write throughput</strong> -- thousands of new URLs created per second. (4) <strong>High availability</strong> -- the redirect path must have 99.99% uptime. (5) Analytics data must be eventually consistent but not lose events.</p>
+        <p>This exercise touches every chapter: data models and encoding (Ch2-4), replication and partitioning (Ch5-6), transactions (Ch7), distributed system challenges (Ch8-9), and batch/stream processing for analytics (Ch10-12).</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Data Model and Storage</h2></div>
+        <p>The core data is a <strong>key-value mapping</strong>: short code maps to original URL. The schema is simple:</p>
+        <p><code>shortCode</code> (primary key, string, 7 chars), <code>originalURL</code> (string, up to 2048 chars), <code>createdAt</code> (timestamp), <code>userId</code> (optional, for authenticated users), <code>expiresAt</code> (optional).</p>
+        <p><strong>Short code generation:</strong> Use <strong>Base62 encoding</strong> (a-z, A-Z, 0-9) for human-friendly codes. A 7-character Base62 code gives 62^7 = 3.5 trillion possible values -- far more than enough. To generate codes, use an auto-incrementing counter (simple but requires coordination) or pre-generated ID ranges (each application server gets a block of IDs, no coordination needed for each write).</p>
+        <p><strong>Storage engine choice:</strong> A hash-partitioned key-value store is ideal for the core mapping. The access pattern is almost entirely point lookups by key (short code), which is the optimal case for hash indexes. Options include DynamoDB, Cassandra, or even Redis (with persistence) for the hot path.</p>
+        <p><strong>Encoding:</strong> For internal service-to-service communication, use a compact binary format like <strong>Protocol Buffers</strong> (Protobuf) for efficiency. For the public-facing API, use <strong>JSON</strong> for developer friendliness and broad compatibility. Schema evolution is handled by Protobuf's field numbering.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table"></i> URL Shortener Data Model</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Table representation -->
+            <rect x="60" y="20" width="500" height="35" rx="8" fill="var(--accent)" opacity="0.85"/>
+            <text x="110" y="42" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">shortCode</text>
+            <text x="250" y="42" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">originalURL</text>
+            <text x="390" y="42" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">createdAt</text>
+            <text x="500" y="42" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">userId</text>
+
+            <rect x="60" y="58" width="500" height="30" rx="0" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="110" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">aB3kL9x</text>
+            <text x="250" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">https://example.com/long...</text>
+            <text x="390" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">2024-01-15T...</text>
+            <text x="500" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">usr_42</text>
+
+            <rect x="60" y="88" width="500" height="30" rx="0" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="110" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">Xp7mQ2w</text>
+            <text x="250" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">https://docs.example.io/...</text>
+            <text x="390" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">2024-01-16T...</text>
+            <text x="500" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">usr_87</text>
+
+            <!-- Encoding info -->
+            <rect x="60" y="140" width="230" height="50" rx="8" fill="var(--accent-2)" opacity="0.1" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="175" y="160" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Base62 Encoding</text>
+            <text x="175" y="178" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">7 chars = 3.5 trillion codes</text>
+
+            <rect x="330" y="140" width="230" height="50" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="445" y="160" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Storage: Key-Value Store</text>
+            <text x="445" y="178" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Hash-partitioned by shortCode</text>
+          </svg>
+          <p class="viz-caption">The core data model is a key-value mapping from short code to original URL. Base62 encoding provides compact, human-friendly codes with 3.5 trillion possible values.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Distribution Strategy</h2></div>
+        <p><strong>Partitioning:</strong> Hash the short code to determine which partition stores the URL mapping. Hash partitioning ensures <strong>uniform distribution</strong> across nodes -- unlike range partitioning, which could create hot spots if codes are sequential. With billions of URLs, you need dozens to hundreds of partitions spread across multiple machines.</p>
+        <p><strong>Replication:</strong> Use <strong>leader-follower replication</strong> for the write path (creating new short URLs). For the read path (redirecting), use <strong>read replicas</strong> distributed geographically. Since URL mappings are immutable once created (a short code always maps to the same URL), stale reads from followers are not a problem -- the data does not change.</p>
+        <p><strong>Caching:</strong> The redirect path is extremely read-heavy (reads outnumber writes by 100:1 or more). An <strong>in-memory LRU cache</strong> (Redis/Memcached) in front of the database serves hot URLs with sub-millisecond latency. The working set (frequently accessed URLs) is much smaller than the total dataset, so a modest cache can handle most traffic. Cache invalidation is trivial because URL mappings are immutable.</p>
+        <p><strong>Geographic distribution:</strong> For global low latency, deploy read replicas and caches in multiple regions. A <strong>CDN</strong> can cache redirects at edge locations closest to users. DNS-based routing sends users to the nearest datacenter. The write path can be centralized (or use multi-leader across regions) since writes are far less frequent than reads.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-network-wired"></i> Distributed Architecture with Caching</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <defs><marker id="arrCap" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Users -->
+            <text x="55" y="25" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">Users</text>
+            <rect x="20" y="35" width="70" height="30" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="55" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Worldwide</text>
+
+            <!-- CDN / Edge -->
+            <rect x="140" y="20" width="100" height="55" rx="10" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="190" y="42" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">CDN / Edge</text>
+            <text x="190" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Cache redirects</text>
+
+            <line x1="90" y1="50" x2="138" y2="48" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- API Layer -->
+            <rect x="290" y="20" width="100" height="55" rx="10" fill="var(--accent)" opacity="0.85"/>
+            <text x="340" y="42" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">API Servers</text>
+            <text x="340" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">Stateless</text>
+
+            <line x1="240" y1="48" x2="288" y2="48" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- Cache -->
+            <rect x="440" y="10" width="90" height="40" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="485" y="28" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Redis Cache</text>
+            <text x="485" y="42" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">LRU, hot URLs</text>
+
+            <line x1="390" y1="38" x2="438" y2="32" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- Database partitions -->
+            <rect x="440" y="60" width="90" height="40" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="485" y="78" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">DB Partition 1</text>
+            <text x="485" y="92" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Leader + Followers</text>
+
+            <rect x="540" y="60" width="70" height="40" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="575" y="78" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">P2</text>
+            <text x="575" y="92" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">L + F</text>
+
+            <line x1="390" y1="52" x2="438" y2="72" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- ID Generator -->
+            <rect x="290" y="100" width="100" height="40" rx="8" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="340" y="118" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">ID Generator</text>
+            <text x="340" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">Pre-allocated ranges</text>
+
+            <line x1="340" y1="75" x2="340" y2="98" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- Analytics pipeline -->
+            <text x="310" y="175" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text)">Analytics Pipeline</text>
+
+            <rect x="100" y="190" width="90" height="40" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="145" y="208" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Click Events</text>
+            <text x="145" y="222" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">from API</text>
+
+            <rect x="230" y="190" width="80" height="40" rx="8" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="270" y="214" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Kafka</text>
+
+            <rect x="350" y="190" width="80" height="40" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="390" y="214" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Flink</text>
+
+            <rect x="470" y="190" width="100" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="520" y="208" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--text)">Analytics DB</text>
+            <text x="520" y="222" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">ClickHouse</text>
+
+            <line x1="190" y1="210" x2="228" y2="210" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+            <line x1="310" y1="210" x2="348" y2="210" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+            <line x1="430" y1="210" x2="468" y2="210" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrCap)"/>
+
+            <!-- Labels -->
+            <text x="145" y="255" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Produce</text>
+            <text x="270" y="255" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Buffer & Order</text>
+            <text x="390" y="255" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Window & Aggregate</text>
+            <text x="520" y="255" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Store & Query</text>
+          </svg>
+          <p class="viz-caption">Read path: CDN/edge -> API -> Redis cache -> DB fallback. Write path: API -> ID generator -> partitioned DB. Analytics: click events -> Kafka -> Flink -> analytics DB.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Consistency, Transactions, and Streams</h2></div>
+        <p><strong>Uniqueness of short codes:</strong> Each short code must map to exactly one URL. Using a <strong>counter or pre-generated ID ranges</strong> avoids collisions without expensive distributed coordination. Each application server is assigned a block of IDs (e.g., server A gets IDs 1-10000, server B gets 10001-20000). When a server exhausts its range, it requests a new block from a central coordinator. Within its range, the server can generate codes independently -- no distributed locks or consensus needed per write.</p>
+        <p><strong>Analytics via stream processing:</strong> Every redirect generates a click event sent to <strong>Kafka</strong>. A <strong>Flink</strong> stream processor consumes these events and computes real-time analytics: clicks per URL in tumbling time windows, geographic distribution, top referrers. The aggregated results are written to an analytics database (e.g., ClickHouse) for dashboards and API queries.</p>
+        <p><strong>Batch processing for historical analytics:</strong> Periodically (daily or weekly), a batch job processes the complete click event history to compute long-term trends, detect anomalies, and generate reports. The batch results complement real-time analytics -- batch is authoritative, stream is timely.</p>
+        <p><strong>CDC from write database to analytics:</strong> New URL creations are captured via CDC and published to Kafka. The analytics pipeline can join click events with URL metadata (creation date, user who created it) to produce richer analytics -- for example, "URLs created this week received X clicks on average."</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Full Architecture and Trade-offs</h2></div>
+        <p>Putting it all together, the complete architecture has two main paths:</p>
+        <p><strong>Write path (create short URL):</strong> Client sends POST to API server. The API server obtains a unique ID from its pre-allocated range, encodes it as Base62, stores the mapping in the partitioned database, and returns the short URL. CDC captures the new row and publishes it to Kafka for downstream consumers.</p>
+        <p><strong>Read path (redirect):</strong> Client visits the short URL. The CDN/edge may serve the redirect from its cache (fastest). Otherwise, the API server checks the Redis cache. On cache miss, it queries the database partition (determined by hashing the short code). The redirect is returned as an HTTP 301 (permanent) or 302 (temporary). A click event is asynchronously sent to Kafka.</p>
+        <p><strong>Monitoring:</strong> Track <strong>latency percentiles</strong> (p50, p95, p99) for both read and write paths. Monitor <strong>error rates</strong> by type (404 for unknown codes, 500 for internal failures). Watch for <strong>partition hotspots</strong> -- if one partition gets more traffic, rebalance. Track Kafka consumer lag to ensure the analytics pipeline keeps up.</p>
+        <p><strong>Schema evolution:</strong> The public API uses versioned JSON endpoints (v1, v2). Internal services use Protobuf with backward/forward-compatible schema changes (adding optional fields). Rolling deployments ensure zero-downtime updates.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale"></i> Key Trade-offs</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <rect x="10" y="10" width="290" height="95" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="155" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Consistency vs Latency</text>
+            <text x="155" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Strong consistency = higher latency (consensus)</text>
+            <text x="155" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Our choice: eventual consistency for reads</text>
+            <text x="155" y="89" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">(OK because URL mappings are immutable)</text>
+
+            <rect x="320" y="10" width="290" height="95" rx="12" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="465" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Storage vs Computation</text>
+            <text x="465" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Cache everything = more RAM cost</text>
+            <text x="465" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Our choice: LRU cache for hot URLs only</text>
+            <text x="465" y="89" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">(power-law: 20% of URLs get 80% of traffic)</text>
+
+            <rect x="10" y="115" width="290" height="95" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="155" y="140" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Availability vs Complexity</text>
+            <text x="155" y="160" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Multi-region = high availability but complex</text>
+            <text x="155" y="177" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Our choice: multi-region reads, centralized writes</text>
+            <text x="155" y="194" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">(reads are 100x more frequent than writes)</text>
+
+            <rect x="320" y="115" width="290" height="95" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="465" y="140" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Timeliness vs Accuracy</text>
+            <text x="465" y="160" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Real-time analytics = approximate counts</text>
+            <text x="465" y="177" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Our choice: stream for speed, batch for accuracy</text>
+            <text x="465" y="194" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">(batch corrects stream approximations daily)</text>
+          </svg>
+          <p class="viz-caption">Every architecture decision involves trade-offs. The key is matching trade-offs to your specific requirements -- there is no universal "best" design.</p>
+        </div>
+
+        <div class="insight-box">
+          <strong>Key insight:</strong> System design is the art of trade-offs. No single technology solves every problem -- the best architectures compose specialized tools, connected by well-defined data flows, with clear understanding of what each trade-off buys and costs. The principles from every chapter of DDIA -- encoding, storage, replication, partitioning, transactions, consistency, batch, and stream processing -- all come together in real system design.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Capstone Summary</h3>
+        <ul>
+          <li><strong>URL shortener requirements:</strong> Billions of URLs, low-latency redirects, high write throughput, analytics.</li>
+          <li><strong>Data model:</strong> Key-value store (shortCode -> originalURL), Base62 encoding for compact 7-character codes.</li>
+          <li><strong>ID generation:</strong> Pre-allocated ranges per server to avoid distributed coordination per write.</li>
+          <li><strong>Partitioning:</strong> Hash by short code for uniform distribution across database nodes.</li>
+          <li><strong>Replication:</strong> Leader-follower for writes, read replicas + Redis cache + CDN for the redirect path.</li>
+          <li><strong>Caching:</strong> LRU cache serves hot URLs; immutable mappings mean no invalidation complexity.</li>
+          <li><strong>Analytics:</strong> Click events -> Kafka -> Flink (real-time windowed aggregation) -> analytics DB.</li>
+          <li><strong>CDC:</strong> New URL creations streamed via CDC to enrich analytics with URL metadata.</li>
+          <li><strong>Monitoring:</strong> Latency percentiles, error rates, partition balance, Kafka consumer lag.</li>
+          <li><strong>Trade-offs:</strong> Consistency vs latency, storage vs computation, availability vs complexity, timeliness vs accuracy.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Base62</dt><dd style="color:var(--text-muted); margin:0;">Encoding using a-z, A-Z, 0-9 for URL-safe, compact short codes.</dd>
+            <dt style="font-weight:700; color:var(--text);">LRU Cache</dt><dd style="color:var(--text-muted); margin:0;">Least Recently Used eviction -- keeps hot items in memory, evicts cold ones.</dd>
+            <dt style="font-weight:700; color:var(--text);">Pre-allocated Ranges</dt><dd style="color:var(--text-muted); margin:0;">Each server gets a block of IDs, enabling local ID generation without coordination.</dd>
+            <dt style="font-weight:700; color:var(--text);">Consumer Lag</dt><dd style="color:var(--text-muted); margin:0;">How far behind a stream consumer is from the latest produced event.</dd>
+            <dt style="font-weight:700; color:var(--text);">301 vs 302</dt><dd style="color:var(--text-muted); margin:0;">301 = permanent redirect (cacheable); 302 = temporary (allows tracking each click).</dd>
+            <dt style="font-weight:700; color:var(--text);">Power-Law Distribution</dt><dd style="color:var(--text-muted); margin:0;">A few URLs get most traffic -- makes caching extremely effective.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCap" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCap .mm-node { animation: mmFadeInCap 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCap { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCap .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCap .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCap .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCap .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="68" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">URL Shortener</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Data Model</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Partitioning</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Replication</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="50" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Caching</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Analytics</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">ID Generation</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">Trade-offs</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch12.html"><i class="fas fa-arrow-left"></i> Ch 12</a>
+      <a href="index.html" class="nav-next">Back to Index <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "Why is a hash-partitioned key-value store ideal for the URL shortener's core mapping?", options: ["It supports complex queries", "The access pattern is almost entirely point lookups by key (short code), which hash indexes handle optimally", "It is the cheapest option", "It supports transactions"], correct: 1, explanation: "The URL shortener's primary operation is looking up a single short code to find the original URL. Hash-based partitioning and indexing provide O(1) lookups for this exact access pattern." },
+      { question: "How do pre-allocated ID ranges avoid distributed coordination?", options: ["They use random numbers", "Each server gets a block of IDs and generates codes locally within its range, only coordinating when requesting a new block", "They rely on timestamps", "They use consistent hashing"], correct: 1, explanation: "Instead of coordinating every write, each server obtains a range of IDs (e.g., 1-10000) from a central allocator. Within its range, the server generates codes independently -- coordination happens only when a range is exhausted." },
+      { question: "Why is cache invalidation trivial for URL mappings?", options: ["The cache is small", "URL mappings are immutable -- once a short code is created, it always maps to the same URL", "The cache refreshes every second", "Redis handles it automatically"], correct: 1, explanation: "Since a short code's mapping never changes after creation, cached entries never become stale. There is no need for invalidation logic -- entries can stay in the cache until evicted by LRU." },
+      { question: "Why use HTTP 302 (temporary redirect) instead of 301 (permanent) for analytics?", options: ["302 is faster", "302 forces the browser to hit the server on every click, allowing click tracking; 301 would be cached by the browser", "302 is more secure", "There is no difference"], correct: 1, explanation: "A 301 tells the browser to cache the redirect permanently, so subsequent visits bypass the server entirely. A 302 ensures every click goes through the server, enabling accurate click counting." },
+      { question: "What is the role of Kafka in the analytics pipeline?", options: ["It stores the URL mappings", "It buffers click events, provides ordering, and decouples the redirect path from the analytics processing", "It generates short codes", "It serves as the CDN"], correct: 1, explanation: "Kafka acts as a durable, ordered buffer between the API servers (which produce click events) and Flink (which processes them). This decoupling ensures the redirect path is not slowed down by analytics processing." },
+      { question: "Why deploy read replicas in multiple geographic regions?", options: ["To save money on storage", "To serve redirects with low latency to users worldwide by having data close to them", "To comply with regulations", "To support more URL formats"], correct: 1, explanation: "Users worldwide need sub-50ms redirect latency. By placing read replicas and caches in multiple regions (US, Europe, Asia), the system ensures users are served by a nearby datacenter." },
+      { question: "What makes the power-law distribution of URL traffic important for caching?", options: ["It means all URLs get equal traffic", "A small percentage of URLs receive most traffic, so a modest cache can serve the majority of requests", "It requires larger databases", "It prevents caching from being effective"], correct: 1, explanation: "Power-law (Zipf) distribution means ~20% of URLs get ~80% of traffic. A cache that holds just the top few percent of URLs can satisfy the vast majority of redirect requests, making caching extremely cost-effective." },
+      { question: "How does the architecture balance timeliness and accuracy in analytics?", options: ["It only uses batch processing", "Stream processing (Flink) provides real-time approximate counts, while periodic batch jobs compute authoritative historical analytics", "It only uses stream processing", "It ignores accuracy"], correct: 1, explanation: "Stream processing gives fast but potentially approximate analytics (e.g., windowed counts). Batch processing recomputes from the complete event history for accuracy. The batch results correct any stream approximations." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

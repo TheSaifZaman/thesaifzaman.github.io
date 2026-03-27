@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch1: Reliable, Scalable, and Maintainable Applications — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch1">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 1</div>
+      <h1>Reliable, Scalable, and Maintainable Applications</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Foundations</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Thinking About Data Systems</h2></div>
+        <p>Modern applications are <strong>data-intensive</strong>, not compute-intensive. The bottleneck is usually the amount, complexity, and rate of change of data -- not raw CPU cycles. A typical application stitches together several components: <strong>databases</strong> (store data so it can be found later), <strong>caches</strong> (remember the result of an expensive operation to speed up reads), <strong>search indexes</strong> (allow users to search and filter data by keyword), <strong>stream processing</strong> (send messages to another process for asynchronous handling), and <strong>batch processing</strong> (periodically crunch large amounts of accumulated data).</p>
+        <p>The boundaries between these categories are blurring. Redis is used as a message queue, Apache Kafka provides database-like durability guarantees for messages. A single tool no longer satisfies all data processing needs. Instead, work is broken down across multiple tools, stitched together with application code. When you combine several tools to provide a service, the application code's job is to keep caches, indexes, and derived data consistent with the primary data store.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-database"></i> Typical Data System Architecture</div>
+          <svg viewBox="0 0 620 260" width="100%" height="260">
+            <defs><marker id="arr1a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Client -->
+            <rect x="240" y="10" width="140" height="40" rx="10" fill="var(--accent)" opacity="0.9"/>
+            <text x="310" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Application Code</text>
+
+            <!-- Primary DB -->
+            <rect x="20" y="90" width="110" height="50" rx="10" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="75" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Primary DB</text>
+            <text x="75" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Store & retrieve</text>
+            <line x1="270" y1="50" x2="100" y2="88" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr1a)"/>
+
+            <!-- Cache -->
+            <rect x="160" y="90" width="100" height="50" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="210" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Cache</text>
+            <text x="210" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Speed up reads</text>
+            <line x1="290" y1="50" x2="225" y2="88" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr1a)"/>
+
+            <!-- Search Index -->
+            <rect x="290" y="90" width="110" height="50" rx="10" fill="var(--accent)" opacity="0.75"/>
+            <text x="345" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Search Index</text>
+            <text x="345" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Filter & find</text>
+            <line x1="320" y1="50" x2="340" y2="88" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr1a)"/>
+
+            <!-- Stream Processing -->
+            <rect x="430" y="90" width="110" height="50" rx="10" fill="var(--accent-2)" opacity="0.75"/>
+            <text x="485" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Stream Proc.</text>
+            <text x="485" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Async messages</text>
+            <line x1="345" y1="50" x2="465" y2="88" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr1a)"/>
+
+            <!-- Batch Processing -->
+            <rect x="255" y="190" width="110" height="50" rx="10" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="310" y="212" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Batch Proc.</text>
+            <text x="310" y="228" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Periodic crunch</text>
+            <line x1="75" y1="140" x2="253" y2="205" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr1a)"/>
+            <line x1="485" y1="140" x2="367" y2="205" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr1a)"/>
+          </svg>
+          <p class="viz-caption">Application code stitches together multiple specialized data systems. Keeping them consistent is the developer's responsibility.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Reliability</h2></div>
+        <p>Reliability means the system continues to work correctly even when things go wrong. A <strong>fault</strong> is a component deviating from its spec; a <strong>failure</strong> is the system as a whole stopping. We design <strong>fault-tolerant</strong> systems -- systems that cope with faults to prevent failures.</p>
+        <p><strong>Hardware faults:</strong> Hard disk MTTF is about 10-50 years. In a cluster of 10,000 disks, you should expect on average one disk failure per day. Historically, we added hardware redundancy -- RAID, dual power supplies, hot-swappable CPUs. As data volumes and computing demands grow (especially cloud), multi-machine redundancy using software fault-tolerance becomes essential.</p>
+        <p><strong>Software faults:</strong> Systematic bugs are harder to anticipate. A software bug in one node can cause correlated failures across many nodes simultaneously (e.g., the Linux kernel leap-second bug of June 30, 2012). Cascading failures where one component's failure triggers others. No quick cure -- thorough testing, process isolation, crash-and-restart, monitoring, and alerting help.</p>
+        <p><strong>Human errors:</strong> Humans are the #1 cause of outages. Configuration errors by operators are the leading cause. Approaches: design systems that minimize opportunities for error (good APIs, admin interfaces), provide sandbox environments, test thoroughly at all levels (unit to integration), allow quick rollback, set up detailed monitoring (telemetry), and implement good management practices and training.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Scalability — Describing Load</h2></div>
+        <p>Scalability is the system's ability to cope with increased load. First, we need to describe load succinctly with <strong>load parameters</strong>: requests per second, the ratio of reads to writes, number of simultaneously active users, hit rate on a cache, etc. The best choice of parameters depends on your system's architecture.</p>
+        <p><strong>The Twitter fan-out problem</strong> is a classic example. Two main operations: posting a tweet (avg 4.6k requests/sec, peak 12k/sec) and viewing the home timeline (300k requests/sec). Two approaches exist:</p>
+        <p><strong>Fan-out-on-read:</strong> When a user requests their home timeline, look up everyone they follow, find their recent tweets, and merge them (sorted by time). Simple but slow at read time for users following many people.</p>
+        <p><strong>Fan-out-on-write:</strong> When a user posts a tweet, pre-compute and insert it into the home timeline cache of every follower. Reads are cheap (just look up the cache), but writes are expensive -- especially for users with millions of followers (celebrities).</p>
+        <p>Twitter's actual solution: a <strong>hybrid approach</strong>. Fan-out-on-write for most users. For celebrities with millions of followers, their tweets are fetched at read time and merged with the precomputed timeline. The distribution of followers per user is a key load parameter.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-retweet"></i> Twitter Fan-Out: Two Approaches</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr1b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Fan-out on Read -->
+            <rect x="10" y="10" width="290" height="200" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="155" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Fan-out on Read</text>
+
+            <rect x="30" y="55" width="80" height="35" rx="8" fill="var(--accent)" opacity="0.8"/>
+            <text x="70" y="77" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">User A</text>
+            <rect x="30" y="100" width="80" height="35" rx="8" fill="var(--accent)" opacity="0.8"/>
+            <text x="70" y="122" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">User B</text>
+            <rect x="30" y="145" width="80" height="35" rx="8" fill="var(--accent)" opacity="0.8"/>
+            <text x="70" y="167" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">User C</text>
+
+            <rect x="170" y="85" width="110" height="50" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="225" y="107" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Query & merge</text>
+            <text x="225" y="122" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">at read time</text>
+
+            <line x1="110" y1="72" x2="168" y2="100" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+            <line x1="110" y1="117" x2="168" y2="110" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+            <line x1="110" y1="162" x2="168" y2="120" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+
+            <!-- Fan-out on Write -->
+            <rect x="320" y="10" width="290" height="200" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="465" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Fan-out on Write</text>
+
+            <rect x="340" y="85" width="80" height="50" rx="8" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="380" y="107" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">New Tweet</text>
+            <text x="380" y="122" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">from User A</text>
+
+            <rect x="480" y="55" width="110" height="30" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="535" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Follower 1 cache</text>
+            <rect x="480" y="95" width="110" height="30" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="535" y="115" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Follower 2 cache</text>
+            <rect x="480" y="135" width="110" height="30" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="535" y="155" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Follower 3 cache</text>
+
+            <line x1="420" y1="100" x2="478" y2="72" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+            <line x1="420" y1="110" x2="478" y2="110" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+            <line x1="420" y1="120" x2="478" y2="148" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr1b)"/>
+          </svg>
+          <p class="viz-caption">Fan-out on read: cheap writes, expensive reads. Fan-out on write: expensive writes, cheap reads. Twitter uses a hybrid.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Scalability — Describing Performance</h2></div>
+        <p>Once you've described load, you can investigate what happens when load increases: How is performance affected if you keep resources unchanged? How much do you need to increase resources to keep performance unchanged?</p>
+        <p>In batch processing systems, we care about <strong>throughput</strong> (records/second or total time for a job). In online systems, we care about <strong>response time</strong> -- the time between a client sending a request and receiving a response. Response time varies, so think of it as a distribution, not a single number.</p>
+        <p><strong>Percentiles:</strong> The <strong>median (p50)</strong> is the halfway point -- half of requests are faster, half are slower. To understand outliers, look at <strong>p95</strong> (95th percentile), <strong>p99</strong>, and <strong>p999</strong>. Amazon observed that customers with the slowest requests often had the most data (i.e., biggest buyers). Tail latencies directly affect revenue.</p>
+        <p><strong>Tail latency amplification:</strong> In microservice architectures, a single end-user request may fan out to multiple backend services. Even if each service is fast at p99, the overall request is only as fast as the slowest backend call. If you make 5 parallel calls each with p99 = 1s, there's a ~5% chance one of them is slow, making the whole request slow.</p>
+        <p><strong>SLOs and SLAs:</strong> Service Level Objectives and Service Level Agreements are often defined in percentiles: "p99 response time under 200ms." <strong>Head-of-line blocking:</strong> A few slow requests can hold up processing of subsequent requests, making the queue grow and tail latencies worse.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Approaches for Coping with Load</h2></div>
+        <p><strong>Scaling up</strong> (vertical scaling): Move to a more powerful machine -- more CPUs, more RAM, more disk. Simple but expensive and has limits.</p>
+        <p><strong>Scaling out</strong> (horizontal scaling / shared-nothing architecture): Distribute load across multiple smaller machines. More complex but potentially more cost-effective and fault-tolerant.</p>
+        <p><strong>Elastic scaling:</strong> Automatically add computing resources when load is detected. Useful for unpredictable load but adds complexity. Manual scaling is simpler and more predictable.</p>
+        <p>There is no one-size-fits-all scalable architecture. A system designed for 100,000 requests/sec (each 1 KB) looks very different from one designed for 3 requests/min (each 2 GB). The right architecture depends on read volume, write volume, data to store, complexity of data, response time requirements, and access patterns. An architecture that works at one scale may not work at 10x that scale.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-expand-arrows-alt"></i> Vertical vs Horizontal Scaling</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Vertical -->
+            <rect x="20" y="10" width="270" height="180" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="155" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Scaling Up (Vertical)</text>
+
+            <rect x="60" y="60" width="60" height="110" rx="8" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="90" y="120" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Small</text>
+
+            <text x="150" y="120" text-anchor="middle" font-family="Inter" font-size="18" fill="var(--text-muted)">&#8594;</text>
+
+            <rect x="180" y="50" width="80" height="120" rx="8" fill="var(--accent)" opacity="0.7"/>
+            <text x="220" y="115" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Bigger</text>
+            <text x="220" y="130" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">machine</text>
+
+            <!-- Horizontal -->
+            <rect x="320" y="10" width="280" height="180" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="460" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Scaling Out (Horizontal)</text>
+
+            <rect x="345" y="60" width="50" height="50" rx="8" fill="var(--accent-2)" opacity="0.75"/>
+            <text x="370" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Node</text>
+            <rect x="405" y="60" width="50" height="50" rx="8" fill="var(--accent-2)" opacity="0.75"/>
+            <text x="430" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Node</text>
+            <rect x="465" y="60" width="50" height="50" rx="8" fill="var(--accent-2)" opacity="0.75"/>
+            <text x="490" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Node</text>
+            <rect x="525" y="60" width="50" height="50" rx="8" fill="var(--accent-2)" opacity="0.75"/>
+            <text x="550" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Node</text>
+
+            <rect x="405" y="130" width="110" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="460" y="155" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Shared-nothing</text>
+          </svg>
+          <p class="viz-caption">Vertical: one big machine. Horizontal: many small machines (shared-nothing). Most real systems use a pragmatic mix.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">6</div><h2>Maintainability</h2></div>
+        <p>The majority of the cost of software is not in its initial development, but in its ongoing maintenance -- fixing bugs, keeping systems running, adapting to new requirements, adding new features, paying off technical debt. We should design software to minimize pain during maintenance. Three design principles help:</p>
+        <p><strong>Operability:</strong> Make it easy for operations teams to keep the system running smoothly. Good monitoring, automation support, documentation, self-healing where possible, predictable behavior, good defaults with overrides. "Good operations can often work around limitations of bad software, but good software cannot run reliably with bad operations."</p>
+        <p><strong>Simplicity:</strong> Make it easy for new engineers to understand the system. Remove <strong>accidental complexity</strong> -- complexity that is not inherent in the problem but arises from the implementation. The best tool for removing accidental complexity is <strong>abstraction</strong>. A good abstraction hides implementation detail behind a clean, simple facade (e.g., high-level programming languages hide machine code, SQL hides on-disk storage).</p>
+        <p><strong>Evolvability</strong> (also called extensibility or plasticity): Make it easy to make changes. Requirements change constantly. Agile working patterns provide a framework for adapting to change, but we also need agility at the level of the data system design itself -- making it easy to modify data systems and adapt them to changing requirements.</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> Reliability, scalability, and maintainability are not features to be bolted on -- they are fundamental design concerns that must be addressed from the beginning. There is no magic formula; it's all about making the right trade-offs for your specific use case.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 1 Summary</h3>
+        <ul>
+          <li><strong>Data-intensive apps</strong> combine databases, caches, search indexes, stream processing, and batch processing -- boundaries are blurring.</li>
+          <li><strong>Reliability:</strong> The system works correctly despite faults. Hardware faults (add redundancy), software faults (testing, monitoring), human errors (#1 cause -- design for safety).</li>
+          <li><strong>Scalability</strong> starts by describing load with parameters (requests/sec, read/write ratios, etc.). Twitter's fan-out problem illustrates how load parameters drive architecture.</li>
+          <li><strong>Performance</strong> is described with percentiles (p50, p95, p99, p999). Tail latencies are amplified in microservice architectures.</li>
+          <li><strong>Scaling up</strong> (bigger machine) vs <strong>scaling out</strong> (more machines). Elastic scaling adds resources automatically. No universal scalable architecture exists.</li>
+          <li><strong>Maintainability</strong> has three pillars: Operability (easy to operate), Simplicity (abstraction removes accidental complexity), Evolvability (easy to change).</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Fault vs Failure</dt><dd style="color:var(--text-muted); margin:0;">A fault is one component deviating from spec; a failure is the whole system stopping.</dd>
+            <dt style="font-weight:700; color:var(--text);">Load Parameter</dt><dd style="color:var(--text-muted); margin:0;">A number describing the current load (e.g., requests/sec, cache hit rate).</dd>
+            <dt style="font-weight:700; color:var(--text);">Fan-out</dt><dd style="color:var(--text-muted); margin:0;">The number of downstream requests triggered by one incoming request.</dd>
+            <dt style="font-weight:700; color:var(--text);">Percentile (p99)</dt><dd style="color:var(--text-muted); margin:0;">99% of requests are faster than this value; 1% are slower.</dd>
+            <dt style="font-weight:700; color:var(--text);">Tail Latency Amplification</dt><dd style="color:var(--text-muted); margin:0;">In parallel calls, the slowest call determines overall latency.</dd>
+            <dt style="font-weight:700; color:var(--text);">Accidental Complexity</dt><dd style="color:var(--text-muted); margin:0;">Complexity not inherent in the problem, arising from the implementation.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh1" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh1 .mm-node { animation: mmFadeInCH1 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH1 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh1 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh1 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh1 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh1 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="310"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="310"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="380"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="68" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Ch1: Foundations</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Reliability</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Scalability</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Maintainability</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="310" rx="65" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="314" text-anchor="middle">Load Parameters</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="310" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="314" text-anchor="middle">Percentiles</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="380" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="384" text-anchor="middle">Fault Types</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="index.html"><i class="fas fa-arrow-left"></i> Index</a>
+      <a href="ch2.html" class="nav-next">Ch 2: Data Models <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "Why are modern applications described as 'data-intensive' rather than 'compute-intensive'?", options: ["CPUs are no longer improving", "The bottleneck is usually the amount, complexity, and rate of change of data", "All applications use the same amount of CPU", "Data is cheaper than compute"], correct: 1, explanation: "Modern applications are limited not by CPU power but by the amount of data, its complexity, and how fast it changes." },
+      { question: "What is the difference between a fault and a failure?", options: ["They mean the same thing", "A fault is one component deviating from spec; a failure is the whole system stopping", "A failure is a minor issue; a fault is catastrophic", "Faults are hardware only; failures are software only"], correct: 1, explanation: "A fault is when one component goes wrong. A failure is when the system as a whole stops providing the required service. Fault-tolerant systems prevent faults from becoming failures." },
+      { question: "What is the approximate MTTF (mean time to failure) for a hard disk?", options: ["1-2 years", "10-50 years", "100+ years", "6 months"], correct: 1, explanation: "Hard disk MTTF is about 10-50 years. But in a large cluster (e.g., 10,000 disks), you'd expect about one disk failure per day." },
+      { question: "According to the book, what is the #1 cause of outages?", options: ["Hardware failures", "Software bugs", "Human errors", "Network partitions"], correct: 2, explanation: "Studies show that configuration errors by operators (human errors) are the leading cause of outages, even more than hardware or software faults." },
+      { question: "In Twitter's fan-out problem, why is fan-out-on-write problematic for celebrities?", options: ["Celebrities don't use Twitter", "Their tweets must be inserted into millions of followers' timeline caches, creating enormous write amplification", "It makes reads slower", "Celebrity accounts use different databases"], correct: 1, explanation: "A celebrity with 30 million followers would require 30 million writes to timeline caches for a single tweet, creating massive write amplification." },
+      { question: "What does the p99 latency metric tell you?", options: ["99% of requests failed", "99% of requests are faster than this value", "The average response time", "The maximum response time"], correct: 1, explanation: "The 99th percentile (p99) means 99% of requests have a response time below this value, and 1% are slower." },
+      { question: "What is 'tail latency amplification' in microservices?", options: ["Latency decreases with more services", "A single end-user request fans out to multiple services, and the slowest call determines overall latency", "Tail requests are dropped", "Only the fastest response is used"], correct: 1, explanation: "When a request makes multiple parallel backend calls, the overall response time equals the slowest individual call. Even if each backend is fast at p99, the probability that at least one is slow increases with the number of calls." },
+      { question: "What is the difference between scaling up and scaling out?", options: ["Scaling up adds machines; scaling out adds power", "Scaling up means a more powerful machine; scaling out means distributing across more machines", "They are the same thing", "Scaling out is always better"], correct: 1, explanation: "Scaling up (vertical) means moving to a bigger, more powerful machine. Scaling out (horizontal/shared-nothing) means distributing the load across multiple smaller machines." },
+      { question: "What is 'accidental complexity' in software?", options: ["Complexity that is essential to the problem domain", "Complexity not inherent in the problem but arising from the implementation", "Bugs caused by accidents", "Random system failures"], correct: 1, explanation: "Accidental complexity is complexity that is not inherent in the problem the software solves, but arises only because of the implementation. Good abstractions remove accidental complexity." },
+      { question: "Which maintainability principle focuses on making it easy for new engineers to understand the system?", options: ["Operability", "Simplicity", "Evolvability", "Reliability"], correct: 1, explanation: "Simplicity means making the system easy to understand for new engineers, primarily by using good abstractions to remove accidental complexity." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

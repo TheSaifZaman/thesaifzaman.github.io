@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5: Replication — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch5">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 5</div>
+      <h1>Replication</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Distributed Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Leaders and Followers</h2></div>
+        <p>Replication means keeping a copy of the same data on multiple machines connected via a network. The most common approach is <strong>leader-based replication</strong> (also called master-slave or active-passive). One replica is designated the leader: all writes go to the leader first, which writes the data to its local storage and then sends the change to all followers via a replication log or change stream. Followers apply writes in the same order the leader processed them.</p>
+        <p><strong>Synchronous vs asynchronous replication:</strong> With synchronous replication, the leader waits for at least one follower to confirm the write before reporting success to the client. This guarantees the follower has an up-to-date copy, but if that follower is slow or down, writes are blocked. In practice, <strong>semi-synchronous</strong> is common: one follower is synchronous (guaranteeing an up-to-date copy on at least two nodes), and the rest are asynchronous.</p>
+        <p><strong>Setting up new followers</strong> without downtime: take a consistent snapshot of the leader's database, copy it to the new follower, then have the follower request all data changes that happened since the snapshot (using the snapshot's exact position in the replication log).</p>
+        <p><strong>Handling node outages:</strong> If a follower crashes, it performs <em>catch-up recovery</em> by replaying all changes from its log since its last processed position. If the leader fails, <em>failover</em> promotes a follower to leader. Failover is fraught with pitfalls: the new leader may lack some writes (data loss), split-brain scenarios, and choosing the right timeout for declaring a leader dead.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-database"></i> Leader-Follower Replication</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr5a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Client -->
+            <rect x="20" y="80" width="80" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="60" y="105" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="var(--text)">Client</text>
+
+            <!-- Leader -->
+            <rect x="160" y="70" width="100" height="60" rx="10" fill="var(--accent)" opacity="0.9"/>
+            <text x="210" y="95" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Leader</text>
+            <text x="210" y="112" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">All writes here</text>
+            <line x1="100" y1="100" x2="158" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr5a)"/>
+
+            <!-- Follower 1 (sync) -->
+            <rect x="340" y="20" width="110" height="50" rx="10" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="395" y="42" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Follower 1</text>
+            <text x="395" y="58" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Synchronous</text>
+            <line x1="260" y1="85" x2="338" y2="50" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr5a)"/>
+
+            <!-- Follower 2 (async) -->
+            <rect x="340" y="90" width="110" height="50" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="395" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Follower 2</text>
+            <text x="395" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Asynchronous</text>
+            <line x1="260" y1="100" x2="338" y2="110" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr5a)"/>
+
+            <!-- Follower 3 (async) -->
+            <rect x="340" y="160" width="110" height="50" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="395" y="182" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Follower 3</text>
+            <text x="395" y="198" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Asynchronous</text>
+            <line x1="260" y1="115" x2="338" y2="180" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr5a)"/>
+
+            <!-- Reads -->
+            <rect x="510" y="90" width="90" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="555" y="115" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text-muted)">Reads from any</text>
+            <line x1="450" y1="115" x2="508" y2="115" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr5a)"/>
+          </svg>
+          <p class="viz-caption">Writes go to the leader only. Reads can go to any replica. Semi-synchronous: one follower is sync, others are async.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Problems with Replication Lag</h2></div>
+        <p>If an application reads from an asynchronous follower, it may see <strong>stale data</strong> because the follower hasn't caught up with the leader. This is "eventually consistent" -- if you stop writing and wait, followers will eventually catch up. But the "eventually" can be seconds, minutes, or more under load.</p>
+        <p>Three key problems emerge from replication lag:</p>
+        <p><strong>Read-your-own-writes:</strong> A user writes data (sent to the leader) then reads it back (served by a follower that hasn't replicated yet) -- they see their data vanished. Solution: read the user's own data from the leader, or track timestamps and wait for followers to catch up.</p>
+        <p><strong>Monotonic reads:</strong> A user makes two reads that hit different followers -- the second follower is further behind, so the user sees data "go back in time." Solution: ensure each user always reads from the same replica (e.g., hash user ID to replica).</p>
+        <p><strong>Consistent prefix reads:</strong> If a sequence of causally related writes arrives at different followers in different orders, an observer might see the answer before the question. Solution: ensure causally related writes go to the same partition.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> Three Replication Lag Problems</div>
+          <svg viewBox="0 0 620 250" width="100%" height="250">
+            <rect x="10" y="20" width="190" height="210" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="105" y="48" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Read-Your-Own-Writes</text>
+            <text x="105" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">User writes to leader...</text>
+            <text x="105" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">reads from stale follower...</text>
+            <text x="105" y="115" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">"Where's my data?!"</text>
+            <rect x="35" y="140" width="140" height="35" rx="8" fill="var(--accent)" opacity="0.15"/>
+            <text x="105" y="155" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Fix: Read own data</text>
+            <text x="105" y="168" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">from leader</text>
+
+            <rect x="215" y="20" width="190" height="210" rx="12" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="310" y="48" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Monotonic Reads</text>
+            <text x="310" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read 1 from up-to-date replica</text>
+            <text x="310" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read 2 from lagging replica</text>
+            <text x="310" y="115" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">"Data went back in time!"</text>
+            <rect x="240" y="140" width="140" height="35" rx="8" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="310" y="155" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Fix: Sticky sessions</text>
+            <text x="310" y="168" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">(same user, same replica)</text>
+
+            <rect x="420" y="20" width="190" height="210" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="515" y="48" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Consistent Prefix Reads</text>
+            <text x="515" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Q: "How's the weather?"</text>
+            <text x="515" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">A: "Fine, thanks!"</text>
+            <text x="515" y="115" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Observer sees A before Q!</text>
+            <rect x="445" y="140" width="140" height="35" rx="8" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="515" y="155" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Fix: Causal writes to</text>
+            <text x="515" y="168" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">same partition</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Multi-Leader Replication</h2></div>
+        <p>In single-leader replication, the leader is a bottleneck and a single point of failure. <strong>Multi-leader replication</strong> (master-master or active-active) allows more than one node to accept writes. Each leader simultaneously acts as a follower to the other leaders.</p>
+        <p><strong>Use cases:</strong> Multi-datacenter operation (one leader per datacenter, reducing write latency for local users). Offline-capable clients (each device is a "leader" for its local data, syncing later -- think calendar apps). Collaborative editing (each user's changes are like writes to a local leader, with conflict resolution).</p>
+        <p>The biggest problem is <strong>write conflicts</strong>. If two leaders concurrently modify the same record differently, you need conflict resolution. Strategies include: <strong>last-write-wins (LWW)</strong> -- pick the write with the highest timestamp, discarding others (data loss!); <strong>merge values</strong> -- e.g., concatenate conflicting edits; <strong>custom resolution logic</strong> -- application-specific code runs on read or write to resolve conflicts.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sitemap"></i> Multi-Leader Replication Topologies</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <defs><marker id="arr5b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Circular -->
+            <text x="100" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Circular</text>
+            <circle cx="60" cy="70" r="16" fill="var(--accent)" opacity="0.8"/>
+            <circle cx="140" cy="70" r="16" fill="var(--accent)" opacity="0.8"/>
+            <circle cx="100" cy="140" r="16" fill="var(--accent)" opacity="0.8"/>
+            <text x="60" y="74" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L1</text>
+            <text x="140" y="74" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L2</text>
+            <text x="100" y="144" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L3</text>
+            <line x1="76" y1="66" x2="122" y2="66" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr5b)"/>
+            <line x1="148" y1="84" x2="114" y2="128" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr5b)"/>
+            <line x1="86" y1="132" x2="52" y2="86" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr5b)"/>
+
+            <!-- Star -->
+            <text x="310" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Star</text>
+            <circle cx="310" cy="90" r="18" fill="var(--accent-2)" opacity="0.8"/>
+            <circle cx="260" cy="50" r="14" fill="var(--accent-2)" opacity="0.6"/>
+            <circle cx="360" cy="50" r="14" fill="var(--accent-2)" opacity="0.6"/>
+            <circle cx="260" cy="140" r="14" fill="var(--accent-2)" opacity="0.6"/>
+            <circle cx="360" cy="140" r="14" fill="var(--accent-2)" opacity="0.6"/>
+            <text x="310" y="94" text-anchor="middle" font-family="Inter" font-size="9" fill="white">Root</text>
+            <line x1="296" y1="78" x2="270" y2="60" stroke="var(--text-muted)" stroke-width="1.2"/>
+            <line x1="324" y1="78" x2="350" y2="60" stroke="var(--text-muted)" stroke-width="1.2"/>
+            <line x1="296" y1="102" x2="270" y2="130" stroke="var(--text-muted)" stroke-width="1.2"/>
+            <line x1="324" y1="102" x2="350" y2="130" stroke="var(--text-muted)" stroke-width="1.2"/>
+
+            <!-- All-to-all -->
+            <text x="520" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">All-to-All</text>
+            <circle cx="480" cy="60" r="16" fill="var(--accent-3)" opacity="0.8"/>
+            <circle cx="560" cy="60" r="16" fill="var(--accent-3)" opacity="0.8"/>
+            <circle cx="480" cy="140" r="16" fill="var(--accent-3)" opacity="0.8"/>
+            <circle cx="560" cy="140" r="16" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="480" y="64" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L1</text>
+            <text x="560" y="64" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L2</text>
+            <text x="480" y="144" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L3</text>
+            <text x="560" y="144" text-anchor="middle" font-family="Inter" font-size="9" fill="white">L4</text>
+            <line x1="496" y1="60" x2="542" y2="60" stroke="var(--text-muted)" stroke-width="1"/>
+            <line x1="480" y1="76" x2="480" y2="122" stroke="var(--text-muted)" stroke-width="1"/>
+            <line x1="560" y1="76" x2="560" y2="122" stroke="var(--text-muted)" stroke-width="1"/>
+            <line x1="496" y1="140" x2="542" y2="140" stroke="var(--text-muted)" stroke-width="1"/>
+            <line x1="494" y1="72" x2="548" y2="128" stroke="var(--text-muted)" stroke-width="1"/>
+            <line x1="548" y1="72" x2="494" y2="128" stroke="var(--text-muted)" stroke-width="1"/>
+          </svg>
+          <p class="viz-caption">Circular and star topologies have single points of failure. All-to-all is most fault-tolerant but can suffer from causality ordering issues.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Leaderless Replication</h2></div>
+        <p><strong>Dynamo-style</strong> systems (Amazon Dynamo, Cassandra, Riak, Voldemort) abandon the concept of a leader entirely. The client sends writes to several replicas directly (or via a coordinator that does not enforce ordering). Reads also query several nodes in parallel and use version numbers to determine the most recent value.</p>
+        <p><strong>Quorum:</strong> If there are <em>n</em> replicas, every write must be confirmed by <em>w</em> nodes, and every read must query <em>r</em> nodes. As long as <em>w + r > n</em>, you are guaranteed to read at least one node with the latest value. Common choice: n=3, w=2, r=2.</p>
+        <p><strong>Repair mechanisms:</strong> <em>Read repair</em> -- when a client reads from multiple nodes and detects a stale value, it writes the newer value back to the out-of-date node. <em>Anti-entropy process</em> -- a background process constantly scans for differences between replicas and copies missing data.</p>
+        <p><strong>Sloppy quorums and hinted handoff:</strong> If some of the designated n nodes are unreachable, writes can be temporarily accepted by other nodes (sloppy quorum). Once the designated node is back, the temporary node hands off the data (hinted handoff). This increases write availability but means quorum guarantees are weaker.</p>
+        <p><strong>Concurrent writes:</strong> When two clients write to the same key simultaneously, you need a resolution strategy. Last-write-wins (LWW) uses timestamps but silently drops writes. <strong>Version vectors</strong> track the causal history per replica, allowing the application to merge truly concurrent writes without data loss.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Choosing a Replication Strategy</h2></div>
+        <p>Each replication approach makes different trade-offs:</p>
+        <p><strong>Single-leader:</strong> Simple to understand, no write conflicts, strong consistency guarantees (if reading from the leader). The leader is a bottleneck for writes and a single point of failure. Failover can be complex. Best when strong consistency matters and write throughput is manageable.</p>
+        <p><strong>Multi-leader:</strong> Better write performance (writes accepted at any datacenter), better tolerance of datacenter outages and network problems. But conflict resolution is complex and error-prone. Best for multi-datacenter deployments and offline-first applications.</p>
+        <p><strong>Leaderless:</strong> High availability for writes (no single point of failure), good performance for write-heavy workloads. But eventual consistency only, and concurrent write resolution is complex. Tunable consistency via quorum parameters. Best when availability and partition tolerance are paramount (AP in CAP theorem).</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> There is no universally "best" replication strategy. The right choice depends on your application's requirements for consistency, availability, latency, and operational complexity. Most real-world systems combine strategies -- e.g., single-leader within a datacenter, multi-leader across datacenters.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 5 Summary</h3>
+        <ul>
+          <li><strong>Leader-based replication:</strong> One leader accepts all writes, followers replicate asynchronously (or semi-synchronously).</li>
+          <li><strong>Replication lag</strong> causes three problems: lost own writes, non-monotonic reads, and violated causal ordering.</li>
+          <li><strong>Multi-leader</strong> allows writes at multiple nodes -- useful for multi-DC, offline clients, and collaborative editing -- but creates write conflicts.</li>
+          <li><strong>Conflict resolution:</strong> LWW (data loss risk), merge values, or custom application logic.</li>
+          <li><strong>Leaderless (Dynamo-style):</strong> Reads and writes go to multiple nodes; quorum condition w + r > n ensures overlap.</li>
+          <li><strong>Read repair</strong> and <strong>anti-entropy</strong> fix stale replicas in leaderless systems.</li>
+          <li><strong>Sloppy quorums</strong> trade consistency for availability when nodes are unreachable.</li>
+          <li><strong>Version vectors</strong> track causality per replica, enabling correct merging of concurrent writes.</li>
+          <li><strong>Trade-offs:</strong> Single-leader = simple + consistent; Multi-leader = performant + complex; Leaderless = available + eventually consistent.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Replication Lag</dt><dd style="color:var(--text-muted); margin:0;">Delay between a write on the leader and its visibility on a follower.</dd>
+            <dt style="font-weight:700; color:var(--text);">Failover</dt><dd style="color:var(--text-muted); margin:0;">Promoting a follower to leader when the existing leader fails.</dd>
+            <dt style="font-weight:700; color:var(--text);">Quorum</dt><dd style="color:var(--text-muted); margin:0;">Minimum number of nodes that must acknowledge a read/write (w + r > n).</dd>
+            <dt style="font-weight:700; color:var(--text);">Split-Brain</dt><dd style="color:var(--text-muted); margin:0;">Two nodes both believe they are the leader, accepting conflicting writes.</dd>
+            <dt style="font-weight:700; color:var(--text);">Version Vector</dt><dd style="color:var(--text-muted); margin:0;">Per-replica version numbers tracking causal history of a data item.</dd>
+            <dt style="font-weight:700; color:var(--text);">Hinted Handoff</dt><dd style="color:var(--text-muted); margin:0;">Temporarily storing writes on behalf of an unreachable node, delivering them when it recovers.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh5" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh5 .mm-node { animation: mmFadeInCH5 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH5 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh5 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh5 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh5 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh5 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="65" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Replication</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Leader-Follower</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Replication Lag</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Multi-Leader</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Leaderless</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Quorums</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="65" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">Conflict Resolution</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">Version Vectors</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch4.html"><i class="fas fa-arrow-left"></i> Ch 4</a>
+      <a href="ch6.html" class="nav-next">Ch 6: Partitioning <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "In leader-based replication, what is 'semi-synchronous' replication?", options: ["All followers are synchronous", "One follower is synchronous, the rest are asynchronous", "The leader waits for all followers before confirming a write", "There is no leader"], correct: 1, explanation: "Semi-synchronous means one follower confirms synchronously (guaranteeing data on at least two nodes), while the rest replicate asynchronously for better performance." },
+      { question: "What is the main risk of leader failover?", options: ["Followers become too fast", "The new leader may lack some writes the old leader had, causing data loss", "All clients must restart", "The database must be rebuilt from scratch"], correct: 1, explanation: "If the old leader had accepted writes that weren't yet replicated to the new leader, those writes are lost. Split-brain scenarios are another serious failover risk." },
+      { question: "What causes the 'read-your-own-writes' problem?", options: ["Writing to the wrong database", "Reading from a follower that hasn't replicated your recent write from the leader", "Using the wrong encoding format", "Network partition between datacenters"], correct: 1, explanation: "A user writes to the leader, then reads from a stale follower that hasn't received the write yet, making it appear their data has vanished." },
+      { question: "How do you prevent 'monotonic reads' violations?", options: ["Always read from the leader", "Ensure each user always reads from the same replica", "Use multi-leader replication", "Disable caching"], correct: 1, explanation: "By routing each user to the same replica (e.g., hash user ID to replica), you ensure they never see data go backward in time across reads." },
+      { question: "What is the biggest problem with multi-leader replication?", options: ["It is too slow", "Write conflicts when two leaders modify the same record concurrently", "It cannot scale beyond two nodes", "It requires synchronous replication"], correct: 1, explanation: "When two leaders accept conflicting writes to the same record, you need a conflict resolution strategy -- and there is no perfect general-purpose solution." },
+      { question: "What does 'last-write-wins' (LWW) conflict resolution sacrifice?", options: ["Performance", "Availability", "Data -- it silently discards concurrent writes with lower timestamps", "Consistency"], correct: 2, explanation: "LWW picks the write with the highest timestamp and discards others. If two writes are truly concurrent, one is silently lost -- achieving convergence at the cost of durability." },
+      { question: "In a leaderless system with n=3, w=2, r=2, how many nodes must acknowledge a write?", options: ["1", "2", "3", "All available nodes"], correct: 1, explanation: "w=2 means 2 out of 3 nodes must confirm the write. Combined with r=2, we get w+r=4 > n=3, ensuring at least one node has the latest value on reads." },
+      { question: "What is 'read repair' in a leaderless system?", options: ["Rewriting the entire database", "When a client detects a stale value during a read, it writes the newer value back to the out-of-date node", "A scheduled database maintenance task", "Fixing corrupted disk sectors"], correct: 1, explanation: "During a read from multiple nodes, the client compares version numbers, detects the stale replica, and writes the correct value back to it -- repairing the inconsistency." },
+      { question: "What is a 'sloppy quorum'?", options: ["A quorum with fewer than w+r>n nodes", "Writes accepted by nodes outside the designated n home nodes when some are unreachable", "A quorum that only counts leader nodes", "A read-only quorum"], correct: 1, explanation: "When designated nodes are unreachable, writes are temporarily accepted by other nodes in the cluster. Hinted handoff delivers the data to the correct nodes once they recover." },
+      { question: "Why are version vectors preferred over simple timestamps for detecting concurrent writes?", options: ["They are faster to compute", "They accurately track causal relationships between writes per replica, avoiding data loss", "They use less storage", "They work without clocks"], correct: 1, explanation: "Version vectors track the version number per replica, allowing the system to distinguish truly concurrent writes (which need merging) from causally ordered writes (where one supersedes the other), avoiding the silent data loss of timestamp-based LWW." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

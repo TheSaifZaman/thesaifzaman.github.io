@@ -1,9 +1,9 @@
 /* ============================================================
-   Visual Book: The Barakah Effect — Shared App Logic
+   Visual Book: Designing Data-Intensive Applications — Shared App Logic
    ============================================================ */
 
 const VB = (() => {
-  const STORAGE_KEY = 'vb-barakah-progress';
+  const STORAGE_KEY = 'vb-ddia-progress';
   const THEME_KEY   = 'vb-theme';
 
   // ---------- Progress ----------
@@ -236,7 +236,7 @@ const VB = (() => {
 
   // ---------- Landing Stats ----------
   function renderLandingStats() {
-    const chapters = ['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11','ch12','ch13','ch14','app-a','app-b','capstone'];
+    const chapters = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11','ch12','capstone'];
     const progress = loadProgress();
     let totalScore = 0, totalQ = 0, completed = 0;
     chapters.forEach(k => {

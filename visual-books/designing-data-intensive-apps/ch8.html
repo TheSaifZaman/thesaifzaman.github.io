@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch8: The Trouble with Distributed Systems — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch8">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 8</div>
+      <h1>The Trouble with Distributed Systems</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Distributed Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Faults and Partial Failures</h2></div>
+        <p>A single computer is fundamentally different from a distributed system. When a program runs on one machine, it is largely <strong>deterministic</strong>: the same operation produces the same result. If something goes wrong, the entire machine typically crashes -- a total failure. You don't usually get a "partially working" computer.</p>
+        <p>In a <strong>distributed system</strong>, things are fundamentally different. Some parts of the system may be working while other parts are broken. These <strong>partial failures</strong> are nondeterministic: the system may behave in unpredictable ways because you cannot know for sure what state remote nodes are in.</p>
+        <p><strong>Cloud vs HPC:</strong> High-Performance Computing (HPC) treats the cluster more like a single computer -- if a node fails, the entire job is restarted from a checkpoint. Cloud computing takes the opposite approach: systems are built from commodity hardware with high failure rates. Rather than trying to prevent failures, cloud systems are designed to <strong>tolerate partial failures</strong>. In a shared-nothing architecture, nodes communicate only via an unreliable network.</p>
+        <p>Building reliable systems from unreliable components is possible (like TCP providing reliable transport over unreliable IP), but you must understand and handle the failure modes explicitly.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Unreliable Networks</h2></div>
+        <p>When you send a request over the network to another node, many things can go wrong. The request may be <strong>lost</strong> (dropped by the network). It may be <strong>waiting in a queue</strong> (delayed at a switch or the recipient's OS buffer). The <strong>remote node may have crashed</strong>. The remote node may have processed the request but the <strong>response was lost</strong>. Or the response may be <strong>delayed</strong> (queued on the way back).</p>
+        <p>The fundamental problem: <strong>you can't tell the difference</strong> between a lost request and a slow one. The only tool you have is a <strong>timeout</strong>. But choosing the right timeout is a dilemma: too short, and you declare nodes dead when they're merely slow (false positives, leading to unnecessary failovers and cascading failures). Too long, and it takes a long time to detect actual failures.</p>
+        <p><strong>Network congestion</strong> is a major source of variable delays: packets queue at network switches when many machines send to the same destination; the receiving OS queues packets if the application is busy; TCP flow control (backpressure) throttles the sender; VM pauses can delay packet processing. There is no theoretically "correct" timeout value -- it must be determined experimentally.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-network-wired"></i> Failure Modes of a Network Request</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <defs><marker id="arr8a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Sender -->
+            <rect x="20" y="20" width="90" height="45" rx="10" fill="var(--accent)" opacity="0.85"/>
+            <text x="65" y="40" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">Sender</text>
+            <text x="65" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Node A</text>
+
+            <!-- Receiver -->
+            <rect x="510" y="20" width="90" height="45" rx="10" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="555" y="40" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">Receiver</text>
+            <text x="555" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Node B</text>
+
+            <!-- Scenario 1: Request lost -->
+            <text x="20" y="100" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">1. Request lost</text>
+            <line x1="110" y1="96" x2="300" y2="96" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arr8a)"/>
+            <text x="330" y="100" font-family="Inter" font-size="18" fill="var(--accent)">&#x2717;</text>
+
+            <!-- Scenario 2: Queued -->
+            <text x="20" y="135" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">2. Request queued</text>
+            <line x1="110" y1="131" x2="400" y2="131" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr8a)"/>
+            <rect x="405" y="122" width="60" height="18" rx="4" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="435" y="135" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">queued</text>
+
+            <!-- Scenario 3: Node crashed -->
+            <text x="20" y="170" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">3. Node B crashed</text>
+            <line x1="110" y1="166" x2="500" y2="166" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr8a)"/>
+            <text x="555" y="170" text-anchor="middle" font-family="Inter" font-size="18" fill="var(--accent-3)">&#x2620;</text>
+
+            <!-- Scenario 4: Response lost -->
+            <text x="20" y="205" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">4. Response lost</text>
+            <line x1="110" y1="201" x2="500" y2="201" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr8a)"/>
+            <line x1="500" y1="207" x2="300" y2="207" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="280" y="211" font-family="Inter" font-size="18" fill="var(--accent)">&#x2717;</text>
+
+            <!-- Scenario 5: Response delayed -->
+            <text x="20" y="240" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">5. Response delayed</text>
+            <line x1="110" y1="236" x2="500" y2="236" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr8a)"/>
+            <line x1="500" y1="242" x2="340" y2="242" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <rect x="270" y="234" width="60" height="18" rx="4" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="300" y="247" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">queued</text>
+
+            <!-- Bottom note -->
+            <text x="310" y="275" text-anchor="middle" font-family="Inter" font-size="10" font-style="italic" fill="var(--text-muted)">From the sender's perspective, all five scenarios look the same: no response.</text>
+          </svg>
+          <p class="viz-caption">A network request can fail in many ways, but the sender cannot distinguish between them. The only option is to wait for a timeout.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Unreliable Clocks</h2></div>
+        <p>Each machine in a distributed system has its own clock, and they are never perfectly synchronized. <strong>NTP</strong> (Network Time Protocol) can synchronize clocks, but only to limited accuracy -- network delays, clock drift, and misconfiguration all introduce errors. Relying on clock synchronization across nodes is dangerous.</p>
+        <p><strong>Time-of-day clocks</strong> (wall clocks) return the current date and time (e.g., <code>System.currentTimeMillis()</code>). They are synchronized with NTP, but they can <strong>jump</strong>: forward or backward when NTP adjusts, or during leap seconds. This makes them unsuitable for measuring elapsed time.</p>
+        <p><strong>Monotonic clocks</strong> (e.g., <code>System.nanoTime()</code>) always move forward and are guaranteed never to jump backward. They are perfect for measuring <strong>durations</strong> (how long something took) but their absolute value is meaningless -- you can only compare two readings from the same machine.</p>
+        <p>Using timestamps to <strong>order events across nodes</strong> is dangerous because of clock skew. If Node A's clock is slightly ahead of Node B's, events on A will appear to happen "later" than events on B, even if B's event actually happened later in real time. Last-write-wins (LWW) based on timestamps can silently drop writes due to clock skew.</p>
+        <p><strong>Google's TrueTime</strong> API takes a different approach: instead of returning a single timestamp, it returns a <strong>confidence interval</strong> [earliest, latest]. The actual time is guaranteed to be within that interval. When ordering events, the system waits until the intervals don't overlap, ensuring correct ordering. This requires GPS receivers and atomic clocks in each datacenter.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-clock"></i> Clock Skew Between Nodes</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Timeline -->
+            <line x1="60" y1="60" x2="580" y2="60" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="40" y="64" text-anchor="end" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Node A</text>
+            <line x1="60" y1="120" x2="580" y2="120" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="40" y="124" text-anchor="end" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Node B</text>
+
+            <!-- Real time axis -->
+            <line x1="60" y1="175" x2="580" y2="175" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="40" y="179" text-anchor="end" font-family="Inter" font-size="9" fill="var(--text-muted)">Real</text>
+            <text x="60" y="195" font-family="Inter" font-size="9" fill="var(--text-muted)">t=0</text>
+            <text x="560" y="195" text-anchor="end" font-family="Inter" font-size="9" fill="var(--text-muted)">t=100ms</text>
+
+            <!-- Node A event (happens at real t=30ms, A's clock says t=35ms) -->
+            <circle cx="230" cy="60" r="8" fill="var(--accent)"/>
+            <text x="230" y="45" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Write X=1</text>
+            <text x="230" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">A's clock: t=35</text>
+
+            <!-- Node B event (happens at real t=40ms, B's clock says t=32ms due to skew) -->
+            <circle cx="290" cy="120" r="8" fill="var(--accent-2)"/>
+            <text x="290" y="105" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Write X=2</text>
+            <text x="290" y="145" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">B's clock: t=32</text>
+
+            <!-- Danger zone -->
+            <rect x="380" y="40" width="200" height="100" rx="8" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="480" y="65" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">LWW picks X=1</text>
+            <text x="480" y="82" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">because A's clock (35)</text>
+            <text x="480" y="96" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">> B's clock (32)</text>
+            <text x="480" y="115" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">But X=2 happened later!</text>
+          </svg>
+          <p class="viz-caption">Clock skew means timestamps across nodes cannot be trusted for ordering events. B's event happened later in real time but has an earlier timestamp.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Process Pauses</h2></div>
+        <p>Even on a single machine, a thread can be paused for an arbitrarily long time and there is nothing it can do about it. Sources of unexpected pauses include: <strong>garbage collection</strong> (stop-the-world GC pauses can last seconds in large heaps), <strong>virtual machine suspension</strong> (VM live migration, snapshots), <strong>disk I/O</strong> (thrashing when memory is overcommitted, or synchronous disk writes), <strong>OS context switches</strong>, and <strong>SIGSTOP/SIGCONT</strong> signals.</p>
+        <p>The danger: a thread might be paused <em>in the middle of a critical section</em> without knowing it was paused. Consider a <strong>lease-based leader</strong>: a node obtains a lease (time-limited lock) saying "I am the leader for the next 10 seconds." It checks the lease, sees it's still valid, then proceeds to write. But if a GC pause happened between the check and the write, the lease may have already expired and another node became the leader -- both nodes now believe they are the leader.</p>
+        <p><strong>Fencing tokens</strong> solve this problem. Every time a lock or lease is granted, the lock service issues a monotonically increasing <strong>fencing token</strong> (a number). The client includes this token in every write. The storage server rejects any write with a token lower than the highest token it has already seen. Even if a paused client sends a delayed write with an old token, the storage server rejects it because it has already seen a higher token from the new leader.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Knowledge, Truth, and Lies</h2></div>
+        <p>In a distributed system, a node cannot trust its own judgment alone. A node might think it is the leader, think its lease is valid, or think another node is dead -- and be wrong about all of these. <strong>Truth is defined by quorum</strong>: a majority of nodes must agree on a fact (e.g., which node is the leader, whether a node is alive).</p>
+        <p><strong>Byzantine faults</strong> occur when nodes actively <em>lie</em> or send corrupted data -- either due to bugs, hardware errors, or malicious actors. Most datacenter systems do not protect against Byzantine faults because it is expensive and most nodes are trusted. Byzantine fault tolerance is mainly relevant in peer-to-peer networks and blockchain systems.</p>
+        <p><strong>System models</strong> formalize our assumptions about what can go wrong. For timing: <em>synchronous model</em> assumes bounded network delay and bounded clock drift (unrealistic for most systems). <em>Partially synchronous model</em> assumes the system is usually well-behaved but occasionally has unbounded delays (most realistic). <em>Asynchronous model</em> makes no timing assumptions at all (theoretical, very conservative).</p>
+        <p>For crash behavior: <em>crash-stop</em> assumes a node that crashes never comes back. <em>Crash-recovery</em> assumes nodes may crash and later restart with durable state. <em>Byzantine</em> assumes nodes may behave arbitrarily, including sending malicious messages. Most practical systems assume crash-recovery in a partially synchronous network.</p>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 8 Summary</h3>
+        <ul>
+          <li><strong>Partial failures</strong> are the defining challenge of distributed systems: some parts work while others are broken, and you can't always tell which.</li>
+          <li><strong>Unreliable networks:</strong> Requests can be lost, delayed, or duplicated. You can't distinguish "lost" from "slow." Timeouts are your only tool, but there is no correct timeout value.</li>
+          <li><strong>Unreliable clocks:</strong> Time-of-day clocks can jump; monotonic clocks only measure durations. Clock skew makes cross-node timestamps unreliable for ordering events.</li>
+          <li><strong>Google TrueTime</strong> returns confidence intervals rather than exact timestamps, enabling correct event ordering at the cost of special hardware.</li>
+          <li><strong>Process pauses</strong> (GC, VM suspension, disk I/O) can cause a thread to be paused for arbitrarily long, making time-based assumptions dangerous.</li>
+          <li><strong>Fencing tokens:</strong> Monotonically increasing tokens that prevent stale writes from paused clients.</li>
+          <li><strong>Truth by quorum:</strong> A node cannot trust its own judgment -- truth is determined by majority agreement.</li>
+          <li><strong>System models:</strong> Synchronous (bounded delays), partially synchronous (usually bounded), asynchronous (no timing assumptions).</li>
+          <li><strong>Crash models:</strong> Crash-stop, crash-recovery, and Byzantine (nodes may lie).</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Partial Failure</dt><dd style="color:var(--text-muted); margin:0;">When some components of a distributed system work while others are broken.</dd>
+            <dt style="font-weight:700; color:var(--text);">Clock Skew</dt><dd style="color:var(--text-muted); margin:0;">The difference in time readings between two imperfectly synchronized clocks.</dd>
+            <dt style="font-weight:700; color:var(--text);">Fencing Token</dt><dd style="color:var(--text-muted); margin:0;">A monotonically increasing number issued with each lock grant, used to reject stale writes.</dd>
+            <dt style="font-weight:700; color:var(--text);">Byzantine Fault</dt><dd style="color:var(--text-muted); margin:0;">A node that lies, sends corrupted data, or behaves maliciously.</dd>
+            <dt style="font-weight:700; color:var(--text);">Quorum</dt><dd style="color:var(--text-muted); margin:0;">Majority agreement among nodes to determine the truth in a distributed system.</dd>
+            <dt style="font-weight:700; color:var(--text);">NTP</dt><dd style="color:var(--text-muted); margin:0;">Network Time Protocol -- synchronizes clocks across machines with limited accuracy.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh8" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh8 .mm-node { animation: mmFadeInCH8 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH8 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh8 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh8 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh8 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh8 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="75" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Distributed</text>
+            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Troubles</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Partial Failures</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Unreliable Networks</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Unreliable Clocks</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Process Pauses</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Fencing Tokens</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="58" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">Byzantine Faults</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">System Models</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch7.html"><i class="fas fa-arrow-left"></i> Ch 7</a>
+      <a href="ch9.html" class="nav-next">Ch 9: Consistency and Consensus <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "What is a 'partial failure' in a distributed system?", options: ["When a database loses some data", "When some parts of the system are working while others are broken, in an unpredictable way", "When a transaction partially commits", "When a network loses exactly half its packets"], correct: 1, explanation: "Partial failures mean some nodes, disks, or network links are working while others are not. Unlike a single computer that either works or crashes entirely, distributed systems can be in a 'partially broken' state." },
+      { question: "Why can't you tell the difference between a lost request and a slow one?", options: ["You can, using checksums", "You can, using TCP", "Because from the sender's perspective, a lost message and a very delayed message look identical — there is no response in either case", "Because network protocols don't support acknowledgments"], correct: 2, explanation: "The sender sees the same thing in both cases: no response. The only option is to wait for a timeout and then make a judgment call, but you can never be certain whether the request was lost or just delayed." },
+      { question: "What is the danger of setting timeouts too short?", options: ["Increased network traffic", "False positives — declaring nodes dead when they're merely slow, potentially causing unnecessary failovers", "Data corruption", "Memory leaks"], correct: 1, explanation: "Short timeouts mean you quickly declare slow nodes as dead. This triggers unnecessary failovers, load redistribution, and potentially cascading failures if the node was just temporarily slow." },
+      { question: "Why are time-of-day clocks unsuitable for measuring elapsed time?", options: ["They are too imprecise", "They can jump forward or backward when NTP adjusts them or during leap seconds", "They only work on Linux", "They require network access"], correct: 1, explanation: "Time-of-day clocks are synchronized with NTP and can jump — forward if the local clock is behind, or backward if it's ahead. This means the difference between two readings might be negative or wildly incorrect." },
+      { question: "What does Google's TrueTime API return instead of a single timestamp?", options: ["Two timestamps from different servers", "A confidence interval [earliest, latest] guaranteed to contain the actual time", "A hash of the current time", "The time on the nearest atomic clock"], correct: 1, explanation: "TrueTime returns an interval [earliest, latest]. The actual time is guaranteed to be somewhere within that range. To order events, the system waits until intervals don't overlap, ensuring correct ordering at the cost of some delay." },
+      { question: "How can a GC pause cause a leader to make incorrect writes?", options: ["GC corrupts the data being written", "The leader's lease may expire during the pause, another node becomes leader, but the paused node doesn't know and writes with a stale lease", "GC changes the network routing tables", "GC resets the leader's clock"], correct: 1, explanation: "A leader checks its lease, sees it's valid, then gets paused by GC. During the pause, the lease expires and another node becomes leader. When the original node resumes, it still thinks it's the leader and writes — causing a split-brain scenario." },
+      { question: "How do fencing tokens prevent stale writes from paused clients?", options: ["They encrypt the data", "Each lock grant issues an increasing token; the storage server rejects writes with tokens lower than the highest it has seen", "They add a checksum to each write", "They prevent GC from running"], correct: 1, explanation: "Fencing tokens are monotonically increasing. If client A got token 33 and was paused, and client B got token 34 and wrote successfully, then when A resumes and tries to write with token 33, the storage server rejects it because it has already seen token 34." },
+      { question: "What does 'truth is defined by quorum' mean?", options: ["All nodes must agree", "A majority of nodes must agree on a fact (like who is the leader) for it to be considered true", "Only the leader's view counts", "The fastest node's view counts"], correct: 1, explanation: "A single node can't trust its own judgment in a distributed system — it might be isolated or delusional. A fact is only 'true' if a majority of nodes agree on it, ensuring that even if some nodes are faulty, the system makes correct decisions." },
+      { question: "What are Byzantine faults?", options: ["Faults caused by network partitions", "Faults where nodes actively lie, send corrupted data, or behave maliciously", "Faults caused by clock skew", "Any fault in a distributed system"], correct: 1, explanation: "Byzantine faults are the worst-case scenario: nodes that don't just crash but actively misbehave — sending conflicting messages to different nodes, corrupting data, or being controlled by an attacker. Most datacenter systems don't protect against them." },
+      { question: "Which system model is most realistic for practical distributed systems?", options: ["Synchronous model with crash-stop faults", "Partially synchronous model with crash-recovery faults", "Asynchronous model with Byzantine faults", "Synchronous model with Byzantine faults"], correct: 1, explanation: "Most real systems are partially synchronous (usually well-behaved timing, occasionally unbounded delays) with crash-recovery behavior (nodes may crash and restart). This model is realistic enough to be useful while allowing meaningful correctness proofs." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

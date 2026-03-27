@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch6: Partitioning — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch6">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 6</div>
+      <h1>Partitioning</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~22 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Distributed Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Partitioning of Key-Value Data</h2></div>
+        <p>The goal of partitioning (also called sharding) is to spread data and query load evenly across multiple nodes. If the partitioning is unfair -- some partitions have much more data or receive more queries than others -- it is called <strong>skewed</strong>, and the overloaded partition is called a <strong>hot spot</strong>.</p>
+        <p><strong>Key range partitioning:</strong> Assign a continuous range of keys to each partition, like volumes of an encyclopedia (A-D, E-H, ...). This preserves key ordering, enabling efficient range queries. The downside: if keys are accessed sequentially (e.g., timestamp-prefixed keys), all writes hit the same partition, creating a hot spot. Partition boundaries must be chosen carefully -- often adaptively based on the data distribution.</p>
+        <p><strong>Hash partitioning:</strong> Apply a hash function to each key and assign hash ranges to partitions. A good hash function distributes keys uniformly, eliminating hot spots from sequential keys. But you lose the ability to do efficient range queries -- adjacent keys are scattered across partitions. Some systems (like Cassandra) allow <em>compound primary keys</em> where the first part is hashed (for distribution) and the rest is range-sorted within the partition.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-th-large"></i> Key-Range vs Hash Partitioning</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <!-- Key Range -->
+            <text x="155" y="25" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Key Range Partitioning</text>
+            <rect x="10" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
+            <text x="55" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 1</text>
+            <text x="55" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">A - F</text>
+
+            <rect x="110" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
+            <text x="155" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 2</text>
+            <text x="155" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">G - N</text>
+
+            <rect x="210" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
+            <text x="255" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 3</text>
+            <text x="255" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">O - Z</text>
+
+            <rect x="30" y="110" width="110" height="28" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="85" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)">Range queries: efficient</text>
+            <rect x="175" y="110" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.1"/>
+            <text x="230" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">Hot spots: possible</text>
+
+            <!-- Hash -->
+            <text x="465" y="25" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">Hash Partitioning</text>
+            <rect x="320" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="365" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 1</text>
+            <text x="365" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 0-33%</text>
+
+            <rect x="420" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="465" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 2</text>
+            <text x="465" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 34-66%</text>
+
+            <rect x="520" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="565" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 3</text>
+            <text x="565" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 67-100%</text>
+
+            <rect x="340" y="110" width="110" height="28" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="395" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)">Even distribution</text>
+            <rect x="485" y="110" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.1"/>
+            <text x="540" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">No range queries</text>
+
+            <!-- Comparison bar -->
+            <rect x="60" y="170" width="500" height="50" rx="10" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="310" y="192" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">Trade-off: Range queries vs Even load distribution</text>
+            <text x="310" y="208" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Compound keys (Cassandra) combine both: hash first part, range-sort the rest</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Skewed Workloads and Hot Spots</h2></div>
+        <p>Even with hash partitioning, hot spots can still occur. Imagine a social media platform where a celebrity with millions of followers posts an update: all reads and writes for that single key (the post ID or user ID) will hammer one partition. Hashing distributes different keys evenly, but it cannot help when a single key receives disproportionate traffic.</p>
+        <p>Today, most data systems cannot automatically compensate for a single highly skewed key. It is the <strong>application's responsibility</strong> to handle this. A common technique: append a random number (e.g., two-digit suffix, giving 100 variants) to hot keys, spreading writes across 100 partitions. But reads now need to query all 100 keys and merge results. This trade-off only makes sense for the small number of keys known to be hot -- applying it to all keys would add unnecessary overhead.</p>
+        <p>Future systems may detect and compensate for skew automatically, but for now it remains an application-level concern that requires explicit engineering.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Partitioning and Secondary Indexes</h2></div>
+        <p>Key-value data is straightforward to partition -- just map the key to a partition. But most applications also need <strong>secondary indexes</strong> (e.g., "find all cars where color = red"), and secondary indexes don't map neatly to partitions. Two approaches exist:</p>
+        <p><strong>Document-partitioned (local) indexes:</strong> Each partition maintains its own secondary index covering only the documents in that partition. Writing is simple (update one partition's index), but reads require <strong>scatter/gather</strong> -- querying all partitions and merging results. This is expensive and prone to tail latency amplification.</p>
+        <p><strong>Term-partitioned (global) indexes:</strong> The secondary index is itself partitioned -- e.g., colors a-m on partition 1, n-z on partition 2. Reads are efficient (query one partition of the index), but writes may need to update indexes across multiple partitions. These cross-partition writes are often implemented asynchronously.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-search"></i> Local vs Global Secondary Indexes</div>
+          <svg viewBox="0 0 620 260" width="100%" height="260">
+            <defs><marker id="arr6a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Local -->
+            <text x="155" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Document-Partitioned (Local)</text>
+            <rect x="20" y="35" width="120" height="90" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
+            <text x="80" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 1</text>
+            <text x="80" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Data + Local Index</text>
+            <rect x="35" y="80" width="90" height="18" rx="4" fill="var(--accent)" opacity="0.15"/>
+            <text x="80" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -> doc3</text>
+
+            <rect x="160" y="35" width="120" height="90" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
+            <text x="220" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 2</text>
+            <text x="220" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Data + Local Index</text>
+            <rect x="175" y="80" width="90" height="18" rx="4" fill="var(--accent)" opacity="0.15"/>
+            <text x="220" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -> doc7</text>
+
+            <text x="155" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read "color:red" = scatter to ALL partitions</text>
+
+            <!-- Global -->
+            <text x="465" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Term-Partitioned (Global)</text>
+            <rect x="340" y="35" width="120" height="90" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="400" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Index Partition 1</text>
+            <rect x="350" y="65" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="400" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">color:a-m</text>
+            <rect x="350" y="88" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="400" y="101" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">blue,green,black</text>
+
+            <rect x="480" y="35" width="120" height="90" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="540" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Index Partition 2</text>
+            <rect x="490" y="65" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="540" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">color:n-z</text>
+            <rect x="490" y="88" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="540" y="101" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">red,white,yellow</text>
+
+            <text x="465" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read "color:red" = query ONE index partition</text>
+
+            <!-- Comparison -->
+            <rect x="60" y="175" width="240" height="65" rx="8" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="180" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Local Index</text>
+            <text x="180" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Write: fast (one partition)</text>
+            <text x="180" y="230" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read: slow (scatter/gather)</text>
+
+            <rect x="320" y="175" width="240" height="65" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="440" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Global Index</text>
+            <text x="440" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Write: slow (cross-partition)</text>
+            <text x="440" y="230" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read: fast (one partition)</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Rebalancing Partitions</h2></div>
+        <p>Over time, data grows, query throughput changes, or machines fail. You need to move data between nodes -- this is <strong>rebalancing</strong>. The key requirement: after rebalancing, load should be shared fairly, the database must continue accepting reads and writes during the process, and no more data than necessary should be moved.</p>
+        <p><strong>Don't use hash mod N:</strong> If you assign keys by <code>hash(key) mod N</code>, then adding or removing a node (changing N) reshuffles most keys. This is catastrophically expensive.</p>
+        <p><strong>Fixed number of partitions:</strong> Create many more partitions than nodes at the start (e.g., 1000 partitions for 10 nodes). When a node is added, it steals a few partitions from existing nodes. The partition count doesn't change -- only the assignment of partitions to nodes. Used by Riak, Elasticsearch, Couchbase, Voldemort.</p>
+        <p><strong>Dynamic partitioning:</strong> Partitions split when they grow too large and merge when they shrink. HBase and RethinkDB use this approach. It adapts well to data volume but starts with a single partition (pre-splitting can help).</p>
+        <p><strong>Proportional to nodes:</strong> Keep a fixed number of partitions per node. When a new node joins, it randomly splits existing partitions and takes half. Used by Cassandra.</p>
+        <div class="insight-box">
+          <strong>Automatic vs manual rebalancing:</strong> Fully automatic rebalancing is convenient but can be dangerous -- it can overload the network or cascade failures if combined with automatic failure detection. Many production systems use a hybrid: the system suggests partition moves, but a human confirms them.
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Request Routing</h2></div>
+        <p>When a client wants to read or write a key, how does it know which node to contact? This is an instance of a general problem called <strong>service discovery</strong>. Three common approaches:</p>
+        <p><strong>1. Contact any node (gossip protocol):</strong> The client connects to any node. If that node owns the partition, it handles the request; otherwise, it forwards to the correct node. Nodes use a gossip protocol to propagate partition-to-node mapping. Used by Cassandra and Riak. No external dependency, but adds complexity to every node.</p>
+        <p><strong>2. Routing tier:</strong> All requests go through a partition-aware routing layer (load balancer) that determines the correct node. The routing tier uses a coordination service like <strong>ZooKeeper</strong> to track partition assignments. Used by HBase, SolrCloud, and Kafka. Clean separation of concerns but adds a network hop.</p>
+        <p><strong>3. Client-aware:</strong> The client itself knows the partition-to-node mapping and connects directly to the correct node. The client subscribes to ZooKeeper to stay updated. Most efficient but requires smarter clients.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-route"></i> Three Request Routing Approaches</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr6b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Approach 1: Gossip -->
+            <rect x="10" y="15" width="190" height="190" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="105" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">1. Any Node (Gossip)</text>
+            <rect x="55" y="55" width="45" height="25" rx="6" fill="var(--accent)" opacity="0.7"/>
+            <text x="78" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="white">Client</text>
+            <rect x="35" y="105" width="40" height="25" rx="5" fill="var(--accent)" opacity="0.4"/>
+            <text x="55" y="122" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">N1</text>
+            <rect x="85" y="105" width="40" height="25" rx="5" fill="var(--accent)" opacity="0.4"/>
+            <text x="105" y="122" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">N2</text>
+            <rect x="135" y="105" width="40" height="25" rx="5" fill="var(--accent)" opacity="0.4"/>
+            <text x="155" y="122" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">N3</text>
+            <line x1="78" y1="80" x2="55" y2="103" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr6b)"/>
+            <line x1="55" y1="115" x2="83" y2="115" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="125" y1="115" x2="133" y2="115" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="105" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Nodes gossip partition map</text>
+            <text x="105" y="168" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Forward if needed</text>
+
+            <!-- Approach 2: Routing tier -->
+            <rect x="215" y="15" width="190" height="190" rx="12" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="310" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">2. Routing Tier (ZK)</text>
+            <rect x="265" y="55" width="45" height="25" rx="6" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="288" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="white">Client</text>
+            <rect x="268" y="100" width="80" height="25" rx="5" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="308" y="117" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">Router</text>
+            <rect x="240" y="145" width="35" height="22" rx="4" fill="var(--accent-2)" opacity="0.3"/>
+            <rect x="285" y="145" width="35" height="22" rx="4" fill="var(--accent-2)" opacity="0.3"/>
+            <rect x="330" y="145" width="35" height="22" rx="4" fill="var(--accent-2)" opacity="0.3"/>
+            <text x="258" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N1</text>
+            <text x="303" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N2</text>
+            <text x="348" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N3</text>
+            <line x1="288" y1="80" x2="300" y2="98" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr6b)"/>
+            <line x1="308" y1="125" x2="303" y2="143" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr6b)"/>
+            <text x="370" y="117" text-anchor="start" font-family="Inter" font-size="7" fill="var(--text-muted)">ZK</text>
+
+            <!-- Approach 3: Client-aware -->
+            <rect x="420" y="15" width="190" height="190" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="515" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">3. Client-Aware</text>
+            <rect x="468" y="55" width="55" height="25" rx="6" fill="var(--accent-3)" opacity="0.7"/>
+            <text x="496" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="white">Smart Client</text>
+            <rect x="540" y="55" width="50" height="25" rx="5" fill="var(--accent-3)" opacity="0.3"/>
+            <text x="565" y="72" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">ZK</text>
+            <rect x="440" y="120" width="35" height="22" rx="4" fill="var(--accent-3)" opacity="0.3"/>
+            <rect x="490" y="120" width="35" height="22" rx="4" fill="var(--accent-3)" opacity="0.3"/>
+            <rect x="540" y="120" width="35" height="22" rx="4" fill="var(--accent-3)" opacity="0.3"/>
+            <text x="458" y="135" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N1</text>
+            <text x="508" y="135" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N2</text>
+            <text x="558" y="135" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text)">N3</text>
+            <line x1="496" y1="80" x2="508" y2="118" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr6b)"/>
+            <line x1="523" y1="65" x2="538" y2="65" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="515" y="168" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Client knows the map;</text>
+            <text x="515" y="180" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">connects directly</text>
+          </svg>
+        </div>
+
+        <p><strong>Parallel query execution:</strong> Massively parallel processing (MPP) databases like Teradata, Vertica, and Presto support complex analytical queries that touch many partitions. The query optimizer breaks the query into execution stages, and each stage runs in parallel across partitions before results are combined.</p>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 6 Summary</h3>
+        <ul>
+          <li><strong>Partitioning goal:</strong> Spread data and query load evenly across nodes to avoid skew and hot spots.</li>
+          <li><strong>Key range partitioning:</strong> Preserves sort order for range queries, but risks hot spots from sequential access patterns.</li>
+          <li><strong>Hash partitioning:</strong> Distributes keys evenly, eliminates sequential hot spots, but sacrifices range query efficiency.</li>
+          <li><strong>Hot spots from popular keys</strong> cannot be solved by hashing -- application must split hot keys (e.g., random suffix).</li>
+          <li><strong>Local (document) indexes:</strong> Each partition has its own index. Fast writes, expensive scatter/gather reads.</li>
+          <li><strong>Global (term) indexes:</strong> Index is itself partitioned. Efficient reads, but writes must update multiple partitions.</li>
+          <li><strong>Don't use hash mod N</strong> for rebalancing -- adding nodes reshuffles nearly everything.</li>
+          <li><strong>Rebalancing strategies:</strong> Fixed partition count, dynamic split/merge, or proportional to nodes.</li>
+          <li><strong>Request routing:</strong> Gossip (any node), routing tier (ZooKeeper), or client-aware (smart clients).</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Partition (Shard)</dt><dd style="color:var(--text-muted); margin:0;">A subset of the total dataset, stored on one node.</dd>
+            <dt style="font-weight:700; color:var(--text);">Hot Spot</dt><dd style="color:var(--text-muted); margin:0;">A partition receiving disproportionately high load.</dd>
+            <dt style="font-weight:700; color:var(--text);">Scatter/Gather</dt><dd style="color:var(--text-muted); margin:0;">Querying all partitions and merging results -- expensive for secondary index reads.</dd>
+            <dt style="font-weight:700; color:var(--text);">Consistent Hashing</dt><dd style="color:var(--text-muted); margin:0;">A hash-based approach that minimizes data movement when partitions change.</dd>
+            <dt style="font-weight:700; color:var(--text);">Rebalancing</dt><dd style="color:var(--text-muted); margin:0;">Moving data between nodes to maintain even load distribution.</dd>
+            <dt style="font-weight:700; color:var(--text);">ZooKeeper</dt><dd style="color:var(--text-muted); margin:0;">Coordination service that tracks partition-to-node assignments for routing.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh6" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh6 .mm-node { animation: mmFadeInCH6 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH6 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh6 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh6 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh6 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh6 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="65" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Partitioning</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Key Range</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Hash Partitioning</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Hot Spots</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">Secondary Indexes</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Rebalancing</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="65" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">Request Routing</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">MPP Queries</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch5.html"><i class="fas fa-arrow-left"></i> Ch 5</a>
+      <a href="ch7.html" class="nav-next">Ch 7: Transactions <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "What is the main goal of partitioning?", options: ["Reduce storage costs", "Spread data and query load evenly across multiple nodes", "Improve data durability", "Simplify application code"], correct: 1, explanation: "Partitioning aims to distribute both data and the query load across nodes so no single node becomes a bottleneck." },
+      { question: "What is the key advantage of key range partitioning over hash partitioning?", options: ["Better even distribution", "Supports efficient range queries because keys are sorted", "Eliminates hot spots", "Uses less disk space"], correct: 1, explanation: "Key range partitioning keeps keys in sorted order within each partition, making range scans efficient. Hash partitioning scatters adjacent keys across partitions." },
+      { question: "Why can't hash partitioning eliminate all hot spots?", options: ["Hash functions are too slow", "If a single key is extremely popular, all its reads/writes still go to one partition", "Hash partitioning doesn't work with strings", "It requires too many partitions"], correct: 1, explanation: "Hashing distributes different keys evenly, but a single very popular key (e.g., a celebrity's user ID) will still concentrate all traffic on one partition." },
+      { question: "How can an application mitigate hot spots from a single popular key?", options: ["Use a bigger hash function", "Append a random suffix to split the key across multiple partitions", "Move the hot key to a faster server", "Disable caching for that key"], correct: 1, explanation: "Adding a random suffix (e.g., two digits giving 100 variants) spreads writes across 100 partitions. Reads must then query all variants and merge -- a trade-off worth making only for known hot keys." },
+      { question: "What is 'scatter/gather' in the context of secondary indexes?", options: ["A method of rebalancing partitions", "Querying all partitions for a secondary index lookup and merging results", "Distributing writes across all nodes", "A type of hash function"], correct: 1, explanation: "With document-partitioned (local) secondary indexes, a query like 'find all red cars' must be sent to every partition and results merged -- this is scatter/gather." },
+      { question: "Why should you NOT use 'hash mod N' for assigning keys to partitions?", options: ["It's too slow to compute", "Adding or removing a node changes N, reshuffling most keys across all nodes", "It doesn't distribute keys evenly", "It requires sorted keys"], correct: 1, explanation: "When N changes (nodes added/removed), hash(key) mod N changes for most keys, requiring massive data movement. Fixed partition count or consistent hashing avoids this." },
+      { question: "What is the 'fixed number of partitions' rebalancing strategy?", options: ["Create exactly one partition per node", "Create many more partitions than nodes upfront; reassign partitions to nodes as the cluster changes", "Dynamically split and merge partitions", "Use hash mod N"], correct: 1, explanation: "You create far more partitions than nodes (e.g., 1000 partitions for 10 nodes). When nodes change, whole partitions move between nodes without splitting." },
+      { question: "In the routing tier approach to request routing, what role does ZooKeeper play?", options: ["It stores the actual data", "It tracks partition-to-node assignments so the router knows where to send requests", "It executes queries on behalf of clients", "It hashes the keys"], correct: 1, explanation: "ZooKeeper is a coordination service that maintains the authoritative mapping of which partitions live on which nodes. The routing tier consults this mapping to route requests." },
+      { question: "What is the trade-off between local (document-partitioned) and global (term-partitioned) secondary indexes?", options: ["Local is faster for everything", "Local: fast writes, slow reads (scatter/gather). Global: slow writes (cross-partition), fast reads", "Global is faster for everything", "They have identical performance characteristics"], correct: 1, explanation: "Local indexes are fast to update (only one partition) but require scatter/gather for reads. Global indexes enable single-partition reads but require cross-partition writes." },
+      { question: "What is a 'shard' in database terminology?", options: ["A type of index", "Another name for a partition -- a subset of data stored on one node", "A backup copy of data", "A type of query"], correct: 1, explanation: "Shard is the term used in MongoDB, Elasticsearch, and others for what this chapter calls a partition -- a piece of the total dataset assigned to a specific node." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

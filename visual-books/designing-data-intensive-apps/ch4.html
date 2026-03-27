@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch4: Encoding and Evolution — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch4">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 4</div>
+      <h1>Encoding and Evolution</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~22 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Foundations</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Formats for Encoding Data</h2></div>
+        <p>Programs work with data in at least two representations: <strong>in memory</strong> (objects, structs, arrays, hash tables -- optimized for CPU access) and <strong>on disk or network</strong> (self-contained sequences of bytes). The translation from in-memory to bytes is called <strong>encoding</strong> (serialization, marshalling); the reverse is <strong>decoding</strong> (deserialization, unmarshalling).</p>
+        <p><strong>Language-specific formats</strong> (Java's <code>java.io.Serializable</code>, Python's <code>pickle</code>, Ruby's <code>Marshal</code>): Convenient but deeply flawed. They tie you to one language, often have <strong>security vulnerabilities</strong> (deserializing untrusted data can execute arbitrary code), poor versioning/forward-backward compatibility, and often poor performance.</p>
+        <p><strong>JSON and XML:</strong> Widely supported, human-readable, language-independent. But they have problems. JSON doesn't distinguish integers from floating-point numbers (everything is a "number"). JSON doesn't support binary strings (workaround: Base64, which increases size by 33%). XML is verbose. Neither has a schema mechanism that's widely adopted or enforced.</p>
+        <p><strong>Binary JSON variants</strong> (MessagePack, BSON, BJSON, UBJSON, BISON): Encode JSON in binary for compactness and faster parsing. But the space savings are modest -- a 81-byte JSON document might become 66 bytes in MessagePack. The data model is still JSON, so you still have the number ambiguity and no schema.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Thrift, Protocol Buffers, and Avro</h2></div>
+        <p>These are <strong>schema-based binary encoding</strong> formats. You define a schema with field names, types, and numeric <strong>field tags</strong>. The encoded data uses field tags instead of field names, making it more compact.</p>
+        <p><strong>Apache Thrift</strong> (Facebook) has two encodings: BinaryProtocol (field tag + type + length + value) and CompactProtocol (packs field tag and type into a single byte, uses variable-length integers). <strong>Protocol Buffers (Protobuf)</strong> (Google) is similar to Thrift's CompactProtocol -- very efficient, variable-length integers, packed into minimal bytes.</p>
+        <p>Both Thrift and Protobuf use <strong>field tags</strong> (numbers) as the identity of each field. The field name is only for human readability in the schema file -- it never appears in the encoded data. This is critical for schema evolution: you can change a field's name freely, but you must never change its tag number.</p>
+        <p><strong>Apache Avro</strong> takes a different approach: <em>no field tags at all</em>. The encoded data is just values concatenated together. To decode it, you need both the <strong>writer's schema</strong> (the schema used when encoding) and the <strong>reader's schema</strong> (the schema the reading code expects). Avro resolves the two schemas at read time, matching fields by name. This makes Avro the most compact, and the writer's schema can be included once per file (for Hadoop) or negotiated per connection (for RPC).</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-compress-alt"></i> Encoding Comparison: Same Record</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <!-- JSON -->
+            <rect x="10" y="10" width="600" height="55" rx="10" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="25" y="30" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">JSON</text>
+            <text x="25" y="50" font-family="JetBrains Mono" font-size="9" fill="var(--text)">{"userName":"Martin","favoriteNumber":1337,"interests":["daydreaming","hacking"]}</text>
+            <text x="570" y="50" text-anchor="end" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">81 bytes</text>
+
+            <!-- Protobuf -->
+            <rect x="10" y="80" width="600" height="55" rx="10" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="25" y="100" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Protocol Buffers</text>
+            <rect x="25" y="110" width="22" height="16" rx="3" fill="var(--accent-2)" opacity="0.3"/>
+            <text x="36" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">tag1</text>
+            <rect x="50" y="110" width="55" height="16" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="77" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">Martin</text>
+            <rect x="108" y="110" width="22" height="16" rx="3" fill="var(--accent-2)" opacity="0.3"/>
+            <text x="119" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">tag2</text>
+            <rect x="133" y="110" width="30" height="16" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="148" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">1337</text>
+            <rect x="166" y="110" width="22" height="16" rx="3" fill="var(--accent-2)" opacity="0.3"/>
+            <text x="177" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">tag3</text>
+            <rect x="191" y="110" width="85" height="16" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="233" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">daydreaming</text>
+            <rect x="279" y="110" width="22" height="16" rx="3" fill="var(--accent-2)" opacity="0.3"/>
+            <text x="290" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">tag3</text>
+            <rect x="304" y="110" width="58" height="16" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="333" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">hacking</text>
+            <text x="570" y="122" text-anchor="end" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">33 bytes</text>
+
+            <!-- Avro -->
+            <rect x="10" y="150" width="600" height="55" rx="10" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="25" y="170" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Avro</text>
+            <rect x="25" y="180" width="8" height="16" rx="3" fill="var(--accent-3)" opacity="0.3"/>
+            <text x="29" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">len</text>
+            <rect x="36" y="180" width="55" height="16" rx="3" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="63" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">Martin</text>
+            <rect x="94" y="180" width="30" height="16" rx="3" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="109" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">1337</text>
+            <rect x="127" y="180" width="85" height="16" rx="3" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="169" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">daydreaming</text>
+            <rect x="215" y="180" width="58" height="16" rx="3" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="244" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">hacking</text>
+            <rect x="276" y="180" width="8" height="16" rx="3" fill="var(--accent-3)" opacity="0.3"/>
+            <text x="280" y="192" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text)">0</text>
+            <text x="570" y="192" text-anchor="end" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">32 bytes</text>
+
+            <!-- Size comparison -->
+            <text x="310" y="232" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text-muted)">No field tags in Avro -- just values in schema order. Most compact.</text>
+          </svg>
+          <p class="viz-caption">JSON: 81 bytes (field names as strings). Protobuf: 33 bytes (numeric field tags). Avro: 32 bytes (no tags at all, relies on schema resolution).</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Schema Evolution</h2></div>
+        <p>Schemas inevitably change over time. The key question is whether old and new code can coexist -- typically during rolling upgrades where not all servers are updated simultaneously.</p>
+        <p><strong>Forward compatibility:</strong> Old code can read data written by new code. When old code encounters an unknown field tag, it simply skips it (the type annotation tells it how many bytes to skip). This works automatically in Thrift and Protobuf.</p>
+        <p><strong>Backward compatibility:</strong> New code can read data written by old code. When new code expects a field that's missing from old data, it uses the <strong>default value</strong> defined in the schema. This means you can add new fields freely, as long as they have defaults (or are optional). You must never add a new <em>required</em> field -- old data won't have it, breaking backward compatibility.</p>
+        <p><strong>Rules for safe evolution:</strong> Never remove a required field. Never reuse a field tag number (even after removing the field). Only add optional fields with default values. In Protobuf/Thrift, removing a field means its tag can never be used again.</p>
+        <p><strong>Avro's approach</strong> is different: the reader's schema and writer's schema don't need to be identical -- they just need to be <em>compatible</em>. Avro resolves differences by matching fields by name. If the writer has a field the reader doesn't expect, it's ignored. If the reader expects a field the writer didn't include, the default value is used. This makes Avro particularly friendly for schema evolution in data pipelines.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Modes of Dataflow</h2></div>
+        <p>Data gets encoded and decoded in three main contexts:</p>
+        <p><strong>Through databases:</strong> The writing process encodes data; the reading process decodes it. The reader might be a different version of the application (or even a different application entirely). Data in a database can outlive the code that wrote it by many years -- you might decode data that was written 5 years ago by long-obsolete code. Forward compatibility is crucial: an older version of the code might read and re-write a record, and must not destroy unknown fields added by newer code.</p>
+        <p><strong>Through services (REST and RPC):</strong> A client encodes a request, the server decodes it, processes it, encodes a response, and the client decodes the response. <strong>REST</strong> uses HTTP with JSON (or other formats), is widely adopted, and works well for public APIs. <strong>RPC</strong> (Remote Procedure Call) tries to make network calls look like local function calls -- but this is fundamentally flawed. Network calls are unpredictable (timeouts, retries, variable latency), not idempotent by default, and involve serialization overhead. Modern RPC frameworks (gRPC with Protobuf, Finagle with Thrift) acknowledge these differences. Service compatibility requires maintaining old and new API versions simultaneously during rolling upgrades.</p>
+        <p><strong>Through asynchronous messaging:</strong> <strong>Message brokers</strong> (RabbitMQ, Kafka) act as intermediaries. The sender encodes a message, the broker stores it temporarily, and the recipient decodes it. Advantages: decoupling (sender doesn't need to know who receives the message), buffering (broker handles backpressure), and re-delivery on failure. The <strong>actor model</strong> (Akka, Erlang OTP) is a programming model where actors communicate exclusively by sending asynchronous messages, with each actor processing one message at a time. Distributed actor frameworks (across machines) combine message brokering with the actor model.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Three Modes of Dataflow</div>
+          <svg viewBox="0 0 620 210" width="100%" height="210">
+            <defs><marker id="arr4a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Through Database -->
+            <rect x="10" y="10" width="190" height="190" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="105" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Through Databases</text>
+
+            <rect x="35" y="55" width="60" height="30" rx="6" fill="var(--accent)" opacity="0.8"/>
+            <text x="65" y="74" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Writer</text>
+
+            <rect x="35" y="140" width="60" height="30" rx="6" fill="var(--accent)" opacity="0.6"/>
+            <text x="65" y="159" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Reader</text>
+
+            <rect x="120" y="85" width="60" height="40" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="150" y="100" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">DB</text>
+            <text x="150" y="115" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">(years)</text>
+
+            <line x1="65" y1="85" x2="118" y2="97" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+            <line x1="118" y1="112" x2="65" y2="138" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+
+            <!-- Through Services -->
+            <rect x="215" y="10" width="190" height="190" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="310" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Through Services</text>
+
+            <rect x="235" y="75" width="60" height="30" rx="6" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="265" y="94" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Client</text>
+
+            <rect x="340" y="75" width="60" height="30" rx="6" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="370" y="94" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Server</text>
+
+            <line x1="295" y1="85" x2="338" y2="85" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+            <line x1="338" y1="100" x2="295" y2="100" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+
+            <text x="317" y="75" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-2)">request</text>
+            <text x="317" y="118" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-2)">response</text>
+
+            <text x="310" y="150" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">REST / RPC</text>
+            <text x="310" y="165" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">(gRPC, Thrift)</text>
+
+            <!-- Through Messaging -->
+            <rect x="420" y="10" width="190" height="190" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="515" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Async Messaging</text>
+
+            <rect x="440" y="60" width="60" height="30" rx="6" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="470" y="79" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Sender</text>
+
+            <rect x="473" y="105" width="80" height="35" rx="8" fill="var(--surface)" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="513" y="120" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">Broker</text>
+            <text x="513" y="133" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">(buffer)</text>
+
+            <rect x="440" y="155" width="60" height="30" rx="6" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="470" y="174" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Receiver</text>
+            <rect x="530" y="155" width="60" height="30" rx="6" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="560" y="174" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Receiver</text>
+
+            <line x1="470" y1="90" x2="500" y2="103" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+            <line x1="495" y1="140" x2="470" y2="153" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+            <line x1="525" y1="140" x2="555" y2="153" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr4a)"/>
+          </svg>
+          <p class="viz-caption">Data flows through databases (long-lived), through services (request-response), or through message brokers (asynchronous, decoupled).</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>The Merits of Schemas</h2></div>
+        <p>Binary encoding formats with schemas (Protobuf, Thrift, Avro) have several significant advantages over text-based formats like JSON:</p>
+        <p><strong>Compactness:</strong> They can be much more compact than JSON since field names are omitted from the encoded data (replaced by field tags or schema-order). Avro in particular is extremely compact.</p>
+        <p><strong>Schema as documentation:</strong> The schema is always up-to-date because it's required for encoding and decoding. Unlike documentation or comments, it can't become stale -- if the schema doesn't match the data, encoding/decoding fails.</p>
+        <p><strong>Compatibility checking:</strong> You can check forward and backward compatibility of schema changes <em>before</em> deploying. The schema registry can reject incompatible changes automatically, preventing data corruption or application crashes.</p>
+        <p><strong>Code generation:</strong> For statically typed languages (Java, C++, Go), schemas enable generating classes or structs with type-safe accessors. This gives you compile-time type checking for the data structures, catching errors early.</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> Schema evolution enables rolling upgrades without downtime. By ensuring forward and backward compatibility in your encoding format, you can deploy new code gradually -- some servers run the new version while others still run the old version. This is essential for large-scale systems where you can't update everything simultaneously.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 4 Summary</h3>
+        <ul>
+          <li><strong>Encoding</strong> translates in-memory data structures to bytes for storage/network. Language-specific formats (pickle, Java serialization) are dangerous and inflexible.</li>
+          <li><strong>JSON/XML:</strong> Human-readable and widely supported but verbose, ambiguous (number types), and lack enforced schemas.</li>
+          <li><strong>Thrift & Protobuf:</strong> Schema-based binary encoding using numeric field tags. Compact and efficient. Field tags are critical for evolution.</li>
+          <li><strong>Avro:</strong> No field tags -- encodes values in schema order. Reader and writer schemas are resolved at read time. Most compact.</li>
+          <li><strong>Forward compatibility:</strong> Old code can read new data (skips unknown fields). <strong>Backward compatibility:</strong> New code can read old data (uses defaults for missing fields).</li>
+          <li><strong>Rules:</strong> Never remove required fields, never reuse field tags, only add optional fields with defaults.</li>
+          <li><strong>Dataflow through databases:</strong> Data may outlive code by years. Both forward and backward compatibility needed.</li>
+          <li><strong>Dataflow through services:</strong> REST (simple, HTTP-based) and RPC (gRPC, Thrift -- tries to make network look local, but shouldn't hide the differences).</li>
+          <li><strong>Dataflow through messaging:</strong> Brokers (Kafka, RabbitMQ) decouple sender and receiver. Actor model (Akka, Erlang) combines messaging with computation.</li>
+          <li><strong>Schemas</strong> provide compactness, documentation, compatibility checks, and code generation.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Encoding / Decoding</dt><dd style="color:var(--text-muted); margin:0;">Translating between in-memory objects and byte sequences (serialization / deserialization).</dd>
+            <dt style="font-weight:700; color:var(--text);">Field Tag</dt><dd style="color:var(--text-muted); margin:0;">A numeric identifier for a schema field, used instead of the field name in binary encoding.</dd>
+            <dt style="font-weight:700; color:var(--text);">Forward Compatibility</dt><dd style="color:var(--text-muted); margin:0;">Old code can read data written by new code (unknown fields are ignored).</dd>
+            <dt style="font-weight:700; color:var(--text);">Backward Compatibility</dt><dd style="color:var(--text-muted); margin:0;">New code can read data written by old code (missing fields use defaults).</dd>
+            <dt style="font-weight:700; color:var(--text);">Writer/Reader Schema</dt><dd style="color:var(--text-muted); margin:0;">Avro concept: the schema used at write time vs the schema the reading application expects.</dd>
+            <dt style="font-weight:700; color:var(--text);">RPC</dt><dd style="color:var(--text-muted); margin:0;">Remote Procedure Call: making a network request look like a local function call (with caveats).</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh4" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh4 .mm-node { animation: mmFadeInCH4 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH4 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh4 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh4 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh4 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh4 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="120" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="580" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="310"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="310"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="380"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="72" ry="30" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Encoding &</text>
+            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Evolution</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="120" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="120" y="74" text-anchor="middle">JSON / XML</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Thrift / Protobuf</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="580" cy="70" rx="45" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="580" y="74" text-anchor="middle">Avro</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="310" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="314" text-anchor="middle">Schema Evolution</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="310" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="314" text-anchor="middle">Modes of Dataflow</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="380" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="384" text-anchor="middle">REST / RPC</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch3.html"><i class="fas fa-arrow-left"></i> Ch 3</a>
+      <a href="ch5.html" class="nav-next">Ch 5: Replication <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "Why are language-specific serialization formats (like Java Serialization or Python pickle) problematic?", options: ["They are too fast", "They tie you to one language, have security vulnerabilities, and poor versioning support", "They produce the most compact output", "They are the industry standard"], correct: 1, explanation: "Language-specific formats lock you into one language, can execute arbitrary code during deserialization (security risk), and typically have poor support for schema evolution and versioning." },
+      { question: "What is the main limitation of JSON as an encoding format?", options: ["It's not human-readable", "It doesn't distinguish integers from floats, doesn't support binary data, and is verbose", "It can only encode strings", "It requires a schema"], correct: 1, explanation: "JSON has number ambiguity (no int vs float distinction), no native binary string support (must use Base64), and is verbose compared to binary formats." },
+      { question: "What are 'field tags' in Thrift and Protocol Buffers?", options: ["Human-readable labels", "Numeric identifiers for fields that appear in the encoded data instead of field names", "Database column indexes", "Encryption keys"], correct: 1, explanation: "Field tags are numbers assigned to each field in the schema. The encoded data uses these numbers instead of field names, making it compact. Tags must never change or be reused." },
+      { question: "How does Avro differ from Protobuf in its encoding approach?", options: ["Avro uses larger field tags", "Avro has no field tags at all -- it encodes values in schema order and resolves writer/reader schemas at read time", "Avro only supports strings", "Avro is text-based like JSON"], correct: 1, explanation: "Avro doesn't use field tags. Values are encoded in the order defined by the writer's schema. At read time, the reader's schema is compared to the writer's schema and fields are matched by name." },
+      { question: "What does 'forward compatibility' mean for data encoding?", options: ["New code can read old data", "Old code can read data written by new code", "Data can only move forward in time", "All versions must be identical"], correct: 1, explanation: "Forward compatibility means old code can read data written by newer code. Unknown fields are simply skipped. This is essential during rolling upgrades when old and new code coexist." },
+      { question: "Why should you never reuse a field tag number in Protobuf/Thrift?", options: ["It causes syntax errors", "Old data encoded with that tag would be interpreted as the new field type, causing data corruption", "It's not technically possible", "It slows down encoding"], correct: 1, explanation: "If you remove field X (tag 3) and later add field Y (also tag 3), old data with field X would be decoded as field Y -- leading to corrupted or misinterpreted data." },
+      { question: "Why is sending data through a database a unique challenge for encoding?", options: ["Databases are slow", "Data may outlive the code that wrote it by years, requiring both forward and backward compatibility", "Databases only support JSON", "Database data never changes"], correct: 1, explanation: "Data in a database can be written by code that was deployed years ago and may be read by code deployed years in the future. Both directions of compatibility are needed." },
+      { question: "What is the fundamental flaw with RPC (Remote Procedure Call)?", options: ["It's too slow", "It tries to make network calls look like local function calls, hiding important differences (timeouts, retries, latency, idempotency)", "It can only use JSON", "It requires the same programming language on both sides"], correct: 1, explanation: "Network calls are fundamentally different from local calls: they can fail in unpredictable ways, have variable latency, require serialization, and may need retry/idempotency logic. Hiding these differences leads to unreliable systems." },
+      { question: "What advantage does a message broker provide over direct service-to-service calls?", options: ["It's always faster", "It decouples sender from receiver, provides buffering during load spikes, and enables automatic re-delivery on failure", "It eliminates the need for encoding", "It only works within one datacenter"], correct: 1, explanation: "Message brokers (Kafka, RabbitMQ) decouple producers and consumers, buffer messages when consumers are slow, and can redeliver messages if processing fails -- improving reliability and flexibility." },
+      { question: "What is a key advantage of schema-based binary encoding over JSON?", options: ["It's human-readable", "Schemas provide compactness, documentation that can't go stale, compatibility checking, and type-safe code generation", "It works without any schema definition", "It's supported by all programming languages natively"], correct: 1, explanation: "Schema-based formats like Protobuf and Avro are more compact (no field names in data), the schema serves as always-current documentation, compatibility can be checked before deployment, and schemas enable type-safe code generation." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>

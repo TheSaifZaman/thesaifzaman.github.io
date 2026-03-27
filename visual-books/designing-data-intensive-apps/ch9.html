@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch9: Consistency and Consensus — DDIA Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  </style>
+</head>
+<body data-chapter="ch9">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">DDIA</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="chapter-progress"><div class="chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 9</div>
+      <h1>Consistency and Consensus</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-graduation-cap"></i> Distributed Data</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- TAB: Lessons -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">1</div><h2>Linearizability</h2></div>
+        <p><strong>Linearizability</strong> (also called atomic consistency or strong consistency) is the strongest consistency guarantee: the system behaves as if there is only <em>one copy</em> of the data, and all operations on it are <strong>atomic</strong>. Once a read returns a value v, all subsequent reads (by any client) must return v or a more recent value -- you never see a value "go back in time."</p>
+        <p><strong>Use cases:</strong> Leader election (all nodes must agree on who the leader is at any given moment). Uniqueness constraints (e.g., two users must not be able to register the same username simultaneously). Cross-channel timing dependencies (e.g., you upload an image, then send a message referencing it -- the message consumer must be able to see the image).</p>
+        <p><strong>The cost of linearizability:</strong> The <strong>CAP theorem</strong> states that during a network partition, you must choose between <em>consistency</em> (linearizability) and <em>availability</em>. If two datacenters are partitioned, a linearizable system must reject requests on one side (losing availability), while a non-linearizable system can continue serving requests on both sides (but with potentially stale data). Even without partitions, linearizability has a <strong>performance cost</strong> due to coordination overhead.</p>
+        <p>Many systems choose not to be linearizable for performance reasons. Even RAM on a modern multi-core CPU is not linearizable (due to CPU caches) unless you use memory barriers.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Linearizable vs Non-Linearizable Timeline</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr9a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Time arrow -->
+            <line x1="40" y1="195" x2="600" y2="195" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr9a)"/>
+            <text x="605" y="199" font-family="Inter" font-size="9" fill="var(--text-muted)">time</text>
+
+            <!-- Linearizable section -->
+            <text x="20" y="25" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Linearizable</text>
+            <rect x="20" y="35" width="580" height="65" rx="8" fill="var(--accent)" opacity="0.05" stroke="var(--accent)" stroke-width="1"/>
+
+            <!-- Write -->
+            <rect x="100" y="50" width="100" height="28" rx="6" fill="var(--accent)" opacity="0.8"/>
+            <text x="150" y="68" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">write(x=1)</text>
+
+            <!-- Read 1 -->
+            <rect x="240" y="50" width="80" height="28" rx="6" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="280" y="68" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">read: x=1</text>
+
+            <!-- Read 2 -->
+            <rect x="360" y="50" width="80" height="28" rx="6" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="400" y="68" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">read: x=1</text>
+
+            <!-- Check mark -->
+            <text x="480" y="70" font-family="Inter" font-size="16" fill="var(--accent)">&#x2713; Consistent</text>
+
+            <!-- Non-linearizable section -->
+            <text x="20" y="120" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Non-Linearizable</text>
+            <rect x="20" y="130" width="580" height="55" rx="8" fill="var(--accent-3)" opacity="0.05" stroke="var(--accent-3)" stroke-width="1"/>
+
+            <!-- Write -->
+            <rect x="100" y="142" width="100" height="28" rx="6" fill="var(--accent)" opacity="0.8"/>
+            <text x="150" y="160" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">write(x=1)</text>
+
+            <!-- Read 1 sees new value -->
+            <rect x="240" y="142" width="80" height="28" rx="6" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="280" y="160" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">read: x=1</text>
+
+            <!-- Read 2 sees OLD value -->
+            <rect x="360" y="142" width="80" height="28" rx="6" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="160" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">read: x=0</text>
+
+            <!-- X mark -->
+            <text x="480" y="162" font-family="Inter" font-size="16" fill="var(--accent-3)">&#x2717; Stale read!</text>
+          </svg>
+          <p class="viz-caption">In a linearizable system, once a read returns x=1, no subsequent read can return x=0. In a non-linearizable system, a later read might see an older value.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">2</div><h2>Ordering Guarantees</h2></div>
+        <p><strong>Causal consistency</strong> is a weaker but more practical guarantee than linearizability: if event A <em>caused</em> event B (e.g., A is a question, B is the answer), then everyone must see A before B. Events that are not causally related (concurrent) can be seen in any order. Causal consistency is the strongest model that doesn't sacrifice performance for network delays.</p>
+        <p><strong>Causal order is a partial order,</strong> not a total order. In a linearizable system, all operations form a <em>total order</em> (you can always say which happened first). In a causally consistent system, concurrent events are <em>incomparable</em> -- neither happened "before" the other. Only causally related events must be ordered.</p>
+        <p><strong>Lamport timestamps</strong> provide a total ordering across all events: each node maintains a counter, and each event gets a timestamp of (counter, nodeID). The counter is incremented on each event and updated to the maximum seen value when a message is received. This gives a total order consistent with causality, but it has a limitation: you can't tell from Lamport timestamps alone whether two events are concurrent or causally related (they always give a total order, even for concurrent events).</p>
+        <p><strong>Total order broadcast</strong> is a protocol that delivers messages to all nodes in the exact same order. It is equivalent to consensus: if you can solve total order broadcast, you can solve consensus, and vice versa. Total order broadcast is the foundation for state machine replication (all replicas process the same operations in the same order, staying consistent).</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Distributed Transactions and 2PC</h2></div>
+        <p><strong>Two-Phase Commit (2PC)</strong> is the most common algorithm for achieving atomic transaction commits across multiple nodes. It uses a <strong>coordinator</strong> (also called transaction manager) that orchestrates the commit:</p>
+        <p><strong>Phase 1 (Prepare):</strong> The coordinator sends a "prepare" request to all participants. Each participant checks whether it can commit (validates constraints, acquires locks) and responds with "yes" (I promise I can commit) or "no" (I must abort). A "yes" vote is a <em>binding promise</em> -- the participant must be able to commit if asked, even after a crash and restart.</p>
+        <p><strong>Phase 2 (Commit/Abort):</strong> If all participants vote "yes," the coordinator writes a commit decision to its own log (the <em>commit point</em>), then sends "commit" to all participants. If any participant votes "no," the coordinator sends "abort" to all.</p>
+        <p><strong>The critical vulnerability:</strong> If the coordinator crashes <em>after</em> sending "prepare" but <em>before</em> sending the commit/abort decision, participants are stuck in a state of uncertainty -- they voted "yes" and hold locks, but don't know the outcome. They must wait for the coordinator to recover. This makes 2PC a <strong>blocking protocol</strong>.</p>
+        <p><strong>In practice:</strong> XA transactions implement 2PC across heterogeneous systems (different databases, message brokers). They carry a performance penalty because locks must be held during the entire protocol, and a failed coordinator can block the entire system.</p>
+
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-handshake"></i> Two-Phase Commit (2PC)</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <defs><marker id="arr9b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Coordinator -->
+            <rect x="240" y="15" width="140" height="40" rx="10" fill="var(--accent)" opacity="0.9"/>
+            <text x="310" y="40" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Coordinator</text>
+
+            <!-- Participant A -->
+            <rect x="50" y="90" width="120" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="110" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Participant A</text>
+
+            <!-- Participant B -->
+            <rect x="450" y="90" width="120" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="510" y="112" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Participant B</text>
+
+            <!-- Phase 1: Prepare -->
+            <text x="310" y="80" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Phase 1: Prepare</text>
+            <line x1="260" y1="55" x2="150" y2="88" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <line x1="360" y1="55" x2="470" y2="88" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <text x="185" y="68" font-family="Inter" font-size="9" fill="var(--text-muted)">prepare?</text>
+            <text x="420" y="68" font-family="Inter" font-size="9" fill="var(--text-muted)">prepare?</text>
+
+            <!-- Votes -->
+            <line x1="150" y1="127" x2="260" y2="155" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <line x1="470" y1="127" x2="360" y2="155" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <text x="180" y="148" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">yes!</text>
+            <text x="430" y="148" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">yes!</text>
+
+            <!-- Commit point -->
+            <rect x="250" y="155" width="120" height="25" rx="6" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="310" y="172" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Commit point (log)</text>
+
+            <!-- Phase 2: Commit -->
+            <text x="310" y="200" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Phase 2: Commit</text>
+            <line x1="260" y1="185" x2="130" y2="215" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <line x1="360" y1="185" x2="490" y2="215" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr9b)"/>
+            <text x="175" y="208" font-family="Inter" font-size="9" fill="var(--accent-3)">commit!</text>
+            <text x="435" y="208" font-family="Inter" font-size="9" fill="var(--accent-3)">commit!</text>
+
+            <!-- Danger note -->
+            <rect x="150" y="240" width="320" height="30" rx="6" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="310" y="260" text-anchor="middle" font-family="Inter" font-size="9" font-style="italic" fill="var(--accent-3)">If coordinator crashes between Phase 1 and 2, participants are stuck!</text>
+          </svg>
+          <p class="viz-caption">2PC ensures atomicity across nodes, but if the coordinator crashes after "prepare" and before "commit," participants hold locks indefinitely -- a blocking protocol.</p>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Fault-Tolerant Consensus</h2></div>
+        <p><strong>Consensus</strong> means getting several nodes to agree on something. It sounds simple but is one of the most important and difficult problems in distributed computing. The well-known algorithms are: <strong>Paxos</strong> (the classic, notoriously difficult to understand), <strong>Raft</strong> (designed for understandability), <strong>Zab</strong> (used by ZooKeeper), and <strong>Viewstamped Replication</strong>.</p>
+        <p>A correct consensus algorithm must satisfy four properties: <strong>Uniform agreement</strong> -- no two nodes decide differently. <strong>Integrity</strong> -- no node decides twice. <strong>Validity</strong> -- if a node decides value v, then v was proposed by some node. <strong>Termination</strong> (liveness) -- every non-crashed node eventually decides. The first three are safety properties (always hold); termination is a liveness property (eventually holds, given a sufficient number of working nodes).</p>
+        <p>Most consensus algorithms use <strong>epoch numbers</strong> (called ballot numbers in Paxos, terms in Raft). Within each epoch, there is a unique leader. Before a leader can make a decision, it must collect votes from a <strong>quorum</strong> (majority) of nodes. If a leader is suspected of being dead, a new election begins with a higher epoch number, and the new leader's epoch supersedes the old one.</p>
+        <p><strong>Limitations of consensus:</strong> It requires a majority of nodes to be functioning (a 3-node cluster tolerates 1 failure, a 5-node cluster tolerates 2). Membership changes (adding/removing nodes) are complex. Frequent leader elections (due to network instability) hurt performance because the system makes no progress during elections. Consensus algorithms are designed for small clusters of nodes (3-7), not thousands.</p>
+      </div>
+
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">5</div><h2>Coordination Services</h2></div>
+        <p><strong>ZooKeeper</strong>, <strong>etcd</strong>, and <strong>Consul</strong> are coordination services that provide a small set of powerful primitives, implemented on top of consensus algorithms internally. They look like a key-value store, but their guarantees are much stronger than a regular database.</p>
+        <p><strong>What they provide:</strong> Linearizable atomic operations (e.g., compare-and-set). Total ordering of operations (every operation gets a monotonically increasing transaction ID). Failure detection (ephemeral nodes that disappear if the client's session times out). Change notifications (watches that notify clients when data changes).</p>
+        <p><strong>Use cases:</strong> <em>Leader election</em> -- nodes try to acquire an ephemeral lock; the one that succeeds is the leader. If it dies, its session expires, the lock is released, and another node takes over. <em>Distributed locks</em> -- similar to leader election but for mutual exclusion. <em>Service discovery</em> -- services register their address in the coordination service; clients look up which nodes provide a given service. <em>Membership services</em> -- tracking which nodes are alive and part of the cluster.</p>
+        <p><strong>Allocating work to nodes:</strong> When new nodes join or leave, work (partitions, tasks) must be rebalanced. ZooKeeper can track the current assignment and, via watches, notify nodes when the assignment changes. The actual rebalancing logic runs in the application, but ZooKeeper provides the coordination primitives to do it safely.</p>
+        <div class="insight-box">
+          <strong>Key insight:</strong> You don't need to implement consensus yourself. Use ZooKeeper, etcd, or Consul for the coordination-heavy parts of your system (leader election, service discovery, distributed locks), and build your application logic on top. These tools encapsulate the hard problems of distributed coordination so you don't have to.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: Summary -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 9 Summary</h3>
+        <ul>
+          <li><strong>Linearizability:</strong> Strongest consistency -- behaves as if one copy of data, all operations atomic. Sacrificed for performance by many systems.</li>
+          <li><strong>CAP theorem:</strong> During a network partition, choose between consistency (linearizability) and availability.</li>
+          <li><strong>Causal consistency:</strong> Weaker than linearizability but preserves cause-and-effect ordering. Best performance trade-off.</li>
+          <li><strong>Lamport timestamps:</strong> Total ordering via (counter, nodeID) pairs, but can't distinguish concurrent from causal events.</li>
+          <li><strong>Total order broadcast:</strong> All nodes deliver messages in the same order. Equivalent to consensus.</li>
+          <li><strong>2PC (Two-Phase Commit):</strong> Coordinator-based atomic commit across nodes. Blocking if coordinator crashes after prepare.</li>
+          <li><strong>Consensus algorithms</strong> (Paxos, Raft, Zab): Achieve agreement with epoch-based leaders and quorum voting. Require majority of nodes.</li>
+          <li><strong>Coordination services</strong> (ZooKeeper, etcd, Consul): Provide linearizable ops, failure detection, and change notifications on top of consensus.</li>
+          <li><strong>Used for:</strong> Leader election, distributed locks, service discovery, membership, and work allocation.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem; color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid; grid-template-columns:auto 1fr; gap:0.4rem 1rem; font-size:0.88rem;">
+            <dt style="font-weight:700; color:var(--text);">Linearizability</dt><dd style="color:var(--text-muted); margin:0;">System appears to have one copy of data; once a value is read, it never goes backward.</dd>
+            <dt style="font-weight:700; color:var(--text);">CAP Theorem</dt><dd style="color:var(--text-muted); margin:0;">During a partition, choose consistency or availability -- you can't have both.</dd>
+            <dt style="font-weight:700; color:var(--text);">Causal Consistency</dt><dd style="color:var(--text-muted); margin:0;">If A caused B, everyone sees A before B. Concurrent events may be in any order.</dd>
+            <dt style="font-weight:700; color:var(--text);">Two-Phase Commit</dt><dd style="color:var(--text-muted); margin:0;">Prepare/commit protocol for atomic distributed transactions. Blocking if coordinator fails.</dd>
+            <dt style="font-weight:700; color:var(--text);">Consensus</dt><dd style="color:var(--text-muted); margin:0;">Getting multiple nodes to agree on a value. Solved by Paxos, Raft, Zab algorithms.</dd>
+            <dt style="font-weight:700; color:var(--text);">Epoch Number</dt><dd style="color:var(--text-muted); margin:0;">Monotonically increasing number identifying a leader's term in a consensus protocol.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quiz -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- TAB: Mind Map -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh9" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+          <style>
+            #mmCh9 .mm-node { animation: mmFadeInCH9 0.5s ease both; cursor:pointer; }
+            @keyframes mmFadeInCH9 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh9 .mm-node:hover ellipse { filter: brightness(1.15); }
+            #mmCh9 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
+            #mmCh9 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh9 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+          </style>
+          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
+          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
+          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
+          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
+          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
+
+          <g class="mm-node" style="animation-delay:0s">
+            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
+            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Consistency &amp;</text>
+            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Consensus</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="130" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="74" text-anchor="middle">Linearizability</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="350" cy="55" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="350" y="59" text-anchor="middle">Causal Ordering</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="570" cy="70" rx="68" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="570" y="74" text-anchor="middle">Total Order Broadcast</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="110" cy="280" rx="50" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="110" y="284" text-anchor="middle">2PC</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="590" cy="280" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="590" y="284" text-anchor="middle">Paxos / Raft</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="200" cy="370" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="200" y="374" text-anchor="middle">CAP Theorem</text>
+          </g>
+          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
+            <ellipse cx="500" cy="370" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="500" y="374" text-anchor="middle">ZooKeeper</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch8.html"><i class="fas fa-arrow-left"></i> Ch 8</a>
+      <a href="ch10.html" class="nav-next">Ch 10: Batch Processing <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "Designing Data-Intensive Applications" by Martin Kleppmann, &copy; 2017 O'Reilly Media.</p>
+    <p>Independent educational companion &mdash; not affiliated with O'Reilly Media or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUESTIONS = [
+      { question: "What does linearizability guarantee?", options: ["Data is replicated to all nodes", "The system behaves as if there is one copy of data and all operations are atomic — once a value is read, it never goes backward", "All transactions are serializable", "The system is always available"], correct: 1, explanation: "Linearizability means the system appears to have a single copy of data. Once any read returns value v, all subsequent reads must return v or a newer value — you can never see an older value after seeing a newer one." },
+      { question: "What does the CAP theorem say?", options: ["You can have consistency, availability, and partition tolerance all at once", "During a network partition, you must choose between consistency (linearizability) and availability", "Consensus is always possible", "Partitions never happen in practice"], correct: 1, explanation: "The CAP theorem states that during a network partition (which will happen eventually), you must choose: either reject requests on one side (maintain consistency/linearizability) or serve potentially stale data on both sides (maintain availability)." },
+      { question: "What is causal consistency?", options: ["All events are totally ordered", "If event A caused event B, everyone sees A before B, but concurrent events can be in any order", "All reads return the most recent write", "Events are ordered by wall-clock time"], correct: 1, explanation: "Causal consistency preserves cause-and-effect ordering: if A happened before B and B depends on A, everyone sees A before B. But events that are not causally related (concurrent) can appear in different orders at different nodes." },
+      { question: "What is the limitation of Lamport timestamps?", options: ["They require synchronized clocks", "They can't provide a total order", "They always give a total order, so you can't distinguish concurrent events from causally related ones", "They only work with two nodes"], correct: 2, explanation: "Lamport timestamps assign a total order to all events, which is consistent with causality. But because the order is total, you lose the ability to tell whether two events were truly concurrent or one caused the other." },
+      { question: "In Two-Phase Commit, what happens if the coordinator crashes after 'prepare' but before 'commit'?", options: ["Participants automatically abort", "Participants automatically commit", "Participants are stuck — they voted 'yes' and hold locks but don't know the outcome (blocking)", "A new coordinator is automatically elected"], correct: 2, explanation: "Participants voted 'yes' and promised they can commit. They hold locks and cannot proceed (commit or abort) without hearing the coordinator's decision. This is why 2PC is called a blocking protocol." },
+      { question: "What is the 'commit point' in 2PC?", options: ["When the first participant votes yes", "When the coordinator writes the commit decision to its own log — this is the moment that determines the transaction's outcome", "When all participants have committed", "When the client sends the commit request"], correct: 1, explanation: "The commit point is when the coordinator writes its decision to its durable log. Before this point, the transaction can still be aborted. After this point, the decision is final and the coordinator will keep retrying until all participants commit." },
+      { question: "What are the four properties a consensus algorithm must satisfy?", options: ["ACID properties", "Uniform agreement, integrity, validity, and termination", "Consistency, availability, partition tolerance, and liveness", "Atomicity, ordering, uniqueness, and durability"], correct: 1, explanation: "Uniform agreement (no two nodes decide differently), integrity (no node decides twice), validity (decided values were actually proposed), and termination (every non-crashed node eventually decides)." },
+      { question: "Why do consensus algorithms use epoch numbers?", options: ["To track time", "To uniquely identify each leader's term — a higher epoch supersedes a lower one, preventing split-brain", "To count the number of nodes", "To order network packets"], correct: 1, explanation: "Epoch numbers (ballot numbers in Paxos, terms in Raft) ensure that each leader's term is uniquely identified. A leader with a higher epoch supersedes one with a lower epoch, preventing two leaders from making conflicting decisions." },
+      { question: "What does ZooKeeper use ephemeral nodes for?", options: ["Permanent data storage", "Leader election and failure detection — ephemeral nodes disappear when the client's session times out, triggering a new election", "Caching frequently accessed data", "Load balancing network requests"], correct: 1, explanation: "Ephemeral nodes exist only as long as the client's session is alive. If the client (e.g., the leader) crashes or loses connectivity, its session times out, the ephemeral node disappears, and other nodes are notified — triggering a new leader election." },
+      { question: "Why is total order broadcast equivalent to consensus?", options: ["They use the same algorithm", "If you can deliver messages in the same order to all nodes, you can solve consensus (agree on values), and vice versa", "They are both impossible to implement", "Total order broadcast is a special case of consensus"], correct: 1, explanation: "Total order broadcast (all nodes deliver messages in the exact same order) and consensus (all nodes agree on a value) are formally equivalent problems. Solving one lets you solve the other, which is why consensus algorithms are the foundation of coordination services." }
+    ];
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+  </script>
+</body>
+</html>
