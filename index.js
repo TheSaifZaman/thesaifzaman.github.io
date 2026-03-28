@@ -642,28 +642,40 @@ function initCounters() {
     const bar = document.getElementById('impactBar');
     if (!bar) return;
 
+    function animateCounters() {
+        bar.querySelectorAll('.impact-number').forEach(el => {
+            const target = parseInt(el.dataset.target);
+            const duration = 1800;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(eased * target);
+                if (progress < 1) requestAnimationFrame(tick);
+                else el.textContent = target;
+            }
+            requestAnimationFrame(tick);
+        });
+        bar.classList.add('visible');
+    }
+
+    // Check if already in viewport (above the fold)
+    const rect = bar.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+        setTimeout(animateCounters, 400);
+        return;
+    }
+
+    // Otherwise use IntersectionObserver for scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                bar.querySelectorAll('.impact-number').forEach(el => {
-                    const target = parseInt(el.dataset.target);
-                    const duration = 1800;
-                    const start = performance.now();
-                    function tick(now) {
-                        const elapsed = now - start;
-                        const progress = Math.min(elapsed / duration, 1);
-                        const eased = 1 - Math.pow(1 - progress, 3);
-                        el.textContent = Math.floor(eased * target);
-                        if (progress < 1) requestAnimationFrame(tick);
-                        else el.textContent = target;
-                    }
-                    requestAnimationFrame(tick);
-                });
-                bar.classList.add('visible');
+                animateCounters();
                 observer.unobserve(bar);
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
     observer.observe(bar);
 }
 
