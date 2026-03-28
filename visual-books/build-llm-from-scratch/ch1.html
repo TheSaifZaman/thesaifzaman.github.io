@@ -242,6 +242,229 @@
       gap: 0.5rem;
       min-height: 24px;
     }
+
+    /* ── Step-through animated diagrams ── */
+    .step-diagram {
+      position: relative;
+      overflow: hidden;
+    }
+    .step-diagram .step-stage {
+      display: none;
+      animation: fadeSlideIn 0.4s ease;
+    }
+    .step-diagram .step-stage.active {
+      display: block;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.5rem;
+    }
+    .step-nav .step-counter {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-nav .step-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .step-nav .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s ease;
+    }
+    .step-nav .step-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+    .step-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent);
+      min-height: 60px;
+    }
+
+    /* ── Interactive exercises ── */
+    .exercise-box {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      backdrop-filter: blur(12px);
+    }
+    .exercise-box h4 {
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .exercise-box h4 i { font-size: 1rem; }
+    .exercise-box p { font-size: 0.88rem; margin-bottom: 0.75rem; }
+    .drag-zone {
+      min-height: 56px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      transition: all 0.2s ease;
+      margin-bottom: 0.75rem;
+    }
+    .drag-zone.over {
+      border-color: var(--accent);
+      background: rgba(79,110,247,0.06);
+    }
+    .drag-zone-label {
+      font-size: 0.76rem;
+      color: var(--text-light);
+      font-style: italic;
+    }
+    .drag-item {
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: grab;
+      user-select: none;
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+    .drag-item:active { cursor: grabbing; transform: scale(1.05); }
+    .drag-item.placed { opacity: 0.5; cursor: default; }
+    .drag-item.correct { border-color: var(--accent-3); background: rgba(16,185,129,0.1); color: var(--accent-3); }
+    .drag-item.incorrect { border-color: var(--accent-danger); background: rgba(239,68,68,0.1); color: var(--accent-danger); }
+    .exercise-feedback {
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+    .exercise-feedback.show { display: block; }
+    .exercise-feedback.success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .exercise-feedback.error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+
+    /* Match exercise */
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    .match-left, .match-right {
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .match-left.selected, .match-right.selected {
+      border-color: var(--accent);
+      background: rgba(79,110,247,0.1);
+      box-shadow: 0 0 0 2px rgba(79,110,247,0.2);
+    }
+    .match-left.matched, .match-right.matched {
+      border-color: var(--accent-3);
+      background: rgba(16,185,129,0.1);
+      opacity: 0.7;
+      cursor: default;
+    }
+    .match-left.wrong, .match-right.wrong {
+      border-color: var(--accent-danger);
+      background: rgba(239,68,68,0.08);
+    }
+    .match-arrow {
+      color: var(--text-light);
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    /* ── Interactive Mind Map ── */
+    .mindmap-container {
+      position: relative;
+      width: 100%;
+      overflow: auto;
+    }
+    .mm-node {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .mm-node:hover .mm-circle {
+      filter: brightness(1.15);
+    }
+    .mm-sub-group {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .mm-sub-group.collapsed {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.8);
+    }
+    .mm-toggle-icon {
+      font-size: 10px;
+      fill: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      pointer-events: none;
+    }
+    .mm-details {
+      position: absolute;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 260px;
+      box-shadow: var(--shadow);
+      z-index: 10;
+      display: none;
+      backdrop-filter: blur(12px);
+    }
+    .mm-details.show { display: block; animation: fadeSlideIn 0.25s ease; }
+    .mm-details strong { color: var(--text); }
+
+    /* ── Emergent capabilities SVG ── */
+    .scale-layer { transition: opacity 0.3s ease; }
+    .scale-layer:hover { opacity: 1 !important; }
+
+    /* ── Self-attention step SVG ── */
+    .attn-token-box {
+      transition: all 0.3s ease;
+    }
+
+    /* ── Responsive fixes ── */
+    @media (max-width: 600px) {
+      .match-grid { grid-template-columns: 1fr; gap: 0.4rem; }
+      .match-arrow { display: none; }
+    }
   </style>
 </head>
 <body data-chapter="ch1">
@@ -288,6 +511,7 @@
       <div class="ch-meta">
         <span><i class="fas fa-layer-group"></i> 6 Lessons</span>
         <span><i class="fas fa-question-circle"></i> 6-Question Quiz</span>
+        <span><i class="fas fa-gamepad"></i> 2 Interactive Exercises</span>
         <span><i class="fas fa-clock"></i> ~25 min read</span>
         <span class="tag">Foundations</span>
       </div>
@@ -364,6 +588,39 @@
           </svg>
           <div class="viz-caption">LLMs occupy the innermost circle — a specialised subset of deep learning, which itself is a subset of machine learning and AI.</div>
         </div>
+
+        <!-- NEW SVG: Emergent Capabilities at Scale -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Emergent Capabilities — More Scale, More Surprises</div>
+          <svg viewBox="0 0 520 280" width="520" height="280" aria-label="Diagram showing how capabilities emerge with scale" style="display:block;margin:0 auto;">
+            <!-- Axes -->
+            <line x1="60" y1="240" x2="490" y2="240" stroke="var(--text-light)" stroke-width="1.5"/>
+            <line x1="60" y1="240" x2="60" y2="30" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="275" y="270" font-size="11" fill="var(--text-muted)" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600">Model Parameters (Scale)</text>
+            <text x="20" y="135" font-size="11" fill="var(--text-muted)" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" transform="rotate(-90, 20, 135)">Capability</text>
+            <!-- Scale ticks -->
+            <text x="100" y="256" font-size="9" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono">100M</text>
+            <text x="200" y="256" font-size="9" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono">1B</text>
+            <text x="320" y="256" font-size="9" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono">10B</text>
+            <text x="450" y="256" font-size="9" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono">100B+</text>
+            <!-- Grammar curve (always present) -->
+            <path d="M80,220 C140,210 180,140 260,80 Q340,40 470,38" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linecap="round" class="scale-layer" opacity="0.9"/>
+            <text x="475" y="35" font-size="9" fill="#4f6ef7" font-family="Inter" font-weight="600">Grammar</text>
+            <!-- Reasoning curve (emerges mid-scale) -->
+            <path d="M80,235 C160,232 220,228 280,180 Q360,90 470,55" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 3" class="scale-layer" opacity="0.8"/>
+            <text x="475" y="52" font-size="9" fill="#f59e0b" font-family="Inter" font-weight="600">Reasoning</text>
+            <!-- Code generation (emerges later) -->
+            <path d="M80,238 C200,236 280,230 340,190 Q420,110 470,75" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 4" class="scale-layer" opacity="0.7"/>
+            <text x="475" y="72" font-size="9" fill="#10b981" font-family="Inter" font-weight="600">Code Gen</text>
+            <!-- Math (emerges very late) -->
+            <path d="M80,238 C250,237 350,232 400,200 Q450,150 470,105" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 5" class="scale-layer" opacity="0.6"/>
+            <text x="475" y="102" font-size="9" fill="#ef4444" font-family="Inter" font-weight="600">Math</text>
+            <!-- Emergence zone -->
+            <rect x="240" y="30" width="80" height="205" fill="rgba(79,110,247,0.05)" rx="8" stroke="rgba(79,110,247,0.15)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="280" y="24" font-size="8.5" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">EMERGENCE ZONE</text>
+          </svg>
+          <div class="viz-caption">Different capabilities emerge at different scales. Grammar is learned early; reasoning, coding, and mathematics require significantly more parameters.</div>
+        </div>
       </section>
 
       <!-- ══════════════════
@@ -424,6 +681,94 @@
           </div>
           <div class="viz-caption">Hover over a card to highlight it. Each domain leverages the same pretrained weights — only the fine-tuning data differs.</div>
         </div>
+
+        <!-- NEW SVG: BERT vs GPT attention pattern -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-left-right"></i> Bidirectional (BERT) vs Causal (GPT) Attention</div>
+          <svg viewBox="0 0 520 220" width="520" height="220" aria-label="BERT bidirectional vs GPT causal attention patterns" style="display:block;margin:0 auto;">
+            <!-- BERT side -->
+            <text x="130" y="22" font-size="12" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">BERT (Bidirectional)</text>
+            <g>
+              <rect x="20" y="40" width="55" height="30" rx="6" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.5)" stroke-width="1.5"/>
+              <text x="47" y="59" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">The</text>
+              <rect x="85" y="40" width="55" height="30" rx="6" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.5)" stroke-width="1.5"/>
+              <text x="112" y="59" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">cat</text>
+              <rect x="150" y="40" width="55" height="30" rx="6" fill="rgba(16,185,129,0.25)" stroke="rgba(16,185,129,0.7)" stroke-width="2"/>
+              <text x="177" y="59" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">sat</text>
+              <rect x="215" y="40" width="55" height="30" rx="6" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.5)" stroke-width="1.5"/>
+              <text x="242" y="59" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">down</text>
+            </g>
+            <!-- Arrows: bidirectional from "sat" -->
+            <line x1="47" y1="75" x2="170" y2="100" stroke="rgba(16,185,129,0.4)" stroke-width="1.5" marker-end="none"/>
+            <line x1="112" y1="75" x2="170" y2="100" stroke="rgba(16,185,129,0.6)" stroke-width="1.5"/>
+            <line x1="242" y1="75" x2="184" y2="100" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+            <circle cx="177" cy="105" r="12" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.5)" stroke-width="1.5"/>
+            <text x="177" y="109" font-size="8" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Q</text>
+            <text x="130" y="135" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Each token attends to ALL tokens</text>
+            <!-- Attention matrix (mini) -->
+            <g transform="translate(40, 148)">
+              <rect x="0" y="0" width="18" height="18" fill="rgba(16,185,129,0.5)" rx="2"/>
+              <rect x="20" y="0" width="18" height="18" fill="rgba(16,185,129,0.3)" rx="2"/>
+              <rect x="40" y="0" width="18" height="18" fill="rgba(16,185,129,0.7)" rx="2"/>
+              <rect x="60" y="0" width="18" height="18" fill="rgba(16,185,129,0.2)" rx="2"/>
+              <rect x="0" y="20" width="18" height="18" fill="rgba(16,185,129,0.4)" rx="2"/>
+              <rect x="20" y="20" width="18" height="18" fill="rgba(16,185,129,0.6)" rx="2"/>
+              <rect x="40" y="20" width="18" height="18" fill="rgba(16,185,129,0.2)" rx="2"/>
+              <rect x="60" y="20" width="18" height="18" fill="rgba(16,185,129,0.5)" rx="2"/>
+              <rect x="0" y="40" width="18" height="18" fill="rgba(16,185,129,0.3)" rx="2"/>
+              <rect x="20" y="40" width="18" height="18" fill="rgba(16,185,129,0.5)" rx="2"/>
+              <rect x="40" y="40" width="18" height="18" fill="rgba(16,185,129,0.6)" rx="2"/>
+              <rect x="60" y="40" width="18" height="18" fill="rgba(16,185,129,0.4)" rx="2"/>
+              <rect x="0" y="60" width="18" height="18" fill="rgba(16,185,129,0.2)" rx="2"/>
+              <rect x="20" y="60" width="18" height="18" fill="rgba(16,185,129,0.4)" rx="2"/>
+              <rect x="40" y="60" width="18" height="18" fill="rgba(16,185,129,0.3)" rx="2"/>
+              <rect x="60" y="60" width="18" height="18" fill="rgba(16,185,129,0.7)" rx="2"/>
+              <text x="95" y="42" font-size="8.5" fill="var(--text-muted)" font-family="Inter">Full attention<tspan x="95" dy="12">matrix (all</tspan><tspan x="95" dy="12">positions visible)</tspan></text>
+            </g>
+
+            <!-- GPT side -->
+            <text x="390" y="22" font-size="12" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">GPT (Causal / Left-to-Right)</text>
+            <g>
+              <rect x="280" y="40" width="55" height="30" rx="6" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+              <text x="307" y="59" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">The</text>
+              <rect x="345" y="40" width="55" height="30" rx="6" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+              <text x="372" y="59" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">cat</text>
+              <rect x="410" y="40" width="55" height="30" rx="6" fill="rgba(245,158,11,0.25)" stroke="rgba(245,158,11,0.7)" stroke-width="2"/>
+              <text x="437" y="59" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">sat</text>
+              <rect x="475" y="40" width="55" height="30" rx="6" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.25)" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="502" y="59" font-size="10" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">down</text>
+            </g>
+            <!-- Arrows: only from past tokens -->
+            <line x1="307" y1="75" x2="430" y2="100" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+            <line x1="372" y1="75" x2="430" y2="100" stroke="rgba(245,158,11,0.7)" stroke-width="1.5"/>
+            <circle cx="437" cy="105" r="12" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+            <text x="437" y="109" font-size="8" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">Q</text>
+            <!-- X on future -->
+            <text x="502" y="90" font-size="14" fill="rgba(239,68,68,0.6)" text-anchor="middle" font-family="Inter" font-weight="800">x</text>
+            <text x="390" y="135" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Each token only attends to PAST tokens</text>
+            <!-- Causal mask matrix -->
+            <g transform="translate(300, 148)">
+              <rect x="0" y="0" width="18" height="18" fill="rgba(245,158,11,0.6)" rx="2"/>
+              <rect x="20" y="0" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="40" y="0" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="60" y="0" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="0" y="20" width="18" height="18" fill="rgba(245,158,11,0.4)" rx="2"/>
+              <rect x="20" y="20" width="18" height="18" fill="rgba(245,158,11,0.6)" rx="2"/>
+              <rect x="40" y="20" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="60" y="20" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="0" y="40" width="18" height="18" fill="rgba(245,158,11,0.3)" rx="2"/>
+              <rect x="20" y="40" width="18" height="18" fill="rgba(245,158,11,0.5)" rx="2"/>
+              <rect x="40" y="40" width="18" height="18" fill="rgba(245,158,11,0.6)" rx="2"/>
+              <rect x="60" y="40" width="18" height="18" fill="rgba(0,0,0,0.08)" rx="2"/>
+              <rect x="0" y="60" width="18" height="18" fill="rgba(245,158,11,0.2)" rx="2"/>
+              <rect x="20" y="60" width="18" height="18" fill="rgba(245,158,11,0.4)" rx="2"/>
+              <rect x="40" y="60" width="18" height="18" fill="rgba(245,158,11,0.3)" rx="2"/>
+              <rect x="60" y="60" width="18" height="18" fill="rgba(245,158,11,0.7)" rx="2"/>
+              <text x="95" y="42" font-size="8.5" fill="var(--text-muted)" font-family="Inter">Causal mask:<tspan x="95" dy="12">upper triangle</tspan><tspan x="95" dy="12">blocked (-inf)</tspan></text>
+            </g>
+          </svg>
+          <div class="viz-caption">BERT's full attention matrix allows every token to see every other token. GPT's causal mask blocks future tokens (upper triangle = -infinity), enforcing left-to-right generation.</div>
+        </div>
       </section>
 
       <!-- ══════════════════
@@ -444,7 +789,7 @@
         <p><strong>Stage 3 — Fine-tuning.</strong> A pretrained base model is a capable but unrefined learner. Fine-tuning adapts the model to specific behaviours using a much smaller, curated, labelled dataset. There are two main fine-tuning flavours explored in this book: <em>classification fine-tuning</em> (adding a classification head and training on labelled examples) and <em>instruction fine-tuning</em> (training the model to follow natural-language instructions using prompt–response pairs). Techniques like RLHF (Reinforcement Learning from Human Feedback) and RLAIF add a further alignment layer, rewarding models that produce helpful and safe outputs.</p>
 
         <div class="insight-box">
-          <strong>Cost Perspective:</strong> Pretraining GPT-3 (175B parameters) is estimated to have cost $4–12 million in compute. Fine-tuning a 7B model for a specific task can be done on a single GPU in hours. This is why transfer learning — reusing pretrained weights — is transformative.
+          <strong>Cost Perspective:</strong> Pretraining GPT-3 (175B parameters) is estimated to have cost $4-12 million in compute. Fine-tuning a 7B model for a specific task can be done on a single GPU in hours. This is why transfer learning — reusing pretrained weights — is transformative.
         </div>
 
         <!-- Flowchart visualization -->
@@ -484,6 +829,164 @@
           <div class="viz-caption">Blue = data preparation, Amber = pretraining (expensive), Green = fine-tuning (affordable). Each arrow represents a significant engineering effort.</div>
         </div>
 
+        <!-- NEW: Step-through animated diagram — LLM Build Pipeline Deep Dive -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step Through: The LLM Build Pipeline — Deep Dive</div>
+          <div class="step-diagram" id="pipelineSteps">
+            <!-- Step 1 -->
+            <div class="step-stage active" data-step="0">
+              <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;">
+                <rect x="10" y="20" width="500" height="160" rx="12" fill="rgba(79,110,247,0.06)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/>
+                <text x="260" y="16" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">STAGE 1: Data Collection</text>
+                <!-- Sources -->
+                <rect x="30" y="50" width="90" height="50" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="75" y="72" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Web Crawl</text>
+                <text x="75" y="88" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Common Crawl</text>
+                <rect x="135" y="50" width="90" height="50" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="180" y="72" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Books</text>
+                <text x="180" y="88" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">BookCorpus</text>
+                <rect x="240" y="50" width="90" height="50" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="285" y="72" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Code</text>
+                <text x="285" y="88" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">GitHub repos</text>
+                <rect x="345" y="50" width="90" height="50" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="390" y="72" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Wikipedia</text>
+                <text x="390" y="88" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">All languages</text>
+                <!-- Arrow down -->
+                <text x="260" y="120" font-size="18" fill="var(--accent)" text-anchor="middle">↓</text>
+                <!-- Result -->
+                <rect x="150" y="130" width="220" height="40" rx="8" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                <text x="260" y="155" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Raw text corpus (TBs of text)</text>
+              </svg>
+            </div>
+            <!-- Step 2 -->
+            <div class="step-stage" data-step="1">
+              <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;">
+                <rect x="10" y="20" width="500" height="160" rx="12" fill="rgba(79,110,247,0.06)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/>
+                <text x="260" y="16" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">STAGE 1: Cleaning &amp; Tokenisation</text>
+                <!-- Raw text -->
+                <rect x="30" y="45" width="130" height="55" rx="8" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>
+                <text x="95" y="65" font-size="9" fill="var(--accent-danger)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">&lt;html&gt;Hello...</text>
+                <text x="95" y="80" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Dirty raw text</text>
+                <!-- Arrow -->
+                <text x="185" y="75" font-size="16" fill="var(--text-light)" text-anchor="middle">→</text>
+                <!-- Clean -->
+                <rect x="200" y="45" width="130" height="55" rx="8" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+                <text x="265" y="65" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">"Hello world"</text>
+                <text x="265" y="80" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Cleaned text</text>
+                <!-- Arrow -->
+                <text x="355" y="75" font-size="16" fill="var(--text-light)" text-anchor="middle">→</text>
+                <!-- Token IDs -->
+                <rect x="370" y="45" width="130" height="55" rx="8" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                <text x="435" y="65" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">[15496, 995]</text>
+                <text x="435" y="80" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Token IDs (BPE)</text>
+                <!-- Bottom note -->
+                <text x="260" y="130" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Deduplication removes ~30% of Common Crawl data</text>
+                <text x="260" y="148" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">BPE splits rare words into subwords: "unhappiness" → ["un", "happiness"]</text>
+                <text x="260" y="166" font-size="9.5" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">GPT-2 vocabulary: 50,257 subword tokens</text>
+              </svg>
+            </div>
+            <!-- Step 3 -->
+            <div class="step-stage" data-step="2">
+              <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;">
+                <rect x="10" y="20" width="500" height="160" rx="12" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.2)" stroke-width="1.5"/>
+                <text x="260" y="16" font-size="11" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">STAGE 2: Pretraining (Next-Token Prediction)</text>
+                <!-- Input tokens -->
+                <g font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle">
+                  <rect x="40" y="45" width="50" height="28" rx="6" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.4)" stroke-width="1.5"/>
+                  <text x="65" y="63" fill="var(--accent-2)">The</text>
+                  <rect x="100" y="45" width="50" height="28" rx="6" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.4)" stroke-width="1.5"/>
+                  <text x="125" y="63" fill="var(--accent-2)">cat</text>
+                  <rect x="160" y="45" width="50" height="28" rx="6" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.4)" stroke-width="1.5"/>
+                  <text x="185" y="63" fill="var(--accent-2)">sat</text>
+                </g>
+                <text x="230" y="63" font-size="14" fill="var(--accent-2)" text-anchor="middle">→</text>
+                <!-- Transformer box -->
+                <rect x="250" y="35" width="120" height="48" rx="10" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.5)" stroke-width="2"/>
+                <text x="310" y="55" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">Transformer</text>
+                <text x="310" y="70" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">(12 layers, 12 heads)</text>
+                <text x="390" y="63" font-size="14" fill="var(--accent-2)" text-anchor="middle">→</text>
+                <!-- Output probability -->
+                <rect x="410" y="35" width="90" height="48" rx="10" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.5)" stroke-width="2"/>
+                <text x="455" y="55" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">P(next)</text>
+                <text x="455" y="70" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">"on" → 42%</text>
+                <!-- Loss -->
+                <text x="260" y="115" font-size="18" fill="var(--accent-2)" text-anchor="middle">↓</text>
+                <rect x="170" y="120" width="180" height="35" rx="8" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
+                <text x="260" y="142" font-size="10" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="700">Cross-Entropy Loss → Backprop</text>
+                <text x="260" y="175" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Repeat for trillions of tokens across weeks of GPU time</text>
+              </svg>
+            </div>
+            <!-- Step 4 -->
+            <div class="step-stage" data-step="3">
+              <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;">
+                <rect x="10" y="20" width="500" height="160" rx="12" fill="rgba(16,185,129,0.06)" stroke="rgba(16,185,129,0.2)" stroke-width="1.5"/>
+                <text x="260" y="16" font-size="11" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">STAGE 3: Fine-tuning</text>
+                <!-- Base model -->
+                <rect x="30" y="45" width="130" height="55" rx="8" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+                <text x="95" y="66" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">Base Model</text>
+                <text x="95" y="82" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Broad knowledge</text>
+                <!-- Plus -->
+                <text x="185" y="75" font-size="18" fill="var(--text-light)" text-anchor="middle">+</text>
+                <!-- Task data -->
+                <rect x="200" y="45" width="130" height="55" rx="8" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+                <text x="265" y="66" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Task Data</text>
+                <text x="265" y="82" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Labels / Instructions</text>
+                <!-- Arrow -->
+                <text x="355" y="75" font-size="16" fill="var(--text-light)" text-anchor="middle">→</text>
+                <!-- Result -->
+                <rect x="370" y="40" width="130" height="65" rx="10" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.5)" stroke-width="2"/>
+                <text x="435" y="65" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Specialised Model</text>
+                <text x="435" y="82" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">ChatBot / Classifier</text>
+                <!-- Two paths -->
+                <rect x="80" y="125" width="160" height="35" rx="8" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+                <text x="160" y="147" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="600">Classification Fine-tuning</text>
+                <rect x="280" y="125" width="160" height="35" rx="8" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+                <text x="360" y="147" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Instruction Fine-tuning</text>
+                <text x="260" y="180" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Hours on a single GPU vs weeks on GPU clusters for pretraining</text>
+              </svg>
+            </div>
+            <!-- Step 5 -->
+            <div class="step-stage" data-step="4">
+              <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;">
+                <rect x="10" y="20" width="500" height="160" rx="12" fill="rgba(239,68,68,0.04)" stroke="rgba(239,68,68,0.2)" stroke-width="1.5"/>
+                <text x="260" y="16" font-size="11" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="700">DEPLOYMENT: Serving the Model</text>
+                <!-- Model -->
+                <rect x="30" y="55" width="110" height="50" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="85" y="78" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Fine-tuned LLM</text>
+                <text x="85" y="93" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">GPT-2 124M</text>
+                <!-- Arrow -->
+                <text x="165" y="82" font-size="14" fill="var(--text-light)" text-anchor="middle">→</text>
+                <!-- API -->
+                <rect x="185" y="55" width="90" height="50" rx="8" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+                <text x="230" y="78" font-size="10" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">REST API</text>
+                <text x="230" y="93" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Flask / FastAPI</text>
+                <!-- Arrow -->
+                <text x="300" y="82" font-size="14" fill="var(--text-light)" text-anchor="middle">→</text>
+                <!-- Apps -->
+                <rect x="320" y="40" width="85" height="35" rx="6" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+                <text x="362" y="62" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="600">Chat App</text>
+                <rect x="320" y="85" width="85" height="35" rx="6" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+                <text x="362" y="107" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="600">Code Copilot</text>
+                <rect x="420" y="55" width="85" height="50" rx="6" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1"/>
+                <text x="462" y="78" font-size="9" fill="#8b5cf6" text-anchor="middle" font-family="Inter" font-weight="600">Classifier</text>
+                <text x="462" y="93" font-size="8" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Spam/Sentiment</text>
+                <!-- Summary -->
+                <text x="260" y="155" font-size="10" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="700">Full Pipeline Complete!</text>
+                <text x="260" y="172" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Data → Tokenise → Pretrain → Fine-tune → Deploy</text>
+              </svg>
+            </div>
+
+            <div class="step-desc" id="pipelineDesc">
+              <strong>Step 1/5 — Data Collection:</strong> Gather text from diverse sources (web crawls, books, code, Wikipedia). GPT-2 used WebText (40 GB from Reddit-linked pages). Modern models use multi-trillion token datasets.
+            </div>
+            <div class="step-nav">
+              <button class="btn btn-ghost btn-sm" id="pipelinePrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+              <div class="step-dots" id="pipelineDots"></div>
+              <button class="btn btn-primary btn-sm" id="pipelineNext">Next <i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
         <pre class="code-block"><span class="cmt"># Simplified pseudo-code: the pretraining loop</span>
 <span class="kw">for</span> batch <span class="kw">in</span> dataloader:
     input_ids, target_ids = batch          <span class="cmt"># e.g. shape [B, T]</span>
@@ -492,6 +995,21 @@
     loss.backward()
     optimizer.step()
     optimizer.zero_grad()</pre>
+
+        <!-- EXERCISE 1: Drag & Drop — Order the LLM Pipeline -->
+        <div class="exercise-box" id="exercise1">
+          <h4><i class="fas fa-puzzle-piece"></i> EXERCISE 1: Order the LLM Build Pipeline</h4>
+          <p>Drag the steps below into the correct order, from first to last.</p>
+          <div class="drag-zone" id="dropZone1">
+            <span class="drag-zone-label">Drop steps here in order...</span>
+          </div>
+          <div id="dragSource1" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;"></div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" id="checkEx1"><i class="fas fa-check"></i> Check Answer</button>
+            <button class="btn btn-ghost btn-sm" id="resetEx1"><i class="fas fa-rotate-left"></i> Reset</button>
+          </div>
+          <div class="exercise-feedback" id="feedbackEx1"></div>
+        </div>
       </section>
 
       <!-- ══════════════════
@@ -512,7 +1030,7 @@
         <p><strong>Multi-head attention</strong> runs this process in parallel across several independent "heads," each potentially attending to different relationship types. The outputs of all heads are concatenated and projected back to the model's hidden dimension. Stacked on top of this are feed-forward networks, layer normalisation (applied before the attention and FFN sublayers in the pre-norm variant used by GPT-2), residual connections, and a final linear + softmax output layer that maps to vocabulary probabilities.</p>
 
         <div class="insight-box">
-          <strong>Why Not RNNs?</strong> RNNs process tokens sequentially — to understand token <em>t</em> they must pass information through all tokens 1 through <em>t–1</em>. This creates a vanishing gradient problem over long sequences and prevents parallelisation. Self-attention computes all pairwise relationships at once, with constant path length between any two tokens, regardless of distance.
+          <strong>Why Not RNNs?</strong> RNNs process tokens sequentially — to understand token <em>t</em> they must pass information through all tokens 1 through <em>t-1</em>. This creates a vanishing gradient problem over long sequences and prevents parallelisation. Self-attention computes all pairwise relationships at once, with constant path length between any two tokens, regardless of distance.
         </div>
 
         <!-- Transformer stack diagram -->
@@ -569,6 +1087,209 @@
           <div class="viz-caption">Both stacks share the embedding, positional encoding, FFN, and normalisation blocks. The key difference is the attention mask — GPT uses causal masking so each token can only attend to past tokens.</div>
         </div>
 
+        <!-- NEW: Step-through animated diagram — Self-Attention Computation -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step Through: Self-Attention in Action</div>
+          <div class="step-diagram" id="attnSteps">
+            <!-- Step 1: Input embeddings -->
+            <div class="step-stage active" data-step="0">
+              <svg viewBox="0 0 520 180" width="520" height="180" style="display:block;margin:0 auto;">
+                <text x="260" y="18" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Input: Token Embeddings</text>
+                <g font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle">
+                  <rect x="60" y="35" width="100" height="40" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                  <text x="110" y="59" fill="var(--accent)">The</text>
+                  <rect x="210" y="35" width="100" height="40" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                  <text x="260" y="59" fill="var(--accent)">cat</text>
+                  <rect x="360" y="35" width="100" height="40" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                  <text x="410" y="59" fill="var(--accent)">sat</text>
+                </g>
+                <!-- Embedding vectors -->
+                <text x="110" y="100" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">[0.2, -0.1, 0.8, ...]</text>
+                <text x="260" y="100" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">[0.5, 0.3, -0.2, ...]</text>
+                <text x="410" y="100" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">[0.1, 0.7, 0.4, ...]</text>
+                <text x="260" y="135" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Each token is mapped to a d-dimensional vector (d=768 for GPT-2 Small)</text>
+                <text x="260" y="155" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Positional embeddings are added to inject order information</text>
+              </svg>
+            </div>
+            <!-- Step 2: Q, K, V projections -->
+            <div class="step-stage" data-step="1">
+              <svg viewBox="0 0 520 180" width="520" height="180" style="display:block;margin:0 auto;">
+                <text x="260" y="18" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Project into Q, K, V</text>
+                <!-- Token: cat -->
+                <rect x="195" y="30" width="130" height="30" rx="6" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="260" y="50" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">x = embed("cat")</text>
+                <!-- Arrows down to Q K V -->
+                <line x1="210" y1="62" x2="100" y2="85" stroke="rgba(239,68,68,0.5)" stroke-width="1.5"/>
+                <line x1="260" y1="62" x2="260" y2="85" stroke="rgba(16,185,129,0.5)" stroke-width="1.5"/>
+                <line x1="310" y1="62" x2="420" y2="85" stroke="rgba(79,110,247,0.5)" stroke-width="1.5"/>
+                <!-- Q -->
+                <rect x="40" y="88" width="120" height="35" rx="8" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="2"/>
+                <text x="100" y="107" font-size="10" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="700">Q = x * W_q</text>
+                <text x="100" y="140" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">"What am I looking for?"</text>
+                <!-- K -->
+                <rect x="200" y="88" width="120" height="35" rx="8" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.4)" stroke-width="2"/>
+                <text x="260" y="107" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">K = x * W_k</text>
+                <text x="260" y="140" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">"What do I contain?"</text>
+                <!-- V -->
+                <rect x="360" y="88" width="120" height="35" rx="8" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>
+                <text x="420" y="107" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">V = x * W_v</text>
+                <text x="420" y="140" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">"What info do I carry?"</text>
+                <text x="260" y="168" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Three separate learned weight matrices (W_q, W_k, W_v)</text>
+              </svg>
+            </div>
+            <!-- Step 3: Attention scores -->
+            <div class="step-stage" data-step="2">
+              <svg viewBox="0 0 520 180" width="520" height="180" style="display:block;margin:0 auto;">
+                <text x="260" y="18" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Compute Attention Scores</text>
+                <!-- Formula -->
+                <text x="260" y="48" font-size="11" fill="var(--text)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">scores = Q * K^T / sqrt(d_k)</text>
+                <!-- Matrix visualization -->
+                <g transform="translate(120, 65)">
+                  <text x="140" y="-5" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter" font-weight="600">Attention Score Matrix</text>
+                  <!-- Headers -->
+                  <text x="90" y="22" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">The</text>
+                  <text x="150" y="22" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">cat</text>
+                  <text x="210" y="22" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">sat</text>
+                  <text x="40" y="55" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">The</text>
+                  <text x="40" y="90" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">cat</text>
+                  <text x="40" y="105" font-size="8" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">sat</text>
+                  <!-- Score cells -->
+                  <rect x="65" y="32" width="50" height="30" rx="4" fill="rgba(79,110,247,0.25)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+                  <text x="90" y="52" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">0.8</text>
+                  <rect x="125" y="32" width="50" height="30" rx="4" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.2)" stroke-width="1"/>
+                  <text x="150" y="52" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">0.3</text>
+                  <rect x="185" y="32" width="50" height="30" rx="4" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.15)" stroke-width="1"/>
+                  <text x="210" y="52" font-size="9" fill="var(--text-light)" text-anchor="middle" font-family="JetBrains Mono">0.1</text>
+                  <rect x="65" y="70" width="50" height="30" rx="4" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.2)" stroke-width="1"/>
+                  <text x="90" y="90" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">0.4</text>
+                  <rect x="125" y="70" width="50" height="30" rx="4" fill="rgba(79,110,247,0.3)" stroke="rgba(79,110,247,0.4)" stroke-width="1"/>
+                  <text x="150" y="90" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">0.9</text>
+                  <rect x="185" y="70" width="50" height="30" rx="4" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.2)" stroke-width="1"/>
+                  <text x="210" y="90" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="JetBrains Mono">0.5</text>
+                </g>
+                <text x="260" y="170" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Higher scores = stronger attention. Scaling by sqrt(d_k) prevents dot products from growing too large.</text>
+              </svg>
+            </div>
+            <!-- Step 4: Softmax + weighted sum -->
+            <div class="step-stage" data-step="3">
+              <svg viewBox="0 0 520 180" width="520" height="180" style="display:block;margin:0 auto;">
+                <text x="260" y="18" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Softmax → Weighted Sum of Values</text>
+                <!-- Softmax -->
+                <text x="260" y="45" font-size="10" fill="var(--text)" text-anchor="middle" font-family="JetBrains Mono">weights = softmax(scores)</text>
+                <!-- Probability bars for "cat" row -->
+                <text x="100" y="72" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter" font-weight="600">Attention weights for "cat":</text>
+                <g transform="translate(160, 78)">
+                  <rect x="0" y="0" width="60" height="22" rx="4" fill="rgba(79,110,247,0.2)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+                  <text x="30" y="15" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="JetBrains Mono">The 25%</text>
+                  <rect x="70" y="0" width="80" height="22" rx="4" fill="rgba(16,185,129,0.25)" stroke="rgba(16,185,129,0.4)" stroke-width="2"/>
+                  <text x="110" y="15" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">cat 50%</text>
+                  <rect x="160" y="0" width="60" height="22" rx="4" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+                  <text x="190" y="15" font-size="9" fill="var(--accent-2)" text-anchor="middle" font-family="JetBrains Mono">sat 25%</text>
+                </g>
+                <text x="260" y="125" font-size="10" fill="var(--text)" text-anchor="middle" font-family="JetBrains Mono">output = 0.25*V_The + 0.50*V_cat + 0.25*V_sat</text>
+                <!-- Result -->
+                <rect x="160" y="138" width="200" height="30" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.4)" stroke-width="2"/>
+                <text x="260" y="158" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Context-enriched "cat" vector</text>
+              </svg>
+            </div>
+            <!-- Step 5: Multi-head -->
+            <div class="step-stage" data-step="4">
+              <svg viewBox="0 0 520 180" width="520" height="180" style="display:block;margin:0 auto;">
+                <text x="260" y="18" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Multi-Head Attention: Parallel Heads</text>
+                <!-- Multiple heads -->
+                <g font-family="Inter" font-size="9" text-anchor="middle">
+                  <rect x="30" y="35" width="85" height="45" rx="8" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+                  <text x="72" y="55" fill="var(--accent)" font-weight="700">Head 1</text>
+                  <text x="72" y="70" fill="var(--text-muted)" font-size="7.5">Grammar</text>
+                  <rect x="130" y="35" width="85" height="45" rx="8" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.4)" stroke-width="1.5"/>
+                  <text x="172" y="55" fill="var(--accent-2)" font-weight="700">Head 2</text>
+                  <text x="172" y="70" fill="var(--text-muted)" font-size="7.5">Semantics</text>
+                  <rect x="230" y="35" width="85" height="45" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+                  <text x="272" y="55" fill="var(--accent-3)" font-weight="700">Head 3</text>
+                  <text x="272" y="70" fill="var(--text-muted)" font-size="7.5">Position</text>
+                  <text x="340" y="60" fill="var(--text-light)" font-size="16">...</text>
+                  <rect x="370" y="35" width="85" height="45" rx="8" fill="rgba(139,92,246,0.12)" stroke="rgba(139,92,246,0.4)" stroke-width="1.5"/>
+                  <text x="412" y="55" fill="#8b5cf6" font-weight="700">Head 12</text>
+                  <text x="412" y="70" fill="var(--text-muted)" font-size="7.5">Co-reference</text>
+                </g>
+                <!-- Concat arrow -->
+                <g>
+                  <line x1="72" y1="82" x2="260" y2="110" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+                  <line x1="172" y1="82" x2="260" y2="110" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+                  <line x1="272" y1="82" x2="260" y2="110" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+                  <line x1="412" y1="82" x2="260" y2="110" stroke="rgba(139,92,246,0.3)" stroke-width="1"/>
+                </g>
+                <!-- Concat box -->
+                <rect x="170" y="110" width="180" height="30" rx="8" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.5)" stroke-width="2"/>
+                <text x="260" y="130" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Concatenate + Linear Project</text>
+                <text x="260" y="160" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">GPT-2 uses 12 heads, each attending to different linguistic patterns independently.</text>
+                <text x="260" y="175" font-size="9" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="600">Each head: d_model / n_heads = 768 / 12 = 64 dimensions</text>
+              </svg>
+            </div>
+
+            <div class="step-desc" id="attnDesc">
+              <strong>Step 1/5 — Input Embeddings:</strong> Each input token is converted to a dense vector using a learned embedding table. Positional embeddings are added so the model knows the order of tokens (self-attention alone is permutation-invariant).
+            </div>
+            <div class="step-nav">
+              <button class="btn btn-ghost btn-sm" id="attnPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+              <div class="step-dots" id="attnDots"></div>
+              <button class="btn btn-primary btn-sm" id="attnNext">Next <i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW SVG: RNN vs Transformer comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-bolt"></i> RNN vs Transformer — Path Length Comparison</div>
+          <svg viewBox="0 0 520 200" width="520" height="200" style="display:block;margin:0 auto;" aria-label="RNN sequential vs Transformer parallel processing">
+            <!-- RNN side -->
+            <text x="130" y="20" font-size="11" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="700">RNN: Sequential (O(n) path)</text>
+            <g font-family="JetBrains Mono" font-size="9" font-weight="600" text-anchor="middle">
+              <circle cx="40" cy="70" r="22" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
+              <text x="40" y="74" fill="var(--accent-danger)">h1</text>
+              <text x="40" y="105" fill="var(--text-muted)" font-size="8" font-family="Inter">The</text>
+              <line x1="62" y1="70" x2="88" y2="70" stroke="rgba(239,68,68,0.4)" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+              <circle cx="110" cy="70" r="22" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
+              <text x="110" y="74" fill="var(--accent-danger)">h2</text>
+              <text x="110" y="105" fill="var(--text-muted)" font-size="8" font-family="Inter">cat</text>
+              <line x1="132" y1="70" x2="158" y2="70" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
+              <circle cx="180" cy="70" r="22" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="1.5"/>
+              <text x="180" y="74" fill="var(--accent-danger)">h3</text>
+              <text x="180" y="105" fill="var(--text-muted)" font-size="8" font-family="Inter">sat</text>
+              <line x1="202" y1="70" x2="228" y2="70" stroke="rgba(239,68,68,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <text x="243" y="74" fill="var(--text-light)" font-size="12">...</text>
+            </g>
+            <text x="130" y="135" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Info from token 1 must pass through every<tspan x="130" dy="14">intermediate step to reach token n.</tspan></text>
+            <text x="130" y="175" font-size="9" fill="var(--accent-danger)" text-anchor="middle" font-family="Inter" font-weight="600">Cannot parallelise. Gradients vanish.</text>
+
+            <!-- Transformer side -->
+            <text x="390" y="20" font-size="11" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Transformer: Parallel (O(1) path)</text>
+            <g font-family="JetBrains Mono" font-size="9" font-weight="600" text-anchor="middle">
+              <rect x="295" y="45" width="48" height="28" rx="6" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+              <text x="319" y="63" fill="var(--accent-3)">The</text>
+              <rect x="355" y="45" width="48" height="28" rx="6" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+              <text x="379" y="63" fill="var(--accent-3)">cat</text>
+              <rect x="415" y="45" width="48" height="28" rx="6" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+              <text x="439" y="63" fill="var(--accent-3)">sat</text>
+              <rect x="475" y="45" width="28" height="28" rx="6" fill="rgba(16,185,129,0.06)" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
+              <text x="489" y="63" fill="var(--text-light)">...</text>
+            </g>
+            <!-- All-to-all connections -->
+            <line x1="319" y1="75" x2="379" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <line x1="319" y1="75" x2="439" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <line x1="379" y1="75" x2="319" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <line x1="379" y1="75" x2="439" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <line x1="439" y1="75" x2="319" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <line x1="439" y1="75" x2="379" y2="90" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <!-- Attention box -->
+            <rect x="300" y="95" width="180" height="28" rx="6" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+            <text x="390" y="113" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Self-Attention Layer</text>
+            <text x="390" y="145" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Every token directly attends to every<tspan x="390" dy="14">other token in a single operation.</tspan></text>
+            <text x="390" y="175" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="600">Fully parallel. Constant path length.</text>
+          </svg>
+          <div class="viz-caption">In an RNN, information from token 1 to token 100 must traverse 99 steps. In a Transformer, every pair has a direct O(1) connection via attention.</div>
+        </div>
+
         <pre class="code-block"><span class="cmt"># Scaled dot-product attention (simplified)</span>
 <span class="kw">import</span> torch
 <span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
@@ -599,7 +1320,7 @@
 
         <p><strong>Fine-tuning</strong> takes the pretrained weights as a starting point and continues training on a much smaller, task-specific dataset. Because the model already "knows" language deeply, fine-tuning requires far less data and compute to produce a capable task-specific model. The intuition is that the pretrained representations capture general linguistic structure; fine-tuning merely steers these capabilities toward the target task.</p>
 
-        <p>There are two main fine-tuning strategies covered in this book. <em>Classification fine-tuning</em> replaces the language modelling head with a classification head and trains the model to predict a class label (e.g., spam or not spam). <em>Instruction fine-tuning</em> keeps the language modelling head but trains the model to follow natural-language instructions encoded in a prompt–completion format, producing a model that behaves like a helpful assistant.</p>
+        <p>There are two main fine-tuning strategies covered in this book. <em>Classification fine-tuning</em> replaces the language modelling head with a classification head and trains the model to predict a class label (e.g., spam or not spam). <em>Instruction fine-tuning</em> keeps the language modelling head but trains the model to follow natural-language instructions encoded in a prompt-completion format, producing a model that behaves like a helpful assistant.</p>
 
         <!-- Comparison table -->
         <div class="viz-container">
@@ -653,8 +1374,31 @@
           <div class="viz-caption">Transfer learning makes fine-tuning accessible: you get the benefit of trillion-token training without paying for it directly.</div>
         </div>
 
+        <!-- NEW SVG: Transfer Learning Funnel -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-filter"></i> Transfer Learning — From General to Specific</div>
+          <svg viewBox="0 0 520 220" width="520" height="220" style="display:block;margin:0 auto;" aria-label="Transfer learning funnel from broad pretraining to specific fine-tuning">
+            <!-- Funnel shape -->
+            <polygon points="60,30 460,30 380,100 140,100" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.35)" stroke-width="1.5"/>
+            <text x="260" y="55" font-size="11" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">Pretraining: Broad World Knowledge</text>
+            <text x="260" y="75" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Grammar, facts, reasoning, style, multilingual patterns</text>
+            <!-- Narrowing -->
+            <polygon points="140,105 380,105 340,155 180,155" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.35)" stroke-width="1.5"/>
+            <text x="260" y="128" font-size="10" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Fine-tuning: Task-Specific</text>
+            <text x="260" y="145" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Instructions, classifications, domain data</text>
+            <!-- Output -->
+            <polygon points="180,160 340,160 300,195 220,195" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.45)" stroke-width="2"/>
+            <text x="260" y="182" font-size="10" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Deployed Model</text>
+            <!-- Cost annotations -->
+            <text x="485" y="55" font-size="8.5" fill="var(--accent-2)" text-anchor="end" font-family="Inter">$4-12M compute</text>
+            <text x="485" y="130" font-size="8.5" fill="var(--accent)" text-anchor="end" font-family="Inter">$100-10K compute</text>
+            <text x="485" y="182" font-size="8.5" fill="var(--accent-3)" text-anchor="end" font-family="Inter">API / product</text>
+          </svg>
+          <div class="viz-caption">The funnel narrows from broad pretraining (expensive, general) through fine-tuning (affordable, specific) to a deployed model that serves a particular need.</div>
+        </div>
+
         <div class="insight-box">
-          <strong>Parameter-Efficient Fine-tuning (PEFT):</strong> Techniques like LoRA (Low-Rank Adaptation) freeze most of the pretrained weights and only train small adapter layers, reducing fine-tuning memory requirements by 10–100x. This makes fine-tuning possible on consumer-grade hardware. Appendix E of the book covers LoRA in depth.
+          <strong>Parameter-Efficient Fine-tuning (PEFT):</strong> Techniques like LoRA (Low-Rank Adaptation) freeze most of the pretrained weights and only train small adapter layers, reducing fine-tuning memory requirements by 10-100x. This makes fine-tuning possible on consumer-grade hardware. Appendix E of the book covers LoRA in depth.
         </div>
       </section>
 
@@ -707,6 +1451,52 @@
           <div class="viz-caption">This book builds GPT-2 Small (124M parameters) — the architecture that launched a thousand fine-tunes.</div>
         </div>
 
+        <!-- NEW SVG: GPT Forward Pass -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-microchip"></i> GPT-2 Forward Pass — End to End</div>
+          <svg viewBox="0 0 520 320" width="520" height="320" style="display:block;margin:0 auto;" aria-label="GPT-2 forward pass diagram showing token embedding through transformer blocks to output">
+            <!-- Input tokens -->
+            <g font-family="JetBrains Mono" font-size="9" font-weight="600" text-anchor="middle">
+              <rect x="80" y="10" width="55" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+              <text x="107" y="27" fill="var(--accent)">The</text>
+              <rect x="145" y="10" width="55" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+              <text x="172" y="27" fill="var(--accent)">cat</text>
+              <rect x="210" y="10" width="55" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+              <text x="237" y="27" fill="var(--accent)">sat</text>
+              <rect x="275" y="10" width="55" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+              <text x="302" y="27" fill="var(--accent)">on</text>
+            </g>
+            <text x="220" y="52" font-size="10" fill="var(--text-light)" text-anchor="middle">↓</text>
+            <!-- Token + Positional Embedding -->
+            <rect x="90" y="57" width="250" height="30" rx="8" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+            <text x="215" y="76" font-size="9.5" fill="var(--accent)" text-anchor="middle" font-family="Inter" font-weight="700">Token Embed + Positional Embed</text>
+            <text x="400" y="76" font-size="8" fill="var(--text-muted)" text-anchor="start" font-family="Inter">[B, T] → [B, T, 768]</text>
+            <text x="220" y="102" font-size="10" fill="var(--text-light)" text-anchor="middle">↓</text>
+            <!-- Transformer blocks (repeated) -->
+            <rect x="70" y="107" width="290" height="120" rx="12" fill="rgba(245,158,11,0.05)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="375" y="125" font-size="8.5" fill="var(--accent-2)" text-anchor="start" font-family="Inter" font-weight="700">x 12 layers</text>
+            <text x="215" y="124" font-size="9" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="700">Transformer Block</text>
+            <!-- Inner components -->
+            <rect x="95" y="132" width="240" height="22" rx="5" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+            <text x="215" y="147" font-size="8" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="600">LayerNorm → Masked Multi-Head Attention → Residual</text>
+            <text x="215" y="165" font-size="8" fill="var(--text-light)" text-anchor="middle">↓</text>
+            <rect x="95" y="170" width="240" height="22" rx="5" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+            <text x="215" y="185" font-size="8" fill="var(--accent-2)" text-anchor="middle" font-family="Inter" font-weight="600">LayerNorm → FFN (768 → 3072 → 768) → Residual</text>
+            <rect x="95" y="200" width="240" height="18" rx="5" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.15)" stroke-width="1"/>
+            <text x="215" y="213" font-size="7.5" fill="var(--text-muted)" text-anchor="middle" font-family="Inter">Dropout applied after attention and FFN</text>
+            <text x="220" y="242" font-size="10" fill="var(--text-light)" text-anchor="middle">↓</text>
+            <!-- Final LayerNorm -->
+            <rect x="120" y="247" width="190" height="24" rx="6" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+            <text x="215" y="263" font-size="9" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Final LayerNorm</text>
+            <text x="220" y="282" font-size="10" fill="var(--text-light)" text-anchor="middle">↓</text>
+            <!-- Output -->
+            <rect x="100" y="286" width="230" height="28" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.5)" stroke-width="2"/>
+            <text x="215" y="304" font-size="9.5" fill="var(--accent-3)" text-anchor="middle" font-family="Inter" font-weight="700">Linear → Softmax → P(next token)</text>
+            <text x="400" y="304" font-size="8" fill="var(--text-muted)" text-anchor="start" font-family="Inter">[B, T, 768] → [B, T, 50257]</text>
+          </svg>
+          <div class="viz-caption">The complete GPT-2 forward pass: token IDs → embeddings → 12 transformer blocks → next-token probability distribution over a 50,257-token vocabulary.</div>
+        </div>
+
         <pre class="code-block"><span class="cmt"># GPT-2 Small configuration (as used in this book)</span>
 GPT_CONFIG_124M = {
     <span class="str">"vocab_size"</span>: <span class="num">50257</span>,    <span class="cmt"># BPE vocabulary (GPT-2 tokenizer)</span>
@@ -729,6 +1519,18 @@ GPT_CONFIG_124M = {
             <button class="btn btn-ghost btn-sm" id="predResetBtn"><i class="fas fa-rotate-left"></i> Reset</button>
           </div>
           <div class="viz-caption">Each click simulates one autoregressive step. The model considers all previous tokens and outputs a probability distribution — the top candidates are shown above the chosen token.</div>
+        </div>
+
+        <!-- EXERCISE 2: Match concepts -->
+        <div class="exercise-box" id="exercise2">
+          <h4><i class="fas fa-link"></i> EXERCISE 2: Match the Concept</h4>
+          <p>Click a term on the left, then click its matching description on the right. Match all pairs correctly.</p>
+          <div class="match-grid" id="matchGrid">
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.75rem;">
+            <button class="btn btn-ghost btn-sm" id="resetEx2"><i class="fas fa-rotate-left"></i> Reset</button>
+          </div>
+          <div class="exercise-feedback" id="feedbackEx2"></div>
         </div>
       </section>
 
@@ -772,136 +1574,12 @@ GPT_CONFIG_124M = {
     <div class="tab-panel" id="tab-mindmap">
       <div class="viz-container">
         <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 1 Mind Map — Understanding LLMs</div>
-        <svg id="mindmap-ch1" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 1: Understanding LLMs"></svg>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;">Click any branch to expand or collapse its sub-topics. Click sub-nodes for details.</p>
+        <div class="mindmap-container">
+          <svg id="mindmap-ch1" viewBox="0 0 860 640" style="width:100%;height:auto;display:block;min-height:400px;" aria-label="Interactive mind map of Chapter 1: Understanding LLMs"></svg>
+          <div class="mm-details" id="mmDetails"></div>
+        </div>
       </div>
-      <script>
-      (function() {
-        var svg = document.getElementById('mindmap-ch1');
-        var NS = 'http://www.w3.org/2000/svg';
-
-        var cx = 400, cy = 300;
-        var branches = [
-          { label: 'What is an LLM', angle: -90, color: '#4f6ef7', subs: ['Neural Network', 'Next-Token Prediction', 'Emergent Capabilities'] },
-          { label: 'Applications',   angle: -30, color: '#f59e0b', subs: ['Translation', 'Summarization', 'Code Generation'] },
-          { label: 'Three Stages',   angle:  30, color: '#10b981', subs: ['Data Prep', 'Pretraining', 'Fine-tuning'] },
-          { label: 'Transformer Arch', angle: 90, color: '#8b5cf6', subs: ['Self-Attention', 'Multi-Head', 'Encoder vs Decoder'] },
-          { label: 'Pretraining vs FT', angle: 150, color: '#ef4444', subs: ['Transfer Learning', 'Catastrophic Forgetting'] },
-          { label: 'GPT Overview',   angle: 210, color: '#06b6d4', subs: ['Decoder-Only', 'Autoregressive', 'GPT-2 Sizes'] }
-        ];
-
-        var branchR = 150, subR = 90;
-
-        function toRad(deg) { return deg * Math.PI / 180; }
-
-        function makeSVGEl(tag, attrs) {
-          var el = document.createElementNS(NS, tag);
-          for (var k in attrs) el.setAttribute(k, attrs[k]);
-          return el;
-        }
-
-        function addText(parent, x, y, text, fontSize, fill, bold) {
-          var words = text.split(' ');
-          var lineH = fontSize * 1.25;
-          var lines = [];
-          var cur = '';
-          words.forEach(function(w) {
-            var test = cur ? cur + ' ' + w : w;
-            if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
-            else { cur = test; }
-          });
-          if (cur) lines.push(cur);
-          var startY = y - (lines.length - 1) * lineH / 2;
-          lines.forEach(function(line, i) {
-            var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
-            t.textContent = line;
-            parent.appendChild(t);
-          });
-        }
-
-        var allBranchGroups = [];
-
-        // Center node
-        var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
-        var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
-        centerG.appendChild(centerCircle);
-        addText(centerG, cx, cy - 8, 'Understanding', 11, '#fff', true);
-        addText(centerG, cx, cy + 10, 'LLMs', 11, '#fff', true);
-        svg.appendChild(centerG);
-
-        branches.forEach(function(b, bi) {
-          var rad = toRad(b.angle);
-          var bx = cx + branchR * Math.cos(rad);
-          var by = cy + branchR * Math.sin(rad);
-
-          var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
-
-          // Line center to branch
-          var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
-          g.appendChild(line);
-
-          // Branch circle
-          var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
-          g.appendChild(bc);
-          addText(g, bx, by, b.label, 9.5, '#fff', true);
-
-          // Sub-nodes
-          var subCount = b.subs.length;
-          b.subs.forEach(function(sub, si) {
-            var spread = 50;
-            var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
-            var srad = toRad(baseAngle);
-            var sx = bx + subR * Math.cos(srad);
-            var sy = by + subR * Math.sin(srad);
-
-            var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
-            g.appendChild(sl);
-
-            var sw = 68, sh = 26;
-            var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
-            g.appendChild(sr);
-            addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
-          });
-
-          svg.insertBefore(g, centerG);
-          allBranchGroups.push(g);
-        });
-
-        // Animate on load (staggered fade-in)
-        var allNodes = svg.querySelectorAll('circle, rect');
-        allNodes.forEach(function(n, i) {
-          setTimeout(function() {
-            n.style.transition = 'opacity 0.4s ease';
-            n.setAttribute('opacity', n.getAttribute('fill-opacity') ? n.getAttribute('fill-opacity') : '1');
-            if (n.getAttribute('fill-opacity')) n.setAttribute('opacity', '1');
-          }, i * 60);
-        });
-
-        // Click: highlight branch
-        allBranchGroups.forEach(function(g, gi) {
-          g.addEventListener('click', function(e) {
-            e.stopPropagation();
-            allBranchGroups.forEach(function(og, oi) {
-              var circles = og.querySelectorAll('circle');
-              var rects = og.querySelectorAll('rect');
-              var lines = og.querySelectorAll('line');
-              var opacity = (oi === gi) ? '1' : '0.25';
-              circles.forEach(function(c) { c.setAttribute('opacity', opacity); });
-              rects.forEach(function(r) { r.setAttribute('opacity', opacity); });
-              lines.forEach(function(l) { l.setAttribute('opacity', oi === gi ? '0.8' : '0.15'); });
-            });
-          });
-        });
-
-        // Click center: reset
-        centerG.addEventListener('click', function() {
-          allBranchGroups.forEach(function(g) {
-            g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
-            g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
-            g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
-          });
-        });
-      })();
-      </script>
     </div><!-- /#tab-mindmap -->
 
     <!-- ══════════════════════════════════════════
@@ -1007,6 +1685,65 @@ GPT_CONFIG_124M = {
 
     /* ── Init tabs ── */
     VB.initTabs('chapterTabs');
+
+    /* ── Step-through diagram engine ── */
+    function initStepDiagram(containerId, prevId, nextId, dotsId, descId, descriptions) {
+      var container = document.getElementById(containerId);
+      var stages = container.querySelectorAll('.step-stage');
+      var prevBtn = document.getElementById(prevId);
+      var nextBtn = document.getElementById(nextId);
+      var dotsEl = document.getElementById(dotsId);
+      var descEl = document.getElementById(descId);
+      var current = 0;
+      var total = stages.length;
+
+      // Create dots
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'step-dot' + (i === 0 ? ' active' : '');
+        dotsEl.appendChild(dot);
+      }
+
+      function update() {
+        stages.forEach(function(s, idx) {
+          s.classList.toggle('active', idx === current);
+        });
+        var dots = dotsEl.querySelectorAll('.step-dot');
+        dots.forEach(function(d, idx) {
+          d.classList.toggle('active', idx === current);
+        });
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === total - 1;
+        descEl.innerHTML = descriptions[current];
+      }
+
+      prevBtn.addEventListener('click', function() {
+        if (current > 0) { current--; update(); }
+      });
+      nextBtn.addEventListener('click', function() {
+        if (current < total - 1) { current++; update(); }
+      });
+
+      update();
+    }
+
+    // Pipeline step descriptions
+    initStepDiagram('pipelineSteps', 'pipelinePrev', 'pipelineNext', 'pipelineDots', 'pipelineDesc', [
+      '<strong>Step 1/5 — Data Collection:</strong> Gather text from diverse sources (web crawls, books, code, Wikipedia). GPT-2 used WebText (40 GB from Reddit-linked pages). Modern models use multi-trillion token datasets.',
+      '<strong>Step 2/5 — Cleaning &amp; Tokenisation:</strong> Remove HTML, deduplicate, filter low-quality text. Then split into subword tokens using BPE. GPT-2\'s vocabulary has 50,257 tokens. The tokeniser is critical — poor tokenisation degrades model performance.',
+      '<strong>Step 3/5 — Pretraining:</strong> Feed token sequences into the transformer and predict the next token. Compute cross-entropy loss and backpropagate. This runs for weeks across thousands of GPUs. The result is a "base model" with broad knowledge but no task alignment.',
+      '<strong>Step 4/5 — Fine-tuning:</strong> Take the pretrained base model and continue training on a smaller, labelled dataset. Two flavours: classification (add a classification head) or instruction-following (train on prompt-response pairs). RLHF can further align the model.',
+      '<strong>Step 5/5 — Deployment:</strong> Serve the fine-tuned model via an API (e.g., Flask, FastAPI) or embed it in an application. Techniques like quantisation (INT8/INT4) reduce model size for edge deployment. The full pipeline — from raw text to working product — is what this book teaches.'
+    ]);
+
+    // Self-attention step descriptions
+    initStepDiagram('attnSteps', 'attnPrev', 'attnNext', 'attnDots', 'attnDesc', [
+      '<strong>Step 1/5 — Input Embeddings:</strong> Each input token is converted to a dense vector using a learned embedding table. Positional embeddings are added so the model knows the order of tokens (self-attention alone is permutation-invariant).',
+      '<strong>Step 2/5 — Q, K, V Projections:</strong> Each token\'s embedding is multiplied by three learned weight matrices (W_q, W_k, W_v) to produce Query, Key, and Value vectors. The Query asks "what am I looking for?", the Key says "what do I contain?", and the Value carries the actual information.',
+      '<strong>Step 3/5 — Attention Scores:</strong> The dot product of each Query with all Keys produces a score matrix. Scores are divided by sqrt(d_k) to prevent them from growing too large (which would make softmax outputs too peaked). In GPT, future positions are masked to -infinity.',
+      '<strong>Step 4/5 — Softmax &amp; Weighted Sum:</strong> Softmax converts raw scores into a probability distribution (attention weights). Each token\'s output is then the weighted sum of all Value vectors, with weights proportional to attention. High-attention tokens contribute more to the final representation.',
+      '<strong>Step 5/5 — Multi-Head Attention:</strong> The Q/K/V process runs in parallel across 12 independent heads (in GPT-2 Small). Each head uses a smaller dimension (768/12 = 64) and can specialise in different linguistic patterns (grammar, semantics, position, co-reference). Outputs are concatenated and projected.'
+    ]);
 
     /* ── Next-token prediction interactive demo ── */
     (function () {
@@ -1121,6 +1858,426 @@ GPT_CONFIG_124M = {
       });
 
       init();
+    })();
+
+    /* ── Exercise 1: Drag & Drop — Order the Pipeline ── */
+    (function () {
+      var correctOrder = ['Collect raw text data', 'Clean & deduplicate', 'Tokenise (BPE)', 'Pretrain (next-token)', 'Fine-tune (task data)', 'Deploy model'];
+      var shuffled = correctOrder.slice().sort(function() { return Math.random() - 0.5; });
+      var dropZone = document.getElementById('dropZone1');
+      var source = document.getElementById('dragSource1');
+      var feedback = document.getElementById('feedbackEx1');
+      var dropped = [];
+
+      function render() {
+        source.innerHTML = '';
+        dropZone.innerHTML = '';
+        if (dropped.length === 0) {
+          dropZone.innerHTML = '<span class="drag-zone-label">Drop steps here in order...</span>';
+        }
+        dropped.forEach(function(text, i) {
+          var el = document.createElement('span');
+          el.className = 'drag-item';
+          el.textContent = (i + 1) + '. ' + text;
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function() {
+            dropped.splice(i, 1);
+            shuffled.push(text);
+            render();
+          });
+          dropZone.appendChild(el);
+        });
+        shuffled.forEach(function(text) {
+          var el = document.createElement('span');
+          el.className = 'drag-item';
+          el.textContent = text;
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function() {
+            dropped.push(text);
+            shuffled.splice(shuffled.indexOf(text), 1);
+            render();
+          });
+          source.appendChild(el);
+        });
+      }
+
+      document.getElementById('checkEx1').addEventListener('click', function() {
+        if (dropped.length !== correctOrder.length) {
+          feedback.className = 'exercise-feedback show error';
+          feedback.textContent = 'Place all ' + correctOrder.length + ' steps in the drop zone first!';
+          return;
+        }
+        var allCorrect = true;
+        var items = dropZone.querySelectorAll('.drag-item');
+        items.forEach(function(item, i) {
+          var text = item.textContent.replace(/^\d+\.\s*/, '');
+          if (text === correctOrder[i]) {
+            item.classList.add('correct');
+            item.classList.remove('incorrect');
+          } else {
+            item.classList.add('incorrect');
+            item.classList.remove('correct');
+            allCorrect = false;
+          }
+        });
+        if (allCorrect) {
+          feedback.className = 'exercise-feedback show success';
+          feedback.innerHTML = '<i class="fas fa-check-circle"></i> Correct! The LLM pipeline flows: collect data → clean → tokenise → pretrain → fine-tune → deploy.';
+        } else {
+          feedback.className = 'exercise-feedback show error';
+          feedback.innerHTML = '<i class="fas fa-times-circle"></i> Not quite — some steps are out of order. Red items are in the wrong position. Click items to move them back and try again.';
+        }
+      });
+
+      document.getElementById('resetEx1').addEventListener('click', function() {
+        dropped = [];
+        shuffled = correctOrder.slice().sort(function() { return Math.random() - 0.5; });
+        feedback.className = 'exercise-feedback';
+        feedback.textContent = '';
+        render();
+      });
+
+      render();
+    })();
+
+    /* ── Exercise 2: Match Concepts ── */
+    (function () {
+      var pairs = [
+        { left: 'Self-Attention', right: 'Computes relationships between all token pairs' },
+        { left: 'Causal Mask', right: 'Prevents attending to future tokens' },
+        { left: 'BPE', right: 'Subword tokenisation algorithm' },
+        { left: 'RLHF', right: 'Aligns model with human preferences' },
+        { left: 'Emergent Capability', right: 'Skill appearing at sufficient scale' }
+      ];
+
+      var grid = document.getElementById('matchGrid');
+      var feedback = document.getElementById('feedbackEx2');
+      var selectedLeft = null;
+      var selectedRight = null;
+      var matched = 0;
+      var leftOrder = pairs.map(function(p, i) { return i; }).sort(function() { return Math.random() - 0.5; });
+      var rightOrder = pairs.map(function(p, i) { return i; }).sort(function() { return Math.random() - 0.5; });
+
+      function render() {
+        grid.innerHTML = '';
+        matched = 0;
+        selectedLeft = null;
+        selectedRight = null;
+        feedback.className = 'exercise-feedback';
+
+        var matchState = {};
+        pairs.forEach(function(_, i) { matchState[i] = false; });
+
+        leftOrder.forEach(function(li, row) {
+          var ri = rightOrder[row];
+          var leftEl = document.createElement('div');
+          leftEl.className = 'match-left';
+          leftEl.textContent = pairs[li].left;
+          leftEl.dataset.idx = li;
+
+          var arrow = document.createElement('div');
+          arrow.className = 'match-arrow';
+          arrow.textContent = '---';
+
+          var rightEl = document.createElement('div');
+          rightEl.className = 'match-right';
+          rightEl.textContent = pairs[ri].right;
+          rightEl.dataset.idx = ri;
+
+          leftEl.addEventListener('click', function() {
+            if (leftEl.classList.contains('matched')) return;
+            grid.querySelectorAll('.match-left').forEach(function(e) { e.classList.remove('selected', 'wrong'); });
+            leftEl.classList.add('selected');
+            selectedLeft = li;
+            tryMatch();
+          });
+
+          rightEl.addEventListener('click', function() {
+            if (rightEl.classList.contains('matched')) return;
+            grid.querySelectorAll('.match-right').forEach(function(e) { e.classList.remove('selected', 'wrong'); });
+            rightEl.classList.add('selected');
+            selectedRight = ri;
+            tryMatch();
+          });
+
+          grid.appendChild(leftEl);
+          grid.appendChild(arrow);
+          grid.appendChild(rightEl);
+        });
+      }
+
+      function tryMatch() {
+        if (selectedLeft === null || selectedRight === null) return;
+        var leftEls = grid.querySelectorAll('.match-left');
+        var rightEls = grid.querySelectorAll('.match-right');
+        var leftEl = null, rightEl = null;
+        leftEls.forEach(function(e) { if (parseInt(e.dataset.idx) === selectedLeft) leftEl = e; });
+        rightEls.forEach(function(e) { if (parseInt(e.dataset.idx) === selectedRight) rightEl = e; });
+
+        if (selectedLeft === selectedRight) {
+          // Correct match
+          leftEl.classList.remove('selected');
+          rightEl.classList.remove('selected');
+          leftEl.classList.add('matched');
+          rightEl.classList.add('matched');
+          matched++;
+          if (matched === pairs.length) {
+            feedback.className = 'exercise-feedback show success';
+            feedback.innerHTML = '<i class="fas fa-check-circle"></i> All matched correctly! You understand the key concepts of Chapter 1.';
+          }
+        } else {
+          // Wrong
+          leftEl.classList.add('wrong');
+          rightEl.classList.add('wrong');
+          setTimeout(function() {
+            leftEl.classList.remove('selected', 'wrong');
+            rightEl.classList.remove('selected', 'wrong');
+          }, 800);
+        }
+        selectedLeft = null;
+        selectedRight = null;
+      }
+
+      document.getElementById('resetEx2').addEventListener('click', function() {
+        leftOrder = pairs.map(function(p, i) { return i; }).sort(function() { return Math.random() - 0.5; });
+        rightOrder = pairs.map(function(p, i) { return i; }).sort(function() { return Math.random() - 0.5; });
+        render();
+      });
+
+      render();
+    })();
+
+    /* ── Interactive Mind Map with expand/collapse ── */
+    (function() {
+      var svg = document.getElementById('mindmap-ch1');
+      var detailsEl = document.getElementById('mmDetails');
+      var NS = 'http://www.w3.org/2000/svg';
+      var cx = 430, cy = 320;
+
+      var branches = [
+        {
+          label: 'What is an LLM',
+          angle: -90,
+          color: '#4f6ef7',
+          expanded: true,
+          subs: [
+            { label: 'Neural Network', detail: 'LLMs are deep neural networks with hundreds of millions to hundreds of billions of learnable parameters.' },
+            { label: 'Next-Token\nPrediction', detail: 'The core training objective: given a sequence of tokens, predict the next one. This simple objective, at scale, produces remarkable capabilities.' },
+            { label: 'Emergent\nCapabilities', detail: 'Abilities like reasoning, coding, and translation that emerge at sufficient scale without being explicitly programmed.' }
+          ]
+        },
+        {
+          label: 'Applications',
+          angle: -30,
+          color: '#f59e0b',
+          expanded: true,
+          subs: [
+            { label: 'Translation', detail: 'Convert text between languages while preserving meaning and tone (e.g., DeepL, Google Translate).' },
+            { label: 'Summarisation', detail: 'Condense long documents into concise summaries — either extractive (selecting key sentences) or abstractive (generating new text).' },
+            { label: 'Code Gen', detail: 'Write, complete, debug, and explain code across programming languages (e.g., GitHub Copilot, Cursor).' }
+          ]
+        },
+        {
+          label: 'Three Stages',
+          angle: 20,
+          color: '#10b981',
+          expanded: true,
+          subs: [
+            { label: 'Data Prep', detail: 'Stage 1: Collect raw text, clean it, deduplicate, and tokenise using BPE. This produces the integer token sequences the model trains on.' },
+            { label: 'Pretraining', detail: 'Stage 2: Train on next-token prediction across trillions of tokens. Extremely expensive (weeks on GPU clusters, $4-12M for GPT-3).' },
+            { label: 'Fine-tuning', detail: 'Stage 3: Adapt the pretrained model to specific tasks using labelled data. Two flavours: classification and instruction-following.' }
+          ]
+        },
+        {
+          label: 'Transformer',
+          angle: 90,
+          color: '#8b5cf6',
+          expanded: true,
+          subs: [
+            { label: 'Self-Attention', detail: 'The core mechanism: compute Q, K, V vectors for each token, then use dot-product attention to create context-aware representations.' },
+            { label: 'Multi-Head', detail: '12 parallel attention heads in GPT-2 Small, each attending to different linguistic patterns (grammar, semantics, position, co-reference).' },
+            { label: 'Encoder vs\nDecoder', detail: 'BERT uses encoder (bidirectional). GPT uses decoder (causal, left-to-right). This book builds a decoder-only model.' }
+          ]
+        },
+        {
+          label: 'Pretrain vs\nFine-tune',
+          angle: 155,
+          color: '#ef4444',
+          expanded: true,
+          subs: [
+            { label: 'Transfer\nLearning', detail: 'Train once on general data, then reuse for specific tasks. The pretrained weights encode general language understanding that transfers to downstream tasks.' },
+            { label: 'LoRA / PEFT', detail: 'Parameter-efficient fine-tuning freezes most weights and trains small adapters, reducing memory 10-100x. Makes fine-tuning possible on consumer GPUs.' }
+          ]
+        },
+        {
+          label: 'GPT Overview',
+          angle: 210,
+          color: '#06b6d4',
+          expanded: true,
+          subs: [
+            { label: 'Decoder-Only', detail: 'GPT uses only the decoder half of the Transformer. Each token can only attend to previous tokens (causal masking), making it autoregressive.' },
+            { label: 'Autoregressive', detail: 'At inference time, GPT generates one token at a time, appending each to the context and repeating until a stop condition.' },
+            { label: 'GPT-2 Sizes', detail: 'Four sizes: Small (124M), Medium (355M), Large (774M), XL (1.5B). This book implements the 124M variant.' }
+          ]
+        }
+      ];
+
+      var branchR = 175, subR = 110;
+
+      function toRad(deg) { return deg * Math.PI / 180; }
+
+      function makeSVGEl(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function addText(parent, x, y, text, fontSize, fill, bold) {
+        var lines = text.split('\n');
+        var lineH = fontSize * 1.3;
+        var startY = y - (lines.length - 1) * lineH / 2;
+        lines.forEach(function(line, i) {
+          var words = line.split(' ');
+          var subLines = [];
+          var cur = '';
+          words.forEach(function(w) {
+            var test = cur ? cur + ' ' + w : w;
+            if (test.length > 16 && cur) { subLines.push(cur); cur = w; }
+            else { cur = test; }
+          });
+          if (cur) subLines.push(cur);
+          subLines.forEach(function(sl, si) {
+            var t = makeSVGEl('text', {
+              x: x, y: startY + (i * subLines.length + si) * lineH,
+              'text-anchor': 'middle', 'dominant-baseline': 'middle',
+              'font-size': fontSize, fill: fill,
+              'font-family': 'Inter, sans-serif',
+              'font-weight': bold ? '700' : '500',
+              'pointer-events': 'none'
+            });
+            t.textContent = sl;
+            parent.appendChild(t);
+          });
+        });
+      }
+
+      // Center node
+      var centerG = makeSVGEl('g', { class: 'mm-node', style: 'cursor:pointer' });
+      var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 60, fill: 'var(--accent, #4f6ef7)', opacity: '1', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
+      centerCircle.classList.add('mm-circle');
+      centerG.appendChild(centerCircle);
+      addText(centerG, cx, cy - 8, 'Understanding', 12, '#fff', true);
+      addText(centerG, cx, cy + 10, 'LLMs', 14, '#fff', true);
+      svg.appendChild(centerG);
+
+      var branchGroups = [];
+
+      branches.forEach(function(b, bi) {
+        var rad = toRad(b.angle);
+        var bx = cx + branchR * Math.cos(rad);
+        var by = cy + branchR * Math.sin(rad);
+
+        // Branch group
+        var g = makeSVGEl('g', { class: 'mm-node', 'data-branch': bi });
+
+        // Line center to branch
+        var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '3', opacity: '0.5', 'stroke-linecap': 'round' });
+        g.appendChild(line);
+
+        // Branch circle
+        var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 44, fill: b.color, opacity: '1', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
+        bc.classList.add('mm-circle');
+        g.appendChild(bc);
+        addText(g, bx, by - 4, b.label, 10, '#fff', true);
+
+        // Toggle indicator
+        var toggleY = by + 22;
+        var toggleText = makeSVGEl('text', {
+          x: bx, y: toggleY,
+          'text-anchor': 'middle', 'dominant-baseline': 'middle',
+          'font-size': '10', fill: 'rgba(255,255,255,0.7)',
+          'font-family': 'JetBrains Mono, monospace', 'font-weight': '700',
+          'pointer-events': 'none', 'class': 'mm-toggle-icon'
+        });
+        toggleText.textContent = b.expanded ? '[-]' : '[+]';
+        g.appendChild(toggleText);
+
+        // Sub-nodes group
+        var subG = makeSVGEl('g', { class: 'mm-sub-group' });
+        if (!b.expanded) subG.classList.add('collapsed');
+
+        var subCount = b.subs.length;
+        b.subs.forEach(function(sub, si) {
+          var spread = 40;
+          var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
+          var srad = toRad(baseAngle);
+          var sx = bx + subR * Math.cos(srad);
+          var sy = by + subR * Math.sin(srad);
+
+          var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.8', opacity: '0.35', 'stroke-linecap': 'round' });
+          subG.appendChild(sl);
+
+          var sw = 82, sh = 34;
+          var sr = makeSVGEl('rect', {
+            x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 10,
+            fill: b.color, 'fill-opacity': '0.15', stroke: b.color, 'stroke-width': '1.5',
+            style: 'cursor:pointer'
+          });
+          sr.classList.add('mm-circle');
+          subG.appendChild(sr);
+          addText(subG, sx, sy, sub.label, 8.5, 'var(--text, #1e293b)', false);
+
+          // Click sub-node to show detail
+          sr.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var rect = svg.getBoundingClientRect();
+            var scale = rect.width / 860;
+            detailsEl.style.left = ((sx * scale) - 30) + 'px';
+            detailsEl.style.top = ((sy * scale) + 25) + 'px';
+            detailsEl.innerHTML = '<strong>' + sub.label.replace('\n', ' ') + ':</strong> ' + sub.detail;
+            detailsEl.classList.toggle('show');
+          });
+        });
+
+        g.appendChild(subG);
+        svg.insertBefore(g, centerG);
+        branchGroups.push({ g: g, subG: subG, toggleText: toggleText, branch: b });
+
+        // Click branch to expand/collapse
+        bc.style.cursor = 'pointer';
+        bc.addEventListener('click', function(e) {
+          e.stopPropagation();
+          b.expanded = !b.expanded;
+          subG.classList.toggle('collapsed', !b.expanded);
+          toggleText.textContent = b.expanded ? '[-]' : '[+]';
+          detailsEl.classList.remove('show');
+        });
+      });
+
+      // Click center: expand all
+      centerG.addEventListener('click', function() {
+        branchGroups.forEach(function(bg) {
+          bg.branch.expanded = true;
+          bg.subG.classList.remove('collapsed');
+          bg.toggleText.textContent = '[-]';
+        });
+        detailsEl.classList.remove('show');
+      });
+
+      // Click elsewhere to close details
+      svg.addEventListener('click', function() {
+        detailsEl.classList.remove('show');
+      });
+
+      // Animate on load (staggered fade-in)
+      var allNodes = svg.querySelectorAll('.mm-circle');
+      allNodes.forEach(function(n, i) {
+        n.style.opacity = '0';
+        setTimeout(function() {
+          n.style.transition = 'opacity 0.5s ease';
+          n.style.opacity = n.getAttribute('fill-opacity') || '1';
+        }, i * 80);
+      });
     })();
   </script>
 </body>

@@ -10,376 +10,346 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Chapter-local extras ── */
-    .chapter-hero {
-      padding: 2.5rem 0 1.5rem;
-    }
-    .chapter-hero .ch-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-    .chapter-hero h1 {
-      margin-bottom: 0.6rem;
-    }
-    .chapter-hero .ch-meta {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .chapter-hero .ch-meta span {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
+    /* -- Chapter-local extras -- */
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
 
-    /* ── GPT architecture flow diagram ── */
-    .arch-flow {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
-      margin: 1rem auto;
-      max-width: 360px;
-    }
-    .arch-node {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 0.83rem;
-      font-weight: 600;
+    /* -- GPT architecture flow diagram -- */
+    .arch-flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 1rem auto; max-width: 360px; }
+    .arch-node { width: 100%; padding: 0.6rem 1rem; border-radius: 8px; text-align: center; font-size: 0.83rem; font-weight: 600; position: relative; }
+    .arch-node .arch-dim { font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; font-weight: 400; opacity: 0.75; display: block; margin-top: 0.1rem; }
+    .arch-arrow { font-size: 1rem; color: var(--text-muted); line-height: 1; margin: 2px 0; }
+    .arch-node.an-input  { background: rgba(79,110,247,0.12); color: var(--accent); border: 1.5px solid rgba(79,110,247,0.3); }
+    .arch-node.an-embed  { background: rgba(16,185,129,0.10); color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
+    .arch-node.an-drop   { background: rgba(245,158,11,0.10); color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
+    .arch-node.an-block  { background: rgba(79,110,247,0.18); color: var(--accent); border: 2px solid rgba(79,110,247,0.4); }
+    .arch-node.an-ln     { background: rgba(168,85,247,0.10); color: #a855f7; border: 1.5px solid rgba(168,85,247,0.25); }
+    .arch-node.an-head   { background: rgba(239,68,68,0.10); color: #ef4444; border: 1.5px solid rgba(239,68,68,0.25); }
+    .arch-node.an-logits { background: rgba(16,185,129,0.14); color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.3); }
+
+    /* -- Config table -- */
+    .config-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin: 1rem 0; }
+    .config-table th { background: var(--surface-2); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.5rem 0.75rem; text-align: left; }
+    .config-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    .config-table tr:last-child td { border-bottom: none; }
+    .config-table td:first-child { color: var(--accent); font-weight: 600; }
+    .config-table td:last-child  { color: var(--text-muted); font-size: 0.75rem; font-family: 'Inter', sans-serif; }
+
+    /* -- LayerNorm bar chart -- */
+    .ln-chart { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    .ln-chart-panel { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .ln-chart-header { padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+    .ln-chart-header.before { background: rgba(239,68,68,0.10); color: #ef4444; }
+    .ln-chart-header.after  { background: rgba(16,185,129,0.10); color: var(--accent-3); }
+    .ln-chart-body { padding: 0.6rem 0.75rem; }
+    .ln-bar-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem; }
+    .ln-bar-label { font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); width: 28px; text-align: right; flex-shrink: 0; }
+    .ln-bar-track { flex: 1; height: 14px; background: var(--surface-2); border-radius: 7px; overflow: hidden; position: relative; }
+    .ln-bar-fill { height: 100%; border-radius: 7px; min-width: 2px; }
+    .ln-bar-val { font-size: 0.67rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); width: 38px; flex-shrink: 0; text-align: left; }
+    @media (max-width: 500px) { .ln-chart { grid-template-columns: 1fr; } }
+
+    /* -- GELU SVG chart -- */
+    .gelu-svg-wrap { margin: 1rem 0; overflow-x: auto; }
+    .gelu-legend { display: flex; gap: 1.25rem; font-size: 0.78rem; flex-wrap: wrap; margin-top: 0.5rem; color: var(--text-muted); }
+    .gelu-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+    .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+
+    /* -- Block diagram (transformer block) -- */
+    .block-diagram { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: 1rem auto; max-width: 400px; border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .bd-row { display: flex; align-items: center; padding: 0.55rem 0.85rem; gap: 0.6rem; font-size: 0.83rem; border-bottom: 1px solid var(--border); }
+    .bd-row:last-child { border-bottom: none; }
+    .bd-row-label { flex: 1; font-weight: 600; }
+    .bd-row-dim { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--text-muted); }
+    .bd-row.bd-input  { background: rgba(79,110,247,0.06); }
+    .bd-row.bd-ln     { background: rgba(168,85,247,0.06); }
+    .bd-row.bd-attn   { background: rgba(239,68,68,0.06); }
+    .bd-row.bd-add    { background: rgba(245,158,11,0.06); }
+    .bd-row.bd-ffn    { background: rgba(16,185,129,0.06); }
+    .bd-row.bd-output { background: rgba(79,110,247,0.10); }
+    .bd-icon { width: 22px; text-align: center; font-size: 0.8rem; }
+
+    /* -- Residual gradient diagram -- */
+    .gradient-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    @media (max-width: 500px) { .gradient-compare { grid-template-columns: 1fr; } }
+    .grad-panel { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .grad-panel-header { padding: 0.45rem 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+    .grad-panel-header.no-res  { background: rgba(239,68,68,0.10); color: #ef4444; }
+    .grad-panel-header.yes-res { background: rgba(16,185,129,0.10); color: var(--accent-3); }
+    .grad-panel-body { padding: 0.65rem 0.75rem; }
+    .grad-layer-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .grad-layer-label { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); width: 50px; flex-shrink: 0; }
+    .grad-bar-track { flex: 1; height: 12px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
+    .grad-bar-fill { height: 100%; border-radius: 6px; transition: width 0.3s ease; }
+    .grad-val { font-size: 0.67rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); width: 36px; }
+
+    /* -- Generation loop animation -- */
+    .gen-loop-wrap { margin: 1rem 0; }
+    .gen-sequence { display: flex; gap: 4px; flex-wrap: wrap; margin: 0.75rem 0; min-height: 40px; align-items: center; }
+    .gen-token { padding: 0.3rem 0.6rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; transition: all 0.3s ease; }
+    .gen-token.prompt { background: rgba(79,110,247,0.15); color: var(--accent); border: 1.5px solid rgba(79,110,247,0.35); }
+    .gen-token.new    { background: rgba(16,185,129,0.15); color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.35); animation: tokenAppear 0.35s ease; }
+    @keyframes tokenAppear { from { opacity: 0; transform: translateY(-6px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .gen-step-info { font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); margin-bottom: 0.5rem; }
+    .gen-step-info strong { color: var(--text); }
+    .gen-controls { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+    /* -- Parameter breakdown -- */
+    .param-breakdown { margin: 1rem 0; }
+    .param-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+    .param-label { font-size: 0.8rem; font-weight: 600; width: 160px; flex-shrink: 0; }
+    .param-track { flex: 1; height: 18px; background: var(--surface-2); border-radius: 9px; overflow: hidden; }
+    .param-fill { height: 100%; border-radius: 9px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+    .param-fill-label { font-size: 0.67rem; font-family: 'JetBrains Mono', monospace; color: #fff; font-weight: 700; }
+    .param-count { font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); width: 60px; text-align: right; }
+    @media (max-width: 500px) { .param-label { width: 110px; font-size: 0.75rem; } }
+
+    /* -- Step-through diagram -- */
+    .step-through { margin: 1rem 0; }
+    .step-through-display {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 200px;
+      background: var(--surface);
       position: relative;
     }
-    .arch-node .arch-dim {
-      font-size: 0.7rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 400;
-      opacity: 0.75;
-      display: block;
-      margin-top: 0.1rem;
+    .step-through-stage {
+      padding: 1.25rem;
+      display: none;
     }
-    .arch-arrow {
-      font-size: 1rem;
-      color: var(--text-muted);
-      line-height: 1;
-      margin: 2px 0;
-    }
-    .arch-node.an-input   { background: rgba(79,110,247,0.12);  color: var(--accent); border: 1.5px solid rgba(79,110,247,0.3); }
-    .arch-node.an-embed   { background: rgba(16,185,129,0.10);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.25); }
-    .arch-node.an-drop    { background: rgba(245,158,11,0.10);  color: var(--accent-2); border: 1.5px solid rgba(245,158,11,0.25); }
-    .arch-node.an-block   { background: rgba(79,110,247,0.18);  color: var(--accent); border: 2px solid rgba(79,110,247,0.4); }
-    .arch-node.an-ln      { background: rgba(168,85,247,0.10);  color: #a855f7; border: 1.5px solid rgba(168,85,247,0.25); }
-    .arch-node.an-head    { background: rgba(239,68,68,0.10);   color: #ef4444; border: 1.5px solid rgba(239,68,68,0.25); }
-    .arch-node.an-logits  { background: rgba(16,185,129,0.14);  color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.3); }
-    .arch-repeat-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-style: italic;
-      margin: 0.2rem 0;
-    }
-
-    /* ── Config table ── */
-    .config-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.83rem;
-      margin: 1rem 0;
-    }
-    .config-table th {
+    .step-through-stage.active { display: block; animation: stepFadeIn 0.35s ease; }
+    @keyframes stepFadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+    .step-through-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
       background: var(--surface-2);
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      padding: 0.5rem 0.75rem;
-      text-align: left;
-    }
-    .config-table td {
-      padding: 0.5rem 0.75rem;
       border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .step-through-nav {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      padding: 0.6rem 1rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+    .step-through-nav .btn { min-width: 80px; }
+    .step-indicator {
+      flex: 1;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-dots { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+    .step-dot.active { background: var(--accent); }
+
+    /* -- Step-through SVG content helpers -- */
+    .st-node {
+      transition: opacity 0.4s, transform 0.3s;
+    }
+    .st-highlight {
+      stroke: var(--accent);
+      stroke-width: 3;
+      stroke-dasharray: 6 3;
+      fill: none;
+      animation: st-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes st-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+    /* -- Interactive exercise -- */
+    .exercise-box {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+    .exercise-header {
+      padding: 0.65rem 1rem;
+      background: rgba(79,110,247,0.08);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .exercise-body { padding: 1rem; }
+    .exercise-prompt {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.55;
+    }
+    .exercise-grid {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .exercise-slot {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      font-size: 0.82rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .exercise-slot-label {
+      font-weight: 600;
+      min-width: 100px;
+      flex-shrink: 0;
+      font-size: 0.8rem;
+    }
+    .exercise-slot select,
+    .exercise-slot input {
+      flex: 1;
+      padding: 0.35rem 0.5rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--text);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
     }
-    .config-table tr:last-child td { border-bottom: none; }
-    .config-table td:first-child { color: var(--accent); font-weight: 600; }
-    .config-table td:last-child   { color: var(--text-muted); font-size: 0.75rem; font-family: 'Inter', sans-serif; }
+    .exercise-slot select:focus,
+    .exercise-slot input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .exercise-feedback {
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-top: 0.75rem;
+      display: none;
+      line-height: 1.5;
+    }
+    .exercise-feedback.correct {
+      display: block;
+      background: rgba(16,185,129,0.1);
+      border: 1.5px solid rgba(16,185,129,0.3);
+      color: var(--accent-3);
+    }
+    .exercise-feedback.incorrect {
+      display: block;
+      background: rgba(239,68,68,0.08);
+      border: 1.5px solid rgba(239,68,68,0.25);
+      color: #ef4444;
+    }
+    .exercise-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
 
-    /* ── LayerNorm bar chart ── */
-    .ln-chart {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1rem 0;
+    /* -- Drag-and-drop exercise helpers -- */
+    .drag-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--surface-2);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      min-height: 44px;
     }
-    .ln-chart-panel {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
+    .drag-item {
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 1.5px solid;
     }
-    .ln-chart-header {
+    .drag-item:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+    .drag-item.used { opacity: 0.35; pointer-events: none; }
+    .drop-zone {
+      min-height: 36px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 0.3rem 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: rgba(79,110,247,0.06);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .drop-zone.correct-zone { border-color: var(--accent-3); background: rgba(16,185,129,0.08); }
+    .drop-zone.incorrect-zone { border-color: #ef4444; background: rgba(239,68,68,0.06); }
+
+    /* -- Pre-Norm vs Post-Norm SVG -- */
+    .norm-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    @media (max-width: 560px) { .norm-compare { grid-template-columns: 1fr; } }
+    .norm-panel { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; text-align: center; }
+    .norm-panel-title {
       padding: 0.4rem 0.75rem;
       font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.07em;
     }
-    .ln-chart-header.before { background: rgba(239,68,68,0.10); color: #ef4444; }
-    .ln-chart-header.after  { background: rgba(16,185,129,0.10); color: var(--accent-3); }
-    .ln-chart-body { padding: 0.6rem 0.75rem; }
-    .ln-bar-row {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.35rem;
-    }
-    .ln-bar-label {
-      font-size: 0.68rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      width: 28px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .ln-bar-track {
-      flex: 1;
-      height: 14px;
-      background: var(--surface-2);
-      border-radius: 7px;
-      overflow: hidden;
-      position: relative;
-    }
-    .ln-bar-fill {
-      height: 100%;
-      border-radius: 7px;
-      min-width: 2px;
-    }
-    .ln-bar-val {
-      font-size: 0.67rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      width: 38px;
-      flex-shrink: 0;
-      text-align: left;
-    }
-    @media (max-width: 500px) {
-      .ln-chart { grid-template-columns: 1fr; }
-    }
 
-    /* ── GELU SVG chart ── */
-    .gelu-svg-wrap {
-      margin: 1rem 0;
-      overflow-x: auto;
-    }
-    .gelu-legend {
-      display: flex;
-      gap: 1.25rem;
+    /* -- Weight-tying SVG -- */
+    .wt-svg-wrap { margin: 1rem 0; overflow-x: auto; }
+
+    /* -- Mind map interactive -- */
+    .mm-tooltip {
+      position: absolute;
+      background: var(--surface);
+      border: 1.5px solid var(--accent);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
       font-size: 0.78rem;
-      flex-wrap: wrap;
-      margin-top: 0.5rem;
-      color: var(--text-muted);
+      max-width: 260px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s;
+      color: var(--text);
+      line-height: 1.45;
     }
-    .gelu-legend-item { display: flex; align-items: center; gap: 0.35rem; }
-    .legend-line { width: 24px; height: 3px; border-radius: 2px; }
-
-    /* ── Block diagram (transformer block) ── */
-    .block-diagram {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0;
-      margin: 1rem auto;
-      max-width: 400px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .bd-row {
-      display: flex;
-      align-items: center;
-      padding: 0.55rem 0.85rem;
-      gap: 0.6rem;
-      font-size: 0.83rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .bd-row:last-child { border-bottom: none; }
-    .bd-row-label {
-      flex: 1;
-      font-weight: 600;
-    }
-    .bd-row-dim {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.73rem;
-      color: var(--text-muted);
-    }
-    .bd-row.bd-input    { background: rgba(79,110,247,0.06);  }
-    .bd-row.bd-ln       { background: rgba(168,85,247,0.06);  }
-    .bd-row.bd-attn     { background: rgba(239,68,68,0.06);   }
-    .bd-row.bd-add      { background: rgba(245,158,11,0.06);  }
-    .bd-row.bd-ffn      { background: rgba(16,185,129,0.06);  }
-    .bd-row.bd-output   { background: rgba(79,110,247,0.10);  }
-    .bd-icon {
-      width: 22px;
-      text-align: center;
-      font-size: 0.8rem;
-    }
-
-    /* ── Residual gradient diagram ── */
-    .gradient-compare {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-    @media (max-width: 500px) { .gradient-compare { grid-template-columns: 1fr; } }
-    .grad-panel {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .grad-panel-header {
-      padding: 0.45rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-    .grad-panel-header.no-res  { background: rgba(239,68,68,0.10); color: #ef4444; }
-    .grad-panel-header.yes-res { background: rgba(16,185,129,0.10); color: var(--accent-3); }
-    .grad-panel-body { padding: 0.65rem 0.75rem; }
-    .grad-layer-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
-    }
-    .grad-layer-label {
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      width: 50px;
-      flex-shrink: 0;
-    }
-    .grad-bar-track {
-      flex: 1;
-      height: 12px;
-      background: var(--surface-2);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    .grad-bar-fill {
-      height: 100%;
-      border-radius: 6px;
-      transition: width 0.3s ease;
-    }
-    .grad-val {
-      font-size: 0.67rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      width: 36px;
-    }
-
-    /* ── Generation loop animation ── */
-    .gen-loop-wrap {
-      margin: 1rem 0;
-    }
-    .gen-sequence {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin: 0.75rem 0;
-      min-height: 40px;
-      align-items: center;
-    }
-    .gen-token {
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    .gen-token.prompt   { background: rgba(79,110,247,0.15); color: var(--accent); border: 1.5px solid rgba(79,110,247,0.35); }
-    .gen-token.new      { background: rgba(16,185,129,0.15); color: var(--accent-3); border: 1.5px solid rgba(16,185,129,0.35); animation: tokenAppear 0.35s ease; }
-    @keyframes tokenAppear {
-      from { opacity: 0; transform: translateY(-6px) scale(0.9); }
-      to   { opacity: 1; transform: translateY(0)    scale(1);   }
-    }
-    .gen-step-info {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      padding: 0.5rem 0.75rem;
-      background: var(--surface-2);
-      border-radius: var(--radius-sm);
-      margin-bottom: 0.5rem;
-    }
-    .gen-step-info strong { color: var(--text); }
-    .gen-controls {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    /* ── Parameter breakdown ── */
-    .param-breakdown {
-      margin: 1rem 0;
-    }
-    .param-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
-    .param-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      width: 160px;
-      flex-shrink: 0;
-    }
-    .param-track {
-      flex: 1;
-      height: 18px;
-      background: var(--surface-2);
-      border-radius: 9px;
-      overflow: hidden;
-    }
-    .param-fill {
-      height: 100%;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 6px;
-    }
-    .param-fill-label {
-      font-size: 0.67rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: #fff;
-      font-weight: 700;
-    }
-    .param-count {
-      font-size: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      width: 60px;
-      text-align: right;
-    }
-    @media (max-width: 500px) {
-      .param-label { width: 110px; font-size: 0.75rem; }
-    }
+    .mm-tooltip.visible { opacity: 1; }
+    .mm-node-clickable { cursor: pointer; }
+    .mm-node-clickable:hover rect,
+    .mm-node-clickable:hover circle { filter: brightness(1.15); }
   </style>
 </head>
 <body data-chapter="ch4">
 
-  <!-- ══════════════════════════════════════════
-       HEADER
-  ══════════════════════════════════════════ -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="header-left">
       <span class="book-tag">Visual Book</span>
@@ -392,15 +362,13 @@
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT -->
   <main class="page-wrapper">
 
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
-      <span class="sep">›</span>
+      <span class="sep">&rsaquo;</span>
       <span class="current">Chapter 4</span>
     </nav>
 
@@ -416,14 +384,13 @@
       <div class="ch-meta">
         <span><i class="fas fa-layer-group"></i> 8 Lessons</span>
         <span><i class="fas fa-question-circle"></i> 8-Question Quiz</span>
+        <span><i class="fas fa-gamepad"></i> 2 Interactive Exercises</span>
         <span><i class="fas fa-clock"></i> ~45 min read</span>
         <span class="tag">Core Architecture</span>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TAB BAR
-    ══════════════════════════════════════════ -->
+    <!-- TAB BAR -->
     <div class="tab-bar" id="chapterTabs">
       <button class="tab-btn active" data-tab="tab-lessons">
         <i class="fas fa-book-reader"></i> Lessons
@@ -439,16 +406,16 @@
       </button>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          TAB: LESSONS
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <div class="tab-panel active" id="tab-lessons">
 
-      <p>With attention mechanisms fully understood from Chapter 3, we now have everything needed to assemble a complete GPT model. This chapter builds GPT-2 Small from first principles — every component from scratch. We will implement layer normalization, the GELU activation, the feed-forward network, residual connections, the full transformer block, and finally the end-to-end model with text generation. By the end you will have a working 124M-parameter GPT-2 in under 100 lines of PyTorch.</p>
+      <p>With attention mechanisms fully understood from Chapter 3, we now have everything needed to assemble a complete GPT model. This chapter builds GPT-2 Small from first principles -- every component from scratch. We will implement layer normalization, the GELU activation, the feed-forward network, residual connections, the full transformer block, and finally the end-to-end model with text generation. By the end you will have a working 124M-parameter GPT-2 in under 100 lines of PyTorch.</p>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.1
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-1">
         <div class="lesson-header">
           <span class="lesson-number">4.1</span>
@@ -457,54 +424,38 @@
 
         <p>A GPT model is a stack of transformer blocks preceded by an embedding layer and followed by a linear projection that maps back to vocabulary size. The full forward pass flows through a well-defined sequence of operations: token IDs enter the model, get embedded into dense vectors, positional information is added, the sequence passes through N identical transformer blocks, a final LayerNorm is applied, and a linear layer (the "language model head") projects to logits over the vocabulary. Softmax over those logits gives a probability distribution for the next token.</p>
 
-        <p>GPT-2 Small uses the following configuration: <code>vocab_size=50257</code>, <code>context_length=1024</code>, <code>d_model=768</code>, <code>num_heads=12</code>, <code>num_layers=12</code>, <code>dropout=0.1</code>. These values are not arbitrary — the vocabulary comes from BPE tokenisation on WebText, d_model=768 is a balance between expressivity and computational cost, and 12 layers is empirically sufficient for strong language modelling at this scale.</p>
+        <p>GPT-2 Small uses the following configuration: <code>vocab_size=50257</code>, <code>context_length=1024</code>, <code>d_model=768</code>, <code>num_heads=12</code>, <code>num_layers=12</code>, <code>dropout=0.1</code>. These values are not arbitrary -- the vocabulary comes from BPE tokenisation on WebText, d_model=768 is a balance between expressivity and computational cost, and 12 layers is empirically sufficient for strong language modelling at this scale.</p>
 
-        <p>GPT-2 Small has approximately 124 million parameters total. Roughly 38 million live in the embedding layers (token + positional), and the remaining 85 million are distributed across the 12 transformer blocks (attention heads, feed-forward networks, layer norms). A key design choice — weight tying — shares the token embedding matrix with the output projection, saving ~38M parameters that would otherwise be needed for a separate lm_head weight matrix.</p>
+        <p>GPT-2 Small has approximately 124 million parameters total. Roughly 38 million live in the embedding layers (token + positional), and the remaining 85 million are distributed across the 12 transformer blocks (attention heads, feed-forward networks, layer norms). A key design choice -- weight tying -- shares the token embedding matrix with the output projection, saving ~38M parameters that would otherwise be needed for a separate lm_head weight matrix.</p>
 
-        <p>Understanding the architecture as a whole before diving into components is essential. Every component serves a specific purpose: embeddings convert discrete tokens to continuous space, transformer blocks build contextual representations through attention and position-wise FFN, and the lm_head maps the final representation back to a probability distribution over the vocabulary. The design is clean, composable, and fully parallelizable — the defining reason transformers overtook RNNs.</p>
+        <p>Understanding the architecture as a whole before diving into components is essential. Every component serves a specific purpose: embeddings convert discrete tokens to continuous space, transformer blocks build contextual representations through attention and position-wise FFN, and the lm_head maps the final representation back to a probability distribution over the vocabulary. The design is clean, composable, and fully parallelizable -- the defining reason transformers overtook RNNs.</p>
 
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-project-diagram"></i> GPT-2 Small — Full Architecture Flow</div>
+          <div class="viz-title"><i class="fas fa-project-diagram"></i> GPT-2 Small -- Full Architecture Flow</div>
 
           <div style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start; margin: 0.75rem 0;">
             <!-- Architecture diagram -->
             <div class="arch-flow" style="flex:1; min-width:220px;">
-              <div class="arch-node an-input">Token IDs
-                <span class="arch-dim">[B, T]  integers</span>
-              </div>
+              <div class="arch-node an-input">Token IDs <span class="arch-dim">[B, T]  integers</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-embed">Token Embedding + Positional Embedding
-                <span class="arch-dim">[B, T, 768]</span>
-              </div>
+              <div class="arch-node an-embed">Token Embedding + Positional Embedding <span class="arch-dim">[B, T, 768]</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-drop">Dropout (p=0.1)
-                <span class="arch-dim">[B, T, 768]</span>
-              </div>
+              <div class="arch-node an-drop">Dropout (p=0.1) <span class="arch-dim">[B, T, 768]</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-block">× 12 Transformer Blocks
-                <span class="arch-dim">[B, T, 768]</span>
-              </div>
+              <div class="arch-node an-block">&times; 12 Transformer Blocks <span class="arch-dim">[B, T, 768]</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-ln">Final LayerNorm
-                <span class="arch-dim">[B, T, 768]</span>
-              </div>
+              <div class="arch-node an-ln">Final LayerNorm <span class="arch-dim">[B, T, 768]</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-head">lm_head: Linear (768 → 50257)
-                <span class="arch-dim">[B, T, 50257]  logits</span>
-              </div>
+              <div class="arch-node an-head">lm_head: Linear (768 &rarr; 50257) <span class="arch-dim">[B, T, 50257]  logits</span></div>
               <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
-              <div class="arch-node an-logits">Softmax → Token Probabilities
-                <span class="arch-dim">[B, T, 50257]  sums to 1</span>
-              </div>
+              <div class="arch-node an-logits">Softmax &rarr; Token Probabilities <span class="arch-dim">[B, T, 50257]  sums to 1</span></div>
             </div>
 
             <!-- Config table -->
             <div style="flex:1; min-width:220px;">
               <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:0.5rem;">GPT-2 Small Config</div>
               <table class="config-table">
-                <thead>
-                  <tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
-                </thead>
+                <thead><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr></thead>
                 <tbody>
                   <tr><td>vocab_size</td><td>50,257</td><td>BPE vocabulary</td></tr>
                   <tr><td>context_length</td><td>1,024</td><td>Max sequence tokens</td></tr>
@@ -512,7 +463,7 @@
                   <tr><td>num_heads</td><td>12</td><td>Attention heads</td></tr>
                   <tr><td>num_layers</td><td>12</td><td>Transformer blocks</td></tr>
                   <tr><td>d_head</td><td>64</td><td>768 / 12</td></tr>
-                  <tr><td>d_ffn</td><td>3,072</td><td>768 × 4</td></tr>
+                  <tr><td>d_ffn</td><td>3,072</td><td>768 &times; 4</td></tr>
                   <tr><td>dropout</td><td>0.1</td><td>Regularization</td></tr>
                   <tr><td>Total params</td><td>~124M</td><td>With weight tying</td></tr>
                 </tbody>
@@ -523,69 +474,58 @@
               <div class="param-breakdown" id="paramBreakdown">
                 <div class="param-row">
                   <div class="param-label">Token Embedding</div>
-                  <div class="param-track">
-                    <div class="param-fill" style="width:31%; background: rgba(79,110,247,0.7);">
-                      <span class="param-fill-label">31%</span>
-                    </div>
-                  </div>
+                  <div class="param-track"><div class="param-fill" style="width:31%; background: rgba(79,110,247,0.7);"><span class="param-fill-label">31%</span></div></div>
                   <div class="param-count">~38.6M</div>
                 </div>
                 <div class="param-row">
                   <div class="param-label">Pos. Embedding</div>
-                  <div class="param-track">
-                    <div class="param-fill" style="width:0.6%; background: rgba(16,185,129,0.7);">
-                    </div>
-                  </div>
+                  <div class="param-track"><div class="param-fill" style="width:0.6%; background: rgba(16,185,129,0.7);"></div></div>
                   <div class="param-count">~0.8M</div>
                 </div>
                 <div class="param-row">
-                  <div class="param-label">Attention (×12)</div>
-                  <div class="param-track">
-                    <div class="param-fill" style="width:28%; background: rgba(239,68,68,0.7);">
-                      <span class="param-fill-label">28%</span>
-                    </div>
-                  </div>
+                  <div class="param-label">Attention (&times;12)</div>
+                  <div class="param-track"><div class="param-fill" style="width:28%; background: rgba(239,68,68,0.7);"><span class="param-fill-label">28%</span></div></div>
                   <div class="param-count">~34.7M</div>
                 </div>
                 <div class="param-row">
-                  <div class="param-label">FFN (×12)</div>
-                  <div class="param-track">
-                    <div class="param-fill" style="width:56%; background: rgba(245,158,11,0.7);">
-                      <span class="param-fill-label">56%</span>
-                    </div>
-                  </div>
+                  <div class="param-label">FFN (&times;12)</div>
+                  <div class="param-track"><div class="param-fill" style="width:56%; background: rgba(245,158,11,0.7);"><span class="param-fill-label">56%</span></div></div>
                   <div class="param-count">~56.6M</div>
                 </div>
                 <div class="param-row">
                   <div class="param-label">LayerNorms + LN_f</div>
-                  <div class="param-track">
-                    <div class="param-fill" style="width:0.2%; background: rgba(168,85,247,0.7);">
-                    </div>
-                  </div>
+                  <div class="param-track"><div class="param-fill" style="width:0.2%; background: rgba(168,85,247,0.7);"></div></div>
                   <div class="param-count">~0.02M</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="viz-caption">The complete GPT-2 Small pipeline. Token IDs are converted to 768-dim embeddings, positional info is added, 12 transformer blocks build contextual representations, and the lm_head projects to vocabulary logits. Each transformer block itself contains LayerNorm → Multi-head Attention → residual add, and LayerNorm → FFN → residual add.</div>
+          <div class="viz-caption">The complete GPT-2 Small pipeline. Token IDs are converted to 768-dim embeddings, positional info is added, 12 transformer blocks build contextual representations, and the lm_head projects to vocabulary logits. Each transformer block itself contains LayerNorm &rarr; Multi-head Attention &rarr; residual add, and LayerNorm &rarr; FFN &rarr; residual add.</div>
+        </div>
+
+        <!-- SVG: GPT-2 model sizes comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-bar"></i> GPT-2 Model Family -- Size Comparison</div>
+          <svg id="gpt2FamilySvg" viewBox="0 0 520 180" width="100%" style="max-width:520px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          <div class="viz-caption">GPT-2 comes in four sizes. Small (124M) is our target -- it shares the identical architecture with larger variants, differing only in d_model, num_heads, and num_layers. Training the same code with bigger config values yields Medium, Large, and XL.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.2
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-2">
         <div class="lesson-header">
           <span class="lesson-number">4.2</span>
           <h2>Layer Normalization</h2>
         </div>
 
-        <p>Layer Normalization (LayerNorm) normalizes activations across the <em>feature dimension</em> of each token independently. For a token's activation vector <strong>x</strong> of dimension d, it computes the mean and standard deviation across those d values, subtracts the mean, divides by the std, then applies learnable scale (γ) and shift (β) parameters. Formally: <strong>y = (x − mean) / (std + ε) · γ + β</strong>, where ε is a small constant (1e-5) for numerical stability. Both γ and β are learned during training — they allow the model to undo the normalization if that is what minimizes the loss.</p>
+        <p>Layer Normalization (LayerNorm) normalizes activations across the <em>feature dimension</em> of each token independently. For a token's activation vector <strong>x</strong> of dimension d, it computes the mean and standard deviation across those d values, subtracts the mean, divides by the std, then applies learnable scale (&gamma;) and shift (&beta;) parameters. Formally: <strong>y = (x - mean) / (std + &epsilon;) &middot; &gamma; + &beta;</strong>, where &epsilon; is a small constant (1e-5) for numerical stability. Both &gamma; and &beta; are learned during training -- they allow the model to undo the normalization if that is what minimizes the loss.</p>
 
-        <p>GPT-2 uses the <strong>Pre-Norm</strong> variant of LayerNorm: it is applied <em>before</em> each sublayer (attention and FFN), inside the residual branch. This is in contrast to the Post-Norm in the original "Attention Is All You Need" paper, where LN was applied after the residual addition. Pre-Norm training is empirically more stable for deep networks because the residual stream maintains its scale throughout the forward pass — gradients do not explode or vanish.</p>
+        <p>GPT-2 uses the <strong>Pre-Norm</strong> variant of LayerNorm: it is applied <em>before</em> each sublayer (attention and FFN), inside the residual branch. This is in contrast to the Post-Norm in the original "Attention Is All You Need" paper, where LN was applied after the residual addition. Pre-Norm training is empirically more stable for deep networks because the residual stream maintains its scale throughout the forward pass -- gradients do not explode or vanish.</p>
 
-        <p>Why not BatchNorm? BatchNorm normalizes across the batch dimension — it needs statistics computed over many samples simultaneously. For variable-length sequences (common in NLP), sequences must be padded to equal length, which contaminates the batch statistics with padding values. Furthermore, small batch sizes lead to noisy batch statistics. LayerNorm computes statistics per-token, per-example — it is completely independent of other samples in the batch and works equally well at any batch size, including batch size 1 during inference.</p>
+        <p>Why not BatchNorm? BatchNorm normalizes across the batch dimension -- it needs statistics computed over many samples simultaneously. For variable-length sequences (common in NLP), sequences must be padded to equal length, which contaminates the batch statistics with padding values. Furthermore, small batch sizes lead to noisy batch statistics. LayerNorm computes statistics per-token, per-example -- it is completely independent of other samples in the batch and works equally well at any batch size, including batch size 1 during inference.</p>
 
         <pre class="code-block"><code><span class="kw">class</span> <span class="fn">LayerNorm</span>(nn.Module):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model, eps=<span class="num">1e-5</span>):
@@ -600,67 +540,135 @@
         <span class="kw">return</span> self.gamma * (x - mean) / (std + self.eps) + self.beta</code></pre>
 
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-chart-bar"></i> LayerNorm — Activation Distribution Before &amp; After</div>
-          <div class="ln-chart" id="lnChart">
-            <!-- Rendered by JS -->
+          <div class="viz-title"><i class="fas fa-chart-bar"></i> LayerNorm -- Activation Distribution Before &amp; After</div>
+          <div class="ln-chart" id="lnChart"><!-- Rendered by JS --></div>
+          <div class="viz-caption">Each bar represents one of 8 activation values for a single token. Before LayerNorm, activations are scattered with arbitrary mean and variance. After LayerNorm, they are centered (mean &asymp; 0) and scaled (std &asymp; 1) -- giving the model a consistent input scale regardless of what the previous layer output.</div>
+        </div>
+
+        <!-- SVG: BatchNorm vs LayerNorm dimension illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-table-cells"></i> BatchNorm vs LayerNorm -- Which Dimension is Normalized?</div>
+          <svg id="bnVsLnSvg" viewBox="0 0 520 200" width="100%" style="max-width:520px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          <div class="viz-caption">BatchNorm (left) normalizes each feature across the batch -- it needs many samples. LayerNorm (right) normalizes each sample across features -- works with batch_size=1. For NLP with variable lengths, LayerNorm is the clear choice.</div>
+        </div>
+
+        <!-- Pre-Norm vs Post-Norm comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-code-branch"></i> Pre-Norm vs Post-Norm Placement</div>
+          <div class="norm-compare">
+            <div class="norm-panel">
+              <div class="norm-panel-title" style="background:rgba(239,68,68,0.10); color:#ef4444;">Post-Norm (Original Transformer)</div>
+              <svg viewBox="0 0 220 260" width="100%" style="max-width:220px; display:block; margin:0 auto; font-family:'Inter',sans-serif;">
+                <rect x="40" y="10" width="140" height="30" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="110" y="29" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">Input x</text>
+                <!-- sublayer -->
+                <line x1="110" y1="40" x2="110" y2="55" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="55" width="140" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.25)" stroke-width="1.5"/>
+                <text x="110" y="74" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444">Sublayer(x)</text>
+                <!-- add -->
+                <line x1="110" y1="85" x2="110" y2="100" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="100" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.25)" stroke-width="1.5"/>
+                <text x="110" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-2)">x + Sublayer(x)</text>
+                <!-- LN after -->
+                <line x1="110" y1="130" x2="110" y2="145" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="145" width="140" height="30" rx="6" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.25)" stroke-width="1.5"/>
+                <text x="110" y="164" text-anchor="middle" font-size="10" font-weight="700" fill="#a855f7">LayerNorm</text>
+                <!-- skip connection arrow -->
+                <path d="M 30 25 L 30 115 L 40 115" fill="none" stroke="var(--accent-2)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <text x="110" y="200" text-anchor="middle" font-size="9" fill="var(--text-muted)">LN after residual add</text>
+                <text x="110" y="215" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="600">Less stable for deep nets</text>
+              </svg>
+            </div>
+            <div class="norm-panel">
+              <div class="norm-panel-title" style="background:rgba(16,185,129,0.10); color:var(--accent-3);">Pre-Norm (GPT-2)</div>
+              <svg viewBox="0 0 220 260" width="100%" style="max-width:220px; display:block; margin:0 auto; font-family:'Inter',sans-serif;">
+                <rect x="40" y="10" width="140" height="30" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>
+                <text x="110" y="29" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">Input x</text>
+                <!-- LN before -->
+                <line x1="110" y1="40" x2="110" y2="55" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="55" width="140" height="30" rx="6" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.25)" stroke-width="1.5"/>
+                <text x="110" y="74" text-anchor="middle" font-size="10" font-weight="700" fill="#a855f7">LayerNorm</text>
+                <!-- sublayer -->
+                <line x1="110" y1="85" x2="110" y2="100" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="100" width="140" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.25)" stroke-width="1.5"/>
+                <text x="110" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444">Sublayer(LN(x))</text>
+                <!-- add -->
+                <line x1="110" y1="130" x2="110" y2="145" stroke="var(--text-muted)" stroke-width="1.5"/>
+                <rect x="40" y="145" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.25)" stroke-width="1.5"/>
+                <text x="110" y="164" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-2)">x + Sublayer(LN(x))</text>
+                <!-- skip connection arrow -->
+                <path d="M 30 25 L 30 160 L 40 160" fill="none" stroke="var(--accent-3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <text x="110" y="200" text-anchor="middle" font-size="9" fill="var(--text-muted)">LN before sublayer</text>
+                <text x="110" y="215" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-weight="600">More stable -- GPT-2 choice</text>
+              </svg>
+            </div>
           </div>
-          <div class="viz-caption">Each bar represents one of 8 activation values for a single token. Before LayerNorm, activations are scattered with arbitrary mean and variance. After LayerNorm, they are centered (mean ≈ 0) and scaled (std ≈ 1) — giving the model a consistent input scale regardless of what the previous layer output.</div>
+          <div class="viz-caption">Post-Norm applies LayerNorm after the residual addition, so the residual stream can grow unboundedly. Pre-Norm normalizes before the sublayer, keeping the residual stream's scale stable. GPT-2 uses Pre-Norm for training stability in deep (12+ layer) networks.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.3
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-3">
         <div class="lesson-header">
           <span class="lesson-number">4.3</span>
           <h2>GELU Activation Function</h2>
         </div>
 
-        <p>GELU (Gaussian Error Linear Unit) is the activation function used in GPT-2's feed-forward networks. Unlike ReLU which hard-zeros all negative inputs, GELU multiplies each input by the probability that a standard normal random variable is less than or equal to that value: <strong>GELU(x) = x · Φ(x)</strong>, where Φ is the Gaussian CDF. This gives GELU a smooth, non-zero gradient for negative inputs — it <em>attenuates</em> negative values rather than eliminating them.</p>
+        <p>GELU (Gaussian Error Linear Unit) is the activation function used in GPT-2's feed-forward networks. Unlike ReLU which hard-zeros all negative inputs, GELU multiplies each input by the probability that a standard normal random variable is less than or equal to that value: <strong>GELU(x) = x &middot; &Phi;(x)</strong>, where &Phi; is the Gaussian CDF. This gives GELU a smooth, non-zero gradient for negative inputs -- it <em>attenuates</em> negative values rather than eliminating them.</p>
 
-        <p>In practice, computing the exact CDF is expensive, so PyTorch uses a fast polynomial approximation: <strong>GELU(x) ≈ 0.5 · x · (1 + tanh(√(2/π) · (x + 0.044715 · x³)))</strong>. This approximation is extremely close to the true GELU and widely used. At x=0, GELU(0)=0. For large positive x, GELU(x)≈x (like ReLU). For small negative x, GELU(x) slightly attenuates the value, and for large negative x it approaches 0 — but smoothly.</p>
+        <p>In practice, computing the exact CDF is expensive, so PyTorch uses a fast polynomial approximation: <strong>GELU(x) &asymp; 0.5 &middot; x &middot; (1 + tanh(&radic;(2/&pi;) &middot; (x + 0.044715 &middot; x&sup3;)))</strong>. This approximation is extremely close to the true GELU and widely used. At x=0, GELU(0)=0. For large positive x, GELU(x)&asymp;x (like ReLU). For small negative x, GELU(x) slightly attenuates the value, and for large negative x it approaches 0 -- but smoothly.</p>
 
         <p>Why does GELU outperform ReLU in transformers? ReLU kills all negative activations completely (dead neuron problem: if a neuron always outputs negative pre-activations, it never receives a gradient and never learns). GELU's smooth curve ensures gradients remain non-zero everywhere. Additionally, GELU's stochastic interpretation (acting as a random dropout that depends on the input value) provides implicit regularization. Empirically, GELU consistently outperforms ReLU on large transformer benchmarks, and has become the standard activation for language models.</p>
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-wave-square"></i> Activation Functions Compared: GELU vs ReLU vs Sigmoid</div>
           <div class="gelu-svg-wrap">
-            <svg id="geluSvg" viewBox="0 0 500 220" width="100%" style="max-width:500px; display:block; margin:0 auto; font-family: 'JetBrains Mono', monospace;">
-              <!-- Background grid and axes will be drawn by JS -->
-            </svg>
+            <svg id="geluSvg" viewBox="0 0 500 220" width="100%" style="max-width:500px; display:block; margin:0 auto; font-family: 'JetBrains Mono', monospace;"></svg>
           </div>
           <div class="gelu-legend">
             <span class="gelu-legend-item"><span class="legend-line" style="background:#4f6ef7;"></span> GELU</span>
             <span class="gelu-legend-item"><span class="legend-line" style="background:#ef4444;"></span> ReLU</span>
             <span class="gelu-legend-item"><span class="legend-line" style="background:#10b981;"></span> Sigmoid</span>
           </div>
-          <div class="viz-caption">GELU (blue) is smooth everywhere, unlike ReLU (red) which has a hard kink at x=0. For negative x, GELU gives small non-zero outputs where ReLU gives exactly zero. Sigmoid (green) squashes all values to (0,1) — too compressed for hidden layers in deep transformers.</div>
+          <div class="viz-caption">GELU (blue) is smooth everywhere, unlike ReLU (red) which has a hard kink at x=0. For negative x, GELU gives small non-zero outputs where ReLU gives exactly zero. Sigmoid (green) squashes all values to (0,1) -- too compressed for hidden layers in deep transformers.</div>
+        </div>
+
+        <!-- SVG: GELU derivative comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Gradient Comparison -- Why GELU Avoids Dead Neurons</div>
+          <svg id="geluGradSvg" viewBox="0 0 500 180" width="100%" style="max-width:500px; display:block; margin:0 auto; font-family: 'JetBrains Mono', monospace;"></svg>
+          <div class="gelu-legend">
+            <span class="gelu-legend-item"><span class="legend-line" style="background:#4f6ef7;"></span> GELU gradient</span>
+            <span class="gelu-legend-item"><span class="legend-line" style="background:#ef4444;"></span> ReLU gradient</span>
+          </div>
+          <div class="viz-caption">ReLU's gradient is exactly 0 for all negative inputs -- a neuron stuck in the negative region receives zero gradient and can never recover (dead neuron). GELU's gradient is always non-zero, ensuring every neuron can learn regardless of its current activation value.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.4
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-4">
         <div class="lesson-header">
           <span class="lesson-number">4.4</span>
           <h2>Feed-Forward Network (FFN)</h2>
         </div>
 
-        <p>Every transformer block contains a two-layer feed-forward network (FFN) applied to each token independently after the attention sublayer. The structure is: <strong>Linear(d_model → 4×d_model) → GELU → Linear(4×d_model → d_model)</strong>. In GPT-2 Small this means 768 → 3072 → 768. The intermediate expansion ratio of 4× comes from the original "Attention Is All You Need" paper and has been kept in virtually every subsequent transformer architecture. It gives the model a large "scratchpad" dimension to compute complex nonlinear transformations of the token representation.</p>
+        <p>Every transformer block contains a two-layer feed-forward network (FFN) applied to each token independently after the attention sublayer. The structure is: <strong>Linear(d_model &rarr; 4&times;d_model) &rarr; GELU &rarr; Linear(4&times;d_model &rarr; d_model)</strong>. In GPT-2 Small this means 768 &rarr; 3072 &rarr; 768. The intermediate expansion ratio of 4&times; comes from the original "Attention Is All You Need" paper and has been kept in virtually every subsequent transformer architecture. It gives the model a large "scratchpad" dimension to compute complex nonlinear transformations of the token representation.</p>
 
-        <p>A critical point: the FFN processes each token <em>independently and identically</em> — there is no communication between token positions inside the FFN. Inter-token communication is entirely handled by the attention sublayer. This clean separation of concerns is elegant: attention gathers information from across the sequence, while the FFN processes and transforms that information for each token individually. The FFN can be thought of as storing "factual knowledge" — large models encode enormous amounts of world knowledge in their FFN weights.</p>
+        <p>A critical point: the FFN processes each token <em>independently and identically</em> -- there is no communication between token positions inside the FFN. Inter-token communication is entirely handled by the attention sublayer. This clean separation of concerns is elegant: attention gathers information from across the sequence, while the FFN processes and transforms that information for each token individually. The FFN can be thought of as storing "factual knowledge" -- large models encode enormous amounts of world knowledge in their FFN weights.</p>
 
-        <p>Parameter count for a single FFN: two linear layers contribute 768×3072 + 3072×768 = ~4.7M parameters. Across 12 blocks: ~56.6M parameters. This is the single largest component of GPT-2 Small — roughly 67% of all transformer block parameters live in the FFN layers. Adding dropout after the second linear layer provides regularization, preventing the model from memorizing training data.</p>
+        <p>Parameter count for a single FFN: two linear layers contribute 768&times;3072 + 3072&times;768 = ~4.7M parameters. Across 12 blocks: ~56.6M parameters. This is the single largest component of GPT-2 Small -- roughly 67% of all transformer block parameters live in the FFN layers. Adding dropout after the second linear layer provides regularization, preventing the model from memorizing training data.</p>
 
         <pre class="code-block"><code><span class="kw">class</span> <span class="fn">FeedForward</span>(nn.Module):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model):
         <span class="fn">super</span>().__init__()
         self.net = nn.<span class="fn">Sequential</span>(
-            nn.<span class="fn">Linear</span>(d_model, <span class="num">4</span> * d_model),  <span class="cmt"># 768 → 3072</span>
+            nn.<span class="fn">Linear</span>(d_model, <span class="num">4</span> * d_model),  <span class="cmt"># 768 &rarr; 3072</span>
             <span class="fn">GELU</span>(),
-            nn.<span class="fn">Linear</span>(<span class="num">4</span> * d_model, d_model),  <span class="cmt"># 3072 → 768</span>
+            nn.<span class="fn">Linear</span>(<span class="num">4</span> * d_model, d_model),  <span class="cmt"># 3072 &rarr; 768</span>
             nn.<span class="fn">Dropout</span>(<span class="num">0.1</span>)
         )
 
@@ -668,7 +676,7 @@
         <span class="kw">return</span> self.<span class="fn">net</span>(x)  <span class="cmt"># each token processed independently</span></code></pre>
 
         <div class="insight-box">
-          <strong>FFN vs Attention — Division of Labor:</strong> Attention = "which tokens should communicate, and how?" FFN = "given what I have gathered, what nonlinear transformation should I apply to my own representation?" The FFN runs <em>after</em> attention in each block, applying the same learned transformation to every position independently.
+          <strong>FFN vs Attention -- Division of Labor:</strong> Attention = "which tokens should communicate, and how?" FFN = "given what I have gathered, what nonlinear transformation should I apply to my own representation?" The FFN runs <em>after</em> attention in each block, applying the same learned transformation to every position independently.
         </div>
 
         <div class="viz-container">
@@ -678,30 +686,31 @@
               <div style="width: 60px; height: 120px; background: rgba(79,110,247,0.15); border: 2px solid rgba(79,110,247,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace;">768</div>
               <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.3rem;">Input</div>
             </div>
-            <div style="text-align:center; color:var(--text-muted); font-size:0.8rem;">
-              <i class="fas fa-arrow-right"></i><br>
-              <span style="font-size:0.65rem; font-family:'JetBrains Mono',monospace;">Linear</span>
-            </div>
+            <div style="text-align:center; color:var(--text-muted); font-size:0.8rem;"><i class="fas fa-arrow-right"></i><br><span style="font-size:0.65rem; font-family:'JetBrains Mono',monospace;">Linear</span></div>
             <div style="text-align:center;">
               <div style="width: 60px; height: 300px; background: rgba(16,185,129,0.12); border: 2px solid rgba(16,185,129,0.35); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--accent-3); font-family: 'JetBrains Mono', monospace;">3072</div>
               <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.3rem;">Expanded</div>
             </div>
-            <div style="text-align:center; color:var(--text-muted); font-size:0.8rem;">
-              <i class="fas fa-arrow-right"></i><br>
-              <span style="font-size:0.65rem; font-family:'JetBrains Mono',monospace;">GELU +<br>Linear</span>
-            </div>
+            <div style="text-align:center; color:var(--text-muted); font-size:0.8rem;"><i class="fas fa-arrow-right"></i><br><span style="font-size:0.65rem; font-family:'JetBrains Mono',monospace;">GELU +<br>Linear</span></div>
             <div style="text-align:center;">
               <div style="width: 60px; height: 120px; background: rgba(79,110,247,0.15); border: 2px solid rgba(79,110,247,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace;">768</div>
               <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.3rem;">Output</div>
             </div>
           </div>
-          <div class="viz-caption">The FFN expands d_model by 4× in the intermediate layer (768 → 3072), applies GELU non-linearity, then contracts back to the original dimension. The heights of the boxes are proportional to the dimension sizes. This bottleneck pattern allows rich transformations while returning to the residual stream's original shape.</div>
+          <div class="viz-caption">The FFN expands d_model by 4&times; in the intermediate layer (768 &rarr; 3072), applies GELU non-linearity, then contracts back to the original dimension. The heights of the boxes are proportional to the dimension sizes.</div>
+        </div>
+
+        <!-- SVG: FFN per-token independence -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-cubes"></i> FFN Processes Each Token Independently</div>
+          <svg id="ffnIndepSvg" viewBox="0 0 500 160" width="100%" style="max-width:500px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          <div class="viz-caption">The FFN applies the same learned transformation independently to each token position. There is zero cross-token communication inside the FFN -- that responsibility belongs entirely to the attention sublayer.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.5
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-5">
         <div class="lesson-header">
           <span class="lesson-number">4.5</span>
@@ -710,29 +719,34 @@
 
         <p>Residual connections, also called skip connections, add the input of a sublayer directly to its output: <strong>output = x + sublayer(LayerNorm(x))</strong>. The identity shortcut <em>x</em> bypasses the sublayer entirely. This sounds deceptively simple, but it is one of the most important architectural innovations in deep learning. Introduced in ResNet for image classification in 2015 and adopted universally since, residual connections solve the vanishing gradient problem that previously made training networks deeper than ~20 layers extremely difficult.</p>
 
-        <p>Why do residuals help gradients? In a standard deep network, the gradient of the loss with respect to an early layer involves a product of many Jacobian matrices — one per layer. If those Jacobians have spectral norms less than 1 (which they often do), the product shrinks exponentially toward zero. With residuals, the gradient through the identity path is always 1: <strong>∂output/∂x = 1 + ∂sublayer/∂x</strong>. Even if the sublayer gradient is near zero, the gradient still flows back with magnitude 1. This makes training a 12-layer GPT-2 as stable as training a 2-layer network — the depth is effectively "free".</p>
+        <p>Why do residuals help gradients? In a standard deep network, the gradient of the loss with respect to an early layer involves a product of many Jacobian matrices -- one per layer. If those Jacobians have spectral norms less than 1 (which they often do), the product shrinks exponentially toward zero. With residuals, the gradient through the identity path is always 1: <strong>&part;output/&part;x = 1 + &part;sublayer/&part;x</strong>. Even if the sublayer gradient is near zero, the gradient still flows back with magnitude 1. This makes training a 12-layer GPT-2 as stable as training a 2-layer network -- the depth is effectively "free".</p>
 
-        <p>In GPT-2, there are two residual connections per transformer block: one around the attention sublayer and one around the FFN sublayer. Both use the Pre-Norm pattern: <code>x = x + drop(attn(ln(x)))</code> and <code>x = x + drop(ffn(ln(x)))</code>. The dropout inside each residual branch provides additional regularization. Because the residual stream (the <em>x</em> variable) flows straight through the entire 12-block stack, the model's output is essentially the sum of many small corrections applied by each block — rather than a complex chain of transformations where early information is irreversibly transformed.</p>
+        <p>In GPT-2, there are two residual connections per transformer block: one around the attention sublayer and one around the FFN sublayer. Both use the Pre-Norm pattern: <code>x = x + drop(attn(ln(x)))</code> and <code>x = x + drop(ffn(ln(x)))</code>. The dropout inside each residual branch provides additional regularization. Because the residual stream (the <em>x</em> variable) flows straight through the entire 12-block stack, the model's output is essentially the sum of many small corrections applied by each block -- rather than a complex chain of transformations where early information is irreversibly transformed.</p>
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-code-branch"></i> Gradient Flow: With vs Without Residuals</div>
-          <div class="gradient-compare" id="gradientCompare">
-            <!-- Rendered by JS -->
-          </div>
-          <div class="viz-caption">Without residuals (left), gradient magnitude shrinks exponentially through 12 layers — the first few layers receive almost no gradient signal and learn very slowly. With residuals (right), the gradient highway maintains full magnitude at every layer depth, enabling all 12 layers to learn effectively simultaneously.</div>
+          <div class="gradient-compare" id="gradientCompare"><!-- Rendered by JS --></div>
+          <div class="viz-caption">Without residuals (left), gradient magnitude shrinks exponentially through 12 layers -- the first few layers receive almost no gradient signal and learn very slowly. With residuals (right), the gradient highway maintains full magnitude at every layer depth, enabling all 12 layers to learn effectively simultaneously.</div>
+        </div>
+
+        <!-- SVG: Residual stream "highway" illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-road"></i> The Residual Stream -- A Highway Through 12 Blocks</div>
+          <svg id="residualHighwaySvg" viewBox="0 0 520 200" width="100%" style="max-width:520px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          <div class="viz-caption">The residual stream (blue highway) passes straight through all 12 blocks. Each block reads from the stream, computes a small correction, and adds it back. Information from early layers is never lost -- it persists in the stream unchanged unless a block explicitly modifies it.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.6
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-6">
         <div class="lesson-header">
           <span class="lesson-number">4.6</span>
           <h2>The Full Transformer Block</h2>
         </div>
 
-        <p>A transformer block combines all the components seen so far: two LayerNorms, a multi-head attention sublayer, a feed-forward sublayer, two residual connections, and dropout. The operations in order: (1) LayerNorm the input, (2) pass through multi-head attention, (3) apply dropout, (4) add the original input (residual), (5) LayerNorm the result, (6) pass through FFN, (7) apply dropout, (8) add input of step 5 (residual). The output has the same shape as the input — [B, T, d_model] — making blocks stackable identically.</p>
+        <p>A transformer block combines all the components seen so far: two LayerNorms, a multi-head attention sublayer, a feed-forward sublayer, two residual connections, and dropout. The operations in order: (1) LayerNorm the input, (2) pass through multi-head attention, (3) apply dropout, (4) add the original input (residual), (5) LayerNorm the result, (6) pass through FFN, (7) apply dropout, (8) add input of step 5 (residual). The output has the same shape as the input -- [B, T, d_model] -- making blocks stackable identically.</p>
 
         <p>GPT-2 uses the <strong>Pre-Norm</strong> ordering (LayerNorm before the sublayer), which differs from the original 2017 Transformer paper that used Post-Norm (LayerNorm after residual addition). The Pre-Norm ordering makes training more numerically stable. In Post-Norm, the residual stream can grow unboundedly, leading to training instability in very deep networks. Pre-Norm keeps the residual stream's scale stable throughout training because the LayerNorm normalizes activations before they enter each sublayer, not after the potentially large residual addition.</p>
 
@@ -751,56 +765,48 @@
         <span class="kw">return</span> x</code></pre>
 
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-sitemap"></i> Transformer Block — Pre-Norm Residual Structure</div>
+          <div class="viz-title"><i class="fas fa-sitemap"></i> Transformer Block -- Pre-Norm Residual Structure</div>
           <div class="block-diagram">
-            <div class="bd-row bd-input">
-              <span class="bd-icon" style="color:var(--accent);"><i class="fas fa-arrow-down"></i></span>
-              <span class="bd-row-label" style="color:var(--accent);">Input x</span>
-              <span class="bd-row-dim">[B, T, 768]</span>
+            <div class="bd-row bd-input"><span class="bd-icon" style="color:var(--accent);"><i class="fas fa-arrow-down"></i></span><span class="bd-row-label" style="color:var(--accent);">Input x</span><span class="bd-row-dim">[B, T, 768]</span></div>
+            <div class="bd-row bd-ln"><span class="bd-icon" style="color:#a855f7;"><i class="fas fa-sliders"></i></span><span class="bd-row-label" style="color:#a855f7;">LayerNorm 1</span><span class="bd-row-dim">normalize per token</span></div>
+            <div class="bd-row bd-attn"><span class="bd-icon" style="color:#ef4444;"><i class="fas fa-eye"></i></span><span class="bd-row-label" style="color:#ef4444;">Multi-Head Attention</span><span class="bd-row-dim">12 heads, d_k=64</span></div>
+            <div class="bd-row bd-add"><span class="bd-icon" style="color:var(--accent-2);"><i class="fas fa-plus"></i></span><span class="bd-row-label" style="color:var(--accent-2);">Residual Add (x + attn_out)</span><span class="bd-row-dim">skip connection 1</span></div>
+            <div class="bd-row bd-ln"><span class="bd-icon" style="color:#a855f7;"><i class="fas fa-sliders"></i></span><span class="bd-row-label" style="color:#a855f7;">LayerNorm 2</span><span class="bd-row-dim">normalize per token</span></div>
+            <div class="bd-row bd-ffn"><span class="bd-icon" style="color:var(--accent-3);"><i class="fas fa-network-wired"></i></span><span class="bd-row-label" style="color:var(--accent-3);">Feed-Forward Network</span><span class="bd-row-dim">768 &rarr; 3072 &rarr; 768</span></div>
+            <div class="bd-row bd-add"><span class="bd-icon" style="color:var(--accent-2);"><i class="fas fa-plus"></i></span><span class="bd-row-label" style="color:var(--accent-2);">Residual Add (x + ffn_out)</span><span class="bd-row-dim">skip connection 2</span></div>
+            <div class="bd-row bd-output"><span class="bd-icon" style="color:var(--accent);"><i class="fas fa-arrow-down"></i></span><span class="bd-row-label" style="color:var(--accent);">Output &rarr; next block</span><span class="bd-row-dim">[B, T, 768]</span></div>
+          </div>
+          <div class="viz-caption">The Pre-Norm transformer block. Each of the two sublayers (attention and FFN) follows the pattern: x = x + dropout(sublayer(LayerNorm(x))). The residual stream (x) is maintained throughout -- each block only learns to add a correction to the existing representation.</div>
+        </div>
+
+        <!-- =============================================
+             STEP-THROUGH DIAGRAM 1: Forward Pass Through a Transformer Block
+        ============================================= -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step-Through: Forward Pass Inside a Transformer Block</div>
+          <div class="step-through" id="blockStepThrough">
+            <div class="step-through-header">
+              <span>Transformer Block Forward Pass</span>
+              <span id="blockStepLabel">Step 1 / 8</span>
             </div>
-            <div class="bd-row bd-ln">
-              <span class="bd-icon" style="color:#a855f7;"><i class="fas fa-sliders"></i></span>
-              <span class="bd-row-label" style="color:#a855f7;">LayerNorm 1</span>
-              <span class="bd-row-dim">normalize per token</span>
+            <div class="step-through-display" id="blockStepDisplay">
+              <!-- Steps rendered by JS -->
             </div>
-            <div class="bd-row bd-attn">
-              <span class="bd-icon" style="color:#ef4444;"><i class="fas fa-eye"></i></span>
-              <span class="bd-row-label" style="color:#ef4444;">Multi-Head Attention</span>
-              <span class="bd-row-dim">12 heads, d_k=64</span>
-            </div>
-            <div class="bd-row bd-add">
-              <span class="bd-icon" style="color:var(--accent-2);"><i class="fas fa-plus"></i></span>
-              <span class="bd-row-label" style="color:var(--accent-2);">Residual Add (x + attn_out)</span>
-              <span class="bd-row-dim">skip connection 1</span>
-            </div>
-            <div class="bd-row bd-ln">
-              <span class="bd-icon" style="color:#a855f7;"><i class="fas fa-sliders"></i></span>
-              <span class="bd-row-label" style="color:#a855f7;">LayerNorm 2</span>
-              <span class="bd-row-dim">normalize per token</span>
-            </div>
-            <div class="bd-row bd-ffn">
-              <span class="bd-icon" style="color:var(--accent-3);"><i class="fas fa-network-wired"></i></span>
-              <span class="bd-row-label" style="color:var(--accent-3);">Feed-Forward Network</span>
-              <span class="bd-row-dim">768 → 3072 → 768</span>
-            </div>
-            <div class="bd-row bd-add">
-              <span class="bd-icon" style="color:var(--accent-2);"><i class="fas fa-plus"></i></span>
-              <span class="bd-row-label" style="color:var(--accent-2);">Residual Add (x + ffn_out)</span>
-              <span class="bd-row-dim">skip connection 2</span>
-            </div>
-            <div class="bd-row bd-output">
-              <span class="bd-icon" style="color:var(--accent);"><i class="fas fa-arrow-down"></i></span>
-              <span class="bd-row-label" style="color:var(--accent);">Output → next block</span>
-              <span class="bd-row-dim">[B, T, 768]</span>
+            <div class="step-through-nav">
+              <button class="btn btn-ghost btn-sm" id="blockStepPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+              <div class="step-indicator">
+                <div class="step-dots" id="blockStepDots"></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="blockStepNext">Next <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
-          <div class="viz-caption">The Pre-Norm transformer block. Each of the two sublayers (attention and FFN) follows the pattern: x = x + dropout(sublayer(LayerNorm(x))). The residual stream (x) is maintained throughout — each block only learns to add a correction to the existing representation rather than fully recomputing it from scratch.</div>
+          <div class="viz-caption">Walk through each operation in the transformer block forward pass. Use Next/Previous to see how data flows from input through LayerNorm, attention, residual add, FFN, and out.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.7
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-7">
         <div class="lesson-header">
           <span class="lesson-number">4.7</span>
@@ -809,7 +815,7 @@
 
         <p>With all components in place, assembling the full GPT model is straightforward. The model holds an embedding layer for tokens, a separate embedding layer for positions (up to context_length), dropout, a stack of N TransformerBlocks (as an nn.Sequential), a final LayerNorm, and the linear language model head (lm_head). The forward pass takes integer token IDs of shape [B, T], generates position indices [0, 1, ..., T-1], embeds both, sums them, and passes through the entire stack before projecting to logits.</p>
 
-        <p>A subtle but important implementation detail: <strong>weight tying</strong>. The token embedding matrix (tok_emb.weight) and the lm_head weight matrix represent the same conceptual object — a mapping between token IDs and d_model-dimensional vectors. The embedding maps IDs to vectors (rows of a 50257×768 matrix), and lm_head maps vectors back to IDs (matrix product). Sharing the same weight matrix saves ~38.6M parameters (50257 × 768) and, importantly, improves performance: the model learns a single consistent token representation space rather than two separate potentially-conflicting ones.</p>
+        <p>A subtle but important implementation detail: <strong>weight tying</strong>. The token embedding matrix (tok_emb.weight) and the lm_head weight matrix represent the same conceptual object -- a mapping between token IDs and d_model-dimensional vectors. The embedding maps IDs to vectors (rows of a 50257&times;768 matrix), and lm_head maps vectors back to IDs (matrix product). Sharing the same weight matrix saves ~38.6M parameters (50257 &times; 768) and, importantly, improves performance: the model learns a single consistent token representation space rather than two separate potentially-conflicting ones.</p>
 
         <p>The positional embedding uses a learned table of 1024 positions (one embedding per position), rather than the fixed sinusoidal embeddings from the original Transformer paper. GPT-2's learned positional embeddings allow the model to learn the most useful position representations from data. The token and position embeddings are simply added together (not concatenated), which preserves the d_model dimension and allows attention to jointly use content and position information.</p>
 
@@ -837,24 +843,57 @@
         <span class="kw">return</span> self.<span class="fn">lm_head</span>(x)                         <span class="cmt"># [B, T, vocab_size]</span></code></pre>
 
         <div class="insight-box">
-          <strong>Weight Tying Detail:</strong> Setting <code>self.lm_head.weight = self.tok_emb.weight</code> makes them share the same underlying tensor. When PyTorch counts parameters, it counts this matrix once (~38.6M). Without weight tying, GPT-2 Small would need ~162M parameters instead of 124M — a 31% increase for no empirical gain.
+          <strong>Weight Tying Detail:</strong> Setting <code>self.lm_head.weight = self.tok_emb.weight</code> makes them share the same underlying tensor. When PyTorch counts parameters, it counts this matrix once (~38.6M). Without weight tying, GPT-2 Small would need ~162M parameters instead of 124M -- a 31% increase for no empirical gain.
+        </div>
+
+        <!-- SVG: Weight tying illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-link"></i> Weight Tying -- One Matrix, Two Roles</div>
+          <div class="wt-svg-wrap">
+            <svg id="weightTyingSvg" viewBox="0 0 500 170" width="100%" style="max-width:500px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          </div>
+          <div class="viz-caption">The same 50257&times;768 weight matrix is used for both token embedding (lookup rows by ID) and the output projection (dot product to get logits). This enforces a consistent representation space and saves 38.6M parameters.</div>
+        </div>
+
+        <!-- =============================================
+             STEP-THROUGH DIAGRAM 2: GPT Forward Pass End-to-End
+        ============================================= -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step-Through: GPT Full Forward Pass (End-to-End)</div>
+          <div class="step-through" id="gptStepThrough">
+            <div class="step-through-header">
+              <span>GPT Forward Pass</span>
+              <span id="gptStepLabel">Step 1 / 7</span>
+            </div>
+            <div class="step-through-display" id="gptStepDisplay">
+              <!-- Steps rendered by JS -->
+            </div>
+            <div class="step-through-nav">
+              <button class="btn btn-ghost btn-sm" id="gptStepPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+              <div class="step-indicator">
+                <div class="step-dots" id="gptStepDots"></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="gptStepNext">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+          </div>
+          <div class="viz-caption">Follow the complete GPT forward pass from token IDs to output logits. Each step shows the operation, tensor shapes, and what is happening conceptually.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
+      <!-- ================
            LESSON 4.8
-      ══════════════════ -->
+      ================ -->
       <section class="lesson" id="lesson-4-8">
         <div class="lesson-header">
           <span class="lesson-number">4.8</span>
           <h2>Text Generation (Greedy Decoding)</h2>
         </div>
 
-        <p>GPT generates text autoregressively: the model takes a sequence of tokens as input, produces a probability distribution over the vocabulary for the <em>next</em> token, samples or picks that token, appends it to the sequence, and repeats. At each step, the full context window (all previously generated tokens plus the prompt) is fed into the model — GPT is not recurrent, so there is no hidden state to carry forward; the entire sequence is re-processed each step. This is computationally expensive but enables the model to attend to all previous context at every step.</p>
+        <p>GPT generates text autoregressively: the model takes a sequence of tokens as input, produces a probability distribution over the vocabulary for the <em>next</em> token, samples or picks that token, appends it to the sequence, and repeats. At each step, the full context window (all previously generated tokens plus the prompt) is fed into the model -- GPT is not recurrent, so there is no hidden state to carry forward; the entire sequence is re-processed each step. This is computationally expensive but enables the model to attend to all previous context at every step.</p>
 
-        <p>Greedy decoding always picks the <em>highest-probability</em> next token: <code>argmax(softmax(logits[-1]))</code>. This is the simplest strategy and is deterministic — given the same prompt, you always get the same output. Greedy decoding is fast but can produce repetitive or suboptimal text, since maximizing each individual step does not guarantee the globally optimal sequence. In practice, temperature sampling (dividing logits by a temperature T before softmax) and top-k / top-p (nucleus) sampling produce more natural and diverse text.</p>
+        <p>Greedy decoding always picks the <em>highest-probability</em> next token: <code>argmax(softmax(logits[-1]))</code>. This is the simplest strategy and is deterministic -- given the same prompt, you always get the same output. Greedy decoding is fast but can produce repetitive or suboptimal text, since maximizing each individual step does not guarantee the globally optimal sequence. In practice, temperature sampling (dividing logits by a temperature T before softmax) and top-k / top-p (nucleus) sampling produce more natural and diverse text.</p>
 
-        <p>One important detail: if the generated sequence grows longer than context_length (1024 for GPT-2 Small), we must crop it before feeding into the model. The positional embedding table only has entries for positions 0 to 1023 — passing a longer sequence would require position IDs that do not exist in the embedding table. In practice, sequences rarely reach this limit during generation, but production systems handle this by either truncating or using techniques like sliding window attention.</p>
+        <p>One important detail: if the generated sequence grows longer than context_length (1024 for GPT-2 Small), we must crop it before feeding into the model. The positional embedding table only has entries for positions 0 to 1023 -- passing a longer sequence would require position IDs that do not exist in the embedding table. In practice, sequences rarely reach this limit during generation, but production systems handle this by either truncating or using techniques like sliding window attention.</p>
 
         <pre class="code-block"><code><span class="kw">def</span> <span class="fn">generate</span>(model, idx, max_new_tokens, cfg):
     <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(max_new_tokens):
@@ -870,213 +909,156 @@
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-play-circle"></i> Autoregressive Generation Loop</div>
-
           <div class="gen-loop-wrap">
-            <div class="gen-step-info" id="genStepInfo">
-              Press <strong>Step</strong> to simulate greedy token generation. Each step: forward pass → argmax last-token logits → append.
-            </div>
+            <div class="gen-step-info" id="genStepInfo">Press <strong>Step</strong> to simulate greedy token generation. Each step: forward pass &rarr; argmax last-token logits &rarr; append.</div>
             <div class="gen-sequence" id="genSequence"></div>
             <div class="gen-controls">
               <button class="btn btn-primary" id="genStepBtn"><i class="fas fa-step-forward"></i> Step</button>
               <button class="btn btn-ghost" id="genResetBtn"><i class="fas fa-redo"></i> Reset</button>
             </div>
           </div>
+          <div class="viz-caption">The greedy generation loop illustrated step-by-step. Blue tokens are the original prompt; green tokens are newly generated. At each step the model sees all previous tokens and predicts the next one.</div>
+        </div>
 
-          <div class="viz-caption">The greedy generation loop illustrated step-by-step. Blue tokens are the original prompt; green tokens are newly generated. At each step the model sees all previous tokens and predicts the next one. The sequence grows until max_new_tokens is reached or a stop condition is met.</div>
+        <!-- SVG: Temperature scaling visualization -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-temperature-half"></i> Temperature Sampling -- How It Affects Token Probabilities</div>
+          <svg id="tempSvg" viewBox="0 0 520 200" width="100%" style="max-width:520px; display:block; margin:0 auto; font-family:'Inter',sans-serif;"></svg>
+          <div class="viz-caption">At temperature T=0.1 (low), the distribution is very peaked -- greedy-like. At T=1.0 (default), the original distribution. At T=2.0 (high), the distribution flattens -- more random. Temperature does not change which token has highest probability, but controls how much the model "gambles" on lower-probability alternatives.</div>
         </div>
       </section>
 
-    </div><!-- /#tab-lessons -->
-
-    <!-- ══════════════════════════════════════════
-         TAB: SUMMARY
-    ══════════════════════════════════════════ -->
-    <div class="tab-panel" id="tab-summary">
-
-      <div class="summary-box glass">
-        <h3><i class="fas fa-bookmark"></i> Chapter 4 — Key Takeaways</h3>
-        <ul>
-          <li><strong>GPT architecture</strong> = Token Embedding + Positional Embedding + N × Transformer Blocks + Final LayerNorm + lm_head. GPT-2 Small uses N=12 blocks, d_model=768, vocab_size=50257, yielding ~124M parameters.</li>
-          <li><strong>LayerNorm</strong> normalizes activations across the feature dimension (not batch) per token, using learned γ (scale) and β (shift). GPT-2 uses Pre-Norm: LN is applied <em>before</em> each sublayer for more stable deep network training.</li>
-          <li><strong>GELU activation</strong> outperforms ReLU in transformers because it is smooth everywhere and allows non-zero gradients for negative values — no dead neuron problem. Formula: GELU(x) = 0.5 · x · (1 + tanh(√(2/π) · (x + 0.044715x³))).</li>
-          <li><strong>Feed-Forward Network</strong> expands d_model by 4× (768 → 3072) then contracts back — the largest component of GPT-2 at ~56.6M parameters across 12 blocks. It processes each token independently after attention.</li>
-          <li><strong>Residual connections</strong> in the form output = x + sublayer(LN(x)) prevent vanishing gradients in deep stacks by giving gradients a direct identity path (gradient = 1) at every block depth.</li>
-          <li><strong>Weight tying</strong> shares the token embedding matrix (tok_emb.weight) with the output projection (lm_head.weight), saving ~38.6M parameters and enforcing a consistent token representation space.</li>
-          <li><strong>Greedy text generation</strong> is autoregressive: encode prompt → forward pass → argmax last-token logits → append → repeat. The context window is cropped if the sequence exceeds context_length=1024.</li>
-        </ul>
+      <!-- =============================================
+           INTERACTIVE EXERCISE 1: Build the Architecture Order
+      ============================================= -->
+      <div class="exercise-box" id="exercise1">
+        <div class="exercise-header"><i class="fas fa-puzzle-piece"></i> Interactive Exercise 1: Arrange the GPT Forward Pass</div>
+        <div class="exercise-body">
+          <div class="exercise-prompt">
+            Place the GPT forward pass operations in the correct order, from input to output. Click items in the bank to place them into the slots sequentially. Click a filled slot to remove it.
+          </div>
+          <div class="drag-bank" id="ex1Bank"><!-- Rendered by JS --></div>
+          <div class="exercise-grid" id="ex1Slots" style="grid-template-columns: 1fr;"><!-- Rendered by JS --></div>
+          <div class="exercise-feedback" id="ex1Feedback"></div>
+          <div class="exercise-actions">
+            <button class="btn btn-primary btn-sm" id="ex1Check"><i class="fas fa-check"></i> Check Answer</button>
+            <button class="btn btn-ghost btn-sm" id="ex1Reset"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+        </div>
       </div>
 
+      <!-- =============================================
+           INTERACTIVE EXERCISE 2: Parameter Calculator
+      ============================================= -->
+      <div class="exercise-box" id="exercise2">
+        <div class="exercise-header"><i class="fas fa-calculator"></i> Interactive Exercise 2: GPT Parameter Calculator</div>
+        <div class="exercise-body">
+          <div class="exercise-prompt">
+            Calculate the parameter counts for a custom GPT configuration. Fill in the blanks, then check your answers. Hint: think about each matrix's shape.
+          </div>
+          <div class="exercise-grid" id="ex2Grid" style="grid-template-columns: 1fr;">
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">Config:</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--text-muted);">vocab=1000, d_model=64, n_layers=2, n_heads=4, ctx=128</span>
+            </div>
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">Token Emb params</span>
+              <input type="number" id="ex2TokEmb" placeholder="vocab x d_model = ?" style="max-width:140px;">
+              <span style="font-size:0.72rem; color:var(--text-muted);">= 1000 &times; 64</span>
+            </div>
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">Pos Emb params</span>
+              <input type="number" id="ex2PosEmb" placeholder="ctx x d_model = ?" style="max-width:140px;">
+              <span style="font-size:0.72rem; color:var(--text-muted);">= 128 &times; 64</span>
+            </div>
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">One FFN params</span>
+              <input type="number" id="ex2FFN" placeholder="(d x 4d) + (4d x d) = ?" style="max-width:140px;">
+              <span style="font-size:0.72rem; color:var(--text-muted);">= 64&times;256 + 256&times;64</span>
+            </div>
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">All FFN params (&times;2)</span>
+              <input type="number" id="ex2AllFFN" placeholder="one_ffn x n_layers = ?" style="max-width:140px;">
+              <span style="font-size:0.72rem; color:var(--text-muted);">= ffn_one &times; 2 blocks</span>
+            </div>
+            <div class="exercise-slot">
+              <span class="exercise-slot-label">One Attn (Q,K,V,O)</span>
+              <input type="number" id="ex2Attn" placeholder="4 x (d x d) = ?" style="max-width:140px;">
+              <span style="font-size:0.72rem; color:var(--text-muted);">= 4 &times; (64 &times; 64)</span>
+            </div>
+          </div>
+          <div class="exercise-feedback" id="ex2Feedback"></div>
+          <div class="exercise-actions">
+            <button class="btn btn-primary btn-sm" id="ex2Check"><i class="fas fa-check"></i> Check Answers</button>
+            <button class="btn btn-ghost btn-sm" id="ex2Reset"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /#tab-lessons -->
+
+    <!-- ============================
+         TAB: SUMMARY
+    ============================ -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box glass">
+        <h3><i class="fas fa-bookmark"></i> Chapter 4 -- Key Takeaways</h3>
+        <ul>
+          <li><strong>GPT architecture</strong> = Token Embedding + Positional Embedding + N &times; Transformer Blocks + Final LayerNorm + lm_head. GPT-2 Small uses N=12 blocks, d_model=768, vocab_size=50257, yielding ~124M parameters.</li>
+          <li><strong>LayerNorm</strong> normalizes activations across the feature dimension (not batch) per token, using learned &gamma; (scale) and &beta; (shift). GPT-2 uses Pre-Norm: LN is applied <em>before</em> each sublayer for more stable deep network training.</li>
+          <li><strong>GELU activation</strong> outperforms ReLU in transformers because it is smooth everywhere and allows non-zero gradients for negative values -- no dead neuron problem. Formula: GELU(x) = 0.5 &middot; x &middot; (1 + tanh(&radic;(2/&pi;) &middot; (x + 0.044715x&sup3;))).</li>
+          <li><strong>Feed-Forward Network</strong> expands d_model by 4&times; (768 &rarr; 3072) then contracts back -- the largest component of GPT-2 at ~56.6M parameters across 12 blocks. It processes each token independently after attention.</li>
+          <li><strong>Residual connections</strong> in the form output = x + sublayer(LN(x)) prevent vanishing gradients in deep stacks by giving gradients a direct identity path (gradient = 1) at every block depth.</li>
+          <li><strong>Weight tying</strong> shares the token embedding matrix (tok_emb.weight) with the output projection (lm_head.weight), saving ~38.6M parameters and enforcing a consistent token representation space.</li>
+          <li><strong>Greedy text generation</strong> is autoregressive: encode prompt &rarr; forward pass &rarr; argmax last-token logits &rarr; append &rarr; repeat. The context window is cropped if the sequence exceeds context_length=1024.</li>
+        </ul>
+      </div>
     </div><!-- /#tab-summary -->
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          TAB: QUIZ
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <div class="tab-panel" id="tab-quiz">
-
       <div class="quiz-box glass">
         <h3><i class="fas fa-circle-question"></i> Chapter 4 Quiz</h3>
         <p class="quiz-subtitle">Test your understanding of GPT architecture and implementation. Select one answer per question, then click <strong>Submit Quiz</strong>.</p>
         <div id="quizContainer"></div>
       </div>
-
     </div><!-- /#tab-quiz -->
 
-    <!-- Tab: Mind Map -->
+    <!-- ============================
+         TAB: MIND MAP (Interactive)
+    ============================ -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container">
-        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 4 Mind Map — GPT Architecture</div>
-        <svg id="mindmap-ch4" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 4: GPT Architecture"></svg>
+      <div class="viz-container" style="position:relative;">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 4 Mind Map -- Click Any Node for Details</div>
+        <svg id="mindmap-ch4" viewBox="0 0 800 620" style="width:100%;height:auto;display:block;" aria-label="Interactive mind map of Chapter 4: GPT Architecture"></svg>
+        <div class="mm-tooltip" id="mmTooltip"></div>
+        <div class="viz-caption">Click any branch or sub-topic to highlight it and see a description. Click the center node to reset all branches.</div>
       </div>
-      <script>
-      (function() {
-        var svg = document.getElementById('mindmap-ch4');
-        var NS = 'http://www.w3.org/2000/svg';
-
-        var cx = 400, cy = 300;
-        var branches = [
-          { label: 'GPT Overview',       angle: -90, color: '#4f6ef7', subs: ['Embed+N Blocks', 'LN + LM Head', '124M Params'] },
-          { label: 'Layer Norm',          angle: -30, color: '#f59e0b', subs: ['Pre-Norm', 'Per-Token', 'Learnable γ β'] },
-          { label: 'GELU',               angle:  30, color: '#10b981', subs: ['Smooth Activation', 'vs ReLU', 'Negative Gradient'] },
-          { label: 'Feed-Forward',        angle:  90, color: '#8b5cf6', subs: ['4× Expansion', 'd_model→4d', '4d→d_model'] },
-          { label: 'Residual Connections',angle: 150, color: '#ef4444', subs: ['Skip Connections', 'Gradient Flow', 'ResNet'] },
-          { label: 'Text Generation',     angle: 210, color: '#06b6d4', subs: ['Greedy Decoding', 'Autoregressive Loop', 'Temperature'] }
-        ];
-
-        var branchR = 150, subR = 90;
-
-        function toRad(deg) { return deg * Math.PI / 180; }
-
-        function makeSVGEl(tag, attrs) {
-          var el = document.createElementNS(NS, tag);
-          for (var k in attrs) el.setAttribute(k, attrs[k]);
-          return el;
-        }
-
-        function addText(parent, x, y, text, fontSize, fill, bold) {
-          var words = text.split(' ');
-          var lineH = fontSize * 1.25;
-          var lines = [];
-          var cur = '';
-          words.forEach(function(w) {
-            var test = cur ? cur + ' ' + w : w;
-            if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
-            else { cur = test; }
-          });
-          if (cur) lines.push(cur);
-          var startY = y - (lines.length - 1) * lineH / 2;
-          lines.forEach(function(line, i) {
-            var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
-            t.textContent = line;
-            parent.appendChild(t);
-          });
-        }
-
-        var allBranchGroups = [];
-
-        var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
-        var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
-        centerG.appendChild(centerCircle);
-        addText(centerG, cx, cy - 8, 'GPT', 13, '#fff', true);
-        addText(centerG, cx, cy + 9, 'Architecture', 10, '#fff', true);
-        svg.appendChild(centerG);
-
-        branches.forEach(function(b, bi) {
-          var rad = toRad(b.angle);
-          var bx = cx + branchR * Math.cos(rad);
-          var by = cy + branchR * Math.sin(rad);
-
-          var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
-
-          var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
-          g.appendChild(line);
-
-          var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
-          g.appendChild(bc);
-          addText(g, bx, by, b.label, 9.5, '#fff', true);
-
-          var subCount = b.subs.length;
-          b.subs.forEach(function(sub, si) {
-            var spread = 50;
-            var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
-            var srad = toRad(baseAngle);
-            var sx = bx + subR * Math.cos(srad);
-            var sy = by + subR * Math.sin(srad);
-
-            var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
-            g.appendChild(sl);
-
-            var sw = 68, sh = 26;
-            var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
-            g.appendChild(sr);
-            addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
-          });
-
-          svg.insertBefore(g, centerG);
-          allBranchGroups.push(g);
-        });
-
-        var allNodes = svg.querySelectorAll('circle, rect');
-        allNodes.forEach(function(n, i) {
-          setTimeout(function() {
-            n.style.transition = 'opacity 0.4s ease';
-            n.setAttribute('opacity', '1');
-          }, i * 60);
-        });
-
-        allBranchGroups.forEach(function(g, gi) {
-          g.addEventListener('click', function(e) {
-            e.stopPropagation();
-            allBranchGroups.forEach(function(og, oi) {
-              var opacity = (oi === gi) ? '1' : '0.25';
-              og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', opacity); });
-              og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', opacity); });
-              og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', oi === gi ? '0.8' : '0.15'); });
-            });
-          });
-        });
-
-        centerG.addEventListener('click', function() {
-          allBranchGroups.forEach(function(g) {
-            g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
-            g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
-            g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
-          });
-        });
-      })();
-      </script>
     </div><!-- /#tab-mindmap -->
 
-    <!-- ══════════════════════════════════════════
-         CHAPTER NAV (outside tabs)
-    ══════════════════════════════════════════ -->
+    <!-- Chapter Navigation -->
     <nav class="chapter-nav" aria-label="Chapter navigation">
-      <a href="ch3.html" class="nav-prev" aria-label="Previous chapter">
-        <i class="fas fa-arrow-left"></i> Ch3: Attention Mechanisms
-      </a>
-      <a href="ch5.html" class="nav-next" aria-label="Next chapter">
-        Ch5: Pretraining on Unlabeled Data <i class="fas fa-arrow-right"></i>
-      </a>
+      <a href="ch3.html" class="nav-prev" aria-label="Previous chapter"><i class="fas fa-arrow-left"></i> Ch3: Attention Mechanisms</a>
+      <a href="ch5.html" class="nav-next" aria-label="Next chapter">Ch5: Pretraining on Unlabeled Data <i class="fas fa-arrow-right"></i></a>
     </nav>
 
-  </main><!-- /.page-wrapper -->
+  </main>
 
-  <!-- ══════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════ -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
-    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p>This is an independent educational companion -- not affiliated with Manning Publications or the author.</p>
     <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
   </footer>
 
-  <!-- ══════════════════════════════════════════
-       SCRIPTS
-  ══════════════════════════════════════════ -->
+  <!-- SCRIPTS -->
   <script src="app.js"></script>
   <script>
-    /* ─────────────────────────────────────────
-       Quiz questions — Chapter 4
-    ───────────────────────────────────────── */
+    /* =====================================================
+       Quiz questions -- Chapter 4
+    ===================================================== */
     const QUESTIONS = [
       {
         question: "In GPT-2 Small, how many transformer blocks (layers) are stacked?",
@@ -1086,9 +1068,9 @@
       },
       {
         question: "What is the expansion ratio in the Feed-Forward Network of each transformer block?",
-        options: ["2×", "4×", "8×", "16×"],
+        options: ["2\u00d7", "4\u00d7", "8\u00d7", "16\u00d7"],
         correct: 1,
-        explanation: "The FFN expands from d_model to 4×d_model (768 → 3072 in GPT-2 Small), applies GELU, then projects back. This 4× ratio comes from the original Transformer paper."
+        explanation: "The FFN expands from d_model to 4\u00d7d_model (768 \u2192 3072 in GPT-2 Small), applies GELU, then projects back. This 4\u00d7 ratio comes from the original Transformer paper."
       },
       {
         question: "What is 'weight tying' in GPT and why is it used?",
@@ -1112,13 +1094,13 @@
         question: "What is the primary purpose of residual (skip) connections in deep networks?",
         options: ["Reduce inference memory", "Allow gradients to flow directly backwards, preventing vanishing gradients in deep stacks", "Enable the model to skip unimportant layers", "Increase the expressivity of the attention mechanism"],
         correct: 1,
-        explanation: "In output = x + sublayer(x), the gradient flows through both paths. The direct identity path (∂output/∂x = 1) guarantees gradient flow even if the sublayer has near-zero gradients."
+        explanation: "In output = x + sublayer(x), the gradient flows through both paths. The direct identity path (\u2202output/\u2202x = 1) guarantees gradient flow even if the sublayer has near-zero gradients."
       },
       {
         question: "In greedy text generation, how is the next token chosen?",
         options: ["Randomly sampled from the full distribution", "The token with the highest probability (argmax)", "The median of the top-k logits", "The token that minimizes cross-entropy"],
         correct: 1,
-        explanation: "Greedy decoding takes argmax(softmax(logits[-1])) — the single highest-probability next token. Simple but can lead to repetitive text; temperature sampling and top-k are alternatives."
+        explanation: "Greedy decoding takes argmax(softmax(logits[-1])) \u2014 the single highest-probability next token. Simple but can lead to repetitive text; temperature sampling and top-k are alternatives."
       },
       {
         question: "In GPT-2 Small, what is the dimension d_model (hidden size)?",
@@ -1131,13 +1113,11 @@
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
 
-    /* ─────────────────────────────────────────
+    /* =====================================================
        LayerNorm before/after chart (Lesson 4.2)
-    ───────────────────────────────────────── */
+    ===================================================== */
     (function() {
       const BEFORE_RAW = [3.4, -1.2, 5.8, 0.3, -2.7, 4.1, 1.6, -0.5];
-
-      // compute normalized values (no gamma/beta for illustration)
       const mean = BEFORE_RAW.reduce((a, b) => a + b, 0) / BEFORE_RAW.length;
       const std  = Math.sqrt(BEFORE_RAW.reduce((a, v) => a + (v - mean) ** 2, 0) / BEFORE_RAW.length);
       const AFTER_NORM = BEFORE_RAW.map(v => (v - mean) / (std + 1e-5));
@@ -1145,278 +1125,864 @@
       function makeBarPanel(values, isPanelBefore) {
         const panel = document.createElement('div');
         panel.className = 'ln-chart-panel';
-
         const header = document.createElement('div');
         header.className = 'ln-chart-header ' + (isPanelBefore ? 'before' : 'after');
         header.textContent = isPanelBefore ? 'Before LayerNorm' : 'After LayerNorm';
         panel.appendChild(header);
-
         const body = document.createElement('div');
         body.className = 'ln-chart-body';
-
         const absMax = Math.max(...values.map(Math.abs));
-
         values.forEach((v, i) => {
-          const row = document.createElement('div');
-          row.className = 'ln-bar-row';
-
-          const lbl = document.createElement('div');
-          lbl.className = 'ln-bar-label';
-          lbl.textContent = `x${i}`;
-          row.appendChild(lbl);
-
-          const track = document.createElement('div');
-          track.className = 'ln-bar-track';
-
-          const fill = document.createElement('div');
-          fill.className = 'ln-bar-fill';
-
-          const pct = Math.abs(v) / absMax * 90;
-          fill.style.width = pct + '%';
-
-          if (isPanelBefore) {
-            fill.style.background = v >= 0
-              ? 'rgba(79,110,247,0.7)'
-              : 'rgba(239,68,68,0.65)';
-          } else {
-            fill.style.background = v >= 0
-              ? 'rgba(16,185,129,0.7)'
-              : 'rgba(239,68,68,0.65)';
-          }
-          track.appendChild(fill);
-          row.appendChild(track);
-
-          const val = document.createElement('div');
-          val.className = 'ln-bar-val';
-          val.textContent = v.toFixed(2);
-          row.appendChild(val);
-
+          const row = document.createElement('div'); row.className = 'ln-bar-row';
+          const lbl = document.createElement('div'); lbl.className = 'ln-bar-label'; lbl.textContent = 'x' + i; row.appendChild(lbl);
+          const track = document.createElement('div'); track.className = 'ln-bar-track';
+          const fill = document.createElement('div'); fill.className = 'ln-bar-fill';
+          fill.style.width = (Math.abs(v) / absMax * 90) + '%';
+          fill.style.background = isPanelBefore ? (v >= 0 ? 'rgba(79,110,247,0.7)' : 'rgba(239,68,68,0.65)') : (v >= 0 ? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.65)');
+          track.appendChild(fill); row.appendChild(track);
+          const val = document.createElement('div'); val.className = 'ln-bar-val'; val.textContent = v.toFixed(2); row.appendChild(val);
           body.appendChild(row);
         });
-
         panel.appendChild(body);
         return panel;
       }
-
       const chart = document.getElementById('lnChart');
       chart.appendChild(makeBarPanel(BEFORE_RAW, true));
       chart.appendChild(makeBarPanel(AFTER_NORM, false));
     })();
 
-    /* ─────────────────────────────────────────
+    /* =====================================================
        GELU SVG chart (Lesson 4.3)
-    ───────────────────────────────────────── */
+    ===================================================== */
     (function() {
       const svg = document.getElementById('geluSvg');
-
       const W = 500, H = 220;
       const PAD = { top: 20, bottom: 30, left: 40, right: 20 };
-      const plotW = W - PAD.left - PAD.right;
-      const plotH = H - PAD.top - PAD.bottom;
-
-      // x range: -3 to 3; y range: -0.5 to 1.2
-      const xMin = -3, xMax = 3;
-      const yMin = -0.5, yMax = 1.2;
-
+      const plotW = W - PAD.left - PAD.right, plotH = H - PAD.top - PAD.bottom;
+      const xMin = -3, xMax = 3, yMin = -0.5, yMax = 1.2;
       function xToSvg(x) { return PAD.left + (x - xMin) / (xMax - xMin) * plotW; }
       function yToSvg(y) { return PAD.top + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
-
-      // Draw axes
-      // x-axis at y=0
-      const yZero = yToSvg(0);
-      svg.innerHTML += `<line x1="${PAD.left}" y1="${yZero}" x2="${W - PAD.right}" y2="${yZero}" stroke="var(--border)" stroke-width="1.5"/>`;
-      // y-axis at x=0
-      const xZero = xToSvg(0);
-      svg.innerHTML += `<line x1="${xZero}" y1="${PAD.top}" x2="${xZero}" y2="${H - PAD.bottom}" stroke="var(--border)" stroke-width="1.5"/>`;
-
-      // Grid lines and x-axis labels
+      const yZero = yToSvg(0), xZero = xToSvg(0);
+      svg.innerHTML += '<line x1="'+PAD.left+'" y1="'+yZero+'" x2="'+(W-PAD.right)+'" y2="'+yZero+'" stroke="var(--border)" stroke-width="1.5"/>';
+      svg.innerHTML += '<line x1="'+xZero+'" y1="'+PAD.top+'" x2="'+xZero+'" y2="'+(H-PAD.bottom)+'" stroke="var(--border)" stroke-width="1.5"/>';
       for (let xi = -3; xi <= 3; xi++) {
         const sx = xToSvg(xi);
-        svg.innerHTML += `<line x1="${sx}" y1="${PAD.top}" x2="${sx}" y2="${H - PAD.bottom}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
-        svg.innerHTML += `<text x="${sx}" y="${H - PAD.bottom + 14}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${xi}</text>`;
+        svg.innerHTML += '<line x1="'+sx+'" y1="'+PAD.top+'" x2="'+sx+'" y2="'+(H-PAD.bottom)+'" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
+        svg.innerHTML += '<text x="'+sx+'" y="'+(H-PAD.bottom+14)+'" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+xi+'</text>';
       }
       for (let yi of [-0.5, 0, 0.5, 1.0]) {
         const sy = yToSvg(yi);
-        svg.innerHTML += `<line x1="${PAD.left}" y1="${sy}" x2="${W - PAD.right}" y2="${sy}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
-        svg.innerHTML += `<text x="${PAD.left - 5}" y="${sy + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${yi.toFixed(1)}</text>`;
+        svg.innerHTML += '<line x1="'+PAD.left+'" y1="'+sy+'" x2="'+(W-PAD.right)+'" y2="'+sy+'" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
+        svg.innerHTML += '<text x="'+(PAD.left-5)+'" y="'+(sy+4)+'" text-anchor="end" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+yi.toFixed(1)+'</text>';
       }
-
-      // Math functions
-      function gelu(x) {
-        return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
-      }
+      function gelu(x) { return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x))); }
       function relu(x) { return Math.max(0, x); }
       function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
-
-      function makePath(fn, color, strokeWidth) {
-        const N = 200;
+      function makePath(fn, color, sw) {
         const pts = [];
-        for (let i = 0; i <= N; i++) {
-          const x = xMin + (xMax - xMin) * i / N;
-          const y = fn(x);
-          const sy = yToSvg(y);
-          const sx = xToSvg(x);
-          pts.push(`${i === 0 ? 'M' : 'L'}${sx.toFixed(1)},${sy.toFixed(1)}`);
-        }
-        return `<path d="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>`;
+        for (let i = 0; i <= 200; i++) { const x = xMin + (xMax-xMin)*i/200; pts.push((i===0?'M':'L')+xToSvg(x).toFixed(1)+','+yToSvg(fn(x)).toFixed(1)); }
+        return '<path d="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
       }
-
       svg.innerHTML += makePath(sigmoid, '#10b981', 2);
-      svg.innerHTML += makePath(relu,    '#ef4444', 2);
-      svg.innerHTML += makePath(gelu,    '#4f6ef7', 2.5);
-
-      // Labels on curves
-      svg.innerHTML += `<text x="${xToSvg(2.2)}" y="${yToSvg(gelu(2.2)) - 7}" font-size="11" fill="#4f6ef7" font-family="Inter, sans-serif" font-weight="600">GELU</text>`;
-      svg.innerHTML += `<text x="${xToSvg(2.2)}" y="${yToSvg(relu(2.2)) + 14}" font-size="11" fill="#ef4444" font-family="Inter, sans-serif" font-weight="600">ReLU</text>`;
-      svg.innerHTML += `<text x="${xToSvg(-2.5)}" y="${yToSvg(sigmoid(-2.5)) - 6}" font-size="11" fill="#10b981" font-family="Inter, sans-serif" font-weight="600">Sigmoid</text>`;
+      svg.innerHTML += makePath(relu, '#ef4444', 2);
+      svg.innerHTML += makePath(gelu, '#4f6ef7', 2.5);
+      svg.innerHTML += '<text x="'+xToSvg(2.2)+'" y="'+(yToSvg(gelu(2.2))-7)+'" font-size="11" fill="#4f6ef7" font-family="Inter, sans-serif" font-weight="600">GELU</text>';
+      svg.innerHTML += '<text x="'+xToSvg(2.2)+'" y="'+(yToSvg(relu(2.2))+14)+'" font-size="11" fill="#ef4444" font-family="Inter, sans-serif" font-weight="600">ReLU</text>';
+      svg.innerHTML += '<text x="'+xToSvg(-2.5)+'" y="'+(yToSvg(sigmoid(-2.5))-6)+'" font-size="11" fill="#10b981" font-family="Inter, sans-serif" font-weight="600">Sigmoid</text>';
     })();
 
-    /* ─────────────────────────────────────────
+    /* =====================================================
+       GELU Gradient SVG (Lesson 4.3)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('geluGradSvg');
+      const W = 500, H = 180;
+      const PAD = { top: 15, bottom: 25, left: 40, right: 20 };
+      const plotW = W - PAD.left - PAD.right, plotH = H - PAD.top - PAD.bottom;
+      const xMin = -3, xMax = 3, yMin = -0.2, yMax = 1.3;
+      function xS(x) { return PAD.left + (x - xMin) / (xMax - xMin) * plotW; }
+      function yS(y) { return PAD.top + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
+      // axes
+      svg.innerHTML += '<line x1="'+PAD.left+'" y1="'+yS(0)+'" x2="'+(W-PAD.right)+'" y2="'+yS(0)+'" stroke="var(--border)" stroke-width="1"/>';
+      svg.innerHTML += '<line x1="'+xS(0)+'" y1="'+PAD.top+'" x2="'+xS(0)+'" y2="'+(H-PAD.bottom)+'" stroke="var(--border)" stroke-width="1"/>';
+      for (let xi = -3; xi <= 3; xi++) svg.innerHTML += '<text x="'+xS(xi)+'" y="'+(H-PAD.bottom+13)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)">'+xi+'</text>';
+      function geluGrad(x) {
+        const t = Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x*x*x));
+        const sech2 = 1 - t*t;
+        return 0.5*(1+t) + 0.5*x*sech2*Math.sqrt(2/Math.PI)*(1+3*0.044715*x*x);
+      }
+      function reluGrad(x) { return x > 0 ? 1 : 0; }
+      function makePath(fn, color, sw) {
+        const pts = [];
+        for (let i = 0; i <= 200; i++) { const x = xMin+(xMax-xMin)*i/200; const y = Math.max(yMin, Math.min(yMax, fn(x))); pts.push((i===0?'M':'L')+xS(x).toFixed(1)+','+yS(y).toFixed(1)); }
+        return '<path d="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
+      }
+      svg.innerHTML += makePath(reluGrad, '#ef4444', 2);
+      svg.innerHTML += makePath(geluGrad, '#4f6ef7', 2.5);
+      svg.innerHTML += '<text x="'+xS(-2)+'" y="'+(yS(0)-8)+'" font-size="10" fill="#ef4444" font-weight="600">ReLU grad = 0</text>';
+      svg.innerHTML += '<text x="'+xS(-2)+'" y="'+(yS(geluGrad(-2))-8)+'" font-size="10" fill="#4f6ef7" font-weight="600">GELU grad &ne; 0</text>';
+      // highlight dead zone
+      svg.innerHTML += '<rect x="'+PAD.left+'" y="'+yS(0.05)+'" width="'+(xS(0)-PAD.left)+'" height="'+(yS(-0.05)-yS(0.05))+'" fill="rgba(239,68,68,0.08)" rx="2"/>';
+      svg.innerHTML += '<text x="'+xS(-1.5)+'" y="'+(yS(0)+18)+'" text-anchor="middle" font-size="8" fill="#ef4444" font-weight="600">DEAD ZONE (ReLU)</text>';
+    })();
+
+    /* =====================================================
+       GPT-2 Family bar chart (Lesson 4.1)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('gpt2FamilySvg');
+      const models = [
+        { name: 'Small', params: 124, d: 768, layers: 12, color: '#4f6ef7' },
+        { name: 'Medium', params: 345, d: 1024, layers: 24, color: '#10b981' },
+        { name: 'Large', params: 774, d: 1280, layers: 36, color: '#f59e0b' },
+        { name: 'XL', params: 1558, d: 1600, layers: 48, color: '#ef4444' }
+      ];
+      const maxP = 1558;
+      const barH = 28, gap = 12, startY = 20, startX = 90, barMaxW = 340;
+      models.forEach(function(m, i) {
+        const y = startY + i * (barH + gap);
+        const w = (m.params / maxP) * barMaxW;
+        svg.innerHTML += '<text x="'+(startX-5)+'" y="'+(y+barH/2+4)+'" text-anchor="end" font-size="11" font-weight="700" fill="'+m.color+'">'+m.name+'</text>';
+        svg.innerHTML += '<rect x="'+startX+'" y="'+y+'" width="'+w+'" height="'+barH+'" rx="6" fill="'+m.color+'" opacity="0.75"/>';
+        svg.innerHTML += '<text x="'+(startX+w+8)+'" y="'+(y+barH/2+4)+'" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+m.params+'M | d='+m.d+' | L='+m.layers+'</text>';
+      });
+      // highlight small
+      svg.innerHTML += '<rect x="'+(startX-2)+'" y="'+(startY-2)+'" width="'+(barMaxW*(124/maxP)+4)+'" height="'+(barH+4)+'" rx="8" fill="none" stroke="#4f6ef7" stroke-width="2" stroke-dasharray="5 3"/>';
+      svg.innerHTML += '<text x="'+startX+'" y="'+(startY+4*(barH+gap)+10)+'" font-size="9" fill="var(--text-muted)">Dashed box = our target (GPT-2 Small, 124M)</text>';
+    })();
+
+    /* =====================================================
+       BatchNorm vs LayerNorm SVG (Lesson 4.2)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('bnVsLnSvg');
+      // Draw two 4x5 grids
+      function drawGrid(sx, sy, label, highlightDir) {
+        const cellW = 36, cellH = 24, rows = 4, cols = 5;
+        svg.innerHTML += '<text x="'+(sx+cols*cellW/2)+'" y="'+(sy-8)+'" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text)">'+label+'</text>';
+        // axis labels
+        svg.innerHTML += '<text x="'+(sx+cols*cellW/2)+'" y="'+(sy+rows*cellH+16)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)">Features (d_model)</text>';
+        svg.innerHTML += '<text x="'+(sx-12)+'" y="'+(sy+rows*cellH/2)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)" transform="rotate(-90,'+(sx-12)+','+(sy+rows*cellH/2)+')">Batch</text>';
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const x = sx + c * cellW, y2 = sy + r * cellH;
+            let fill = 'var(--surface-2)';
+            if (highlightDir === 'col' && c === 2) fill = 'rgba(239,68,68,0.2)';
+            if (highlightDir === 'row' && r === 1) fill = 'rgba(16,185,129,0.2)';
+            svg.innerHTML += '<rect x="'+x+'" y="'+y2+'" width="'+cellW+'" height="'+cellH+'" fill="'+fill+'" stroke="var(--border)" stroke-width="1" rx="2"/>';
+          }
+        }
+        // highlight arrow
+        if (highlightDir === 'col') {
+          const cx = sx + 2*cellW + cellW/2;
+          svg.innerHTML += '<line x1="'+cx+'" y1="'+sy+'" x2="'+cx+'" y2="'+(sy+rows*cellH)+'" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4 3"/>';
+          svg.innerHTML += '<text x="'+cx+'" y="'+(sy+rows*cellH+28)+'" text-anchor="middle" font-size="8" fill="#ef4444" font-weight="600">Normalize down column</text>';
+        }
+        if (highlightDir === 'row') {
+          const ry = sy + 1*cellH + cellH/2;
+          svg.innerHTML += '<line x1="'+sx+'" y1="'+ry+'" x2="'+(sx+cols*cellW)+'" y2="'+ry+'" stroke="var(--accent-3)" stroke-width="2.5" stroke-dasharray="4 3"/>';
+          svg.innerHTML += '<text x="'+(sx+cols*cellW/2)+'" y="'+(sy+rows*cellH+28)+'" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-weight="600">Normalize across row</text>';
+        }
+      }
+      drawGrid(20, 30, 'BatchNorm', 'col');
+      drawGrid(290, 30, 'LayerNorm', 'row');
+    })();
+
+    /* =====================================================
        Gradient flow comparison (Lesson 4.5)
-    ───────────────────────────────────────── */
+    ===================================================== */
     (function() {
       const container = document.getElementById('gradientCompare');
-
-      // Without residuals: gradient shrinks by ~0.7 per layer (vanishing)
-      // With residuals: gradient stays ~1.0 (identity path)
       const LAYERS = ['L12 (out)', 'L11', 'L10', 'L9', 'L8', 'L7', 'L6', 'L5', 'L4', 'L3', 'L2', 'L1 (in)'];
-
-      function noResGrad(depth) {
-        // Vanishing: 0.75^depth — shrinks rapidly
-        return Math.pow(0.72, depth);
-      }
-      function yesResGrad(depth) {
-        // Residual: stays near 1.0 with slight decrease
-        return Math.max(0.90, 1.0 - depth * 0.005);
-      }
-
-      function makeGradPanel(labelText, headerClass, gradFn) {
-        const panel = document.createElement('div');
-        panel.className = 'grad-panel';
-
-        const header = document.createElement('div');
-        header.className = 'grad-panel-header ' + headerClass;
-        header.textContent = labelText;
-        panel.appendChild(header);
-
-        const body = document.createElement('div');
-        body.className = 'grad-panel-body';
-
-        LAYERS.forEach((lbl, i) => {
-          const g = gradFn(i);
-          const row = document.createElement('div');
-          row.className = 'grad-layer-row';
-
-          const label = document.createElement('div');
-          label.className = 'grad-layer-label';
-          label.textContent = lbl;
-          row.appendChild(label);
-
-          const track = document.createElement('div');
-          track.className = 'grad-bar-track';
-
-          const fill = document.createElement('div');
-          fill.className = 'grad-bar-fill';
+      function noResGrad(d) { return Math.pow(0.72, d); }
+      function yesResGrad(d) { return Math.max(0.90, 1.0 - d * 0.005); }
+      function makeGradPanel(label, hdrClass, fn) {
+        const p = document.createElement('div'); p.className = 'grad-panel';
+        const h = document.createElement('div'); h.className = 'grad-panel-header ' + hdrClass; h.textContent = label; p.appendChild(h);
+        const b = document.createElement('div'); b.className = 'grad-panel-body';
+        LAYERS.forEach(function(lbl, i) {
+          const g = fn(i);
+          const row = document.createElement('div'); row.className = 'grad-layer-row';
+          const lb = document.createElement('div'); lb.className = 'grad-layer-label'; lb.textContent = lbl; row.appendChild(lb);
+          const trk = document.createElement('div'); trk.className = 'grad-bar-track';
+          const fill = document.createElement('div'); fill.className = 'grad-bar-fill';
           fill.style.width = (g * 95).toFixed(1) + '%';
-          fill.style.background = headerClass === 'no-res'
-            ? `rgba(239,68,68,${0.4 + g * 0.55})`
-            : `rgba(16,185,129,${0.4 + g * 0.55})`;
-          track.appendChild(fill);
-          row.appendChild(track);
-
-          const val = document.createElement('div');
-          val.className = 'grad-val';
-          val.textContent = g.toFixed(3);
-          row.appendChild(val);
-
-          body.appendChild(row);
+          fill.style.background = hdrClass === 'no-res' ? 'rgba(239,68,68,'+(0.4+g*0.55)+')' : 'rgba(16,185,129,'+(0.4+g*0.55)+')';
+          trk.appendChild(fill); row.appendChild(trk);
+          const v = document.createElement('div'); v.className = 'grad-val'; v.textContent = g.toFixed(3); row.appendChild(v);
+          b.appendChild(row);
         });
-
-        panel.appendChild(body);
-        return panel;
+        p.appendChild(b); return p;
       }
-
       container.appendChild(makeGradPanel('No Residuals', 'no-res', noResGrad));
       container.appendChild(makeGradPanel('With Residuals', 'yes-res', yesResGrad));
     })();
 
-    /* ─────────────────────────────────────────
-       Generation loop animation (Lesson 4.8)
-    ───────────────────────────────────────── */
+    /* =====================================================
+       Residual Highway SVG (Lesson 4.5)
+    ===================================================== */
     (function() {
-      // Simulated generation — prompt + plausible next tokens
+      const svg = document.getElementById('residualHighwaySvg');
+      const W = 520, H = 200;
+      // draw main highway
+      svg.innerHTML += '<rect x="20" y="85" width="480" height="30" rx="15" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/>';
+      svg.innerHTML += '<text x="260" y="105" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent)">Residual Stream (x)</text>';
+      // blocks
+      for (let i = 0; i < 6; i++) {
+        const x = 45 + i * 78;
+        // correction branch
+        svg.innerHTML += '<line x1="'+x+'" y1="85" x2="'+x+'" y2="40" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3 2"/>';
+        svg.innerHTML += '<rect x="'+(x-22)+'" y="18" width="44" height="22" rx="6" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>';
+        svg.innerHTML += '<text x="'+x+'" y="33" text-anchor="middle" font-size="8" font-weight="600" fill="#ef4444">Block '+(i+1)+'</text>';
+        // + sign
+        svg.innerHTML += '<circle cx="'+x+'" cy="80" r="8" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>';
+        svg.innerHTML += '<text x="'+x+'" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent-2)">+</text>';
+      }
+      // dots for remaining blocks
+      svg.innerHTML += '<text x="'+(45+6*78)+'" y="33" text-anchor="middle" font-size="10" fill="var(--text-muted)">...</text>';
+      // label
+      svg.innerHTML += '<text x="20" y="145" font-size="9" fill="var(--text-muted)">Each block reads from the stream, computes a correction, and adds it back (+). The stream carries information intact.</text>';
+      // arrows
+      svg.innerHTML += '<polygon points="15,100 25,95 25,105" fill="var(--accent)"/>';
+      svg.innerHTML += '<polygon points="505,100 495,95 495,105" fill="var(--accent)"/>';
+      svg.innerHTML += '<text x="10" y="90" font-size="8" fill="var(--accent)" font-weight="600">IN</text>';
+      svg.innerHTML += '<text x="497" y="90" font-size="8" fill="var(--accent)" font-weight="600">OUT</text>';
+    })();
+
+    /* =====================================================
+       FFN per-token independence SVG (Lesson 4.4)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('ffnIndepSvg');
+      const tokens = ['The', 'cat', 'sat', 'on', 'the'];
+      tokens.forEach(function(tok, i) {
+        const x = 30 + i * 96;
+        // input token
+        svg.innerHTML += '<rect x="'+x+'" y="10" width="70" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>';
+        svg.innerHTML += '<text x="'+(x+35)+'" y="27" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">'+tok+'</text>';
+        // arrow down
+        svg.innerHTML += '<line x1="'+(x+35)+'" y1="36" x2="'+(x+35)+'" y2="50" stroke="var(--text-muted)" stroke-width="1.5"/>';
+        // FFN box
+        svg.innerHTML += '<rect x="'+x+'" y="50" width="70" height="40" rx="6" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>';
+        svg.innerHTML += '<text x="'+(x+35)+'" y="67" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-3)">FFN</text>';
+        svg.innerHTML += '<text x="'+(x+35)+'" y="80" text-anchor="middle" font-size="7" fill="var(--text-muted)">768\u21923072\u2192768</text>';
+        // arrow down
+        svg.innerHTML += '<line x1="'+(x+35)+'" y1="90" x2="'+(x+35)+'" y2="104" stroke="var(--text-muted)" stroke-width="1.5"/>';
+        // output
+        svg.innerHTML += '<rect x="'+x+'" y="104" width="70" height="26" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/>';
+        svg.innerHTML += '<text x="'+(x+35)+'" y="121" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">'+tok+'\'</text>';
+        // crossed-out connection lines (no cross-talk)
+        if (i < tokens.length - 1) {
+          svg.innerHTML += '<line x1="'+(x+70)+'" y1="70" x2="'+(x+96)+'" y2="70" stroke="var(--border)" stroke-width="1" stroke-dasharray="2 3"/>';
+          svg.innerHTML += '<text x="'+(x+83)+'" y="66" text-anchor="middle" font-size="12" fill="#ef4444">\u00d7</text>';
+        }
+      });
+      svg.innerHTML += '<text x="260" y="152" text-anchor="middle" font-size="9" fill="var(--text-muted)">No cross-token communication in FFN (\u00d7). Each column is independent.</text>';
+    })();
+
+    /* =====================================================
+       Weight Tying SVG (Lesson 4.7)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('weightTyingSvg');
+      // shared matrix
+      svg.innerHTML += '<rect x="175" y="30" width="150" height="100" rx="8" fill="rgba(79,110,247,0.1)" stroke="var(--accent)" stroke-width="2"/>';
+      svg.innerHTML += '<text x="250" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">W</text>';
+      svg.innerHTML += '<text x="250" y="86" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">50257 \u00d7 768</text>';
+      svg.innerHTML += '<text x="250" y="102" text-anchor="middle" font-size="8" fill="var(--text-muted)">~38.6M params</text>';
+      svg.innerHTML += '<text x="250" y="118" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)">Shared Matrix</text>';
+      // left: embedding role
+      svg.innerHTML += '<rect x="10" y="55" width="130" height="50" rx="8" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>';
+      svg.innerHTML += '<text x="75" y="76" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-3)">tok_emb</text>';
+      svg.innerHTML += '<text x="75" y="92" text-anchor="middle" font-size="8" fill="var(--text-muted)">ID \u2192 vector (row lookup)</text>';
+      svg.innerHTML += '<line x1="140" y1="80" x2="175" y2="80" stroke="var(--accent-3)" stroke-width="1.5" marker-end=""/>';
+      svg.innerHTML += '<polygon points="173,76 180,80 173,84" fill="var(--accent-3)"/>';
+      // right: lm_head role
+      svg.innerHTML += '<rect x="360" y="55" width="130" height="50" rx="8" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>';
+      svg.innerHTML += '<text x="425" y="76" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444">lm_head</text>';
+      svg.innerHTML += '<text x="425" y="92" text-anchor="middle" font-size="8" fill="var(--text-muted)">vector \u2192 logits (matmul)</text>';
+      svg.innerHTML += '<line x1="325" y1="80" x2="360" y2="80" stroke="#ef4444" stroke-width="1.5"/>';
+      svg.innerHTML += '<polygon points="358,76 365,80 358,84" fill="#ef4444"/>';
+      // savings
+      svg.innerHTML += '<text x="250" y="158" text-anchor="middle" font-size="9" fill="var(--text-muted)">Without tying: 124M + 38.6M = 162M params. With tying: 124M (saves 31%)</text>';
+    })();
+
+    /* =====================================================
+       Temperature SVG (Lesson 4.8)
+    ===================================================== */
+    (function() {
+      const svg = document.getElementById('tempSvg');
+      const logits = [2.5, 1.8, 1.2, 0.5, 0.1, -0.3, -0.8, -1.5];
+      const labels = ['the', 'a', 'next', 'one', 'new', 'old', 'big', 'my'];
+      const temps = [
+        { t: 0.3, label: 'T=0.3 (sharp)', color: '#ef4444' },
+        { t: 1.0, label: 'T=1.0 (normal)', color: '#4f6ef7' },
+        { t: 2.0, label: 'T=2.0 (flat)', color: '#10b981' }
+      ];
+      function softmax(arr, t) {
+        const scaled = arr.map(function(v) { return v / t; });
+        const maxV = Math.max.apply(null, scaled);
+        const exps = scaled.map(function(v) { return Math.exp(v - maxV); });
+        const sum = exps.reduce(function(a, b) { return a + b; }, 0);
+        return exps.map(function(v) { return v / sum; });
+      }
+      const barW = 18, groupW = barW * 3 + 12, startX = 70, startY = 30, maxH = 130;
+      // axis
+      svg.innerHTML += '<line x1="60" y1="'+(startY+maxH)+'" x2="500" y2="'+(startY+maxH)+'" stroke="var(--border)" stroke-width="1.5"/>';
+      labels.forEach(function(lb, i) {
+        svg.innerHTML += '<text x="'+(startX+i*groupW+groupW/2-6)+'" y="'+(startY+maxH+16)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+lb+'</text>';
+      });
+      temps.forEach(function(tc, ti) {
+        const probs = softmax(logits, tc.t);
+        probs.forEach(function(p, pi) {
+          const x = startX + pi * groupW + ti * (barW + 2);
+          const h = p * maxH * 2.5;
+          svg.innerHTML += '<rect x="'+x+'" y="'+(startY+maxH-h)+'" width="'+barW+'" height="'+h+'" rx="3" fill="'+tc.color+'" opacity="0.7"/>';
+        });
+      });
+      // legend
+      temps.forEach(function(tc, ti) {
+        const lx = 80 + ti * 150;
+        svg.innerHTML += '<rect x="'+lx+'" y="'+(startY+maxH+28)+'" width="12" height="12" rx="3" fill="'+tc.color+'" opacity="0.7"/>';
+        svg.innerHTML += '<text x="'+(lx+16)+'" y="'+(startY+maxH+38)+'" font-size="9" fill="var(--text-muted)">'+tc.label+'</text>';
+      });
+    })();
+
+    /* =====================================================
+       Generation loop animation (Lesson 4.8)
+    ===================================================== */
+    (function() {
       const PROMPT_TOKENS  = ['The', 'transformer', 'model', 'predicts'];
       const NEXT_TOKENS    = ['the', 'next', 'word', 'by', 'attending', 'to', 'all', 'previous', 'tokens', '.'];
       const STEP_LOGIT_INFO = [
-        '"the" (prob: 0.38) — article after verb "predicts"',
-        '"next" (prob: 0.41) — common bigram "the next"',
-        '"word" (prob: 0.29) — GPT models language',
-        '"by" (prob: 0.35) — explains mechanism',
-        '"attending" (prob: 0.52) — attention mechanism',
-        '"to" (prob: 0.88) — "attending to"',
-        '"all" (prob: 0.43) — full context',
-        '"previous" (prob: 0.37) — causal attention',
-        '"tokens" (prob: 0.71) — token-level model',
-        '"." (prob: 0.61) — sentence ending',
+        '"the" (prob: 0.38) \u2014 article after verb "predicts"',
+        '"next" (prob: 0.41) \u2014 common bigram "the next"',
+        '"word" (prob: 0.29) \u2014 GPT models language',
+        '"by" (prob: 0.35) \u2014 explains mechanism',
+        '"attending" (prob: 0.52) \u2014 attention mechanism',
+        '"to" (prob: 0.88) \u2014 "attending to"',
+        '"all" (prob: 0.43) \u2014 full context',
+        '"previous" (prob: 0.37) \u2014 causal attention',
+        '"tokens" (prob: 0.71) \u2014 token-level model',
+        '"." (prob: 0.61) \u2014 sentence ending',
       ];
-
       let step = 0;
-      const seqEl    = document.getElementById('genSequence');
-      const infoEl   = document.getElementById('genStepInfo');
-      const stepBtn  = document.getElementById('genStepBtn');
+      const seqEl = document.getElementById('genSequence');
+      const infoEl = document.getElementById('genStepInfo');
+      const stepBtn = document.getElementById('genStepBtn');
       const resetBtn = document.getElementById('genResetBtn');
-
       function render() {
         seqEl.innerHTML = '';
-        PROMPT_TOKENS.forEach(tok => {
-          const el = document.createElement('span');
-          el.className = 'gen-token prompt';
-          el.textContent = tok;
-          seqEl.appendChild(el);
+        PROMPT_TOKENS.forEach(function(tok) {
+          const el = document.createElement('span'); el.className = 'gen-token prompt'; el.textContent = tok; seqEl.appendChild(el);
         });
         for (let i = 0; i < step; i++) {
-          const el = document.createElement('span');
-          el.className = 'gen-token new';
-          el.textContent = NEXT_TOKENS[i];
-          seqEl.appendChild(el);
+          const el = document.createElement('span'); el.className = 'gen-token new'; el.textContent = NEXT_TOKENS[i]; seqEl.appendChild(el);
         }
       }
-
       function updateInfo() {
-        if (step === 0) {
-          infoEl.innerHTML = 'Press <strong>Step</strong> to simulate greedy token generation. Each step: forward pass → argmax last-token logits → append.';
-        } else if (step <= NEXT_TOKENS.length) {
-          const tok = NEXT_TOKENS[step - 1];
-          const info = STEP_LOGIT_INFO[step - 1];
-          infoEl.innerHTML = `<strong>Step ${step}:</strong> Predicted token <code style="background:rgba(16,185,129,0.12);padding:0.1rem 0.35rem;border-radius:4px;color:var(--accent-3);">"${tok}"</code> — ${info}`;
+        if (step === 0) { infoEl.innerHTML = 'Press <strong>Step</strong> to simulate greedy token generation. Each step: forward pass \u2192 argmax last-token logits \u2192 append.'; }
+        else if (step <= NEXT_TOKENS.length) {
+          infoEl.innerHTML = '<strong>Step '+step+':</strong> Predicted token <code style="background:rgba(16,185,129,0.12);padding:0.1rem 0.35rem;border-radius:4px;color:var(--accent-3);">"'+NEXT_TOKENS[step-1]+'"</code> \u2014 '+STEP_LOGIT_INFO[step-1];
         }
         if (step >= NEXT_TOKENS.length) {
-          stepBtn.disabled = true;
-          stepBtn.classList.add('btn-ghost');
-          stepBtn.classList.remove('btn-primary');
+          stepBtn.disabled = true; stepBtn.classList.add('btn-ghost'); stepBtn.classList.remove('btn-primary');
           infoEl.innerHTML += '<br><span style="color:var(--accent-3); font-size:0.78rem;">Generation complete. Click Reset to start over.</span>';
         }
       }
+      stepBtn.addEventListener('click', function() { if (step < NEXT_TOKENS.length) { step++; render(); updateInfo(); } });
+      resetBtn.addEventListener('click', function() { step = 0; stepBtn.disabled = false; stepBtn.classList.add('btn-primary'); stepBtn.classList.remove('btn-ghost'); render(); updateInfo(); });
+      render(); updateInfo();
+    })();
 
-      stepBtn.addEventListener('click', function() {
-        if (step < NEXT_TOKENS.length) {
-          step++;
-          render();
-          updateInfo();
+    /* =====================================================
+       STEP-THROUGH 1: Transformer Block Forward Pass
+    ===================================================== */
+    (function() {
+      const steps = [
+        {
+          title: 'Step 1: Input Arrives',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 80" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="30" y="10" width="300" height="50" rx="8" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/><text x="180" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">x</text><text x="180" y="50" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[B, T, 768]</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The input tensor x of shape [B, T, 768] arrives from the previous block (or from the embedding layer for block 1). This is the <strong>residual stream</strong> -- it will be preserved and added back after each sublayer.</p></div>'
+        },
+        {
+          title: 'Step 2: LayerNorm 1',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 120" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="30" y="5" width="300" height="35" rx="6" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/><text x="180" y="27" text-anchor="middle" font-size="10" fill="var(--accent)">x (saved for residual)</text><line x1="180" y1="40" x2="180" y2="55" stroke="var(--text-muted)" stroke-width="1.5"/><text x="185" y="52" font-size="8" fill="var(--text-muted)">\u2193</text><rect x="80" y="55" width="200" height="40" rx="8" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="2"/><text x="180" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#a855f7">LayerNorm(x)</text><text x="180" y="88" text-anchor="middle" font-size="8" fill="var(--text-muted)">mean=0, std=1 per token</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">LayerNorm normalizes x across the 768 features for each token independently. This is the <strong>Pre-Norm</strong> pattern -- normalizing <em>before</em> the sublayer, not after. The original x is saved for the residual add.</p></div>'
+        },
+        {
+          title: 'Step 3: Multi-Head Attention',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 110" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="80" y="5" width="200" height="35" rx="6" fill="rgba(168,85,247,0.08)" stroke="rgba(168,85,247,0.2)" stroke-width="1.5"/><text x="180" y="27" text-anchor="middle" font-size="10" fill="#a855f7">LN(x)</text><line x1="180" y1="40" x2="180" y2="52" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="40" y="52" width="280" height="45" rx="8" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="2"/><text x="180" y="74" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">Multi-Head Attention (12 heads)</text><text x="180" y="88" text-anchor="middle" font-size="8" fill="var(--text-muted)">Q, K, V projections \u2192 causal mask \u2192 concat \u2192 output proj</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The normalized output passes through 12 attention heads (each with d_k=64). Each head computes causal self-attention: Q\u00b7K^T/\u221a64, masked softmax, then weighted sum of V. Results are concatenated and projected. This is where <strong>inter-token communication</strong> happens.</p></div>'
+        },
+        {
+          title: 'Step 4: Dropout + Residual Add',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 120" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="30" y="5" width="140" height="30" rx="6" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/><text x="100" y="25" text-anchor="middle" font-size="10" fill="var(--accent)">x (original)</text><rect x="190" y="5" width="140" height="30" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.2)" stroke-width="1.5"/><text x="260" y="25" text-anchor="middle" font-size="10" fill="#ef4444">Dropout(attn(LN(x)))</text><line x1="100" y1="35" x2="100" y2="60" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="260" y1="35" x2="260" y2="60" stroke="var(--text-muted)" stroke-width="1.5"/><circle cx="180" cy="70" r="15" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.5)" stroke-width="2"/><text x="180" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent-2)">+</text><line x1="100" y1="60" x2="167" y2="66" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="260" y1="60" x2="193" y2="66" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="180" y1="85" x2="180" y2="100" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="80" y="100" width="200" height="18" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/><text x="180" y="113" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent)">x\' = x + drop(attn(LN(x)))</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The attention output is passed through dropout (p=0.1), then <strong>added to the original x</strong>. This is the first residual connection. The gradient can flow directly through the + operation back to x, preserving gradient magnitude.</p></div>'
+        },
+        {
+          title: 'Step 5: LayerNorm 2',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 90" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="80" y="5" width="200" height="30" rx="6" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/><text x="180" y="25" text-anchor="middle" font-size="10" fill="var(--accent)">x\' (after 1st residual)</text><line x1="180" y1="35" x2="180" y2="48" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="80" y="48" width="200" height="35" rx="8" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="2"/><text x="180" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="#a855f7">LayerNorm(x\')</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The second LayerNorm normalizes the post-attention representation x\'. Again, x\' is saved for the upcoming residual add. Same pattern: normalize <em>before</em> the FFN sublayer.</p></div>'
+        },
+        {
+          title: 'Step 6: Feed-Forward Network',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 100" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="80" y="5" width="200" height="25" rx="6" fill="rgba(168,85,247,0.08)" stroke="rgba(168,85,247,0.2)" stroke-width="1.5"/><text x="180" y="22" text-anchor="middle" font-size="10" fill="#a855f7">LN(x\')</text><line x1="180" y1="30" x2="180" y2="42" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="40" y="42" width="280" height="45" rx="8" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="2"/><text x="180" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-3)">Feed-Forward Network</text><text x="180" y="78" text-anchor="middle" font-size="8" fill="var(--text-muted)">Linear(768\u21923072) \u2192 GELU \u2192 Linear(3072\u2192768) \u2192 Dropout</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The FFN processes each token independently: expand to 3072 dimensions, apply GELU activation, compress back to 768. This is where the model applies nonlinear transformations to each token\'s gathered representation. No cross-token communication here.</p></div>'
+        },
+        {
+          title: 'Step 7: Dropout + Residual Add (2nd)',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 100" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="30" y="5" width="140" height="28" rx="6" fill="rgba(79,110,247,0.08)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5"/><text x="100" y="23" text-anchor="middle" font-size="9" fill="var(--accent)">x\' (saved)</text><rect x="190" y="5" width="140" height="28" rx="6" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.2)" stroke-width="1.5"/><text x="260" y="23" text-anchor="middle" font-size="9" fill="var(--accent-3)">drop(FFN(LN(x\')))</text><circle cx="180" cy="55" r="14" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.5)" stroke-width="2"/><text x="180" y="59" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent-2)">+</text><line x1="100" y1="33" x2="168" y2="50" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="260" y1="33" x2="192" y2="50" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="180" y1="69" x2="180" y2="82" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="60" y="82" width="240" height="18" rx="6" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/><text x="180" y="95" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent)">output = x\' + drop(FFN(LN(x\')))</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">Second residual add: x\' + FFN output. The block is now complete. The output has the same shape [B, T, 768] as the input, ready to feed into the next block.</p></div>'
+        },
+        {
+          title: 'Step 8: Output to Next Block',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 360 100" width="100%" style="max-width:360px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="60" y="10" width="240" height="35" rx="8" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/><text x="180" y="27" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">Block Output</text><text x="180" y="40" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[B, T, 768]</text><line x1="180" y1="45" x2="180" y2="60" stroke="var(--text-muted)" stroke-width="1.5"/><text x="180" y="75" text-anchor="middle" font-size="10" fill="var(--text-muted)">\u2193 feeds into Block N+1 (or Final LN if last block)</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;"><strong>Summary:</strong> x \u2192 LN1 \u2192 Attn \u2192 Drop + <strong>x</strong> \u2192 LN2 \u2192 FFN \u2192 Drop + <strong>x\'</strong> \u2192 output. Two sublayers, two residual connections, two LayerNorms. Shape is preserved throughout, so blocks stack identically.</p></div>'
+        }
+      ];
+
+      initStepThrough('blockStepThrough', 'blockStepDisplay', 'blockStepLabel', 'blockStepDots', 'blockStepPrev', 'blockStepNext', steps);
+    })();
+
+    /* =====================================================
+       STEP-THROUGH 2: GPT Full Forward Pass
+    ===================================================== */
+    (function() {
+      const steps = [
+        {
+          title: 'Step 1: Token IDs Input',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 70" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="50" y="10" width="300" height="45" rx="8" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/><text x="200" y="30" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">Token IDs: [15496, 11, 314, 716]</text><text x="200" y="46" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">Shape: [1, 4] (B=1, T=4)</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The input is a batch of integer token IDs, e.g. "Hello, I am" tokenized to [15496, 11, 314, 716]. Shape is [B, T] where B=batch size, T=sequence length.</p></div>'
+        },
+        {
+          title: 'Step 2: Token + Positional Embedding',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 110" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="20" y="5" width="160" height="35" rx="6" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/><text x="100" y="27" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-3)">tok_emb(ids)</text><rect x="220" y="5" width="160" height="35" rx="6" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/><text x="300" y="27" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-2)">pos_emb([0,1,2,3])</text><circle cx="200" cy="65" r="14" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.4)" stroke-width="2"/><text x="200" y="69" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent)">+</text><line x1="100" y1="40" x2="188" y2="58" stroke="var(--text-muted)" stroke-width="1.5"/><line x1="300" y1="40" x2="212" y2="58" stroke="var(--text-muted)" stroke-width="1.5"/><text x="200" y="98" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">Result: [1, 4, 768]</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">Each token ID looks up a 768-dim vector from tok_emb (50257\u00d7768 table). Position indices [0,1,2,3] look up from pos_emb (1024\u00d7768). The two are <strong>summed element-wise</strong>, giving each token both content and positional information.</p></div>'
+        },
+        {
+          title: 'Step 3: Embedding Dropout',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 70" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="50" y="10" width="300" height="45" rx="8" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)" stroke-width="2"/><text x="200" y="30" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-2)">Dropout(p=0.1)</text><text x="200" y="46" text-anchor="middle" font-size="9" fill="var(--text-muted)">Randomly zeros 10% of embedding values during training</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">Dropout regularization is applied to the combined embeddings. During training, ~10% of values are set to zero (and remaining are scaled by 1/0.9). During inference, dropout is disabled. Shape unchanged: [1, 4, 768].</p></div>'
+        },
+        {
+          title: 'Step 4: 12 Transformer Blocks',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 140" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="100" y="5" width="200" height="30" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/><text x="200" y="25" text-anchor="middle" font-size="10" fill="var(--accent)">Block 1: LN\u2192Attn+Res\u2192LN\u2192FFN+Res</text><line x1="200" y1="35" x2="200" y2="42" stroke="var(--text-muted)" stroke-width="1"/><rect x="100" y="42" width="200" height="30" rx="6" fill="rgba(79,110,247,0.12)" stroke="rgba(79,110,247,0.3)" stroke-width="1.5"/><text x="200" y="62" text-anchor="middle" font-size="10" fill="var(--accent)">Block 2: LN\u2192Attn+Res\u2192LN\u2192FFN+Res</text><line x1="200" y1="72" x2="200" y2="78" stroke="var(--text-muted)" stroke-width="1"/><text x="200" y="88" text-anchor="middle" font-size="10" fill="var(--text-muted)">... \u00d710 more blocks ...</text><line x1="200" y1="92" x2="200" y2="98" stroke="var(--text-muted)" stroke-width="1"/><rect x="100" y="98" width="200" height="30" rx="6" fill="rgba(79,110,247,0.18)" stroke="rgba(79,110,247,0.5)" stroke-width="2"/><text x="200" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent)">Block 12: LN\u2192Attn+Res\u2192LN\u2192FFN+Res</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The embeddings pass sequentially through 12 identical transformer blocks. Each block refines the representations: attention gathers context, FFN transforms it. The residual stream carries information through all blocks. Shape remains [1, 4, 768] throughout.</p></div>'
+        },
+        {
+          title: 'Step 5: Final LayerNorm',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 70" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="80" y="10" width="240" height="45" rx="8" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="2"/><text x="200" y="30" text-anchor="middle" font-size="11" font-weight="700" fill="#a855f7">Final LayerNorm (ln_f)</text><text x="200" y="46" text-anchor="middle" font-size="9" fill="var(--text-muted)">Normalizes output before projection</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">One final LayerNorm is applied after all 12 blocks. This ensures the activations are well-scaled before the linear projection to vocabulary logits. Shape still [1, 4, 768].</p></div>'
+        },
+        {
+          title: 'Step 6: Linear Projection (lm_head)',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 90" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="60" y="5" width="280" height="45" rx="8" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.3)" stroke-width="2"/><text x="200" y="25" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">lm_head: Linear(768 \u2192 50257)</text><text x="200" y="42" text-anchor="middle" font-size="9" fill="var(--text-muted)">Weight-tied with tok_emb</text><text x="200" y="72" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">Output: [1, 4, 50257] logits</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">The lm_head projects each token\'s 768-dim representation to a 50257-dim vector of raw logits -- one score per vocabulary token. The weight matrix is <strong>shared with tok_emb</strong> (weight tying). Each position independently predicts the next token.</p></div>'
+        },
+        {
+          title: 'Step 7: Softmax + Next Token',
+          html: '<div style="text-align:center;padding:1rem;"><svg viewBox="0 0 400 100" width="100%" style="max-width:400px;margin:0 auto;display:block;font-family:Inter,sans-serif;"><rect x="60" y="5" width="280" height="35" rx="6" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.2)" stroke-width="1.5"/><text x="200" y="27" text-anchor="middle" font-size="10" fill="#ef4444">logits[:, -1, :] \u2192 last position only</text><line x1="200" y1="40" x2="200" y2="52" stroke="var(--text-muted)" stroke-width="1.5"/><rect x="80" y="52" width="240" height="35" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)" stroke-width="2"/><text x="200" y="71" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-3)">softmax \u2192 argmax \u2192 next token ID</text></svg><p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">For generation, we only care about the <strong>last position\'s logits</strong>. Apply softmax to get probabilities, then argmax (greedy) to pick the most likely next token. This token is appended to the input and the entire process repeats for the next token.</p></div>'
+        }
+      ];
+
+      initStepThrough('gptStepThrough', 'gptStepDisplay', 'gptStepLabel', 'gptStepDots', 'gptStepPrev', 'gptStepNext', steps);
+    })();
+
+    /* =====================================================
+       Generic Step-Through Engine
+    ===================================================== */
+    function initStepThrough(containerId, displayId, labelId, dotsId, prevId, nextId, steps) {
+      var current = 0;
+      var display = document.getElementById(displayId);
+      var label = document.getElementById(labelId);
+      var dots = document.getElementById(dotsId);
+      var prevBtn = document.getElementById(prevId);
+      var nextBtn = document.getElementById(nextId);
+
+      // create step stages
+      steps.forEach(function(s, i) {
+        var div = document.createElement('div');
+        div.className = 'step-through-stage' + (i === 0 ? ' active' : '');
+        div.innerHTML = '<div style="font-size:0.78rem;font-weight:700;color:var(--accent);padding:0.5rem 1rem 0;margin-bottom:-0.25rem;">' + s.title + '</div>' + s.html;
+        display.appendChild(div);
+      });
+
+      // create dots
+      steps.forEach(function(s, i) {
+        var d = document.createElement('span');
+        d.className = 'step-dot' + (i === 0 ? ' active' : '');
+        dots.appendChild(d);
+      });
+
+      function update() {
+        var stages = display.querySelectorAll('.step-through-stage');
+        var dotEls = dots.querySelectorAll('.step-dot');
+        stages.forEach(function(st, i) { st.classList.toggle('active', i === current); });
+        dotEls.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+        label.textContent = 'Step ' + (current + 1) + ' / ' + steps.length;
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === steps.length - 1;
+        if (current === steps.length - 1) { nextBtn.classList.add('btn-ghost'); nextBtn.classList.remove('btn-primary'); }
+        else { nextBtn.classList.add('btn-primary'); nextBtn.classList.remove('btn-ghost'); }
+      }
+
+      prevBtn.addEventListener('click', function() { if (current > 0) { current--; update(); } });
+      nextBtn.addEventListener('click', function() { if (current < steps.length - 1) { current++; update(); } });
+      update();
+    }
+
+    /* =====================================================
+       EXERCISE 1: Arrange GPT Forward Pass Order
+    ===================================================== */
+    (function() {
+      var CORRECT_ORDER = [
+        'Token IDs',
+        'tok_emb + pos_emb',
+        'Dropout',
+        '12x Transformer Blocks',
+        'Final LayerNorm',
+        'lm_head (Linear)',
+        'Softmax',
+        'Next Token (argmax)'
+      ];
+      var shuffled = CORRECT_ORDER.slice().sort(function() { return Math.random() - 0.5; });
+      var placed = [];
+      var bank = document.getElementById('ex1Bank');
+      var slotsContainer = document.getElementById('ex1Slots');
+      var feedback = document.getElementById('ex1Feedback');
+      var colors = ['#4f6ef7','#10b981','#f59e0b','#4f6ef7','#a855f7','#ef4444','#10b981','#06b6d4'];
+
+      function render() {
+        bank.innerHTML = '';
+        slotsContainer.innerHTML = '';
+        shuffled.forEach(function(item, i) {
+          var el = document.createElement('span');
+          el.className = 'drag-item';
+          var isUsed = placed.indexOf(item) !== -1;
+          if (isUsed) el.classList.add('used');
+          el.textContent = item;
+          var ci = CORRECT_ORDER.indexOf(item);
+          el.style.borderColor = colors[ci];
+          el.style.color = colors[ci];
+          el.style.background = colors[ci] + '15';
+          el.addEventListener('click', function() { if (!isUsed) { placed.push(item); feedback.className = 'exercise-feedback'; feedback.style.display = 'none'; render(); } });
+          bank.appendChild(el);
+        });
+        // slots
+        for (var s = 0; s < CORRECT_ORDER.length; s++) {
+          var slot = document.createElement('div');
+          slot.className = 'exercise-slot';
+          var numLabel = document.createElement('span');
+          numLabel.className = 'exercise-slot-label';
+          numLabel.textContent = 'Step ' + (s + 1);
+          slot.appendChild(numLabel);
+          var zone = document.createElement('div');
+          zone.className = 'drop-zone';
+          if (s < placed.length) {
+            zone.textContent = placed[s];
+            zone.classList.add('filled');
+            (function(idx) {
+              zone.addEventListener('click', function() {
+                placed.splice(idx, 1);
+                feedback.className = 'exercise-feedback'; feedback.style.display = 'none';
+                render();
+              });
+            })(s);
+          } else {
+            zone.textContent = 'Click an item above';
+          }
+          slot.appendChild(zone);
+          slotsContainer.appendChild(slot);
+        }
+      }
+
+      document.getElementById('ex1Check').addEventListener('click', function() {
+        if (placed.length < CORRECT_ORDER.length) {
+          feedback.className = 'exercise-feedback incorrect';
+          feedback.innerHTML = '<strong>Incomplete!</strong> Place all ' + CORRECT_ORDER.length + ' items before checking.';
+          return;
+        }
+        var correct = true;
+        var zones = slotsContainer.querySelectorAll('.drop-zone');
+        placed.forEach(function(item, i) {
+          if (item === CORRECT_ORDER[i]) zones[i].classList.add('correct-zone');
+          else { zones[i].classList.add('incorrect-zone'); correct = false; }
+        });
+        if (correct) {
+          feedback.className = 'exercise-feedback correct';
+          feedback.innerHTML = '<strong>Correct!</strong> The GPT forward pass flows: Token IDs \u2192 Embeddings \u2192 Dropout \u2192 12 Transformer Blocks \u2192 Final LayerNorm \u2192 lm_head \u2192 Softmax \u2192 argmax.';
+        } else {
+          feedback.className = 'exercise-feedback incorrect';
+          feedback.innerHTML = '<strong>Not quite.</strong> Green slots are correct, red are wrong. Click red slots to remove them and try again.';
         }
       });
 
-      resetBtn.addEventListener('click', function() {
-        step = 0;
-        stepBtn.disabled = false;
-        stepBtn.classList.add('btn-primary');
-        stepBtn.classList.remove('btn-ghost');
+      document.getElementById('ex1Reset').addEventListener('click', function() {
+        placed = [];
+        shuffled = CORRECT_ORDER.slice().sort(function() { return Math.random() - 0.5; });
+        feedback.className = 'exercise-feedback'; feedback.style.display = 'none';
         render();
-        updateInfo();
       });
 
       render();
-      updateInfo();
+    })();
+
+    /* =====================================================
+       EXERCISE 2: Parameter Calculator
+    ===================================================== */
+    (function() {
+      var ANSWERS = {
+        ex2TokEmb: 64000,   // 1000 * 64
+        ex2PosEmb: 8192,    // 128 * 64
+        ex2FFN: 32768,      // 64*256 + 256*64
+        ex2AllFFN: 65536,   // 32768 * 2
+        ex2Attn: 16384      // 4 * 64 * 64
+      };
+      var feedback = document.getElementById('ex2Feedback');
+
+      document.getElementById('ex2Check').addEventListener('click', function() {
+        var allCorrect = true;
+        var results = [];
+        for (var key in ANSWERS) {
+          var input = document.getElementById(key);
+          var val = parseInt(input.value, 10);
+          if (val === ANSWERS[key]) {
+            input.style.borderColor = 'var(--accent-3)';
+            input.style.background = 'rgba(16,185,129,0.08)';
+            results.push(key.replace('ex2','') + ': correct');
+          } else {
+            input.style.borderColor = '#ef4444';
+            input.style.background = 'rgba(239,68,68,0.06)';
+            allCorrect = false;
+            results.push(key.replace('ex2','') + ': expected ' + ANSWERS[key].toLocaleString());
+          }
+        }
+        if (allCorrect) {
+          feedback.className = 'exercise-feedback correct';
+          feedback.innerHTML = '<strong>All correct!</strong> Token Emb=64,000 | Pos Emb=8,192 | One FFN=32,768 | All FFN=65,536 | One Attn=16,384. Total model would be about 64,000 + 8,192 + 2*(32,768+16,384) + LayerNorms \u2248 170,000+ params.';
+        } else {
+          feedback.className = 'exercise-feedback incorrect';
+          feedback.innerHTML = '<strong>Some answers need correction:</strong><br>' + results.join('<br>');
+        }
+      });
+
+      document.getElementById('ex2Reset').addEventListener('click', function() {
+        for (var key in ANSWERS) {
+          var input = document.getElementById(key);
+          input.value = '';
+          input.style.borderColor = '';
+          input.style.background = '';
+        }
+        feedback.className = 'exercise-feedback'; feedback.style.display = 'none';
+      });
+    })();
+
+    /* =====================================================
+       INTERACTIVE MIND MAP (Tab 4)
+    ===================================================== */
+    (function() {
+      var svg = document.getElementById('mindmap-ch4');
+      var tooltip = document.getElementById('mmTooltip');
+      var NS = 'http://www.w3.org/2000/svg';
+      var cx = 400, cy = 310;
+
+      var branches = [
+        {
+          label: 'GPT Overview',
+          angle: -90,
+          color: '#4f6ef7',
+          desc: 'GPT-2 Small: 124M params, 12 blocks, d_model=768, vocab=50257. The full pipeline: embed \u2192 blocks \u2192 LN \u2192 lm_head.',
+          subs: [
+            { label: 'Embed + Blocks', desc: 'Token embedding + positional embedding, then 12 identical transformer blocks in sequence.' },
+            { label: 'LN + LM Head', desc: 'Final LayerNorm followed by linear projection to 50257-dim vocabulary logits.' },
+            { label: '124M Params', desc: '38.6M in embeddings, 56.6M in FFN, 34.7M in attention, ~0.02M in LayerNorms.' }
+          ]
+        },
+        {
+          label: 'Layer Norm',
+          angle: -30,
+          color: '#f59e0b',
+          desc: 'Normalizes activations per token across feature dim. Uses learned scale (\u03b3) and shift (\u03b2). GPT-2 uses Pre-Norm placement.',
+          subs: [
+            { label: 'Pre-Norm', desc: 'LN applied BEFORE each sublayer (not after). More stable for deep training.' },
+            { label: 'Per-Token', desc: 'Each token normalized independently -- no batch statistics needed.' },
+            { label: 'Learnable \u03b3 \u03b2', desc: 'Scale and shift params allow the model to undo normalization if needed.' }
+          ]
+        },
+        {
+          label: 'GELU',
+          angle: 30,
+          color: '#10b981',
+          desc: 'Smooth activation function: GELU(x) = x \u00b7 \u03a6(x). Outperforms ReLU because it has non-zero gradients for negative inputs.',
+          subs: [
+            { label: 'Smooth Curve', desc: 'No hard kink at x=0 like ReLU. Differentiable everywhere for stable gradients.' },
+            { label: 'vs ReLU', desc: 'ReLU zeros all negatives (dead neurons). GELU attenuates them smoothly.' },
+            { label: 'tanh Approx', desc: '0.5*x*(1+tanh(\u221a(2/\u03c0)*(x+0.044715x\u00b3))) -- fast and accurate.' }
+          ]
+        },
+        {
+          label: 'Feed-Forward',
+          angle: 90,
+          color: '#8b5cf6',
+          desc: '2-layer FFN per block: 768\u21923072\u2192768. Processes each token independently. Largest component at 56.6M total params.',
+          subs: [
+            { label: '4\u00d7 Expansion', desc: 'Intermediate dim = 4 * d_model = 3072. Gives the model a large computation space.' },
+            { label: 'Per-Token', desc: 'FFN is applied identically and independently to each position -- no cross-token mixing.' },
+            { label: '56.6M Params', desc: 'Two linear layers \u00d7 12 blocks = 67% of all transformer block parameters.' }
+          ]
+        },
+        {
+          label: 'Residuals',
+          angle: 150,
+          color: '#ef4444',
+          desc: 'Skip connections: output = x + sublayer(LN(x)). Gradient through identity path = 1, preventing vanishing gradients.',
+          subs: [
+            { label: 'Skip Path', desc: 'The input x bypasses the sublayer entirely. Gradient always has a magnitude-1 component.' },
+            { label: '\u2202out/\u2202x = 1+...', desc: 'Even if sublayer gradient \u2248 0, the identity path guarantees gradient flow.' },
+            { label: '2 per Block', desc: 'One around attention, one around FFN. The residual stream flows through all 12 blocks.' }
+          ]
+        },
+        {
+          label: 'Generation',
+          angle: 210,
+          color: '#06b6d4',
+          desc: 'Autoregressive: forward pass \u2192 softmax \u2192 pick next token \u2192 append \u2192 repeat. Greedy = argmax.',
+          subs: [
+            { label: 'Greedy/argmax', desc: 'Pick highest-probability token. Deterministic but can be repetitive.' },
+            { label: 'Autoregressive', desc: 'The full sequence is re-processed each step. No hidden state like RNNs.' },
+            { label: 'Temperature', desc: 'Dividing logits by T before softmax: T<1 = sharper, T>1 = more random.' }
+          ]
+        }
+      ];
+
+      var branchR = 155, subR = 95;
+
+      function toRad(deg) { return deg * Math.PI / 180; }
+
+      function makeSVGEl(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function addText(parent, x, y, text, fontSize, fill, bold) {
+        var words = text.split(' ');
+        var lineH = fontSize * 1.25;
+        var lines = [], cur = '';
+        words.forEach(function(w) {
+          var test = cur ? cur + ' ' + w : w;
+          if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
+          else { cur = test; }
+        });
+        if (cur) lines.push(cur);
+        var startY = y - (lines.length - 1) * lineH / 2;
+        lines.forEach(function(line, i) {
+          var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
+          t.textContent = line;
+          parent.appendChild(t);
+        });
+      }
+
+      var allBranchGroups = [];
+
+      // Center node
+      var centerG = makeSVGEl('g', { class: 'mm-node-clickable', style: 'cursor:pointer' });
+      var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
+      centerG.appendChild(centerCircle);
+      addText(centerG, cx, cy - 8, 'GPT', 13, '#fff', true);
+      addText(centerG, cx, cy + 9, 'Architecture', 10, '#fff', true);
+      svg.appendChild(centerG);
+
+      // Branches
+      branches.forEach(function(b, bi) {
+        var rad = toRad(b.angle);
+        var bx = cx + branchR * Math.cos(rad);
+        var by = cy + branchR * Math.sin(rad);
+
+        var g = makeSVGEl('g', { class: 'mm-branch mm-node-clickable', 'data-branch': bi });
+
+        var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
+        g.appendChild(line);
+
+        var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
+        g.appendChild(bc);
+        addText(g, bx, by, b.label, 9.5, '#fff', true);
+
+        // Sub-nodes
+        var subCount = b.subs.length;
+        b.subs.forEach(function(sub, si) {
+          var spread = 50;
+          var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
+          var srad = toRad(baseAngle);
+          var sx = bx + subR * Math.cos(srad);
+          var sy = by + subR * Math.sin(srad);
+
+          var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
+          g.appendChild(sl);
+
+          var sw = 72, sh = 28;
+          var subG = makeSVGEl('g', { class: 'mm-node-clickable mm-sub-node', 'data-branch': bi, 'data-sub': si, style: 'cursor:pointer' });
+          var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
+          subG.appendChild(sr);
+          addText(subG, sx, sy, sub.label, 8.5, 'var(--text, #1e293b)', false);
+
+          // tooltip on click
+          (function(description, px, py) {
+            subG.addEventListener('click', function(e) {
+              e.stopPropagation();
+              showTooltip(description, px, py);
+            });
+          })(sub.desc, sx, sy);
+
+          g.appendChild(subG);
+        });
+
+        // Branch click: highlight + show tooltip
+        (function(branchData, bxPos, byPos) {
+          bc.parentElement && g.addEventListener('click', function(e) {
+            if (e.target.closest('.mm-sub-node')) return;
+            e.stopPropagation();
+            allBranchGroups.forEach(function(og, oi) {
+              var op = (oi === bi) ? '1' : '0.2';
+              og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', op); });
+              og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', op); });
+              og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', oi === bi ? '0.8' : '0.1'); });
+              og.querySelectorAll('text').forEach(function(t) { t.setAttribute('opacity', oi === bi ? '1' : '0.3'); });
+            });
+            showTooltip(branchData.desc, bxPos, byPos);
+          });
+        })(b, bx, by);
+
+        svg.insertBefore(g, centerG);
+        allBranchGroups.push(g);
+      });
+
+      function showTooltip(text, svgX, svgY) {
+        tooltip.textContent = text;
+        // convert SVG coords to approximate pixel position
+        var svgRect = svg.getBoundingClientRect();
+        var scaleX = svgRect.width / 800;
+        var scaleY = svgRect.height / 620;
+        var px = svgX * scaleX + svgRect.left - window.scrollX;
+        var py = svgY * scaleY + svgRect.top - window.scrollY;
+        tooltip.style.left = Math.min(px, svgRect.right - 280) + 'px';
+        tooltip.style.top = (py + 25) + 'px';
+        tooltip.classList.add('visible');
+      }
+
+      // Animate in
+      var allNodes = svg.querySelectorAll('circle, rect');
+      allNodes.forEach(function(n, i) {
+        setTimeout(function() {
+          n.style.transition = 'opacity 0.4s ease';
+          n.setAttribute('opacity', '1');
+        }, i * 40);
+      });
+
+      // Reset on center click
+      centerG.addEventListener('click', function() {
+        tooltip.classList.remove('visible');
+        allBranchGroups.forEach(function(g) {
+          g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
+          g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
+          g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
+          g.querySelectorAll('text').forEach(function(t) { t.setAttribute('opacity', '1'); });
+        });
+      });
+
+      // Hide tooltip on click outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('#mindmap-ch4') && !e.target.closest('#mmTooltip')) {
+          tooltip.classList.remove('visible');
+        }
+      });
     })();
   </script>
 </body>

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 6: Goals &amp; Vision — The Productive Muslim Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);--shadow:0 4px 24px rgba(46,204,113,0.10);}
+    [data-theme="dark"]{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);}
+    @keyframes pm6FadeIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pm6Pop{from{opacity:0;transform:scale(0.92);}to{opacity:1;transform:scale(1);}}
+
+    /* ── Step-through ── */
+    .step-through-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .step-through-box h4{margin:0 0 1rem;color:var(--accent);font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .step-svg-wrap{background:var(--surface-2);border-radius:var(--radius-sm);min-height:150px;display:flex;align-items:center;justify-content:center;padding:1rem;margin-bottom:1rem;overflow:hidden;}
+    .step-svg-wrap svg{max-width:100%;}
+    .step-desc{font-size:0.92rem;color:var(--text-muted);line-height:1.6;min-height:3.5rem;text-align:center;margin-bottom:1rem;padding:0 0.5rem;}
+    .step-controls{display:flex;align-items:center;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+    .step-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:0.45rem 1.1rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+    .step-btn:disabled{opacity:0.35;cursor:not-allowed;}
+    .step-indicator{font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+
+    /* ── Exercise box ── */
+    .exercise-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .exercise-box h4{margin:0 0 0.3rem;color:var(--accent-2);font-size:1rem;}
+    .exercise-box .ex-desc{font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;}
+    .ex-btn-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem;}
+    .ex-btn{padding:0.4rem 1rem;border-radius:var(--radius-sm);border:none;font-size:0.85rem;font-weight:600;cursor:pointer;}
+    .ex-btn-check{background:var(--accent);color:#fff;}
+    .ex-btn-reset{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);}
+    .ex-feedback{font-size:0.85rem;color:var(--accent);font-weight:600;margin-top:0.5rem;min-height:1.4em;}
+
+    /* ── Goal domain cards ── */
+    .goal-levels{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin:1rem 0;}
+    @media(max-width:480px){.goal-levels{grid-template-columns:1fr;}}
+    .goal-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;cursor:pointer;transition:all var(--transition);}
+    .goal-card:hover{border-color:rgba(46,204,113,0.35);box-shadow:var(--shadow);background:var(--surface);}
+    .goal-card .gc-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.3rem;}
+    .goal-card .gc-title{font-size:0.9rem;font-weight:700;color:var(--accent);margin-bottom:0.25rem;}
+    .goal-card .gc-example{font-size:0.78rem;color:var(--text-muted);font-style:italic;}
+
+    /* ── Interactive mind map card grid ── */
+    .mm-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0.85rem;margin:1.25rem 0;}
+    .mm-node-card{background:var(--surface-2);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;}
+    .mm-node-card:hover{border-color:rgba(46,204,113,0.4);box-shadow:var(--shadow);}
+    .mm-node-card.expanded{border-color:rgba(46,204,113,0.55);box-shadow:0 6px 32px rgba(46,204,113,0.15);}
+    .mm-node-header{display:flex;align-items:center;gap:0.65rem;padding:0.85rem 1rem;}
+    .mm-node-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:#fff;flex-shrink:0;}
+    .mm-node-title{font-size:0.9rem;font-weight:700;color:var(--text);flex:1;}
+    .mm-node-toggle{font-size:0.75rem;color:var(--text-muted);transition:transform 0.25s;}
+    .mm-node-card.expanded .mm-node-toggle{transform:rotate(180deg);}
+    .mm-node-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;}
+    .mm-node-card.expanded .mm-node-body{max-height:340px;padding:0 1rem 1rem;}
+    .mm-node-tag{display:inline-block;font-size:0.72rem;font-weight:700;padding:0.15rem 0.55rem;border-radius:999px;color:#fff;margin-bottom:0.6rem;}
+    .mm-node-desc{font-size:0.84rem;color:var(--text-muted);line-height:1.6;margin-bottom:0.5rem;}
+    .mm-node-list{margin:0;padding-left:1.15rem;}
+    .mm-node-list li{font-size:0.82rem;color:var(--text-muted);line-height:1.55;margin-bottom:0.2rem;}
+
+    /* ── SMART goal builder exercise ── */
+    .smart-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin:0.85rem 0;}
+    @media(max-width:500px){.smart-grid{grid-template-columns:1fr;}}
+    .smart-row label{display:block;font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.04em;}
+    .smart-row input,.smart-row select{width:100%;padding:0.45rem 0.65rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text);font-size:0.84rem;font-family:Inter,sans-serif;box-sizing:border-box;}
+    .smart-row input:focus,.smart-row select:focus{outline:none;border-color:var(--accent);}
+    .smart-preview{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;font-size:0.84rem;color:var(--text);line-height:1.6;margin-top:0.75rem;min-height:2.8rem;font-style:italic;}
+
+    /* ── Life wheel exercise ── */
+    .wheel-sliders{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin:0.75rem 0;}
+    @media(max-width:500px){.wheel-sliders{grid-template-columns:1fr;}}
+    .wheel-slider-row{display:flex;flex-direction:column;gap:0.2rem;}
+    .wheel-slider-row label{font-size:0.78rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;}
+    .wheel-slider-row label span{color:var(--accent);font-weight:700;}
+    .wheel-slider-row input[type=range]{width:100%;accent-color:var(--accent);}
+    .wheel-canvas-wrap{display:flex;justify-content:center;margin:1rem 0 0.5rem;}
+
+    /* ── Callout / insight box ── */
+    .insight-box{border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:0.85rem 1rem;margin:1.25rem 0;font-size:0.88rem;color:var(--text-muted);line-height:1.6;}
+    .insight-box strong{color:var(--accent);}
+
+    /* ── Viz container (SVG illustrations) ── */
+    .viz-container{background:var(--surface-2);border-radius:var(--radius);padding:1.25rem;margin:1.25rem 0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+
+    /* ── Reframe grid ── */
+    .reframe-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
+    @media(max-width:500px){.reframe-grid{grid-template-columns:1fr;}}
+    .reframe-cell{background:var(--surface-2);border-radius:var(--radius-sm);padding:0.75rem;}
+    .reframe-cell-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:0.4rem;}
+    .reframe-cell-text{font-size:0.83rem;color:var(--text-muted);line-height:1.55;}
+    .reframe-action{margin-top:0.65rem;font-size:0.82rem;color:var(--text-muted);background:var(--surface-2);border-left:3px solid var(--accent);padding:0.6rem 0.85rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;}
+
+    /* ── Mind map SVG tab ── */
+    .mindmap-container{width:100%;min-height:380px;position:relative;}
+    .mm-tooltip{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.9rem;font-size:0.8rem;color:var(--text);max-width:210px;box-shadow:var(--shadow);pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:10;}
+    .mm-tooltip.visible{opacity:1;}
+  </style>
+</head>
+<body data-chapter="ch6">
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">The Productive Muslim</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill chapter-progress-fill"></div></div>
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 6</div>
+      <h1>Linking Productivity to Goals &amp; Vision</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~22 min read</span>
+        <span><i class="fas fa-compass"></i> Goals &amp; Vision</span>
+        <span><i class="fas fa-layer-group"></i> 6 lessons</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- ═══════════════════════════════ LESSONS TAB -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <!-- 6.1 -->
+      <div class="lesson-section">
+        <h2>6.1 The Missing Link: Connecting Productivity to Purpose</h2>
+        <p>Managing your time and energy without a clear vision is like navigating without a destination — you may move efficiently, but you have no idea whether you are going anywhere meaningful. Chapter 6 addresses the critical link between daily productivity and long-term goals and vision. Without this link, even perfectly optimised days accumulate into years with no clear direction or legacy.</p>
+        <p>The Islamic vision begins with the akhira. Your ultimate destination — Allah's pleasure, Jannah, the meeting with your Lord — is the frame that gives every shorter-term goal its meaning and direction. When this vision is alive in your daily consciousness, it functions as a constant compass: you naturally filter out goals that don't align and invest in those that do.</p>
+        <p>Mohammed Faris introduces a goal hierarchy that connects the eternal to the immediate: <strong>Akhira Vision</strong> (the ultimate destination), <strong>Life Mission</strong> (your khalifah purpose statement), <strong>Long-term Goals</strong> (10-year aspirations), <strong>Mid-term Goals</strong> (1-3 year milestones), <strong>Short-term Goals</strong> (monthly/weekly targets), and <strong>Daily Actions</strong> (specific tasks that accumulate upward). Every daily action should trace a clear line back to the akhira vision.</p>
+
+        <!-- SVG: Pyramid Goal Hierarchy -->
+        <div class="viz-container">
+          <svg viewBox="0 0 460 240" width="100%" height="240">
+            <polygon points="230,8 428,232 32,232" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.3"/>
+            <!-- Layer fills -->
+            <polygon points="230,8 262,55 198,55" fill="var(--accent)" opacity="0.88"/>
+            <polygon points="198,55 262,55 292,92 168,92" fill="var(--accent)" opacity="0.55"/>
+            <polygon points="168,92 292,92 322,130 138,130" fill="var(--accent)" opacity="0.38"/>
+            <polygon points="138,130 322,130 352,168 108,168" fill="var(--accent)" opacity="0.25"/>
+            <polygon points="108,168 352,168 380,204 80,204" fill="var(--accent)" opacity="0.15"/>
+            <polygon points="80,204 380,204 428,232 32,232" fill="var(--accent)" opacity="0.08"/>
+            <!-- Labels -->
+            <text x="230" y="40" text-anchor="middle" font-family="Inter" font-size="9" font-weight="800" fill="#fff">Akhira Vision</text>
+            <text x="230" y="78" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-2)">Life Mission</text>
+            <text x="230" y="116" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Long-term Goals (10 yr)</text>
+            <text x="230" y="154" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Mid-term Goals (1-3 yr)</text>
+            <text x="230" y="190" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Short-term Goals (monthly)</text>
+            <text x="230" y="225" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-3)">Daily Actions</text>
+            <!-- Side labels -->
+            <text x="18" y="40" text-anchor="start" font-family="Inter" font-size="7.5" fill="var(--accent)" opacity="0.7">Eternal</text>
+            <text x="18" y="225" text-anchor="start" font-family="Inter" font-size="7.5" fill="var(--text-muted)" opacity="0.7">Daily</text>
+            <line x1="230" y1="8" x2="230" y2="232" stroke="var(--border)" stroke-width="0.8" stroke-dasharray="3,3"/>
+          </svg>
+        </div>
+
+        <div class="insight-box">
+          <strong>Key insight:</strong> The pyramid reads top-down for meaning (every action draws its significance from the akhira vision above it) and bottom-up for execution (daily actions accumulate into everything above them). Both directions matter simultaneously.
+        </div>
+
+        <!-- SVG: Two paths illustration — with vs without vision -->
+        <div class="viz-container">
+          <svg viewBox="0 0 500 180" width="100%" height="180">
+            <text x="250" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">Two Kinds of Productivity</text>
+            <!-- Left: without vision -->
+            <rect x="10" y="32" width="220" height="138" rx="10" fill="var(--accent)" opacity="0.04" stroke="var(--border)" stroke-width="1"/>
+            <text x="120" y="52" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="var(--text-muted)">Without Akhira Vision</text>
+            <!-- Scattered arrows -->
+            <text x="60" y="78" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--text-muted)" opacity="0.5">→</text>
+            <text x="160" y="90" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--text-muted)" opacity="0.5" transform="rotate(45,160,90)">→</text>
+            <text x="80" y="110" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--text-muted)" opacity="0.5" transform="rotate(-30,80,110)">→</text>
+            <text x="140" y="118" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--text-muted)" opacity="0.5" transform="rotate(120,140,118)">→</text>
+            <text x="100" y="145" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)" opacity="0.8">Busy, efficient — but directionless</text>
+            <!-- Right: with vision -->
+            <rect x="270" y="32" width="220" height="138" rx="10" fill="var(--accent)" opacity="0.07" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.2"/>
+            <text x="380" y="52" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="var(--accent)">With Akhira Vision</text>
+            <!-- Star (destination) -->
+            <polygon points="380,65 382,72 389,72 383,77 385,84 380,80 375,84 377,77 371,72 378,72" fill="var(--accent)" opacity="0.9"/>
+            <!-- Converging arrows toward star -->
+            <line x1="295" y1="130" x2="372" y2="78" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="4,3"/>
+            <line x1="320" y1="150" x2="372" y2="80" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="4,3"/>
+            <line x1="380" y1="160" x2="380" y2="88" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="4,3"/>
+            <line x1="440" y1="150" x2="388" y2="80" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="4,3"/>
+            <line x1="465" y1="130" x2="388" y2="78" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="4,3"/>
+            <text x="380" y="165" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)">Every action aligned to the destination</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 6.2 -->
+      <div class="lesson-section">
+        <h2>6.2 Setting Goals Across Life Domains</h2>
+        <p>A common mistake in goal-setting is focusing all goals in one domain — usually professional or financial — while neglecting others. The result is domain-specific achievement alongside domain-specific emptiness: the successful executive who is spiritually bankrupt, or the skilled professional who barely knows their children. Islamic productivity explicitly requires goal-setting across all major life domains simultaneously.</p>
+        <p>The seven life domains are: <strong>Spiritual</strong> (relationship with Allah, Quran, worship), <strong>Personal Development</strong> (learning, skills, character), <strong>Health</strong> (physical, nutrition, sleep, fitness), <strong>Family</strong> (spouse, children, parents), <strong>Financial</strong> (provision, savings, investment, halal income), <strong>Social</strong> (community, friends, mentorship), and <strong>Contribution</strong> (professional impact, charity, legacy).</p>
+        <p>Setting meaningful goals in each domain creates what Faris calls a "life wheel" that rolls smoothly — versus a lopsided wheel that lurches painfully. Each domain's goals should be connected to the life mission and akhira vision. A financial goal without that connection becomes greed; with it, it becomes proper stewardship of Allah's provision.</p>
+
+        <!-- SVG: Life Wheel static illustration -->
+        <div class="viz-container">
+          <svg id="lifeWheelSvg" viewBox="0 0 360 280" width="100%" height="280"></svg>
+        </div>
+
+        <!-- Domain Explorer Cards -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-layer-group" style="margin-right:0.4rem;"></i> Explore: The 7 Life Domains</h4>
+          <p class="ex-desc">Click any domain card to see the Islamic goal framing for that area of life.</p>
+          <div class="goal-levels" id="goalDomains"></div>
+        </div>
+
+        <!-- Exercise 1: Life Wheel Self-Assessment -->
+        <div class="exercise-box" id="wheelEx">
+          <h4><i class="fas fa-chart-pie" style="margin-right:0.4rem;"></i> Exercise 1: Your Life Wheel Check-In</h4>
+          <p class="ex-desc">Rate your current satisfaction in each domain (1 = very low, 10 = thriving). Watch the wheel update in real time. A balanced wheel rolls smoothly — where are your gaps?</p>
+          <div class="wheel-sliders" id="wheelSliders"></div>
+          <div class="wheel-canvas-wrap">
+            <canvas id="wheelCanvas" width="260" height="260"></canvas>
+          </div>
+          <div class="ex-feedback" id="wheelFeedback"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm6ResetWheel()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6.3 -->
+      <div class="lesson-section">
+        <h2>6.3 The Islamic SMART Goal Framework</h2>
+        <p>The popular SMART goal framework (Specific, Measurable, Achievable, Relevant, Time-bound) provides a useful structure, but the Productive Muslim adds an Islamic layer to each element. <em>Specific</em> becomes specific and connected to purpose; <em>Measurable</em> includes spiritual metrics (not just physical or financial ones); <em>Achievable</em> requires trust in Allah's facilitation; <em>Relevant</em> is filtered through akhira orientation; and <em>Time-bound</em> includes barakah-aware timing, leveraging sacred times and seasons.</p>
+
+        <!-- SVG: SMART Islamic table -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 212" width="100%" height="212">
+            <defs>
+              <linearGradient id="smartGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.85"/>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" width="504" height="32" rx="7" fill="url(#smartGrad)"/>
+            <text x="60" y="29" font-family="Inter" font-size="10" font-weight="800" fill="#fff">Letter</text>
+            <text x="148" y="29" font-family="Inter" font-size="10" font-weight="800" fill="#fff">Standard SMART</text>
+            <text x="318" y="29" font-family="Inter" font-size="10" font-weight="800" fill="#fff">Islamic Addition</text>
+            <g font-family="Inter" font-size="9.5">
+              <rect x="8" y="44" width="504" height="30" rx="4" fill="var(--accent)" opacity="0.07"/>
+              <text x="60" y="64" font-weight="700" fill="var(--accent)">S — Specific</text>
+              <text x="148" y="64" fill="var(--text-muted)">Clear and well-defined</text>
+              <text x="318" y="64" fill="var(--text-muted)">Linked to life mission</text>
+
+              <rect x="8" y="78" width="504" height="30" rx="4" fill="var(--accent)" opacity="0.04"/>
+              <text x="60" y="98" font-weight="700" fill="var(--accent)">M — Measurable</text>
+              <text x="148" y="98" fill="var(--text-muted)">Trackable progress</text>
+              <text x="318" y="98" fill="var(--text-muted)">Includes spiritual metrics</text>
+
+              <rect x="8" y="112" width="504" height="30" rx="4" fill="var(--accent)" opacity="0.07"/>
+              <text x="60" y="132" font-weight="700" fill="var(--accent)">A — Achievable</text>
+              <text x="148" y="132" fill="var(--text-muted)">Realistic stretch</text>
+              <text x="318" y="132" fill="var(--text-muted)">Trust in Allah's help</text>
+
+              <rect x="8" y="146" width="504" height="30" rx="4" fill="var(--accent)" opacity="0.04"/>
+              <text x="60" y="166" font-weight="700" fill="var(--accent)">R — Relevant</text>
+              <text x="148" y="166" fill="var(--text-muted)">Aligned to priorities</text>
+              <text x="318" y="166" fill="var(--text-muted)">Akhira orientation filter</text>
+
+              <rect x="8" y="180" width="504" height="28" rx="4" fill="var(--accent)" opacity="0.07"/>
+              <text x="60" y="200" font-weight="700" fill="var(--accent)">T — Time-bound</text>
+              <text x="148" y="200" fill="var(--text-muted)">Deadline defined</text>
+              <text x="318" y="200" fill="var(--text-muted)">Barakah-aware timing</text>
+            </g>
+            <rect x="8" y="8" width="90" height="200" rx="7" fill="var(--accent)" opacity="0.04"/>
+          </svg>
+        </div>
+
+        <!-- Exercise 2: Islamic SMART Goal Builder -->
+        <div class="exercise-box" id="smartEx">
+          <h4><i class="fas fa-pencil-alt" style="margin-right:0.4rem;"></i> Exercise 2: Build Your Islamic SMART Goal</h4>
+          <p class="ex-desc">Fill in each field and watch your Islamic SMART goal statement take shape below.</p>
+          <div class="smart-grid">
+            <div class="smart-row">
+              <label>Domain</label>
+              <select id="sg-domain" oninput="pm6BuildSMART()">
+                <option value="">-- select --</option>
+                <option>Spiritual</option><option>Personal Development</option>
+                <option>Health</option><option>Family</option>
+                <option>Financial</option><option>Social</option><option>Contribution</option>
+              </select>
+            </div>
+            <div class="smart-row">
+              <label>What exactly? (Specific)</label>
+              <input id="sg-what" type="text" placeholder="e.g. Complete Quran with tafseer" oninput="pm6BuildSMART()"/>
+            </div>
+            <div class="smart-row">
+              <label>How will you measure it?</label>
+              <input id="sg-measure" type="text" placeholder="e.g. 1 khatm + 30 tafseer notes" oninput="pm6BuildSMART()"/>
+            </div>
+            <div class="smart-row">
+              <label>Daily habit / action step</label>
+              <input id="sg-habit" type="text" placeholder="e.g. 20 min after Fajr" oninput="pm6BuildSMART()"/>
+            </div>
+            <div class="smart-row">
+              <label>Deadline (barakah time)</label>
+              <input id="sg-deadline" type="text" placeholder="e.g. By end of Ramadan" oninput="pm6BuildSMART()"/>
+            </div>
+            <div class="smart-row">
+              <label>Akhira connection</label>
+              <input id="sg-akhira" type="text" placeholder="e.g. To meet Allah having fulfilled Quran's right" oninput="pm6BuildSMART()"/>
+            </div>
+          </div>
+          <div class="smart-preview" id="smartPreview">Your Islamic SMART goal will appear here as you fill in the fields above...</div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm6ResetSMART()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Step-through 1: Cascading from Vision to Daily Action -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-sitemap" style="margin-right:0.4rem;"></i> Step-Through 1: Cascading from Vision to Daily Action</h4>
+          <div class="step-svg-wrap" id="step1svg"></div>
+          <div class="step-desc" id="step1desc">Click "Next" to see how an akhira vision cascades all the way down to a specific daily action.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step1prev" onclick="pm6Step1(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step1ind">0 / 5</span>
+            <button class="step-btn" id="step1next" onclick="pm6Step1(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6.4 -->
+      <div class="lesson-section">
+        <h2>6.4 Annual Planning: The Islamic Productivity Year</h2>
+        <p>The Islamic calendar provides a built-in annual planning structure that secular productivity systems lack. The year includes <strong>Ramadan</strong> (intensive spiritual recharge and goal reflection), <strong>Dhul Hijjah</strong> (the ten best days of the year for deeds), <strong>Muharram</strong> (Islamic new year and Ashura fasting), and the weekly rhythm of <strong>Jumu'ah</strong>. The productive Muslim uses these sacred times as planning checkpoints: setting intentions at Ramadan, reviewing at Dhul Hijjah, and recalibrating at Muharram.</p>
+        <p>Annual Intentions (niyyat sanawiyyah) are written at the start of a new year in each of the seven life domains, explicitly connected to the akhira vision. These are not resolutions — they are sincere commitments reviewed before Allah, which fundamentally changes their motivational quality. A resolution can be quietly broken; a sincere niyyah before Allah carries a different weight entirely.</p>
+
+        <!-- SVG: Islamic Calendar planning cycle -->
+        <div class="viz-container">
+          <svg viewBox="0 0 420 240" width="100%" height="240">
+            <defs>
+              <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                <path d="M1,1 L7,4 L1,7 Z" fill="var(--accent)" opacity="0.7"/>
+              </marker>
+            </defs>
+            <ellipse cx="210" cy="120" rx="130" ry="90" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <ellipse cx="210" cy="120" rx="46" ry="27" fill="var(--accent)" opacity="0.9"/>
+            <text x="210" y="116" text-anchor="middle" font-family="Inter" font-size="9" font-weight="800" fill="#fff">Islamic</text>
+            <text x="210" y="128" text-anchor="middle" font-family="Inter" font-size="9" font-weight="800" fill="#fff">Year Cycle</text>
+            <!-- Ramadan top -->
+            <ellipse cx="210" cy="22" rx="52" ry="18" fill="var(--accent)" opacity="0.82"/>
+            <text x="210" y="19" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="#fff">Ramadan</text>
+            <text x="210" y="31" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Set Intentions</text>
+            <line x1="210" y1="40" x2="210" y2="93" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrowGreen)"/>
+            <!-- Dhul Hijjah right -->
+            <ellipse cx="352" cy="120" rx="54" ry="18" fill="var(--accent-3)" opacity="0.82"/>
+            <text x="352" y="117" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Dhul Hijjah</text>
+            <text x="352" y="129" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Mid-year Review</text>
+            <line x1="340" y1="120" x2="257" y2="120" stroke="var(--accent-3)" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrowGreen)"/>
+            <!-- Muharram bottom -->
+            <ellipse cx="210" cy="218" rx="54" ry="18" fill="var(--accent-2)" opacity="0.82"/>
+            <text x="210" y="215" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Muharram</text>
+            <text x="210" y="227" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Annual Recalibration</text>
+            <line x1="210" y1="200" x2="210" y2="147" stroke="var(--accent-2)" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrowGreen)"/>
+            <!-- Jumu'ah left -->
+            <ellipse cx="62" cy="120" rx="50" ry="18" fill="var(--accent)" opacity="0.7"/>
+            <text x="62" y="117" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Jumu'ah</text>
+            <text x="62" y="129" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Weekly Review</text>
+            <line x1="112" y1="120" x2="164" y2="120" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrowGreen)"/>
+          </svg>
+        </div>
+
+        <!-- Step-through 2: Writing Niyyat Sanawiyyah -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-feather-alt" style="margin-right:0.4rem;"></i> Step-Through 2: How to Write Niyyat Sanawiyyah</h4>
+          <div class="step-svg-wrap" id="step3svg"></div>
+          <div class="step-desc" id="step3desc">Click "Next" to walk through the five-step process for writing powerful annual intentions.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step3prev" onclick="pm6Step3(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step3ind">0 / 5</span>
+            <button class="step-btn" id="step3next" onclick="pm6Step3(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <div class="insight-box">
+          <strong>Scholarly insight:</strong> Ibn al-Qayyim wrote that the journey to Allah and the Hereafter is not completed by the body alone — it is completed by the heart's intention. When your annual goals carry a sincere niyyah toward Allah, the very act of planning becomes an act of worship (ibadah).
+        </div>
+      </div>
+
+      <!-- 6.5 -->
+      <div class="lesson-section">
+        <h2>6.5 Weekly and Daily Planning</h2>
+        <p>Annual and long-term goals only materialise through consistent weekly and daily execution. The productive Muslim develops a <strong>weekly planning practice</strong> — ideally before Jumu'ah or on Sunday — that translates monthly milestones into specific weekly priorities and daily tasks. Three questions anchor it: What are my three most important things this week? What scheduled commitments deserve my best attention? What is the minimum I must maintain in each life domain?</p>
+        <p>Daily planning operationalises weekly planning. The most effective practice is the <strong>MIT (Most Important Task) method</strong>: identify the one to three tasks whose completion would make the day a success, then schedule them in the peak post-Fajr window before any reactive work. Reactive work (email, messages, admin) should be batched into defined slots after the MITs are protected.</p>
+
+        <!-- SVG: Day structure illustration -->
+        <div class="viz-container">
+          <svg viewBox="0 0 480 160" width="100%" height="160">
+            <defs>
+              <marker id="arrowUp" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto">
+                <path d="M2,6 L4,2 L6,6 Z" fill="var(--accent)"/>
+              </marker>
+            </defs>
+            <text x="240" y="22" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">Productive Muslim Daily Structure</text>
+            <rect x="20" y="70" width="440" height="22" rx="11" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1"/>
+            <rect x="20" y="70" width="100" height="22" rx="11" fill="var(--accent)" opacity="0.92"/>
+            <text x="70" y="85" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Fajr–Duha: MITs</text>
+            <rect x="124" y="70" width="90" height="22" rx="6" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="169" y="85" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="#fff">Deep Work</text>
+            <rect x="218" y="70" width="48" height="22" rx="6" fill="var(--accent)" opacity="0.55"/>
+            <text x="242" y="85" text-anchor="middle" font-family="Inter" font-size="8" fill="#fff">Dhuhr</text>
+            <rect x="270" y="70" width="80" height="22" rx="6" fill="var(--accent-2)" opacity="0.62"/>
+            <text x="310" y="85" text-anchor="middle" font-family="Inter" font-size="8.5" fill="#fff">Reactive / Email</text>
+            <rect x="354" y="70" width="40" height="22" rx="6" fill="var(--accent)" opacity="0.5"/>
+            <text x="374" y="85" text-anchor="middle" font-family="Inter" font-size="8" fill="#fff">Asr</text>
+            <rect x="398" y="70" width="62" height="22" rx="6" fill="var(--accent-3)" opacity="0.4"/>
+            <text x="429" y="85" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Family/Rest</text>
+            <!-- time labels -->
+            <text x="20" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">Fajr</text>
+            <text x="124" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">9am</text>
+            <text x="218" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">12pm</text>
+            <text x="270" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">2pm</text>
+            <text x="354" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">Asr</text>
+            <text x="398" y="108" font-family="Inter" font-size="8" fill="var(--text-muted)">6pm</text>
+            <!-- Peak energy callout -->
+            <text x="70" y="56" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent)">Peak Energy Window</text>
+            <line x1="70" y1="60" x2="70" y2="70" stroke="var(--accent)" stroke-width="1.3" marker-end="url(#arrowUp)"/>
+          </svg>
+        </div>
+
+        <!-- SVG: MIT priority vs reactive illustration -->
+        <div class="viz-container">
+          <svg viewBox="0 0 480 155" width="100%" height="155">
+            <text x="240" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">MIT vs. Reactive Work: The Balance</text>
+            <!-- MIT block left -->
+            <rect x="10" y="34" width="200" height="110" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.2" stroke-opacity="0.3"/>
+            <text x="110" y="56" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="var(--accent)">MIT Zone</text>
+            <text x="110" y="72" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Post-Fajr — Peak Energy</text>
+            <text x="110" y="88" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Fully offline, no interruptions</text>
+            <text x="110" y="104" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">1-3 deep tasks only</text>
+            <text x="110" y="120" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Makes the day a success</text>
+            <text x="110" y="136" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)" font-weight="700">Proactive | High leverage</text>
+            <!-- Reactive block right -->
+            <rect x="270" y="34" width="200" height="110" rx="10" fill="var(--accent)" opacity="0.05" stroke="var(--border)" stroke-width="1.2"/>
+            <text x="370" y="56" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text-muted)">Reactive Zone</text>
+            <text x="370" y="72" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Afternoon — Post-Dhuhr</text>
+            <text x="370" y="88" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Email, messages, admin</text>
+            <text x="370" y="104" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Batched into defined slots</text>
+            <text x="370" y="120" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Never before MITs are done</text>
+            <text x="370" y="136" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Responsive | Necessary but low leverage</text>
+            <!-- VS divider -->
+            <text x="240" y="96" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="var(--border)">VS</text>
+          </svg>
+        </div>
+
+        <!-- Exercise 4: Daily MIT Planner -->
+        <div class="exercise-box" id="mitEx">
+          <h4><i class="fas fa-list-check" style="margin-right:0.4rem;"></i> Exercise 4: Plan Your MITs for Tomorrow</h4>
+          <p class="ex-desc">Fill in your top 3 Most Important Tasks for tomorrow, the domain each belongs to, and the akhira connection that makes it worth doing. Save it to reflect on the next morning.</p>
+          <div id="mitPlannerRows" style="display:flex;flex-direction:column;gap:0.65rem;margin:0.75rem 0;"></div>
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;margin-top:0.75rem;display:none;" id="mitSummary">
+            <div style="font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Your MIT Plan</div>
+            <div id="mitSummaryContent" style="font-size:0.84rem;color:var(--text-muted);line-height:1.7;"></div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm6SaveMITs()">Save Plan</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm6ResetMITs()">Clear</button>
+          </div>
+          <div class="ex-feedback" id="mitFeedback"></div>
+        </div>
+
+        <!-- Step-through 3: Weekly Planning Process -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-calendar-week" style="margin-right:0.4rem;"></i> Step-Through 3: The Weekly Planning Process</h4>
+          <div class="step-svg-wrap" id="step2svg"></div>
+          <div class="step-desc" id="step2desc">Click "Next" to walk through the productive Muslim's weekly planning process.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step2prev" onclick="pm6Step2(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step2ind">0 / 5</span>
+            <button class="step-btn" id="step2next" onclick="pm6Step2(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6.6 -->
+      <div class="lesson-section">
+        <h2>6.6 Dealing with Obstacles and Recalibrating Goals</h2>
+        <p>Every goal-setting system must account for setbacks, failures, and the need to recalibrate. The Productive Muslim has a distinct Islamic advantage: the belief in qadar (divine decree) and tawakkul (trust in Allah) means that when a goal is not achieved as planned, the Muslim does not catastrophise — they ask "What is Allah teaching me here?" This reframe prevents the paralysing failure spiral that derails goal-setting for many people.</p>
+        <p>Recalibration is not failure — it is wisdom. Goals should be reviewed quarterly and adjusted based on new information, changed circumstances, and evolving priorities. A goal that no longer aligns with your akhira vision should be abandoned without guilt. The process of setting, pursuing, reviewing, and recalibrating goals is itself a form of <em>muhasabah</em> — a spiritual practice of honest self-evaluation before Allah.</p>
+
+        <!-- SVG: Recalibration cycle -->
+        <div class="viz-container">
+          <svg viewBox="0 0 420 186" width="100%" height="186">
+            <rect x="10" y="60" width="88" height="36" rx="9" fill="var(--accent)" opacity="0.88"/>
+            <text x="54" y="82" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">1. Set Goals</text>
+            <rect x="116" y="16" width="88" height="36" rx="9" fill="var(--accent-3)" opacity="0.88"/>
+            <text x="160" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">2. Pursue</text>
+            <rect x="222" y="60" width="90" height="36" rx="9" fill="var(--accent-2)" opacity="0.88"/>
+            <text x="267" y="82" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">3. Review</text>
+            <rect x="116" y="108" width="88" height="44" rx="9" fill="var(--accent)" opacity="0.75"/>
+            <text x="160" y="127" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">4. Recalibrate</text>
+            <text x="160" y="143" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.8)">(muhasabah)</text>
+            <!-- arrows -->
+            <path d="M98,76 Q107,32 116,32" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <path d="M204,32 Q213,58 222,70" fill="none" stroke="var(--accent-3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <path d="M240,96 Q222,128 204,130" fill="none" stroke="var(--accent-2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <path d="M116,124 Q107,100 98,90" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <!-- Tawakkul note -->
+            <text x="344" y="72" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent)">Tawakkul</text>
+            <text x="344" y="84" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">throughout</text>
+            <text x="344" y="96" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">every stage</text>
+          </svg>
+        </div>
+
+        <div class="insight-box">
+          <strong>On qadar and goal-setting:</strong> Believing in qadar does not mean we stop planning — the Prophet (peace be upon him) said "Tie your camel, then put your trust in Allah." Tawakkul is the state after maximum effort, not a substitute for it. Recalibration is itself an act of tawakkul: you are acknowledging that Allah's plan is wiser than your own, and adjusting accordingly.
+        </div>
+
+        <!-- SVG: Effort vs Outcome ownership -->
+        <div class="viz-container">
+          <svg viewBox="0 0 480 160" width="100%" height="160">
+            <text x="240" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">What Is Yours vs. What Belongs to Allah</text>
+            <!-- Your responsibility -->
+            <rect x="10" y="34" width="210" height="116" rx="10" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1.2" stroke-opacity="0.3"/>
+            <text x="115" y="54" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Your Responsibility</text>
+            <text x="115" y="70" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Setting clear goals</text>
+            <text x="115" y="85" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Consistent effort and planning</text>
+            <text x="115" y="100" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Reviewing and recalibrating</text>
+            <text x="115" y="115" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Making du'a sincerely</text>
+            <text x="115" y="140" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)" font-weight="700">"Tie your camel"</text>
+            <!-- Allah's domain -->
+            <rect x="260" y="34" width="210" height="116" rx="10" fill="var(--accent)" opacity="0.05" stroke="var(--border)" stroke-width="1.2"/>
+            <text x="365" y="54" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text-muted)">Allah's Domain (Qadar)</text>
+            <text x="365" y="70" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Outcomes and results</text>
+            <text x="365" y="85" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Timing of doors opening</text>
+            <text x="365" y="100" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">What is withheld and why</text>
+            <text x="365" y="115" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Provisions beyond your means</text>
+            <text x="365" y="140" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)" font-weight="700">"Then put your trust in Allah"</text>
+            <!-- Arrow between -->
+            <text x="240" y="96" text-anchor="middle" font-family="Inter" font-size="18" fill="var(--accent)" opacity="0.4">&#8594;</text>
+          </svg>
+        </div>
+
+        <!-- Exercise 3: Setback Reframe -->
+        <div class="exercise-box" id="reframeEx">
+          <h4><i class="fas fa-redo-alt" style="margin-right:0.4rem;"></i> Exercise 3: The Tawakkul Reframe</h4>
+          <p class="ex-desc">When a goal is blocked, the Islamic reframe transforms how you respond. Select a common setback scenario to see the secular vs. Islamic response side by side.</p>
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text);display:block;margin-bottom:0.4rem;">Choose a setback scenario:</label>
+            <select id="reframeSelect" style="width:100%;padding:0.45rem 0.65rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text);font-size:0.84rem;font-family:Inter,sans-serif;" onchange="pm6ShowReframe()">
+              <option value="">-- select a scenario --</option>
+              <option value="0">I missed my Quran target for the third week running</option>
+              <option value="1">My business goal failed and I lost the investment</option>
+              <option value="2">I couldn't wake up for Fajr consistently this month</option>
+              <option value="3">My health goal fell apart after an injury</option>
+              <option value="4">My career promotion was given to someone else</option>
+            </select>
+          </div>
+          <div id="reframeOutput" style="display:none;">
+            <div class="reframe-grid">
+              <div class="reframe-cell" style="border:1px solid rgba(231,76,60,0.2);">
+                <div class="reframe-cell-label" style="color:#e74c3c;">Secular response</div>
+                <div class="reframe-cell-text" id="reframeSecular"></div>
+              </div>
+              <div class="reframe-cell" style="border:1px solid var(--border);">
+                <div class="reframe-cell-label" style="color:var(--accent);">Islamic reframe</div>
+                <div class="reframe-cell-text" id="reframeIslamic"></div>
+              </div>
+            </div>
+            <div class="reframe-action" id="reframeAction"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- end tab-lessons -->
+
+    <!-- ═══════════════════════════════ SUMMARY TAB -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 6 Summary</h3>
+        <ul>
+          <li><strong>Goal hierarchy:</strong> Akhira Vision &rarr; Life Mission &rarr; Long-term Goals &rarr; Mid-term Goals &rarr; Short-term Goals &rarr; Daily Actions — every action should trace to the vision.</li>
+          <li><strong>7 life domains:</strong> Spiritual, Personal Development, Health, Family, Financial, Social, Contribution — goals must be set across all domains, not just professionally.</li>
+          <li><strong>Islamic SMART goals</strong> add akhira orientation, spiritual metrics, barakah-aware timing, and tawakkul to the standard SMART framework.</li>
+          <li><strong>Annual Intentions</strong> (niyyat sanawiyyah) — written, akhira-connected, reviewed before Allah — have fundamentally different motivational quality than secular resolutions.</li>
+          <li><strong>Islamic calendar</strong> provides built-in planning checkpoints: Ramadan (set intentions), Dhul Hijjah (mid-year review), Muharram (annual recalibration), Jumu'ah (weekly review).</li>
+          <li><strong>Weekly planning:</strong> Three most important things, scheduled commitments, and domain minimums — done before Jumu'ah or on Sunday.</li>
+          <li><strong>MIT method:</strong> Identify the 1-3 Most Important Tasks for each day and schedule them in the peak post-Fajr window before reactive work.</li>
+          <li><strong>Quarterly recalibration:</strong> Review and adjust goals based on new information — recalibration is wisdom, not failure.</li>
+          <li><strong>Tawakkul in setbacks:</strong> When goals are blocked, ask "What is Allah teaching me?" rather than catastrophising — prevents failure spirals.</li>
+          <li><strong>Domain balance:</strong> Professional achievement alongside domain-specific emptiness is not success — the life wheel needs to be balanced across all areas.</li>
+        </ul>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.5rem;">
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;">
+            <div style="font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Goal Hierarchy</div>
+            <ol style="margin:0;padding-left:1.2rem;font-size:0.82rem;color:var(--text-muted);line-height:1.8;">
+              <li>Akhira Vision</li>
+              <li>Life Mission</li>
+              <li>10-Year Goals</li>
+              <li>1-3 Year Goals</li>
+              <li>Monthly Goals</li>
+              <li>Weekly Priorities</li>
+              <li>Daily MITs</li>
+            </ol>
+          </div>
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;">
+            <div style="font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Islamic Calendar Checkpoints</div>
+            <ul style="margin:0;padding-left:1.1rem;font-size:0.82rem;color:var(--text-muted);line-height:1.8;list-style:disc;">
+              <li><strong>Jumu'ah</strong> — weekly review</li>
+              <li><strong>Ramadan</strong> — set annual intentions</li>
+              <li><strong>Dhul Hijjah</strong> — mid-year review</li>
+              <li><strong>Muharram</strong> — annual recalibration</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 1rem;font-size:0.88rem;">
+            <dt style="font-weight:700;color:var(--text);">Niyyat Sanawiyyah</dt>
+            <dd style="color:var(--text-muted);margin:0;">Annual intentions — written, akhira-connected commitments reviewed before Allah at the start of each year.</dd>
+            <dt style="font-weight:700;color:var(--text);">MIT Method</dt>
+            <dd style="color:var(--text-muted);margin:0;">Most Important Task — identify 1-3 tasks whose completion makes the day a success, scheduled in the peak window first.</dd>
+            <dt style="font-weight:700;color:var(--text);">Life Domains</dt>
+            <dd style="color:var(--text-muted);margin:0;">The 7 areas of life requiring balanced goal-setting: Spiritual, Personal, Health, Family, Financial, Social, Contribution.</dd>
+            <dt style="font-weight:700;color:var(--text);">Tawakkul</dt>
+            <dd style="color:var(--text-muted);margin:0;">Complete trust in Allah — after exerting full effort, surrendering outcomes without anxiety or despair.</dd>
+            <dt style="font-weight:700;color:var(--text);">Muhasabah</dt>
+            <dd style="color:var(--text-muted);margin:0;">Self-accounting before Allah — honest self-evaluation that underpins goal recalibration.</dd>
+          </dl>
+        </div>
+
+        <!-- Summary: Secular vs Islamic goal-setting comparison -->
+        <div style="margin-top:1.5rem;">
+          <h4 style="font-size:0.9rem;color:var(--accent);margin-bottom:0.75rem;">Secular vs. Islamic Goal-Setting at a Glance</h4>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.83rem;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:0.55rem 0.75rem;background:var(--surface-2);color:var(--text-muted);font-weight:700;border-bottom:2px solid var(--border);font-size:0.78rem;text-transform:uppercase;">Dimension</th>
+                  <th style="text-align:left;padding:0.55rem 0.75rem;background:var(--surface-2);color:var(--text-muted);font-weight:700;border-bottom:2px solid var(--border);font-size:0.78rem;text-transform:uppercase;">Secular Approach</th>
+                  <th style="text-align:left;padding:0.55rem 0.75rem;background:var(--accent);color:#fff;font-weight:700;border-bottom:2px solid var(--border);font-size:0.78rem;text-transform:uppercase;">Islamic Approach</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;">Ultimate goal</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text-muted);">Success, wealth, status, happiness</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--accent);font-weight:600;">Allah's pleasure and Jannah</td>
+                </tr>
+                <tr style="background:var(--surface-2);">
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;">Motivation source</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text-muted);">Desire, fear of failure, social comparison</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--accent);font-weight:600;">Love of Allah, gratitude, akhira hope</td>
+                </tr>
+                <tr>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;">Response to failure</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text-muted);">Shame, catastrophising, giving up</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--accent);font-weight:600;">Tawakkul + recalibration + lesson-seeking</td>
+                </tr>
+                <tr style="background:var(--surface-2);">
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;">Calendar anchors</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text-muted);">January 1st (arbitrary)</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--accent);font-weight:600;">Ramadan, Dhul Hijjah, Muharram, Jumu'ah</td>
+                </tr>
+                <tr>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;">Scope of domains</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text-muted);">Usually career and finance only</td>
+                  <td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--accent);font-weight:600;">All 7 domains simultaneously and intentionally</td>
+                </tr>
+                <tr style="background:var(--surface-2);">
+                  <td style="padding:0.5rem 0.75rem;color:var(--text);font-weight:600;">Annual review</td>
+                  <td style="padding:0.5rem 0.75rem;color:var(--text-muted);">Optional; often skipped after Feb</td>
+                  <td style="padding:0.5rem 0.75rem;color:var(--accent);font-weight:600;">Embedded in the Islamic calendar as ibadah</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ QUIZ TAB -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- ═══════════════════════════════ MIND MAP TAB -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;"><i class="fas fa-info-circle"></i> Click any branch to reveal details.</p>
+        <div class="mindmap-container" id="mmCh6"></div>
+        <div class="mm-tooltip" id="mmTooltip6"></div>
+      </div>
+
+      <!-- Expandable card grid -->
+      <div style="margin-top:1.5rem;">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
+          <i class="fas fa-expand-alt" style="color:var(--accent);margin-right:0.4rem;"></i>
+          Interactive Concept Cards
+        </h3>
+        <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:1rem;">Click any card to expand its full explanation. Click again to collapse.</p>
+        <div class="mm-card-grid" id="mmCardGrid"></div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch5.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Ch 5: Social Productivity</a>
+      <a href="ch7.html" class="btn btn-primary">Ch 7: Productive Habits <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "The Productive Muslim: Where Faith Meets Productivity" by Mohammed Faris, &copy; 2016 Awakening Publications.</p>
+    <p>Independent educational companion &mdash; not affiliated with Awakening Publications or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    var ns='http://www.w3.org/2000/svg';
+
+    /* ── Helpers ── */
+    function el(tag,attrs,text){
+      var e=document.createElement(tag);
+      if(attrs) Object.keys(attrs).forEach(function(k){e.setAttribute(k,attrs[k]);});
+      if(text!==undefined) e.textContent=text;
+      return e;
+    }
+    function svgEl(tag,attrs,text){
+      var e=document.createElementNS(ns,tag);
+      if(attrs) Object.keys(attrs).forEach(function(k){e.setAttribute(k,attrs[k]);});
+      if(text!==undefined) e.textContent=text;
+      return e;
+    }
+    function appendChildren(parent,children){children.forEach(function(c){parent.appendChild(c);});}
+
+    /* ── Quiz ── */
+    var QUESTIONS=[
+      {question:"What is at the top of the Islamic goal hierarchy described in Chapter 6?",options:["Financial independence","Life Mission statement","Akhira Vision (Allah's pleasure and Jannah)","10-year professional goals"],correct:2,explanation:"The Akhira Vision sits at the top. Every shorter-term goal should trace a clear line back to this ultimate destination."},
+      {question:"How many life domains does the book identify for balanced goal-setting?",options:["3","5","7","10"],correct:2,explanation:"The book identifies 7 life domains: Spiritual, Personal Development, Health, Family, Financial, Social, and Contribution."},
+      {question:"What is 'niyyat sanawiyyah'?",options:["Daily intentions before prayer","Annual intentions — written, akhira-connected commitments reviewed before Allah","A form of voluntary fasting","The Prophet's mission statement"],correct:1,explanation:"Niyyat sanawiyyah are annual intentions — written, akhira-connected, reviewed before Allah — with fundamentally different motivational quality than secular resolutions."},
+      {question:"What does the MIT method stand for?",options:["Muslim Intention Tracker","Most Important Task — the 1-3 tasks whose completion makes the day a success","Midnight Ibadah Time","Morning Intention Template"],correct:1,explanation:"MIT (Most Important Task) means identifying the 1-3 tasks that would make the day a success, scheduled in the peak post-Fajr window."},
+      {question:"How does Islamic goal-setting enhance the standard SMART framework?",options:["By removing the measurable and time-bound elements","By adding akhira orientation, spiritual metrics, barakah-aware timing, and tawakkul","By replacing specific goals with general intentions","By using Arabic words instead of English"],correct:1,explanation:"Islamic SMART goals add akhira orientation, spiritual metrics, barakah-aware timing, and tawakkul to the standard framework."},
+      {question:"Which Islamic calendar periods are identified as natural annual planning checkpoints?",options:["Rajab, Sha'ban, Jumada","Ramadan, Dhul Hijjah, Muharram, and weekly Jumu'ah","Eid al-Fitr and Eid al-Adha only","Mondays and Thursdays"],correct:1,explanation:"Ramadan (set intentions), Dhul Hijjah (mid-year review), Muharram (annual recalibration), and Jumu'ah (weekly review)."},
+      {question:"What is the problem with setting goals in only one life domain?",options:["It is not allowed in Islam","It leads to domain-specific achievement alongside domain-specific emptiness — a lopsided life wheel","It creates too much work","It prevents spiritual growth"],correct:1,explanation:"Focusing all goals professionally while neglecting other domains produces a lopsided life wheel that lurches painfully."},
+      {question:"How should a Muslim respond when a goal is not achieved as planned?",options:["Abandon all goal-setting as futile","Feel guilty and redouble effort regardless of circumstances","Ask 'What is Allah teaching me?' and recalibrate with tawakkul","Report the failure publicly for accountability"],correct:2,explanation:"Tawakkul in setbacks means asking 'What is Allah teaching me?' — this reframe prevents the failure spiral."},
+      {question:"When should weekly planning ideally occur?",options:["On Saturday evening","Before Jumu'ah or on Sunday — translating monthly milestones into weekly priorities","On Monday morning before work","At any convenient time during the week"],correct:1,explanation:"Weekly planning before Jumu'ah or on Sunday translates monthly milestones into specific weekly priorities."},
+      {question:"What makes Annual Intentions different from New Year's Resolutions?",options:["Annual intentions are shorter and simpler","They are written in Arabic","They are akhira-connected, reviewed before Allah, and are sincere covenants — fundamentally different in motivational quality","They are only set in the Islamic new year"],correct:2,explanation:"Annual intentions are akhira-connected covenants before Allah — not just personal declarations. This divine witness quality transforms their motivational depth."}
+    ];
+    VB.initQuiz('quizContainer',QUESTIONS);
+    VB.initTabs('chapterTabs');
+
+    /* ── Life Wheel static SVG illustration ── */
+    (function(){
+      var svg=document.getElementById('lifeWheelSvg');
+      if(!svg) return;
+      var cx=180,cy=140,R=100;
+      var labels=['Spiritual','Personal','Health','Family','Financial','Social','Contribution'];
+      var scores=[8,6,5,7,6,7,5];
+      var n=labels.length;
+      // grid
+      [0.25,0.5,0.75,1].forEach(function(frac){
+        var pts=labels.map(function(_,i){
+          var a=(i/n)*2*Math.PI-Math.PI/2;
+          return (cx+frac*R*Math.cos(a)).toFixed(1)+','+(cy+frac*R*Math.sin(a)).toFixed(1);
+        }).join(' ');
+        svg.appendChild(svgEl('polygon',{points:pts,fill:'none',stroke:'var(--border)','stroke-width':'1'}));
+      });
+      // spokes
+      labels.forEach(function(_,i){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        svg.appendChild(svgEl('line',{
+          x1:cx,y1:cy,
+          x2:(cx+R*Math.cos(a)).toFixed(1),y2:(cy+R*Math.sin(a)).toFixed(1),
+          stroke:'var(--border)','stroke-width':'1'
+        }));
+      });
+      // filled polygon
+      var pts2=labels.map(function(_,i){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        var r=(scores[i]/10)*R;
+        return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1);
+      }).join(' ');
+      svg.appendChild(svgEl('polygon',{points:pts2,fill:'var(--accent)','fill-opacity':'0.28',stroke:'var(--accent)','stroke-width':'2'}));
+      // dots + labels
+      labels.forEach(function(lbl,i){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        var r=(scores[i]/10)*R;
+        svg.appendChild(svgEl('circle',{
+          cx:(cx+r*Math.cos(a)).toFixed(1),cy:(cy+r*Math.sin(a)).toFixed(1),r:'4',fill:'var(--accent)'
+        }));
+        var tx=(cx+(R+18)*Math.cos(a)).toFixed(1);
+        var ty=(cy+(R+18)*Math.sin(a)).toFixed(1);
+        svg.appendChild(svgEl('text',{x:tx,y:String(parseFloat(ty)+4),'text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'600',fill:'var(--text-muted)'},lbl));
+      });
+      svg.appendChild(svgEl('text',{x:cx,y:cy+4,'text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'700',fill:'var(--accent)'},'Life Wheel'));
+    })();
+
+    /* ── Goal Domain Cards ── */
+    var domains=[
+      {label:'Spiritual',title:'Relationship with Allah',example:'Complete Quran reading with tafseer by Ramadan'},
+      {label:'Personal',title:'Growth & Learning',example:'Read 12 books this year across Islamic and professional topics'},
+      {label:'Health',title:'Body as Amanah',example:'Exercise 4x weekly; sleep 7.5hrs; maintain sunnah fasting'},
+      {label:'Family',title:'Best to Your Family',example:'Weekly family dinner (no phones); daily 15-min 1-on-1 with each child'},
+      {label:'Financial',title:'Halal Provision',example:'6-month emergency fund; increase sadaqah by 10%'},
+      {label:'Social',title:'Community & Contribution',example:'Mentor one junior Muslim professional this year'},
+      {label:'Contribution',title:'Legacy & Impact',example:'Launch one community initiative that outlasts my direct involvement'}
+    ];
+    var domainColors=['var(--accent)','var(--accent-3)','var(--accent-2)','var(--accent)','var(--accent-3)','var(--accent-2)','var(--accent)'];
+    var gc=document.getElementById('goalDomains');
+    domains.forEach(function(d,i){
+      var card=el('div',{class:'goal-card'});
+      var label=el('div',{class:'gc-label'},d.label); label.style.color=domainColors[i];
+      var title=el('div',{class:'gc-title'},d.title); title.style.color=domainColors[i];
+      var ex=el('div',{class:'gc-example'},d.example);
+      appendChildren(card,[label,title,ex]);
+      gc.appendChild(card);
+    });
+
+    /* ── Exercise 1: Life Wheel Slider ── */
+    var domainLabels=['Spiritual','Personal','Health','Family','Financial','Social','Contribution'];
+    var wheelScores=[5,5,5,5,5,5,5];
+    var sliderContainer=document.getElementById('wheelSliders');
+    domainLabels.forEach(function(lbl,i){
+      var row=el('div',{class:'wheel-slider-row'});
+      var labelEl=el('label'); labelEl.textContent=lbl+' ';
+      var valSpan=el('span',{id:'wv'+i},'5');
+      labelEl.appendChild(valSpan);
+      var inp=el('input',{type:'range',min:'1',max:'10',value:'5'});
+      inp.addEventListener('input',function(){
+        wheelScores[i]=parseInt(this.value,10);
+        valSpan.textContent=this.value;
+        pm6DrawWheel();
+      });
+      appendChildren(row,[labelEl,inp]);
+      sliderContainer.appendChild(row);
+    });
+    function pm6DrawWheel(){
+      var canvas=document.getElementById('wheelCanvas');
+      if(!canvas||!canvas.getContext) return;
+      var ctx=canvas.getContext('2d');
+      var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=100,n=domainLabels.length;
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='rgba(46,204,113,0.15)';ctx.lineWidth=1;
+      [0.25,0.5,0.75,1].forEach(function(f){
+        ctx.beginPath();
+        for(var i=0;i<n;i++){
+          var a=(i/n)*2*Math.PI-Math.PI/2;
+          if(i===0) ctx.moveTo(cx+f*R*Math.cos(a),cy+f*R*Math.sin(a));
+          else ctx.lineTo(cx+f*R*Math.cos(a),cy+f*R*Math.sin(a));
+        }
+        ctx.closePath();ctx.stroke();
+      });
+      for(var i=0;i<n;i++){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+        ctx.strokeStyle='rgba(46,204,113,0.12)';ctx.stroke();
+      }
+      ctx.beginPath();
+      for(var i=0;i<n;i++){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        var r=(wheelScores[i]/10)*R;
+        if(i===0) ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+        else ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+      }
+      ctx.closePath();
+      ctx.fillStyle='rgba(46,204,113,0.22)';ctx.fill();
+      ctx.strokeStyle='#2ecc71';ctx.lineWidth=2;ctx.stroke();
+      for(var i=0;i<n;i++){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        var r=(wheelScores[i]/10)*R;
+        ctx.beginPath();ctx.arc(cx+r*Math.cos(a),cy+r*Math.sin(a),4,0,2*Math.PI);
+        ctx.fillStyle='#2ecc71';ctx.fill();
+      }
+      ctx.font='bold 9px Inter,sans-serif';ctx.fillStyle='rgba(100,130,120,0.9)';ctx.textAlign='center';
+      for(var i=0;i<n;i++){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        ctx.fillText(domainLabels[i],cx+(R+16)*Math.cos(a),cy+(R+16)*Math.sin(a)+4);
+      }
+      var minVal=Math.min.apply(null,wheelScores);
+      var minIdx=wheelScores.indexOf(minVal);
+      var avg=(wheelScores.reduce(function(a,b){return a+b;},0)/n).toFixed(1);
+      var fb=document.getElementById('wheelFeedback');
+      if(fb){
+        if(minVal<=3) fb.textContent='Lowest domain: '+domainLabels[minIdx]+' ('+minVal+'/10). Consider dedicating a specific goal here.';
+        else if(parseFloat(avg)>=7) fb.textContent='Looking balanced! Average: '+avg+'/10. Keep reviewing quarterly so no domain dips.';
+        else fb.textContent='Average: '+avg+'/10. Watch your '+domainLabels[minIdx]+' domain — it is lowest right now.';
+      }
+    }
+    pm6DrawWheel();
+    window.pm6ResetWheel=function(){
+      wheelScores=[5,5,5,5,5,5,5];
+      sliderContainer.querySelectorAll('input').forEach(function(inp,i){
+        inp.value=5;
+        document.getElementById('wv'+i).textContent='5';
+      });
+      pm6DrawWheel();
+    };
+
+    /* ── Exercise 2: Islamic SMART Goal Builder ── */
+    window.pm6BuildSMART=function(){
+      var domain=document.getElementById('sg-domain').value;
+      var what=document.getElementById('sg-what').value.trim();
+      var measure=document.getElementById('sg-measure').value.trim();
+      var habit=document.getElementById('sg-habit').value.trim();
+      var deadline=document.getElementById('sg-deadline').value.trim();
+      var akhira=document.getElementById('sg-akhira').value.trim();
+      var prev=document.getElementById('smartPreview');
+      if(!domain&&!what){prev.textContent='Your Islamic SMART goal will appear here as you fill in the fields above...';return;}
+      var parts=[];
+      if(domain) parts.push('In my '+domain+' domain');
+      if(what) parts.push('I will '+what.charAt(0).toLowerCase()+what.slice(1));
+      if(measure) parts.push('measured by '+measure);
+      if(habit) parts.push('through '+habit);
+      if(deadline) parts.push('to be achieved '+deadline);
+      if(akhira) parts.push('— all done with the intention of '+akhira.charAt(0).toLowerCase()+akhira.slice(1));
+      prev.textContent=parts.join(', ')+'.';
+    };
+    window.pm6ResetSMART=function(){
+      ['sg-domain','sg-what','sg-measure','sg-habit','sg-deadline','sg-akhira'].forEach(function(id){
+        document.getElementById(id).value='';
+      });
+      document.getElementById('smartPreview').textContent='Your Islamic SMART goal will appear here as you fill in the fields above...';
+    };
+
+    /* ── Exercise 4: MIT Planner ── */
+    (function(){
+      var mitData=[{task:'',domain:'',akhira:''},{task:'',domain:'',akhira:''},{task:'',domain:'',akhira:''}];
+      var container=document.getElementById('mitPlannerRows');
+      if(!container) return;
+      var domainOpts=['Spiritual','Personal Development','Health','Family','Financial','Social','Contribution'];
+      mitData.forEach(function(_,i){
+        var row=el('div',{});
+        row.style.cssText='background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;';
+        var numLabel=el('div',{});
+        numLabel.style.cssText='grid-column:1/-1;font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:0.2rem;';
+        numLabel.textContent='MIT '+(i+1)+' — Most Important Task';
+        var taskInp=el('input',{type:'text',placeholder:'What must get done?',id:'mit-task-'+i});
+        taskInp.style.cssText='padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:0.83rem;font-family:Inter,sans-serif;';
+        taskInp.addEventListener('input',function(){mitData[i].task=this.value.trim();});
+        var domainSel=el('select',{id:'mit-domain-'+i});
+        domainSel.style.cssText='padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:0.83rem;font-family:Inter,sans-serif;';
+        [el('option',{value:''},'-- Domain --')].concat(domainOpts.map(function(d){return el('option',{value:d},d);})).forEach(function(o){domainSel.appendChild(o);});
+        domainSel.addEventListener('change',function(){mitData[i].domain=this.value;});
+        var akhiraInp=el('input',{type:'text',placeholder:'Akhira connection...',id:'mit-akhira-'+i});
+        akhiraInp.style.cssText='padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:0.83rem;font-family:Inter,sans-serif;';
+        akhiraInp.addEventListener('input',function(){mitData[i].akhira=this.value.trim();});
+        appendChildren(row,[numLabel,taskInp,domainSel,akhiraInp]);
+        container.appendChild(row);
+      });
+      window.pm6SaveMITs=function(){
+        var filled=mitData.filter(function(d){return d.task;});
+        if(!filled.length){
+          document.getElementById('mitFeedback').textContent='Fill in at least one MIT to save your plan.';
+          return;
+        }
+        var summary=document.getElementById('mitSummary');
+        var content=document.getElementById('mitSummaryContent');
+        while(content.firstChild) content.removeChild(content.firstChild);
+        filled.forEach(function(d,i){
+          var line=el('div',{});
+          line.style.cssText='margin-bottom:0.45rem;padding-bottom:0.45rem;border-bottom:1px solid var(--border);';
+          var num=el('strong',{},(i+1)+'. '); num.style.color='var(--accent)';
+          line.appendChild(num);
+          line.appendChild(document.createTextNode(d.task));
+          if(d.domain){
+            var tag=el('span',{},' ['+d.domain+']');
+            tag.style.cssText='font-size:0.78rem;color:var(--accent-3);font-weight:600;';
+            line.appendChild(tag);
+          }
+          if(d.akhira){
+            var sub=el('div',{},d.akhira);
+            sub.style.cssText='font-size:0.8rem;color:var(--text-muted);font-style:italic;margin-top:0.15rem;';
+            line.appendChild(sub);
+          }
+          content.appendChild(line);
+        });
+        summary.style.display='block';
+        document.getElementById('mitFeedback').textContent='Plan saved! Review this tomorrow morning after Fajr before starting work.';
+      };
+      window.pm6ResetMITs=function(){
+        mitData=[{task:'',domain:'',akhira:''},{task:'',domain:'',akhira:''},{task:'',domain:'',akhira:''}];
+        for(var i=0;i<3;i++){
+          var t=document.getElementById('mit-task-'+i);
+          var d=document.getElementById('mit-domain-'+i);
+          var a=document.getElementById('mit-akhira-'+i);
+          if(t) t.value='';if(d) d.value='';if(a) a.value='';
+        }
+        var s=document.getElementById('mitSummary');if(s) s.style.display='none';
+        var fb=document.getElementById('mitFeedback');if(fb) fb.textContent='';
+      };
+    })();
+
+    /* ── Step-through builder ── */
+    function buildStepSvg(containerId,steps,activeCount){
+      var container=document.getElementById(containerId);
+      var old=container.querySelector('svg');
+      if(old) container.removeChild(old);
+      var svg=svgEl('svg',{viewBox:'0 0 560 100',width:'100%'});
+      container.appendChild(svg);
+      steps.forEach(function(s,i){
+        var x=10+i*110;
+        var g=svgEl('g',{opacity:i<activeCount?'1':'0.18'});
+        var rect=svgEl('rect',{x:x,y:'14',width:'100',height:'72',rx:'10',fill:s.color,opacity:'0.92'});
+        var stepLbl=svgEl('text',{x:x+50,y:'32','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.7)'},'Step '+(i+1));
+        var words=s.label.split(' ');
+        var line1=words.slice(0,2).join(' ');
+        var line2=words.slice(2).join(' ');
+        var t1=svgEl('text',{x:x+50,y:line2?'52':'58','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'700',fill:'#fff'},line1);
+        appendChildren(g,[rect,stepLbl,t1]);
+        if(line2){
+          var t2=svgEl('text',{x:x+50,y:'68','text-anchor':'middle','font-family':'Inter','font-size':'9.5',fill:'rgba(255,255,255,0.85)'},line2);
+          g.appendChild(t2);
+        }
+        svg.appendChild(g);
+        if(i<steps.length-1){
+          svg.appendChild(svgEl('text',{x:x+110,y:'58','text-anchor':'middle','font-family':'Inter','font-size':'18',fill:'rgba(46,204,113,0.4)'},'→'));
+        }
+      });
+    }
+
+    /* ── Step 1: Cascade from Vision to Daily Action ── */
+    var s1idx=0;
+    var cascade=[
+      {label:'Akhira Vision',color:'#2ecc71',desc:'Enter Jannah through Allah\'s pleasure by living as a faithful khalifah who used every gift in service of creation.'},
+      {label:'Life Mission',color:'#1abc9c',desc:'To build a school in an underserved community that produces a generation of ethical Muslim leaders — as my sadaqah jariyah.'},
+      {label:'10-Year Goal',color:'#27ae60',desc:'Have the school built, funded, and running with 200 students by age 45, earning through halal professional excellence to fund it.'},
+      {label:'1-Year Goal',color:'#2ecc71',desc:'Save $15,000 toward school fund, complete the education business plan, and identify the site and key partners by December.'},
+      {label:'Daily Action',color:'#1abc9c',desc:'Today: 20 min researching Islamic education models after Fajr; transfer $250 to school savings; email one potential partner.'}
+    ];
+    function pm6RenderStep1(){
+      buildStepSvg('step1svg',cascade,s1idx);
+      document.getElementById('step1ind').textContent=s1idx+' / '+cascade.length;
+      document.getElementById('step1prev').disabled=(s1idx===0);
+      document.getElementById('step1next').disabled=(s1idx===cascade.length);
+      document.getElementById('step1desc').textContent=s1idx>0?cascade[s1idx-1].label+': '+cascade[s1idx-1].desc:'Click Next to see how an akhira vision cascades all the way down to a specific daily action.';
+    }
+    window.pm6Step1=function(dir){s1idx=Math.max(0,Math.min(cascade.length,s1idx+dir));pm6RenderStep1();};
+    pm6RenderStep1();
+
+    /* ── Step 2: Niyyat Sanawiyyah writing process ── */
+    var s3idx=0;
+    var niyyahSteps=[
+      {label:'Make Wudu & Sit',color:'#2ecc71',desc:'Begin in a state of purity. Sit quietly away from distraction. Open with bismillah and a short du\'a asking Allah for sincerity and clarity of purpose.'},
+      {label:'Recall Your Vision',color:'#1abc9c',desc:'Read your life mission statement. If you don\'t have one, spend 5 minutes writing one sentence: "I exist to _____ for the sake of Allah." Let this anchor everything.'},
+      {label:'Review All 7 Domains',color:'#27ae60',desc:'Go through each of the 7 life domains. For each one ask: What does success look like here by next year? Write one meaningful goal per domain.'},
+      {label:'Connect to Akhira',color:'#2ecc71',desc:'For each goal, add one sentence: "This matters because..." Make sure every goal traces back to Allah\'s pleasure, not just personal achievement.'},
+      {label:'Seal with Du\'a',color:'#1abc9c',desc:'Read your complete list aloud as a du\'a before Allah. Ask for tawfiq, barakah, and steadfastness. Sign and date it. Return to review at Dhul Hijjah.'}
+    ];
+    function pm6RenderStep3(){
+      buildStepSvg('step3svg',niyyahSteps,s3idx);
+      document.getElementById('step3ind').textContent=s3idx+' / '+niyyahSteps.length;
+      document.getElementById('step3prev').disabled=(s3idx===0);
+      document.getElementById('step3next').disabled=(s3idx===niyyahSteps.length);
+      document.getElementById('step3desc').textContent=s3idx>0?niyyahSteps[s3idx-1].label+': '+niyyahSteps[s3idx-1].desc:'Click Next to walk through the five-step process for writing powerful annual intentions.';
+    }
+    window.pm6Step3=function(dir){s3idx=Math.max(0,Math.min(niyyahSteps.length,s3idx+dir));pm6RenderStep3();};
+    pm6RenderStep3();
+
+    /* ── Step 3: Weekly Planning Process ── */
+    var s2idx=0;
+    var weeklySteps=[
+      {label:'Review Niyyah',color:'#2ecc71',desc:'Open with bismillah. Review your life mission statement and this month\'s goals. Renew your intention: what is your service to Allah this week?'},
+      {label:'Review Last Week',color:'#1abc9c',desc:'What were your three priorities? What did you accomplish? Where did you fall short? Be honest but compassionate — this is muhasabah, not self-punishment.'},
+      {label:'Set 3 Priorities',color:'#27ae60',desc:'What are the 3 most important things to accomplish this week? These must trace back to your monthly goals and life mission. Write them down explicitly.'},
+      {label:'Schedule & Protect',color:'#2ecc71',desc:'Block time for MIT tasks in the post-Fajr peak window. Schedule salah, family time, and community commitments. Batch reactive work into defined slots.'},
+      {label:'Close with Du\'a',color:'#1abc9c',desc:'Make du\'a for success in your priorities, for barakah in your time, and tawfiq. Hand the outcomes to Allah after doing your part.'}
+    ];
+    function pm6RenderStep2(){
+      buildStepSvg('step2svg',weeklySteps,s2idx);
+      document.getElementById('step2ind').textContent=s2idx+' / '+weeklySteps.length;
+      document.getElementById('step2prev').disabled=(s2idx===0);
+      document.getElementById('step2next').disabled=(s2idx===weeklySteps.length);
+      document.getElementById('step2desc').textContent=s2idx>0?weeklySteps[s2idx-1].label+': '+weeklySteps[s2idx-1].desc:'Click Next to walk through the productive Muslim\'s weekly planning process.';
+    }
+    window.pm6Step2=function(dir){s2idx=Math.max(0,Math.min(weeklySteps.length,s2idx+dir));pm6RenderStep2();};
+    pm6RenderStep2();
+
+    /* ── Exercise 3: Tawakkul Reframe ── */
+    var reframes=[
+      {secular:"I've failed again. I have no self-discipline. I'll never become consistent with Quran.",islamic:"Perhaps I was trying to do too much too fast. Allah is showing me I need a more realistic routine.",action:"Recalibrate: reduce to 5 minutes daily for 2 weeks, then build gradually. Consistency beats ambition."},
+      {secular:"I lost everything I invested. I'm a failure. I should give up on entrepreneurship entirely.",islamic:"This was a test of my tawakkul and attachment to wealth. Perhaps this door closed so a better provision opens.",action:"Review: Was the plan halal and sound? Make istikhara before the next venture. Seek a mentor's counsel."},
+      {secular:"I have no willpower. I'm lazy. I'll never be a Fajr person. Just accept it.",islamic:"My sleep schedule and nightly habits are working against me. This is a practical problem I can solve, not a character flaw.",action:"Diagnose: What time did I sleep? Fix the cause, not the symptom. Try sleeping by 10:30pm for 2 weeks first."},
+      {secular:"My health goal is ruined. There's no point continuing — I've lost all the progress.",islamic:"Injury is a reminder that my body is an amanah. Allah is giving me time to rest and reflect on sustainable habits.",action:"Consult a doctor, modify the goal to your current capacity, and add du'a for shifa. Momentum resumes from today."},
+      {secular:"I deserved that promotion. My efforts went unrecognized. This company is unfair.",islamic:"Perhaps Allah has better rizq elsewhere — a role that aligns with my mission more deeply. Alhamdulillah for the test.",action:"Make du'a for guidance, review your domain goals beyond career, and explore if this is still the right environment."}
+    ];
+    window.pm6ShowReframe=function(){
+      var sel=document.getElementById('reframeSelect');
+      var out=document.getElementById('reframeOutput');
+      if(sel.value===''){out.style.display='none';return;}
+      var d=reframes[parseInt(sel.value,10)];
+      document.getElementById('reframeSecular').textContent=d.secular;
+      document.getElementById('reframeIslamic').textContent=d.islamic;
+      var actionEl=document.getElementById('reframeAction');
+      while(actionEl.firstChild) actionEl.removeChild(actionEl.firstChild);
+      var bold=el('strong',{},'Recalibration action: ');
+      bold.style.color='var(--accent)';
+      actionEl.appendChild(bold);
+      actionEl.appendChild(document.createTextNode(d.action));
+      out.style.display='block';
+    };
+
+    /* ── Mind Map (SVG radial) ── */
+    (function(){
+      var container=document.getElementById('mmCh6');
+      var tooltip=document.getElementById('mmTooltip6');
+      var W=560,H=400,cx=W/2,cy=H/2;
+      var svg=svgEl('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',height:H});
+      container.style.position='relative';container.appendChild(svg);
+      var branches=[
+        {label:'Akhira Vision',color:'#2ecc71',angle:270,r:158,desc:'The ultimate destination that frames every shorter-term goal with eternal meaning.'},
+        {label:'7 Life Domains',color:'#1abc9c',angle:321,r:158,desc:'Spiritual, Personal, Health, Family, Financial, Social, Contribution — goals across all domains.'},
+        {label:'Islamic SMART',color:'#27ae60',angle:13,r:158,desc:'SMART framework enhanced with akhira orientation, spiritual metrics, and barakah-aware timing.'},
+        {label:'Annual Intentions',color:'#2ecc71',angle:90,r:158,desc:'Written akhira-connected niyyat sanawiyyah reviewed as a covenant before Allah.'},
+        {label:'Weekly Planning',color:'#1abc9c',angle:141,r:158,desc:"3 priorities, last-week review, schedule + protect MIT window — done before Jumu'ah."},
+        {label:'MIT Method',color:'#27ae60',angle:208,r:158,desc:'Most Important Tasks scheduled in the peak post-Fajr window before reactive work begins.'},
+        {label:'Recalibration',color:'#2ecc71',angle:247,r:158,desc:'Quarterly review and adjustment — recalibration is wisdom, not failure; tawakkul in setbacks.'}
+      ];
+      var cg=svgEl('g');
+      appendChildren(cg,[
+        svgEl('ellipse',{cx:cx,cy:cy,rx:'62',ry:'32',fill:'#2ecc71',opacity:'0.92'}),
+        svgEl('text',{x:cx,y:cy,'text-anchor':'middle','font-family':'Inter','font-size':'11.5','font-weight':'800',fill:'#fff'},'Goals &'),
+        svgEl('text',{x:cx,y:cy+15,'text-anchor':'middle','font-family':'Inter','font-size':'11.5','font-weight':'800',fill:'#fff'},'Vision')
+      ]);
+      svg.appendChild(cg);
+      branches.forEach(function(b,i){
+        var rad=b.angle*Math.PI/180;
+        var bx=cx+b.r*Math.cos(rad),by=cy+b.r*Math.sin(rad);
+        var line=svgEl('line',{x1:cx,y1:cy,x2:bx.toFixed(1),y2:by.toFixed(1),stroke:'rgba(46,204,113,0.2)','stroke-width':'1.8'});
+        svg.insertBefore(line,cg);
+        var bg=svgEl('g');
+        bg.style.cursor='pointer';
+        bg.style.animation='pm6FadeIn 0.4s ease '+(i*0.09+0.1)+'s both';
+        var ell=svgEl('ellipse',{cx:bx.toFixed(1),cy:by.toFixed(1),rx:'54',ry:'22',fill:b.color,opacity:'0.82'});
+        var txt=svgEl('text',{x:bx.toFixed(1),y:(by+4).toFixed(1),'text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'600',fill:'#fff'},b.label);
+        appendChildren(bg,[ell,txt]);
+        bg.addEventListener('click',function(e){
+          var rect=container.getBoundingClientRect();
+          tooltip.style.left=(e.clientX-rect.left+12)+'px';
+          tooltip.style.top=(e.clientY-rect.top+12)+'px';
+          while(tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+          var strong=el('strong',{},b.label);
+          strong.style.color=b.color;strong.style.display='block';
+          strong.style.marginBottom='0.2rem';strong.style.fontSize='0.82rem';
+          tooltip.appendChild(strong);
+          tooltip.appendChild(document.createTextNode(b.desc));
+          tooltip.classList.add('visible');e.stopPropagation();
+        });
+        svg.appendChild(bg);
+      });
+      document.addEventListener('click',function(){tooltip.classList.remove('visible');});
+    })();
+
+    /* ── Mind Map: Expandable card grid ── */
+    var cardData=[
+      {
+        icon:'fa-star',color:'#2ecc71',title:'Akhira Vision',tag:'Foundation',
+        desc:'The akhira vision is the eternal frame that gives every shorter-term goal its meaning. Without it, even great achievements are ultimately hollow.',
+        points:['Ultimate destination: Allah\'s pleasure + Jannah','Functions as a constant compass for decisions','Not fatalism — the most strategic framework available','Should be written as a single powerful statement']
+      },
+      {
+        icon:'fa-circle',color:'#1abc9c',title:'7 Life Domains',tag:'Balance',
+        desc:'Goals must span all 7 domains simultaneously. Neglecting any domain creates a lopsided life wheel.',
+        points:['Spiritual — relationship with Allah, Quran, ibadah','Personal — learning, skills, character development','Health — body, nutrition, sleep, fitness','Family — spouse, children, parents','Financial — halal provision, savings, sadaqah','Social — community, mentorship, friendship','Contribution — legacy, charity, professional impact']
+      },
+      {
+        icon:'fa-bullseye',color:'#27ae60',title:'Islamic SMART Goals',tag:'Framework',
+        desc:'Standard SMART enhanced with Islamic dimensions that transform ordinary goals into acts of worship.',
+        points:['S: Specific + linked to life mission','M: Measurable including spiritual metrics','A: Achievable with trust in Allah\'s facilitation','R: Relevant — filtered through akhira orientation','T: Time-bound with barakah-aware timing']
+      },
+      {
+        icon:'fa-scroll',color:'#2ecc71',title:'Niyyat Sanawiyyah',tag:'Annual Ritual',
+        desc:'Annual intentions are not New Year\'s resolutions — they are sincere covenants made before Allah.',
+        points:['Written at the start of Ramadan or Islamic new year','One meaningful goal per life domain','Each goal includes an explicit akhira connection','Reviewed at Dhul Hijjah and Muharram','Read aloud as a du\'a before Allah and signed']
+      },
+      {
+        icon:'fa-calendar-check',color:'#1abc9c',title:'Weekly Planning',tag:'Routine',
+        desc:'The bridge between annual goals and daily actions. Done before Jumu\'ah or on Sunday.',
+        points:['Open with bismillah and mission review','Review last week honestly (muhasabah)','Set 3 most important things for the week','Block MIT tasks in peak post-Fajr window','Close with du\'a for tawfiq and barakah']
+      },
+      {
+        icon:'fa-crosshairs',color:'#27ae60',title:'MIT Method',tag:'Daily',
+        desc:'Most Important Task: identify 1-3 tasks whose completion would make the day a success.',
+        points:['Scheduled in the peak post-Fajr energy window','Protected from reactive work (email, messages)','Reactive work batched into afternoon slots','Even one MIT daily compounds into major goals over time']
+      },
+      {
+        icon:'fa-arrows-rotate',color:'#2ecc71',title:'Quarterly Recalibration',tag:'Review',
+        desc:'Goals should be reviewed quarterly. Recalibration is wisdom, not failure.',
+        points:['Ask: does this still align with my akhira vision?','Abandoned goals (changed context) = wisdom','Restructured goals (more time needed) = strategy','Tawakkul: after full effort, surrender outcomes to Allah','Every setback contains a lesson — ask what Allah is teaching']
+      }
+    ];
+    var grid=document.getElementById('mmCardGrid');
+    cardData.forEach(function(d){
+      var card=el('div',{class:'mm-node-card'});
+      var header=el('div',{class:'mm-node-header'});
+      var iconEl=el('div',{class:'mm-node-icon'});
+      iconEl.style.background=d.color;
+      var iTag=el('i',{class:'fas '+d.icon});
+      iconEl.appendChild(iTag);
+      var titleEl=el('div',{class:'mm-node-title'},d.title);
+      var toggleEl=el('i',{class:'fas fa-chevron-down mm-node-toggle'});
+      appendChildren(header,[iconEl,titleEl,toggleEl]);
+      var body=el('div',{class:'mm-node-body'});
+      var tag=el('span',{class:'mm-node-tag'},d.tag);
+      tag.style.background=d.color;
+      var descEl=el('p',{class:'mm-node-desc'},d.desc);
+      var listEl=el('ul',{class:'mm-node-list'});
+      d.points.forEach(function(pt){
+        listEl.appendChild(el('li',{},pt));
+      });
+      appendChildren(body,[tag,descEl,listEl]);
+      appendChildren(card,[header,body]);
+      card.addEventListener('click',function(){
+        var wasExpanded=card.classList.contains('expanded');
+        grid.querySelectorAll('.mm-node-card.expanded').forEach(function(c){c.classList.remove('expanded');});
+        if(!wasExpanded) card.classList.add('expanded');
+      });
+      grid.appendChild(card);
+    });
+
+  })();
+  </script>
+</body>
+</html>

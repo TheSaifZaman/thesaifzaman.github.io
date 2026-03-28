@@ -15,6 +15,185 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through diagrams */
+    .step-diagram { position: relative; }
+    .step-diagram .step-controls {
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-2);
+    }
+    .step-diagram .step-controls .btn { min-width: 90px; justify-content: center; }
+    .step-diagram .step-indicator {
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted); min-width: 70px; text-align: center;
+    }
+    .step-diagram .step-frame { transition: opacity 0.4s ease; min-height: 280px; }
+    .step-diagram .step-desc {
+      text-align: center; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem;
+      min-height: 2.5em; transition: opacity 0.3s ease;
+    }
+
+    /* Interactive mind map */
+    .mindmap-container { position: relative; min-height: 520px; }
+    .mm-interactive { width: 100%; height: 520px; }
+    .mm-interactive .mm-group { cursor: pointer; }
+    .mm-interactive .mm-branch-line { stroke: var(--border); stroke-width: 2; fill: none; transition: stroke 0.3s ease, stroke-width 0.3s ease; }
+    .mm-interactive .mm-child-line { stroke: var(--border); stroke-width: 1.5; fill: none; opacity: 0; transition: opacity 0.4s ease, stroke 0.3s ease; }
+    .mm-interactive .mm-child-line.visible { opacity: 1; }
+    .mm-interactive .mm-node-bg { transition: all 0.3s ease; }
+    .mm-interactive .mm-node-text { font-family: 'Inter', sans-serif; pointer-events: none; transition: opacity 0.3s ease; }
+    .mm-interactive .mm-child-group { opacity: 0; transform-origin: center; transition: opacity 0.4s ease, transform 0.4s ease; transform: scale(0.7); }
+    .mm-interactive .mm-child-group.visible { opacity: 1; transform: scale(1); }
+    .mm-interactive .mm-expand-hint {
+      font-family: 'Inter', sans-serif; font-size: 9px; fill: var(--text-light);
+      pointer-events: none; opacity: 0.7; transition: opacity 0.3s ease;
+    }
+    .mm-interactive .mm-group:hover .mm-node-bg { filter: brightness(1.12); }
+    .mm-interactive .mm-group.expanded .mm-expand-hint { opacity: 0; }
+    .mm-legend { display: flex; gap: 1rem; justify-content: center; margin-top: 0.75rem; flex-wrap: wrap; }
+    .mm-legend-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: var(--text-muted); }
+    .mm-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Exercise styles */
+    .exercise-container {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; margin: 1.5rem 0;
+    }
+    .exercise-title {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--accent-2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .exercise-instructions { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+
+    /* Drag and drop */
+    .dnd-zones { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .dnd-zone {
+      flex: 1; min-width: 140px; min-height: 100px; padding: 0.75rem;
+      border: 2px dashed var(--border); border-radius: var(--radius-sm);
+      background: var(--surface-2); transition: all 0.2s ease;
+    }
+    .dnd-zone.drag-over { border-color: var(--accent); background: rgba(212,161,6,0.06); }
+    .dnd-zone-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-light); margin-bottom: 0.5rem; text-align: center;
+    }
+    .dnd-items-tray { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; justify-content: center; }
+    .dnd-item {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+      cursor: grab; user-select: none; transition: all 0.2s ease;
+      background: rgba(212,161,6,0.12); color: var(--accent); border: 1.5px solid rgba(212,161,6,0.3);
+    }
+    .dnd-item:active { cursor: grabbing; transform: scale(1.05); }
+    .dnd-item.placed { opacity: 0.4; pointer-events: none; }
+    .dnd-item.correct-place { background: var(--success-bg); color: var(--accent-3); border-color: var(--success-border); }
+    .dnd-item.wrong-place { background: var(--error-bg); color: var(--accent-danger); border-color: var(--error-border); }
+    .dnd-zone .dnd-item { cursor: pointer; }
+
+    /* Slider exercise */
+    .slider-exercise { margin: 1rem 0; }
+    .slider-row {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .slider-label { font-size: 0.88rem; font-weight: 600; color: var(--text); min-width: 120px; }
+    .slider-input {
+      flex: 1; min-width: 150px; -webkit-appearance: none; appearance: none;
+      height: 6px; border-radius: 3px; background: var(--border-2); outline: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .slider-value {
+      min-width: 40px; text-align: center; font-weight: 700; font-size: 0.95rem;
+      color: var(--accent); font-family: 'JetBrains Mono', monospace;
+    }
+    .slider-result {
+      margin-top: 1rem; padding: 1rem; border-radius: var(--radius-sm);
+      background: var(--surface-2); border: 1px solid var(--border); text-align: center;
+      font-size: 0.92rem; color: var(--text-muted); transition: all 0.3s ease;
+    }
+    .slider-result .result-score {
+      font-size: 1.5rem; font-weight: 800; display: block; margin-bottom: 0.25rem;
+    }
+    .slider-result .result-label { font-size: 0.82rem; }
+    .slider-result.level-low { border-color: var(--error-border); }
+    .slider-result.level-low .result-score { color: var(--accent-danger); }
+    .slider-result.level-mid { border-color: rgba(212,161,6,0.4); }
+    .slider-result.level-mid .result-score { color: var(--accent); }
+    .slider-result.level-high { border-color: var(--success-border); }
+    .slider-result.level-high .result-score { color: var(--accent-3); }
+
+    /* Feedback badge */
+    .exercise-feedback {
+      margin-top: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+      font-size: 0.88rem; font-weight: 600; text-align: center; display: none;
+    }
+    .exercise-feedback.visible { display: block; }
+    .exercise-feedback.success { background: var(--success-bg); color: var(--accent-3); border: 1px solid var(--success-border); }
+    .exercise-feedback.error { background: var(--error-bg); color: var(--accent-danger); border: 1px solid var(--error-border); }
+
+    /* Matching exercise */
+    .match-grid { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+    .match-left, .match-right {
+      padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600;
+      border: 1.5px solid var(--border); background: var(--surface-2); transition: all 0.2s ease;
+    }
+    .match-left { text-align: right; cursor: pointer; }
+    .match-right { text-align: left; cursor: pointer; }
+    .match-left.selected, .match-right.selected { border-color: var(--accent); background: rgba(212,161,6,0.1); }
+    .match-left.matched, .match-right.matched { border-color: var(--accent-3); background: var(--success-bg); color: var(--accent-3); pointer-events: none; }
+    .match-left.wrong, .match-right.wrong { border-color: var(--accent-danger); background: var(--error-bg); }
+    .match-arrow { text-align: center; font-size: 1.1rem; color: var(--text-light); }
+    .match-arrow.connected { color: var(--accent-3); }
+
+    /* Scenario builder exercise */
+    .scenario-card {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 1rem; margin-bottom: 0.75rem; transition: all 0.3s ease;
+    }
+    .scenario-card .scenario-q { font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; }
+    .scenario-options { display: flex; flex-direction: column; gap: 0.4rem; }
+    .scenario-opt {
+      display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem;
+      border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface);
+      font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;
+    }
+    .scenario-opt:hover { border-color: var(--accent); }
+    .scenario-opt.chosen { border-color: var(--accent); background: rgba(212,161,6,0.08); font-weight: 600; }
+    .scenario-opt.correct { border-color: var(--accent-3); background: var(--success-bg); }
+    .scenario-opt.incorrect { border-color: var(--accent-danger); background: var(--error-bg); }
+    .scenario-opt .opt-marker {
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+      flex-shrink: 0; transition: all 0.2s ease;
+    }
+    .scenario-opt.chosen .opt-marker { border-color: var(--accent); background: var(--accent); color: white; }
+    .scenario-opt.correct .opt-marker { border-color: var(--accent-3); background: var(--accent-3); color: white; }
+    .scenario-opt.incorrect .opt-marker { border-color: var(--accent-danger); background: var(--accent-danger); color: white; }
+    .scenario-explanation {
+      margin-top: 0.5rem; padding: 0.6rem 0.75rem; border-radius: 6px;
+      font-size: 0.82rem; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); display: none;
+    }
+    .scenario-explanation.visible { display: block; }
+
+    /* Animated pulse for gateway SVG */
+    @keyframes gatePulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .gate-pulse { animation: gatePulse 2.5s ease-in-out infinite; }
+    .svg-float { animation: float 3s ease-in-out infinite; }
+    @keyframes fadeInScale { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    .fade-in-scale { animation: fadeInScale 0.5s ease forwards; }
+
+    @media (max-width: 600px) {
+      .dnd-zones { flex-direction: column; }
+      .slider-row { flex-direction: column; align-items: flex-start; }
+      .mindmap-container { min-height: 400px; }
+      .mm-interactive { height: 400px; }
+      .match-grid { grid-template-columns: 1fr; gap: 0.3rem; }
+      .match-arrow { display: none; }
+    }
   </style>
 </head>
 <body data-chapter="ch5">
@@ -38,7 +217,7 @@
       <div class="ch-label">Chapter 5</div>
       <h1>Bismillah</h1>
       <p class="ch-meta">
-        <span><i class="fas fa-clock"></i> ~15 min read</span>
+        <span><i class="fas fa-clock"></i> ~18 min read</span>
         <span><i class="fas fa-star"></i> Manifesto Element</span>
       </p>
     </div>
@@ -50,29 +229,271 @@
       <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
     </div>
 
-    <!-- TAB: Lessons -->
+    <!-- ============ TAB: Lessons ============ -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- LESSON 1 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>The Gateway to Barakah</h2></div>
         <p>"Bismillah ir-Rahman ir-Rahim" -- In the Name of Allah, the Most Gracious, the Most Merciful. These are the first words of the Quran, opening every chapter except Surah At-Tawbah. They are the first words taught to Muslim children. They are the words that the angel Jibreel spoke to the Prophet Muhammad (peace be upon him) in the cave of Hira when revelation began.</p>
+
+        <!-- SVG: Gateway Arch Illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-door-open"></i> The Gateway to Barakah</div>
+          <svg viewBox="0 0 600 380" width="100%" style="max-height:380px;">
+            <defs>
+              <linearGradient id="gateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.9"/>
+              </linearGradient>
+              <linearGradient id="lightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </linearGradient>
+              <filter id="glow1">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.6"/>
+              </linearGradient>
+            </defs>
+            <!-- Light rays through gate -->
+            <polygon points="220,120 170,350 430,350 380,120" fill="url(#lightGrad)" class="gate-pulse"/>
+            <!-- Small sparkle particles in the light -->
+            <circle cx="260" cy="200" r="2" fill="var(--accent)" opacity="0.5" class="svg-float"/>
+            <circle cx="320" cy="240" r="1.5" fill="var(--accent)" opacity="0.4" class="svg-float" style="animation-delay:0.5s"/>
+            <circle cx="290" cy="280" r="2" fill="var(--accent)" opacity="0.3" class="svg-float" style="animation-delay:1s"/>
+            <circle cx="340" cy="180" r="1.5" fill="var(--accent)" opacity="0.45" class="svg-float" style="animation-delay:1.5s"/>
+            <!-- Gate pillars -->
+            <rect x="170" y="120" width="30" height="230" rx="4" fill="url(#gateGrad)"/>
+            <rect x="400" y="120" width="30" height="230" rx="4" fill="url(#gateGrad)"/>
+            <!-- Pillar detail lines -->
+            <line x1="178" y1="130" x2="178" y2="340" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <line x1="422" y1="130" x2="422" y2="340" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <!-- Arch -->
+            <path d="M170,120 Q300,20 430,120" fill="none" stroke="url(#gateGrad)" stroke-width="30" stroke-linecap="round"/>
+            <!-- Keystone -->
+            <circle cx="300" cy="55" r="26" fill="var(--accent)" filter="url(#glow1)"/>
+            <text x="300" y="50" text-anchor="middle" fill="white" font-family="Inter" font-size="8" font-weight="700">BISMILLAH</text>
+            <text x="300" y="62" text-anchor="middle" fill="white" font-family="Inter" font-size="6" opacity="0.9">Gateway</text>
+            <!-- Decorative stars on arch -->
+            <circle cx="230" cy="78" r="3" fill="url(#starGrad)" class="svg-float" style="animation-delay:0.3s"/>
+            <circle cx="370" cy="78" r="3" fill="url(#starGrad)" class="svg-float" style="animation-delay:0.8s"/>
+            <!-- Ground line -->
+            <line x1="80" y1="350" x2="520" y2="350" stroke="var(--border)" stroke-width="2"/>
+            <!-- Before gate (mundane) -->
+            <text x="110" y="260" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="10" font-weight="600">Mundane</text>
+            <text x="110" y="275" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Actions</text>
+            <circle cx="100" cy="295" r="5" fill="var(--text-light)" opacity="0.3"/>
+            <circle cx="120" cy="300" r="4" fill="var(--text-light)" opacity="0.25"/>
+            <circle cx="95" cy="315" r="6" fill="var(--text-light)" opacity="0.2"/>
+            <circle cx="125" cy="320" r="3.5" fill="var(--text-light)" opacity="0.2"/>
+            <!-- After gate (blessed) -->
+            <text x="490" y="260" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="10" font-weight="600">Blessed</text>
+            <text x="490" y="275" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7" opacity="0.8">Worship</text>
+            <circle cx="480" cy="295" r="5" fill="var(--accent-3)" opacity="0.4"/>
+            <circle cx="500" cy="300" r="4" fill="var(--accent-3)" opacity="0.35"/>
+            <circle cx="475" cy="315" r="6" fill="var(--accent-3)" opacity="0.3"/>
+            <circle cx="505" cy="320" r="3.5" fill="var(--accent-3)" opacity="0.3"/>
+            <!-- Star bursts around blessed side -->
+            <circle cx="480" cy="285" r="2" fill="var(--accent)" opacity="0.5" class="svg-float" style="animation-delay:0.2s"/>
+            <circle cx="510" cy="310" r="1.5" fill="var(--accent)" opacity="0.4" class="svg-float" style="animation-delay:0.7s"/>
+            <!-- Arrow through gate -->
+            <line x1="140" y1="265" x2="260" y2="265" stroke="var(--text-light)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <polygon points="340,265 330,259 330,271" fill="var(--accent-3)"/>
+            <line x1="340" y1="265" x2="460" y2="265" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="300" y="253" text-anchor="middle" fill="var(--text)" font-family="Inter" font-size="9" font-weight="600">Say Bismillah</text>
+          </svg>
+          <p class="viz-caption">Bismillah is the gateway that transforms every ordinary action into an act of worship, inviting divine blessing.</p>
+        </div>
+
         <p>Bismillah is the gateway to Barakah because it sets the spiritual tone for every action that follows it. When you say Bismillah before an activity, you are making a conscious declaration that this action is being done in Allah's name, with His permission, and for His sake. You are inviting the divine into the mundane.</p>
         <p>The author describes Bismillah as the first and most fundamental element of the Barakah Culture Manifesto. If you practise nothing else from this book, practise this. It costs nothing, takes less than a second, and transforms every ordinary action into an act of worship.</p>
+
+        <!-- SVG: The Basmala Breakdown -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-font"></i> The Basmala -- Word by Word</div>
+          <svg viewBox="0 0 600 280" width="100%" style="max-height:280px;">
+            <defs>
+              <linearGradient id="wordGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="wordGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.7"/>
+              </linearGradient>
+              <linearGradient id="wordGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.7"/>
+              </linearGradient>
+            </defs>
+            <!-- Connecting line -->
+            <line x1="100" y1="80" x2="500" y2="80" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
+            <!-- Word 1: Bismi -->
+            <rect x="30" y="40" width="150" height="80" rx="14" fill="url(#wordGrad1)"/>
+            <text x="105" y="68" text-anchor="middle" fill="white" font-family="Inter" font-size="13" font-weight="800">Bismi</text>
+            <text x="105" y="86" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">"In the Name of"</text>
+            <text x="105" y="100" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.7">Declaration of intent</text>
+            <!-- Word 2: Allah -->
+            <rect x="220" y="40" width="160" height="80" rx="14" fill="url(#wordGrad2)"/>
+            <text x="300" y="68" text-anchor="middle" fill="white" font-family="Inter" font-size="13" font-weight="800">Allah</text>
+            <text x="300" y="86" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">"God"</text>
+            <text x="300" y="100" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.7">The One True God</text>
+            <!-- Word 3: Ar-Rahman Ar-Rahim -->
+            <rect x="420" y="40" width="160" height="80" rx="14" fill="url(#wordGrad3)"/>
+            <text x="500" y="63" text-anchor="middle" fill="white" font-family="Inter" font-size="11" font-weight="800">Ar-Rahman</text>
+            <text x="500" y="78" text-anchor="middle" fill="white" font-family="Inter" font-size="11" font-weight="800">Ar-Rahim</text>
+            <text x="500" y="95" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.9">Most Gracious, Most Merciful</text>
+            <text x="500" y="107" text-anchor="middle" fill="white" font-family="Inter" font-size="6.5" opacity="0.7">Encompassing + Targeted mercy</text>
+            <!-- Arrows -->
+            <polygon points="185,80 178,75 178,85" fill="var(--accent)"/>
+            <polygon points="415,80 408,75 408,85" fill="var(--accent-2)"/>
+            <!-- Combined meaning -->
+            <rect x="100" y="155" width="400" height="55" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="300" y="177" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="11" font-weight="700">Combined: "In the Name of Allah, the Most Gracious, the Most Merciful"</text>
+            <text x="300" y="197" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="8">A complete worldview in a single phrase -- tawhid, tawakkul, and mercy</text>
+            <!-- Bottom notes -->
+            <text x="150" y="240" text-anchor="middle" fill="var(--accent-2)" font-family="Inter" font-size="8" font-weight="600">Ar-Rahman = all-encompassing</text>
+            <text x="150" y="255" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">mercy for all creation</text>
+            <text x="450" y="240" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">Ar-Rahim = targeted</text>
+            <text x="450" y="255" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">special mercy for believers</text>
+          </svg>
+          <p class="viz-caption">The Basmala encodes an entire worldview: dependence on Allah, acknowledgement of His sovereignty, and trust in His encompassing and specific mercy.</p>
+        </div>
+
         <div class="insight-box">
           <strong>A Profound Simplicity:</strong> Bismillah is perhaps the simplest spiritual practice in existence -- three words that take less than two seconds to say. Yet scholars have written entire volumes on its meaning. Its simplicity is its power: it can be practised by anyone, anywhere, at any time, before any action.
         </div>
       </div>
 
+      <!-- LESSON 2 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>The Power of Beginning with Allah's Name</h2></div>
         <p>The Prophet Muhammad (peace be upon him) emphasised saying Bismillah in numerous hadiths, establishing it as a Sunnah before virtually every activity. Before eating: "Mention the Name of Allah and eat with your right hand" (Bukhari and Muslim). Before entering the home: the Prophet taught that saying Bismillah when entering keeps Shaytan away (Muslim). Before wudu: "There is no wudu for the one who does not mention Allah's Name over it" (Abu Dawud).</p>
+
+        <!-- SVG: Three Functions of Bismillah -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-layer-group"></i> The Three Functions of Bismillah</div>
+          <svg viewBox="0 0 600 340" width="100%" style="max-height:340px;">
+            <defs>
+              <linearGradient id="ackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.7"/>
+              </linearGradient>
+              <linearGradient id="reqGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.7"/>
+              </linearGradient>
+              <linearGradient id="protGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.7"/>
+              </linearGradient>
+              <filter id="glow2">
+                <feGaussianBlur stdDeviation="5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- Central Bismillah circle -->
+            <circle cx="300" cy="170" r="50" fill="var(--accent)" opacity="0.1"/>
+            <circle cx="300" cy="170" r="38" fill="var(--accent)" opacity="0.9" filter="url(#glow2)"/>
+            <text x="300" y="165" text-anchor="middle" fill="white" font-family="Inter" font-size="11" font-weight="700">Bismillah</text>
+            <text x="300" y="180" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.85">3 Functions</text>
+            <!-- Connecting curved lines -->
+            <path d="M262,165 Q200,130 155,95" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.4"/>
+            <path d="M262,180 Q200,220 140,258" fill="none" stroke="var(--accent-2)" stroke-width="2" opacity="0.4"/>
+            <path d="M338,170 Q390,170 445,170" fill="none" stroke="var(--accent-3)" stroke-width="2" opacity="0.4"/>
+            <!-- 1. Acknowledgement -->
+            <rect x="30" y="40" width="160" height="105" rx="14" fill="url(#ackGrad)"/>
+            <circle cx="60" cy="68" r="12" fill="white" opacity="0.2"/>
+            <text x="60" y="72" text-anchor="middle" fill="white" font-family="Inter" font-size="12" font-weight="800">1</text>
+            <text x="120" y="70" text-anchor="middle" fill="white" font-family="Inter" font-size="10" font-weight="700">Acknowledgement</text>
+            <line x1="50" y1="82" x2="170" y2="82" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <text x="110" y="100" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">All ability comes</text>
+            <text x="110" y="113" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">from Allah alone</text>
+            <text x="110" y="130" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.7">Tawhid in action</text>
+            <!-- 2. Request -->
+            <rect x="30" y="215" width="160" height="105" rx="14" fill="url(#reqGrad)"/>
+            <circle cx="60" cy="243" r="12" fill="white" opacity="0.2"/>
+            <text x="60" y="247" text-anchor="middle" fill="white" font-family="Inter" font-size="12" font-weight="800">2</text>
+            <text x="125" y="245" text-anchor="middle" fill="white" font-family="Inter" font-size="10" font-weight="700">Request</text>
+            <line x1="50" y1="257" x2="170" y2="257" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <text x="110" y="275" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">Seeking Allah's</text>
+            <text x="110" y="288" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">help and blessing</text>
+            <text x="110" y="305" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.7">Tawakkul in action</text>
+            <!-- 3. Protection -->
+            <rect x="420" y="118" width="160" height="105" rx="14" fill="url(#protGrad)"/>
+            <circle cx="450" cy="146" r="12" fill="white" opacity="0.2"/>
+            <text x="450" y="150" text-anchor="middle" fill="white" font-family="Inter" font-size="12" font-weight="800">3</text>
+            <text x="510" y="148" text-anchor="middle" fill="white" font-family="Inter" font-size="10" font-weight="700">Protection</text>
+            <line x1="440" y1="160" x2="560" y2="160" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <text x="500" y="178" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">Shaytan flees from</text>
+            <text x="500" y="191" text-anchor="middle" fill="white" font-family="Inter" font-size="8" opacity="0.9">Allah's remembrance</text>
+            <text x="500" y="208" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.7">Shield against evil</text>
+          </svg>
+          <p class="viz-caption">Bismillah simultaneously acknowledges Allah's sovereignty, requests His help, and invokes His protection.</p>
+        </div>
+
         <p>Each Bismillah is a micro-reset -- a momentary pause that reconnects you to your Creator before proceeding with the task at hand. In a world of distraction, where we move from one task to the next on autopilot, Bismillah forces a moment of presence. It is mindfulness rooted in tawhid (the oneness of Allah).</p>
         <p>The scholars explain that Bismillah serves three functions simultaneously: (1) It is an <strong>acknowledgement</strong> that all ability comes from Allah. (2) It is a <strong>request</strong> for Allah's help and blessing. (3) It is a <strong>protection</strong> against harm, as Shaytan flees from the remembrance of Allah.</p>
+
+        <!-- SVG: Micro-Reset Cycle -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sync-alt"></i> The Bismillah Micro-Reset Cycle</div>
+          <svg viewBox="0 0 600 300" width="100%" style="max-height:300px;">
+            <defs>
+              <marker id="arrowHead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0,0 8,3 0,6" fill="var(--accent)" opacity="0.6"/>
+              </marker>
+            </defs>
+            <!-- Circular arrow path -->
+            <path d="M300,50 A120,120 0 0,1 420,170" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.3" marker-end="url(#arrowHead)"/>
+            <path d="M420,170 A120,120 0 0,1 300,250" fill="none" stroke="var(--accent-2)" stroke-width="2" opacity="0.3" marker-end="url(#arrowHead)"/>
+            <path d="M300,250 A120,120 0 0,1 180,170" fill="none" stroke="var(--accent-3)" stroke-width="2" opacity="0.3" marker-end="url(#arrowHead)"/>
+            <path d="M180,170 A120,120 0 0,1 300,50" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.3" marker-end="url(#arrowHead)"/>
+            <!-- Step 1: Autopilot -->
+            <circle cx="300" cy="50" r="32" fill="var(--text-light)" opacity="0.15" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="300" y="45" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="9" font-weight="700">AUTOPILOT</text>
+            <text x="300" y="58" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Heedless motion</text>
+            <!-- Step 2: Pause -->
+            <circle cx="420" cy="170" r="32" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="420" y="165" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="9" font-weight="700">PAUSE</text>
+            <text x="420" y="178" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="7">Say Bismillah</text>
+            <!-- Step 3: Connect -->
+            <circle cx="300" cy="250" r="32" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="300" y="245" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="9" font-weight="700">CONNECT</text>
+            <text x="300" y="258" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7">Allah-conscious</text>
+            <!-- Step 4: Act with purpose -->
+            <circle cx="180" cy="170" r="32" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="180" y="165" text-anchor="middle" fill="var(--accent-2)" font-family="Inter" font-size="9" font-weight="700">ACT</text>
+            <text x="180" y="178" text-anchor="middle" fill="var(--accent-2)" font-family="Inter" font-size="7">With purpose</text>
+            <!-- Center label -->
+            <circle cx="300" cy="150" r="22" fill="var(--accent)" opacity="0.9"/>
+            <text x="300" y="154" text-anchor="middle" fill="white" font-family="Inter" font-size="7" font-weight="700">RESET</text>
+          </svg>
+          <p class="viz-caption">Bismillah breaks the autopilot cycle: pause, reconnect with Allah, then act with conscious purpose.</p>
+        </div>
+
+        <!-- STEP-THROUGH: Hadith Evidence -->
+        <div class="viz-container step-diagram" id="stepHadith">
+          <div class="viz-title"><i class="fas fa-scroll"></i> Prophetic Evidence for Bismillah -- Step Through</div>
+          <div class="step-frame" id="stepHadithFrame"></div>
+          <div class="step-desc" id="stepHadithDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="stepHadithPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepHadithIndicator">1 / 5</span>
+            <button class="btn btn-primary btn-sm" id="stepHadithNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
         <div class="insight-box">
           <strong>Hadith:</strong> The Prophet (peace be upon him) said: "Any matter of importance that does not begin with Bismillah is cut off (from blessing)." -- This hadith, reported in various forms, underscores that omitting Bismillah severs the connection to Barakah.
         </div>
       </div>
 
+      <!-- LESSON 3 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Bismillah in Daily Life</h2></div>
         <p>The beauty of Bismillah is its universality -- it applies to every lawful activity. The author encourages readers to audit their daily routine and identify every moment where Bismillah can be said. The result is a day saturated with divine remembrance.</p>
@@ -80,8 +501,17 @@
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-sun"></i> Bismillah Throughout Your Day</div>
           <svg viewBox="0 0 600 400" width="100%" height="400">
+            <defs>
+              <filter id="glowCenter">
+                <feGaussianBlur stdDeviation="6" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- Subtle ring -->
+            <circle cx="300" cy="200" r="110" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+            <circle cx="300" cy="200" r="140" fill="none" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="2,4" opacity="0.3"/>
             <!-- Central Bismillah -->
-            <circle cx="300" cy="200" r="50" fill="var(--accent)" opacity="0.9"/>
+            <circle cx="300" cy="200" r="50" fill="var(--accent)" opacity="0.9" filter="url(#glowCenter)"/>
             <text x="300" y="196" text-anchor="middle" fill="white" font-size="12" font-family="Inter" font-weight="700">Bismillah</text>
             <text x="300" y="212" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.9">Gateway to Barakah</text>
             <!-- Radiating activities -->
@@ -125,22 +555,262 @@
         <p><strong>Before travel:</strong> The Prophet (peace be upon him) taught specific du'as for travel that begin with Bismillah. Every journey, from a long flight to a short drive, becomes an opportunity for Barakah.</p>
         <p><strong>Before writing and studying:</strong> Scholars have always begun their works with Bismillah. When you open a textbook, start an exam, or write an email, Bismillah invites clarity and Barakah into your intellectual efforts.</p>
         <p><strong>Before sleep:</strong> Saying Bismillah before sleeping places you under Allah's protection through the night, and you wake refreshed with the Barakah of a restful sleep.</p>
+
+        <!-- SVG: The Ripple Effect of One Bismillah -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-bullseye"></i> The Ripple Effect of One Bismillah</div>
+          <svg viewBox="0 0 600 280" width="100%" style="max-height:280px;">
+            <!-- Ripple circles -->
+            <circle cx="300" cy="140" r="120" fill="none" stroke="var(--accent-3)" stroke-width="1" opacity="0.15" stroke-dasharray="3,3"/>
+            <circle cx="300" cy="140" r="90" fill="none" stroke="var(--accent-3)" stroke-width="1" opacity="0.25" stroke-dasharray="3,3"/>
+            <circle cx="300" cy="140" r="60" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.35"/>
+            <circle cx="300" cy="140" r="30" fill="var(--accent)" opacity="0.15"/>
+            <!-- Center drop -->
+            <circle cx="300" cy="140" r="14" fill="var(--accent)" opacity="0.9"/>
+            <text x="300" y="144" text-anchor="middle" fill="white" font-family="Inter" font-size="7" font-weight="700">Say it</text>
+            <!-- Labels at each ripple -->
+            <text x="300" y="92" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="8" font-weight="600">Intent purified</text>
+            <text x="410" y="143" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">Barakah invited</text>
+            <text x="190" y="143" text-anchor="middle" fill="var(--accent-2)" font-family="Inter" font-size="8" font-weight="600">Shaytan blocked</text>
+            <text x="300" y="195" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">Action becomes worship</text>
+            <!-- Outer ring labels -->
+            <text x="450" y="90" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Reward multiplied</text>
+            <text x="150" y="90" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Heart softened</text>
+            <text x="450" y="215" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Positive habits formed</text>
+            <text x="150" y="215" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7">Day saturated with dhikr</text>
+          </svg>
+          <p class="viz-caption">One Bismillah creates ripples that extend far beyond the single action -- purifying intent, inviting blessing, and transforming your entire day.</p>
+        </div>
+
+        <!-- STEP-THROUGH: Bismillah Day Cycle -->
+        <div class="viz-container step-diagram" id="stepDayCycle">
+          <div class="viz-title"><i class="fas fa-redo-alt"></i> A Day with Bismillah -- Step Through</div>
+          <div class="step-frame" id="stepDayCycleFrame"></div>
+          <div class="step-desc" id="stepDayCycleDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="stepDayCyclePrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepDayCycleIndicator">1 / 6</span>
+            <button class="btn btn-primary btn-sm" id="stepDayCycleNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- EXERCISE 1: Drag-and-Drop -->
+        <div class="exercise-container" id="exercise1">
+          <div class="exercise-title"><i class="fas fa-hand-pointer"></i> Interactive Exercise: Sort the Activities</div>
+          <p class="exercise-instructions">Drag each activity into the correct category: moments where the Prophet (peace be upon him) specifically taught saying Bismillah (<strong>Sunnah-Confirmed</strong>) versus general good practice (<strong>General Recommendation</strong>). Click an item in a zone to return it to the tray.</p>
+          <div class="dnd-items-tray" id="dndTray1"></div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" id="zone-sunnah" data-zone="sunnah">
+              <div class="dnd-zone-label">Sunnah-Confirmed</div>
+            </div>
+            <div class="dnd-zone" id="zone-general" data-zone="general">
+              <div class="dnd-zone-label">General Recommendation</div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="exercise1Check"><i class="fas fa-check"></i> Check Answers</button>
+          <button class="btn btn-ghost btn-sm" id="exercise1Reset" style="margin-left:0.5rem;"><i class="fas fa-redo"></i> Reset</button>
+          <div class="exercise-feedback" id="exercise1Feedback"></div>
+        </div>
       </div>
 
+      <!-- LESSON 4 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>When We Forget Bismillah</h2></div>
         <p>What happens when Bismillah is absent from our actions? The author argues that activities performed without Bismillah become purely worldly -- stripped of their spiritual dimension. The Prophet (peace be upon him) indicated that a matter of importance not begun with Bismillah is "abtar" -- cut off from blessing.</p>
+
+        <!-- SVG: With vs Without Bismillah -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> With vs. Without Bismillah</div>
+          <svg viewBox="0 0 600 300" width="100%" style="max-height:300px;">
+            <defs>
+              <linearGradient id="blessedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.02"/>
+              </linearGradient>
+              <linearGradient id="barrenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-danger)" stop-opacity="0.1"/>
+                <stop offset="100%" stop-color="var(--accent-danger)" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <!-- LEFT: With Bismillah -->
+            <rect x="20" y="20" width="260" height="260" rx="14" fill="url(#blessedGrad)" stroke="var(--accent-3)" stroke-width="1.5" opacity="0.8"/>
+            <text x="150" y="50" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="12" font-weight="700">WITH BISMILLAH</text>
+            <!-- Growing tree -->
+            <rect x="145" y="150" width="10" height="100" rx="3" fill="var(--accent-3)" opacity="0.6"/>
+            <circle cx="150" cy="135" r="30" fill="var(--accent-3)" opacity="0.25"/>
+            <circle cx="135" cy="125" r="18" fill="var(--accent-3)" opacity="0.3"/>
+            <circle cx="165" cy="120" r="20" fill="var(--accent-3)" opacity="0.35"/>
+            <circle cx="150" cy="108" r="15" fill="var(--accent-3)" opacity="0.3"/>
+            <!-- Fruit -->
+            <circle cx="132" cy="130" r="4" fill="var(--accent)" opacity="0.9"/>
+            <circle cx="168" cy="125" r="4" fill="var(--accent)" opacity="0.9"/>
+            <circle cx="150" cy="112" r="4" fill="var(--accent)" opacity="0.9"/>
+            <text x="150" y="268" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="9" opacity="0.8">Worship + Worldly Benefit</text>
+
+            <!-- Divider -->
+            <line x1="300" y1="30" x2="300" y2="270" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="300" y="290" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="8">COMPARISON</text>
+
+            <!-- RIGHT: Without Bismillah -->
+            <rect x="320" y="20" width="260" height="260" rx="14" fill="url(#barrenGrad)" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.8"/>
+            <text x="450" y="50" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="12" font-weight="700">WITHOUT BISMILLAH</text>
+            <!-- Bare trunk -->
+            <rect x="445" y="150" width="10" height="100" rx="3" fill="var(--text-light)" opacity="0.4"/>
+            <!-- Dead branches -->
+            <line x1="450" y1="170" x2="420" y2="145" stroke="var(--text-light)" stroke-width="2" opacity="0.35"/>
+            <line x1="450" y1="160" x2="480" y2="135" stroke="var(--text-light)" stroke-width="2" opacity="0.35"/>
+            <line x1="450" y1="150" x2="435" y2="125" stroke="var(--text-light)" stroke-width="1.5" opacity="0.3"/>
+            <!-- Abtar label -->
+            <text x="450" y="105" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="10" font-weight="600" opacity="0.7">Abtar</text>
+            <text x="450" y="118" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="8">(Cut off)</text>
+            <text x="450" y="268" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="9" opacity="0.8">Worldly Only, No Barakah</text>
+          </svg>
+          <p class="viz-caption">Actions with Bismillah bear fruit in both worlds; without it, they are "abtar" -- severed from divine blessing.</p>
+        </div>
+
         <p>This does not mean that forgetting Bismillah once ruins your entire day. Allah is merciful and forgiving. But a pattern of omitting Bismillah reflects a deeper spiritual issue: a heart that has become heedless (ghafil) of Allah's presence in daily life.</p>
         <p>The consequence of systematic Bismillah-absence is that your actions become compartmentalised: "religious" activities (prayer, Quran) are seen as separate from "worldly" activities (work, eating, commuting). This compartmentalisation is precisely what hustle culture wants -- it relegates God to a corner of your life rather than the centre.</p>
+
+        <!-- SVG: Compartmentalisation diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> The Danger of Compartmentalisation</div>
+          <svg viewBox="0 0 600 220" width="100%" style="max-height:220px;">
+            <!-- Wrong way: compartments -->
+            <rect x="20" y="15" width="260" height="190" rx="12" fill="none" stroke="var(--accent-danger)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+            <text x="150" y="38" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="10" font-weight="700">COMPARTMENTALISED</text>
+            <rect x="40" y="55" width="100" height="55" rx="8" fill="rgba(16,185,129,0.1)" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="90" y="80" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="9" font-weight="600">Prayer</text>
+            <text x="90" y="95" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7" opacity="0.7">with Allah</text>
+            <rect x="160" y="55" width="100" height="55" rx="8" fill="rgba(107,90,66,0.08)" stroke="var(--text-light)" stroke-width="1"/>
+            <text x="210" y="80" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="9" font-weight="600">Work</text>
+            <text x="210" y="95" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7" opacity="0.7">without Allah</text>
+            <rect x="40" y="125" width="100" height="55" rx="8" fill="rgba(16,185,129,0.1)" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="90" y="150" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="9" font-weight="600">Quran</text>
+            <text x="90" y="165" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7" opacity="0.7">with Allah</text>
+            <rect x="160" y="125" width="100" height="55" rx="8" fill="rgba(107,90,66,0.08)" stroke="var(--text-light)" stroke-width="1"/>
+            <text x="210" y="150" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="9" font-weight="600">Eating</text>
+            <text x="210" y="165" text-anchor="middle" fill="var(--text-light)" font-family="Inter" font-size="7" opacity="0.7">without Allah</text>
+
+            <!-- Arrow -->
+            <text x="300" y="115" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="20" font-weight="700">&rarr;</text>
+
+            <!-- Right way: unified -->
+            <rect x="320" y="15" width="260" height="190" rx="12" fill="none" stroke="var(--accent-3)" stroke-width="1.5" opacity="0.6"/>
+            <text x="450" y="38" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="10" font-weight="700">UNIFIED with BISMILLAH</text>
+            <circle cx="450" cy="120" r="65" fill="var(--accent-3)" opacity="0.08"/>
+            <circle cx="450" cy="120" r="45" fill="var(--accent)" opacity="0.1"/>
+            <text x="450" y="100" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="10" font-weight="700">ALLAH</text>
+            <text x="450" y="115" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="8">at the centre</text>
+            <text x="450" y="135" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="7">Prayer + Work + Meals</text>
+            <text x="450" y="148" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="7">Study + Travel + Sleep</text>
+            <text x="450" y="175" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">All is worship</text>
+          </svg>
+          <p class="viz-caption">Without Bismillah, life splits into "religious" and "worldly" compartments. With Bismillah, Allah is at the centre of everything.</p>
+        </div>
+
+        <!-- SVG: The Heedlessness Spectrum -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sliders-h"></i> The Heedlessness Spectrum</div>
+          <svg viewBox="0 0 600 200" width="100%" style="max-height:200px;">
+            <!-- Gradient bar -->
+            <defs>
+              <linearGradient id="specGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="var(--accent-danger)" stop-opacity="0.8"/>
+                <stop offset="50%" stop-color="var(--accent)" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.8"/>
+              </linearGradient>
+            </defs>
+            <rect x="50" y="60" width="500" height="24" rx="12" fill="url(#specGrad)"/>
+            <!-- Tick marks -->
+            <line x1="50" y1="90" x2="50" y2="100" stroke="var(--text-light)" stroke-width="1"/>
+            <line x1="175" y1="90" x2="175" y2="100" stroke="var(--text-light)" stroke-width="1"/>
+            <line x1="300" y1="90" x2="300" y2="100" stroke="var(--text-light)" stroke-width="1"/>
+            <line x1="425" y1="90" x2="425" y2="100" stroke="var(--text-light)" stroke-width="1"/>
+            <line x1="550" y1="90" x2="550" y2="100" stroke="var(--text-light)" stroke-width="1"/>
+            <!-- Labels -->
+            <text x="50" y="120" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="8" font-weight="600">Complete</text>
+            <text x="50" y="132" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="7">Ghaflah</text>
+            <text x="175" y="120" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="8" font-weight="600">Occasional</text>
+            <text x="175" y="132" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="7">Forgetfulness</text>
+            <text x="300" y="120" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="8" font-weight="600">Growing</text>
+            <text x="300" y="132" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="7">Awareness</text>
+            <text x="425" y="120" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">Consistent</text>
+            <text x="425" y="132" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7">Practice</text>
+            <text x="550" y="120" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="8" font-weight="600">Full</text>
+            <text x="550" y="132" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7">Consciousness</text>
+            <!-- Top labels -->
+            <text x="50" y="48" text-anchor="middle" fill="var(--accent-danger)" font-family="Inter" font-size="7">0 Bismillahs</text>
+            <text x="300" y="48" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="7">Some Bismillahs</text>
+            <text x="550" y="48" text-anchor="middle" fill="var(--accent-3)" font-family="Inter" font-size="7">Every action</text>
+            <!-- Annotation -->
+            <text x="300" y="170" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="8">Where are you on this spectrum? Start with 3 activities today and move rightward.</text>
+          </svg>
+          <p class="viz-caption">Heedlessness is a spectrum. Even moving from "occasional forgetfulness" to "growing awareness" brings measurable Barakah.</p>
+        </div>
+
         <div class="insight-box">
           <strong>The Remedy:</strong> If you have been living without Bismillah, start small. Pick three activities today -- one meal, one work task, one act of entering your home -- and consciously say Bismillah before each. Tomorrow, add three more. Within a week, Bismillah will become second nature, and you will begin to notice the Barakah it brings.
         </div>
         <p>Bismillah is not just a formula or a superstition. It is a worldview compressed into three words: everything begins with Allah, depends on Allah, and returns to Allah. When you truly internalise this, every moment of your life becomes a gateway to Barakah.</p>
+
+        <!-- SVG: The Bismillah Worldview -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-globe"></i> The Bismillah Worldview</div>
+          <svg viewBox="0 0 600 260" width="100%" style="max-height:260px;">
+            <!-- Triangle of interconnection -->
+            <polygon points="300,30 100,220 500,220" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.3"/>
+            <!-- Inner triangle -->
+            <polygon points="300,70 160,195 440,195" fill="var(--accent)" opacity="0.04"/>
+            <!-- Vertices -->
+            <circle cx="300" cy="30" r="28" fill="var(--accent)" opacity="0.9"/>
+            <text x="300" y="27" text-anchor="middle" fill="white" font-family="Inter" font-size="8" font-weight="700">BEGINS</text>
+            <text x="300" y="39" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.8">with Allah</text>
+            <circle cx="100" cy="220" r="28" fill="var(--accent-2)" opacity="0.9"/>
+            <text x="100" y="217" text-anchor="middle" fill="white" font-family="Inter" font-size="8" font-weight="700">DEPENDS</text>
+            <text x="100" y="229" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.8">on Allah</text>
+            <circle cx="500" cy="220" r="28" fill="var(--accent-3)" opacity="0.9"/>
+            <text x="500" y="217" text-anchor="middle" fill="white" font-family="Inter" font-size="8" font-weight="700">RETURNS</text>
+            <text x="500" y="229" text-anchor="middle" fill="white" font-family="Inter" font-size="7" opacity="0.8">to Allah</text>
+            <!-- Center label -->
+            <text x="300" y="150" text-anchor="middle" fill="var(--accent)" font-family="Inter" font-size="11" font-weight="800">BISMILLAH</text>
+            <text x="300" y="166" text-anchor="middle" fill="var(--text-muted)" font-family="Inter" font-size="8">A worldview in three words</text>
+          </svg>
+          <p class="viz-caption">Bismillah encapsulates the believer's entire worldview: everything begins with Allah, depends on Allah, and returns to Allah.</p>
+        </div>
+
+        <!-- EXERCISE 2: Bismillah Audit Slider Calculator -->
+        <div class="exercise-container" id="exercise2">
+          <div class="exercise-title"><i class="fas fa-calculator"></i> Interactive Exercise: Your Bismillah Audit</div>
+          <p class="exercise-instructions">Rate how often you currently say Bismillah before each activity (0 = Never, 10 = Always). Your overall "Barakah Readiness" score will update in real time.</p>
+          <div class="slider-exercise" id="sliderExercise"></div>
+          <div class="slider-result" id="sliderResult">
+            <span class="result-score" id="sliderScore">--</span>
+            <span class="result-label" id="sliderLabel">Adjust the sliders above to calculate your score</span>
+          </div>
+        </div>
+
+        <!-- EXERCISE 3: Match the Function -->
+        <div class="exercise-container" id="exercise3">
+          <div class="exercise-title"><i class="fas fa-link"></i> Interactive Exercise: Match the Function</div>
+          <p class="exercise-instructions">Match each function of Bismillah (left) with its correct description (right). Click a left item, then click its matching right item.</p>
+          <div class="match-grid" id="matchGrid"></div>
+          <button class="btn btn-ghost btn-sm" id="exercise3Reset"><i class="fas fa-redo"></i> Reset</button>
+          <div class="exercise-feedback" id="exercise3Feedback"></div>
+        </div>
+
+        <!-- EXERCISE 4: Scenario Builder -->
+        <div class="exercise-container" id="exercise4">
+          <div class="exercise-title"><i class="fas fa-puzzle-piece"></i> Interactive Exercise: Bismillah Scenarios</div>
+          <p class="exercise-instructions">For each scenario below, choose the best response according to the teachings in this chapter.</p>
+          <div id="scenarioContainer"></div>
+          <button class="btn btn-primary btn-sm" id="exercise4Check" style="margin-top:0.75rem;"><i class="fas fa-check"></i> Check All Answers</button>
+          <div class="exercise-feedback" id="exercise4Feedback"></div>
+        </div>
       </div>
 
     </div>
 
-    <!-- TAB: Summary -->
+    <!-- ============ TAB: Summary ============ -->
     <div class="tab-panel" id="tab-summary">
       <div class="summary-box">
         <h3><i class="fas fa-bookmark"></i> Chapter 5 Summary</h3>
@@ -166,64 +836,23 @@
       </div>
     </div>
 
-    <!-- TAB: Quiz -->
+    <!-- ============ TAB: Quiz ============ -->
     <div class="tab-panel" id="tab-quiz">
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- ============ TAB: Mind Map (Interactive) ============ -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh5" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
-          <style>
-            #mmCh5 .mm-node { animation: mmFadeInCH5 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH5 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh5 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh5 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh5 .mm-center-label { font-family:'Inter',sans-serif; font-size:14px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh5 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
-          </style>
-          <line class="mm-branch" x1="350" y1="210" x2="140" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="560" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="110" y2="240"/>
-          <line class="mm-branch" x1="350" y1="210" x2="590" y2="240"/>
-          <line class="mm-branch" x1="350" y1="210" x2="180" y2="370"/>
-          <line class="mm-branch" x1="350" y1="210" x2="520" y2="370"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="62" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="215" text-anchor="middle">Bismillah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="140" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="140" y="74" text-anchor="middle">Gateway to Barakah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="64" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">Prophetic Sunnah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="560" cy="70" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="560" y="74" text-anchor="middle">3 Functions</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="110" cy="240" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="110" y="244" text-anchor="middle">Daily Activities</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="590" cy="240" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="590" y="244" text-anchor="middle">When Absent</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="180" cy="370" rx="58" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="180" y="374" text-anchor="middle">Micro-Reset</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="520" cy="370" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="520" y="374" text-anchor="middle">Start Small</text>
-          </g>
-        </svg>
+      <div class="viz-container mindmap-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Interactive Mind Map -- Click nodes to expand</div>
+        <svg class="mm-interactive" id="mmCh5" viewBox="0 0 800 520"></svg>
+        <div class="mm-legend">
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent);"></div> Core concept</div>
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent-2);"></div> Key themes</div>
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent-3);"></div> Sub-topics</div>
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent-danger);"></div> Warnings</div>
+        </div>
+        <p class="viz-caption">Click any branch node to expand or collapse its children. The map is fully interactive.</p>
       </div>
     </div>
 
@@ -240,7 +869,880 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    /* ============================================================
+       Chapter 5 -- Enhanced Interactive Logic
+       All SVG content below is static/hardcoded (no user input),
+       so DOM construction via createElement is used where practical
+       and direct SVG markup is used for complex diagram rendering.
+       ============================================================ */
+
+    // ---- STEP-THROUGH DIAGRAMS ----
+    var stepDiagrams = {};
+
+    function createSvgElement(tag, attrs) {
+      var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (var k in attrs) { el.setAttribute(k, attrs[k]); }
+      return el;
+    }
+
+    function buildStepSvg(frame, stepData) {
+      while (frame.firstChild) frame.removeChild(frame.firstChild);
+      var svg = createSvgElement('svg', { viewBox: '0 0 500 250', width: '100%', style: 'max-height:250px;' });
+      svg.appendChild(createSvgElement('rect', { x:'10', y:'10', width:'480', height:'230', rx:'14', fill:'var(--surface-2)', stroke:'var(--border)', 'stroke-width':'1' }));
+      stepData.buildFn(svg);
+      frame.appendChild(svg);
+    }
+
+    function makeTextEl(x, y, text, attrs) {
+      var defaults = { x: String(x), y: String(y), 'text-anchor': 'middle', 'font-family': 'Inter', fill: 'var(--text-muted)', 'font-size': '10' };
+      for (var k in attrs) defaults[k] = attrs[k];
+      var el = createSvgElement('text', defaults);
+      el.textContent = text;
+      return el;
+    }
+
+    function initStepDiagram(id, steps) {
+      stepDiagrams[id] = { steps: steps, current: 0 };
+      renderStep(id);
+      var prev = document.getElementById(id + 'Prev');
+      var next = document.getElementById(id + 'Next');
+      if (prev) prev.addEventListener('click', function() { stepDiagramNav(id, -1); });
+      if (next) next.addEventListener('click', function() { stepDiagramNav(id, 1); });
+    }
+
+    function renderStep(id) {
+      var d = stepDiagrams[id];
+      var frame = document.getElementById(id + 'Frame');
+      var desc = document.getElementById(id + 'Desc');
+      var indicator = document.getElementById(id + 'Indicator');
+      if (!frame || !d) return;
+      var step = d.steps[d.current];
+      buildStepSvg(frame, step);
+      desc.textContent = step.desc;
+      indicator.textContent = (d.current + 1) + ' / ' + d.steps.length;
+      frame.style.opacity = '0';
+      requestAnimationFrame(function() { frame.style.opacity = '1'; });
+    }
+
+    function stepDiagramNav(id, dir) {
+      var d = stepDiagrams[id];
+      if (!d) return;
+      d.current = Math.max(0, Math.min(d.steps.length - 1, d.current + dir));
+      renderStep(id);
+    }
+
+    // Step-through 1: Hadith Evidence
+    initStepDiagram('stepHadith', [
+      {
+        desc: 'Before eating: "Mention the Name of Allah and eat with your right hand." (Bukhari & Muslim)',
+        buildFn: function(svg) {
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'80', r:'45', fill:'var(--accent-3)', opacity:'0.08' }));
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'80', r:'30', fill:'var(--accent-3)', opacity:'0.12' }));
+          // Plate icon
+          svg.appendChild(createSvgElement('ellipse', { cx:'250', cy:'82', rx:'22', ry:'12', fill:'none', stroke:'var(--accent-3)', 'stroke-width':'1.5', opacity:'0.5' }));
+          svg.appendChild(makeTextEl(250, 72, '\uD83C\uDF72', { 'font-size':'22', fill:'var(--accent-3)' }));
+          svg.appendChild(makeTextEl(250, 108, 'Bismillah', { 'font-size':'13', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 125, 'before eating', { 'font-size':'10', fill:'var(--text-muted)' }));
+          svg.appendChild(createSvgElement('rect', { x:'120', y:'150', width:'260', height:'50', rx:'10', fill:'var(--accent-3)', opacity:'0.08', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 172, '"Mention the Name of Allah', { 'font-size':'8', fill:'var(--text-muted)', 'font-style':'italic' }));
+          svg.appendChild(makeTextEl(250, 185, 'and eat with your right hand"', { 'font-size':'8', fill:'var(--text-muted)', 'font-style':'italic' }));
+          svg.appendChild(createSvgElement('rect', { x:'170', y:'210', width:'160', height:'22', rx:'6', fill:'var(--accent-3)', opacity:'0.12', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 225, 'Bukhari & Muslim', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'600' }));
+        }
+      },
+      {
+        desc: 'Before entering the home: Saying Bismillah keeps Shaytan away from the household. (Muslim)',
+        buildFn: function(svg) {
+          // House outline
+          svg.appendChild(createSvgElement('path', { d:'M200,60 L250,30 L300,60 L300,140 L200,140 Z', fill:'var(--accent-2)', opacity:'0.1', stroke:'var(--accent-2)', 'stroke-width':'1.5' }));
+          svg.appendChild(createSvgElement('rect', { x:'230', y:'90', width:'35', height:'50', rx:'4', fill:'var(--accent-2)', opacity:'0.2' }));
+          svg.appendChild(createSvgElement('circle', { cx:'258', cy:'115', r:'3', fill:'var(--accent-2)' }));
+          svg.appendChild(makeTextEl(250, 25, 'Bismillah', { 'font-size':'12', 'font-weight':'700', fill:'var(--accent)' }));
+          // Shield icon
+          svg.appendChild(createSvgElement('path', { d:'M155,85 L155,115 Q155,135 175,140 Q195,135 195,115 L195,85 Z', fill:'var(--accent-3)', opacity:'0.15', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(175, 115, '\uD83D\uDEE1\uFE0F', { 'font-size':'14' }));
+          // Blocked Shaytan
+          svg.appendChild(makeTextEl(355, 100, 'Shaytan', { 'font-size':'9', fill:'var(--accent-danger)', opacity:'0.5' }));
+          svg.appendChild(createSvgElement('line', { x1:'330', y1:'92', x2:'380', y2:'108', stroke:'var(--accent-danger)', 'stroke-width':'1.5', opacity:'0.3' }));
+          svg.appendChild(createSvgElement('line', { x1:'330', y1:'108', x2:'380', y2:'92', stroke:'var(--accent-danger)', 'stroke-width':'1.5', opacity:'0.3' }));
+          svg.appendChild(makeTextEl(250, 170, 'Upon entering the home', { 'font-size':'10' }));
+          svg.appendChild(createSvgElement('rect', { x:'160', y:'195', width:'180', height:'25', rx:'6', fill:'var(--accent-3)', opacity:'0.12', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 212, 'Sahih Muslim', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'600' }));
+        }
+      },
+      {
+        desc: 'Before wudu: "There is no wudu for the one who does not mention Allah\'s Name over it." (Abu Dawud)',
+        buildFn: function(svg) {
+          // Water drops
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'75', r:'40', fill:'var(--accent)', opacity:'0.06' }));
+          svg.appendChild(createSvgElement('path', { d:'M240,65 Q250,45 260,65 Q260,80 250,82 Q240,80 240,65 Z', fill:'var(--accent)', opacity:'0.3' }));
+          svg.appendChild(createSvgElement('path', { d:'M220,85 Q225,75 230,85 Q230,92 225,93 Q220,92 220,85 Z', fill:'var(--accent)', opacity:'0.2' }));
+          svg.appendChild(createSvgElement('path', { d:'M270,80 Q275,70 280,80 Q280,87 275,88 Q270,87 270,80 Z', fill:'var(--accent)', opacity:'0.2' }));
+          svg.appendChild(makeTextEl(250, 110, 'Bismillah', { 'font-size':'13', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 128, 'before wudu', { 'font-size':'9' }));
+          svg.appendChild(createSvgElement('rect', { x:'100', y:'148', width:'300', height:'35', rx:'8', fill:'var(--accent-danger)', opacity:'0.06', stroke:'var(--accent-danger)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 170, '"No wudu for one who does not mention Allah"', { 'font-size':'8', fill:'var(--accent-danger)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'160', y:'200', width:'180', height:'25', rx:'6', fill:'var(--accent-3)', opacity:'0.12', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 217, 'Abu Dawud', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'600' }));
+        }
+      },
+      {
+        desc: 'Before sleeping: The Prophet taught placing the right hand under the cheek and saying Bismillah. (Bukhari)',
+        buildFn: function(svg) {
+          // Night sky
+          svg.appendChild(createSvgElement('rect', { x:'100', y:'30', width:'300', height:'100', rx:'12', fill:'var(--code-bg)', opacity:'0.15' }));
+          svg.appendChild(createSvgElement('circle', { cx:'350', cy:'55', r:'15', fill:'var(--accent)', opacity:'0.2' }));
+          svg.appendChild(createSvgElement('circle', { cx:'155', cy:'50', r:'2', fill:'var(--accent)', opacity:'0.3' }));
+          svg.appendChild(createSvgElement('circle', { cx:'200', cy:'45', r:'1.5', fill:'var(--accent)', opacity:'0.25' }));
+          svg.appendChild(createSvgElement('circle', { cx:'280', cy:'42', r:'1.5', fill:'var(--accent)', opacity:'0.2' }));
+          svg.appendChild(makeTextEl(250, 90, '\uD83C\uDF19', { 'font-size':'22', fill:'var(--accent-2)' }));
+          svg.appendChild(makeTextEl(250, 115, 'Bismillah', { 'font-size':'12', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 133, 'before sleeping', { 'font-size':'9' }));
+          svg.appendChild(makeTextEl(250, 165, 'Right hand under cheek', { 'font-size':'9', fill:'var(--text-muted)' }));
+          svg.appendChild(makeTextEl(250, 180, 'Protection through the night', { 'font-size':'9', fill:'var(--accent-3)' }));
+          svg.appendChild(createSvgElement('rect', { x:'160', y:'200', width:'180', height:'25', rx:'6', fill:'var(--accent-3)', opacity:'0.12', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 217, 'Sahih Bukhari', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'600' }));
+        }
+      },
+      {
+        desc: '"Any matter of importance not begun with Bismillah is abtar (cut off from blessing)." -- General Principle',
+        buildFn: function(svg) {
+          // Central declaration
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'80', r:'50', fill:'var(--accent)', opacity:'0.08' }));
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'80', r:'35', fill:'var(--accent)', opacity:'0.12' }));
+          svg.appendChild(makeTextEl(250, 74, 'Bismillah', { 'font-size':'14', 'font-weight':'800', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 92, 'before EVERY matter', { 'font-size':'8', fill:'var(--accent)', opacity:'0.8' }));
+          // Arrow down
+          svg.appendChild(createSvgElement('line', { x1:'250', y1:'120', x2:'250', y2:'148', stroke:'var(--accent)', 'stroke-width':'2' }));
+          svg.appendChild(createSvgElement('polygon', { points:'250,155 244,145 256,145', fill:'var(--accent)' }));
+          // Connected result
+          svg.appendChild(createSvgElement('rect', { x:'130', y:'160', width:'240', height:'45', rx:'10', fill:'var(--accent)', opacity:'0.1', stroke:'var(--accent)', 'stroke-width':'1.5' }));
+          svg.appendChild(makeTextEl(250, 180, 'Connected to Barakah', { 'font-size':'11', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 195, 'Not abtar (cut off)', { 'font-size':'8', fill:'var(--accent-3)' }));
+          // Decorative lines
+          svg.appendChild(createSvgElement('line', { x1:'130', y1:'80', x2:'80', y2:'80', stroke:'var(--accent)', 'stroke-width':'1', opacity:'0.2', 'stroke-dasharray':'3,3' }));
+          svg.appendChild(createSvgElement('line', { x1:'370', y1='80', x2:'420', y2:'80', stroke:'var(--accent)', 'stroke-width':'1', opacity:'0.2', 'stroke-dasharray':'3,3' }));
+        }
+      }
+    ]);
+
+    // Step-through 2: A Day with Bismillah
+    initStepDiagram('stepDayCycle', [
+      {
+        desc: 'Fajr: Wake up and say Bismillah. Your day begins with divine connection from the very first moment.',
+        buildFn: function(svg) {
+          // Sunrise gradient
+          svg.appendChild(createSvgElement('rect', { x:'50', y:'30', width:'400', height:'80', rx:'10', fill:'var(--accent)', opacity:'0.06' }));
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'50', r:'20', fill:'var(--accent)', opacity:'0.15' }));
+          svg.appendChild(makeTextEl(250, 48, '\uD83C\uDF05', { 'font-size':'20', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 78, 'Fajr Time', { 'font-size':'8', fill:'var(--accent)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'100', y:'100', width:'300', height:'50', rx:'10', fill:'var(--accent)', opacity:'0.1', stroke:'var(--accent)', 'stroke-width':'1.5' }));
+          svg.appendChild(makeTextEl(250, 122, 'Bismillah -- I begin my day', { 'font-size':'11', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 138, "with Allah's Name", { 'font-size':'8' }));
+          svg.appendChild(makeTextEl(250, 175, 'Wake up, make wudu, pray Fajr', { 'font-size':'9' }));
+          // Progress bar
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'100', height:'6', rx:'3', fill:'var(--border-2)' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'17', height:'6', rx:'3', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 220, 'Step 1 of 6', { 'font-size':'7', fill:'var(--text-light)' }));
+        }
+      },
+      {
+        desc: 'Morning routine: Bismillah before dressing, before breakfast, before leaving the house. Three micro-resets in one hour.',
+        buildFn: function(svg) {
+          svg.appendChild(makeTextEl(250, 38, 'MORNING ROUTINE', { 'font-size':'10', 'font-weight':'700', fill:'var(--accent-2)' }));
+          var items = [
+            { cx:130, label:'Dressing', emoji:'\uD83D\uDC55', color:'var(--accent-3)' },
+            { cx:250, label:'Breakfast', emoji:'\uD83C\uDF72', color:'var(--accent)' },
+            { cx:370, label:'Leaving', emoji:'\uD83D\uDEAA', color:'var(--accent-2)' }
+          ];
+          items.forEach(function(it) {
+            svg.appendChild(createSvgElement('circle', { cx:String(it.cx), cy:'100', r:'35', fill:it.color, opacity:'0.08' }));
+            svg.appendChild(createSvgElement('circle', { cx:String(it.cx), cy:'100', r:'28', fill:it.color, opacity:'0.12', stroke:it.color, 'stroke-width':'1.5' }));
+            svg.appendChild(makeTextEl(it.cx, 95, it.emoji, { 'font-size':'18' }));
+            svg.appendChild(makeTextEl(it.cx, 118, it.label, { 'font-size':'8', fill:it.color, 'font-weight':'600' }));
+          });
+          svg.appendChild(createSvgElement('line', { x1:'162', y1:'100', x2:'215', y2:'100', stroke:'var(--border)', 'stroke-width':'1.5' }));
+          svg.appendChild(createSvgElement('polygon', { points:'218,100 212,96 212,104', fill:'var(--border)' }));
+          svg.appendChild(createSvgElement('line', { x1:'282', y1:'100', x2:'335', y2:'100', stroke:'var(--border)', 'stroke-width':'1.5' }));
+          svg.appendChild(createSvgElement('polygon', { points:'338,100 332,96 332,104', fill:'var(--border)' }));
+          svg.appendChild(makeTextEl(250, 165, '3 micro-resets in 1 hour', { 'font-size':'10', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'100', height:'6', rx:'3', fill:'var(--border-2)' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'34', height:'6', rx:'3', fill:'var(--accent)' }));
+        }
+      },
+      {
+        desc: 'Work hours: Bismillah before opening the laptop, before each meeting, before each project task. Work becomes worship.',
+        buildFn: function(svg) {
+          svg.appendChild(makeTextEl(250, 38, 'WORK HOURS', { 'font-size':'10', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(createSvgElement('rect', { x:'100', y:'50', width:'300', height:'100', rx:'12', fill:'var(--accent)', opacity:'0.04', stroke:'var(--accent)', 'stroke-width':'1' }));
+          // Laptop icon
+          svg.appendChild(createSvgElement('rect', { x:'210', y:'65', width:'80', height:'50', rx:'4', fill:'none', stroke:'var(--accent)', 'stroke-width':'1.5', opacity:'0.4' }));
+          svg.appendChild(createSvgElement('rect', { x:'195', y:'118', width:'110', height:'8', rx:'3', fill:'var(--accent)', opacity:'0.15' }));
+          svg.appendChild(makeTextEl(250, 95, '\uD83D\uDCBB', { 'font-size':'18' }));
+          svg.appendChild(makeTextEl(250, 145, 'Bismillah before each task', { 'font-size':'11', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(createSvgElement('rect', { x:'150', y:'160', width:'200', height:'25', rx:'8', fill:'var(--accent-3)', opacity:'0.1', stroke:'var(--accent-3)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 177, 'Work becomes worship', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'100', height:'6', rx:'3', fill:'var(--border-2)' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'50', height:'6', rx:'3', fill:'var(--accent)' }));
+        }
+      },
+      {
+        desc: 'Meals: Bismillah before lunch, before snacks. If you forget mid-meal, say "Bismillah awwalahu wa akhirahu."',
+        buildFn: function(svg) {
+          svg.appendChild(makeTextEl(250, 38, 'MEALS', { 'font-size':'10', 'font-weight':'700', fill:'var(--accent-3)' }));
+          svg.appendChild(createSvgElement('circle', { cx:'180', cy:'95', r:'35', fill:'var(--accent-3)', opacity:'0.08', stroke:'var(--accent-3)', 'stroke-width':'1.5' }));
+          svg.appendChild(makeTextEl(180, 90, '\uD83C\uDF72', { 'font-size':'22' }));
+          svg.appendChild(makeTextEl(180, 113, 'Lunch', { 'font-size':'8', fill:'var(--accent-3)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('circle', { cx:'320', cy:'95', r:'35', fill:'var(--accent-2)', opacity:'0.08', stroke:'var(--accent-2)', 'stroke-width':'1.5' }));
+          svg.appendChild(makeTextEl(320, 90, '\uD83C\uDF4E', { 'font-size':'22' }));
+          svg.appendChild(makeTextEl(320, 113, 'Snacks', { 'font-size':'8', fill:'var(--accent-2)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'80', y:'150', width:'340', height:'40', rx:'8', fill:'var(--accent)', opacity:'0.06', stroke:'var(--accent)', 'stroke-width':'1' }));
+          svg.appendChild(makeTextEl(250, 168, 'Forgot? Say:', { 'font-size':'8', fill:'var(--text-muted)' }));
+          svg.appendChild(makeTextEl(250, 182, 'Bismillah awwalahu wa akhirahu', { 'font-size':'9', fill:'var(--accent)', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'210', width:'100', height:'6', rx:'3', fill:'var(--border-2)' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'210', width:'67', height:'6', rx:'3', fill:'var(--accent)' }));
+        }
+      },
+      {
+        desc: 'Evening: Bismillah before travel home, before studying, before quality time. Every transition is sanctified.',
+        buildFn: function(svg) {
+          svg.appendChild(makeTextEl(250, 38, 'EVENING', { 'font-size':'10', 'font-weight':'700', fill:'var(--accent-2)' }));
+          var items = [
+            { cx:130, label:'Travel home', emoji:'\uD83D\uDE97', color:'var(--accent-2)' },
+            { cx:250, label:'Studying', emoji:'\uD83D\uDCD6', color:'var(--accent-3)' },
+            { cx:370, label:'Family time', emoji:'\uD83D\uDC65', color:'var(--accent)' }
+          ];
+          items.forEach(function(it) {
+            svg.appendChild(createSvgElement('circle', { cx:String(it.cx), cy:'100', r:'32', fill:it.color, opacity:'0.08' }));
+            svg.appendChild(createSvgElement('circle', { cx:String(it.cx), cy:'100', r:'25', fill:it.color, opacity:'0.12', stroke:it.color, 'stroke-width':'1' }));
+            svg.appendChild(makeTextEl(it.cx, 95, it.emoji, { 'font-size':'16' }));
+            svg.appendChild(makeTextEl(it.cx, 118, it.label, { 'font-size':'7', fill:it.color, 'font-weight':'600' }));
+          });
+          svg.appendChild(makeTextEl(250, 160, 'Every transition is sanctified with Bismillah', { 'font-size':'9', 'font-weight':'600' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'100', height:'6', rx:'3', fill:'var(--border-2)' }));
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'200', width:'84', height:'6', rx:'3', fill:'var(--accent)' }));
+        }
+      },
+      {
+        desc: "Night: Bismillah before sleep. You fall asleep under Allah's protection. A full day of Barakah, from Fajr to rest.",
+        buildFn: function(svg) {
+          svg.appendChild(makeTextEl(250, 35, 'NIGHT -- DAY COMPLETE', { 'font-size':'10', 'font-weight':'700', fill:'var(--accent)' }));
+          // Moon and stars
+          svg.appendChild(createSvgElement('rect', { x:'100', y:'45', width:'300', height:'80', rx:'10', fill:'var(--code-bg)', opacity:'0.08' }));
+          svg.appendChild(createSvgElement('circle', { cx:'250', cy:'80', r:'30', fill:'var(--accent)', opacity:'0.08' }));
+          svg.appendChild(makeTextEl(250, 78, '\uD83C\uDF19', { 'font-size':'24' }));
+          svg.appendChild(createSvgElement('circle', { cx:'160', cy:'65', r:'1.5', fill:'var(--accent)', opacity:'0.3' }));
+          svg.appendChild(createSvgElement('circle', { cx:'340', cy:'58', r:'1.5', fill:'var(--accent)', opacity:'0.25' }));
+          svg.appendChild(createSvgElement('circle', { cx:'200', cy:'55', r:'1', fill:'var(--accent)', opacity:'0.2' }));
+          svg.appendChild(makeTextEl(250, 112, 'Bismillah', { 'font-size':'11', 'font-weight':'700', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 128, 'before sleep', { 'font-size':'8' }));
+          svg.appendChild(makeTextEl(250, 160, 'A full day saturated with Barakah', { 'font-size':'10', fill:'var(--accent-3)', 'font-weight':'600' }));
+          // Full progress bar
+          svg.appendChild(createSvgElement('rect', { x:'200', y:'180', width:'100', height:'6', rx:'3', fill:'var(--accent)' }));
+          svg.appendChild(makeTextEl(250, 200, 'From Fajr to rest: every moment connected to Allah', { 'font-size':'8', fill:'var(--text-light)' }));
+          svg.appendChild(makeTextEl(250, 220, 'Day complete!', { 'font-size':'9', fill:'var(--accent-3)', 'font-weight':'700' }));
+        }
+      }
+    ]);
+
+
+    // ---- EXERCISE 1: DRAG AND DROP ----
+    var dndItems = [
+      { text: 'Eating', zone: 'sunnah' },
+      { text: 'Entering home', zone: 'sunnah' },
+      { text: 'Wudu', zone: 'sunnah' },
+      { text: 'Sleeping', zone: 'sunnah' },
+      { text: 'Checking email', zone: 'general' },
+      { text: 'Coding', zone: 'general' },
+      { text: 'Exercising', zone: 'general' },
+      { text: 'Attending class', zone: 'general' }
+    ];
+    var dndState = {};
+
+    function initExercise1() {
+      var tray = document.getElementById('dndTray1');
+      if (!tray) return;
+      while (tray.firstChild) tray.removeChild(tray.firstChild);
+      dndState = {};
+      var shuffled = dndItems.slice().sort(function() { return Math.random() - 0.5; });
+      shuffled.forEach(function(item, i) {
+        var el = document.createElement('div');
+        el.className = 'dnd-item';
+        el.textContent = item.text;
+        el.draggable = true;
+        el.dataset.idx = String(i);
+        el.dataset.correct = item.zone;
+        el.addEventListener('dragstart', function(e) {
+          e.dataTransfer.setData('text/plain', String(i));
+          el.style.opacity = '0.5';
+        });
+        el.addEventListener('dragend', function() { el.style.opacity = '1'; });
+        tray.appendChild(el);
+      });
+      document.querySelectorAll('.dnd-zone').forEach(function(zone) {
+        var labelText = zone.querySelector('.dnd-zone-label').textContent;
+        while (zone.firstChild) zone.removeChild(zone.firstChild);
+        var label = document.createElement('div');
+        label.className = 'dnd-zone-label';
+        label.textContent = labelText;
+        zone.appendChild(label);
+
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+        zone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+          var idx = e.dataTransfer.getData('text/plain');
+          placeItem(idx, zone.dataset.zone);
+        });
+      });
+      var fb = document.getElementById('exercise1Feedback');
+      if (fb) { fb.className = 'exercise-feedback'; fb.textContent = ''; }
+    }
+
+    function placeItem(idx, zoneName) {
+      var tray = document.getElementById('dndTray1');
+      var allItems = tray.querySelectorAll('.dnd-item');
+      var sourceItem = null;
+      allItems.forEach(function(el) { if (el.dataset.idx === String(idx)) sourceItem = el; });
+      if (!sourceItem || sourceItem.classList.contains('placed')) return;
+
+      sourceItem.classList.add('placed');
+      dndState[idx] = zoneName;
+
+      var zone = document.getElementById('zone-' + zoneName);
+      var clone = document.createElement('div');
+      clone.className = 'dnd-item';
+      clone.textContent = sourceItem.textContent;
+      clone.dataset.idx = String(idx);
+      clone.dataset.correct = sourceItem.dataset.correct;
+      clone.addEventListener('click', function() {
+        zone.removeChild(clone);
+        sourceItem.classList.remove('placed');
+        delete dndState[idx];
+      });
+      zone.appendChild(clone);
+    }
+
+    function checkExercise1() {
+      var fb = document.getElementById('exercise1Feedback');
+      if (Object.keys(dndState).length < dndItems.length) {
+        fb.textContent = 'Please place all items into a zone before checking.';
+        fb.className = 'exercise-feedback visible error';
+        return;
+      }
+      var correct = 0;
+      document.querySelectorAll('.dnd-zone .dnd-item').forEach(function(el) {
+        var idx = el.dataset.idx;
+        var correctZone = el.dataset.correct;
+        if (dndState[idx] === correctZone) {
+          el.classList.add('correct-place');
+          correct++;
+        } else {
+          el.classList.add('wrong-place');
+        }
+        el.style.pointerEvents = 'none';
+      });
+      if (correct === dndItems.length) {
+        fb.textContent = 'Excellent! All ' + correct + '/' + dndItems.length + ' correct. You know your Sunnah well!';
+        fb.className = 'exercise-feedback visible success';
+      } else {
+        fb.textContent = correct + '/' + dndItems.length + ' correct. Review the hadiths mentioned in Lesson 2 and try again.';
+        fb.className = 'exercise-feedback visible error';
+      }
+    }
+
+    document.getElementById('exercise1Check').addEventListener('click', checkExercise1);
+    document.getElementById('exercise1Reset').addEventListener('click', function() { initExercise1(); });
+    initExercise1();
+
+
+    // ---- EXERCISE 2: BISMILLAH AUDIT SLIDER ----
+    var auditActivities = [
+      { label: 'Before meals', icon: '\uD83C\uDF72' },
+      { label: 'Before work', icon: '\uD83D\uDCBB' },
+      { label: 'Entering home', icon: '\uD83D\uDEAA' },
+      { label: 'Before wudu', icon: '\uD83D\uDCA7' },
+      { label: 'Before travel', icon: '\uD83D\uDE97' },
+      { label: 'Before studying', icon: '\uD83D\uDCD6' },
+      { label: 'Before sleep', icon: '\uD83C\uDF19' }
+    ];
+
+    function initSliderExercise() {
+      var container = document.getElementById('sliderExercise');
+      if (!container) return;
+      while (container.firstChild) container.removeChild(container.firstChild);
+      auditActivities.forEach(function(act, i) {
+        var row = document.createElement('div');
+        row.className = 'slider-row';
+
+        var label = document.createElement('span');
+        label.className = 'slider-label';
+        label.textContent = act.icon + ' ' + act.label;
+        row.appendChild(label);
+
+        var input = document.createElement('input');
+        input.type = 'range';
+        input.className = 'slider-input';
+        input.min = '0';
+        input.max = '10';
+        input.value = '5';
+        input.dataset.idx = String(i);
+        row.appendChild(input);
+
+        var val = document.createElement('span');
+        val.className = 'slider-value';
+        val.id = 'sv-' + i;
+        val.textContent = '5';
+        row.appendChild(val);
+
+        container.appendChild(row);
+
+        input.addEventListener('input', function() {
+          document.getElementById('sv-' + input.dataset.idx).textContent = input.value;
+          updateSliderResult();
+        });
+      });
+      updateSliderResult();
+    }
+
+    function updateSliderResult() {
+      var sliders = document.querySelectorAll('#sliderExercise .slider-input');
+      var total = 0;
+      sliders.forEach(function(s) { total += parseInt(s.value); });
+      var max = auditActivities.length * 10;
+      var pct = Math.round((total / max) * 100);
+      var scoreEl = document.getElementById('sliderScore');
+      var labelEl = document.getElementById('sliderLabel');
+      var resultEl = document.getElementById('sliderResult');
+      if (!scoreEl) return;
+      scoreEl.textContent = pct + '%';
+      resultEl.className = 'slider-result';
+      if (pct < 40) {
+        labelEl.textContent = 'Room for growth. Start with 3 activities today and build the habit gradually.';
+        resultEl.classList.add('level-low');
+      } else if (pct < 75) {
+        labelEl.textContent = 'Good foundation! Focus on the activities where you scored lowest. You are on the right path.';
+        resultEl.classList.add('level-mid');
+      } else {
+        labelEl.textContent = 'Ma sha Allah! You have a strong Bismillah habit. Keep it up and inspire others!';
+        resultEl.classList.add('level-high');
+      }
+    }
+
+    initSliderExercise();
+
+
+    // ---- EXERCISE 3: MATCH THE FUNCTION ----
+    var matchData = [
+      { left: 'Acknowledgement', right: 'All ability comes from Allah alone', id: 0 },
+      { left: 'Request', right: 'Seeking Allah\'s help and blessing', id: 1 },
+      { left: 'Protection', right: 'Shaytan flees from Allah\'s remembrance', id: 2 },
+      { left: 'Micro-Reset', right: 'A pause that reconnects you to your Creator', id: 3 },
+      { left: 'Abtar', right: 'Cut off from blessing when Bismillah is absent', id: 4 }
+    ];
+
+    var matchState = { selectedLeft: null, matched: [], wrongPair: null };
+
+    function initMatchExercise() {
+      var grid = document.getElementById('matchGrid');
+      if (!grid) return;
+      while (grid.firstChild) grid.removeChild(grid.firstChild);
+      matchState = { selectedLeft: null, matched: [], wrongPair: null };
+
+      // Shuffle right side
+      var rightShuffled = matchData.slice().sort(function() { return Math.random() - 0.5; });
+
+      matchData.forEach(function(item, i) {
+        var leftEl = document.createElement('div');
+        leftEl.className = 'match-left';
+        leftEl.textContent = item.left;
+        leftEl.dataset.id = String(item.id);
+        leftEl.addEventListener('click', function() { handleMatchLeftClick(leftEl); });
+        grid.appendChild(leftEl);
+
+        var arrow = document.createElement('div');
+        arrow.className = 'match-arrow';
+        arrow.id = 'match-arrow-' + i;
+        arrow.innerHTML = '&#8594;';
+        grid.appendChild(arrow);
+
+        var rightItem = rightShuffled[i];
+        var rightEl = document.createElement('div');
+        rightEl.className = 'match-right';
+        rightEl.textContent = rightItem.right;
+        rightEl.dataset.id = String(rightItem.id);
+        rightEl.addEventListener('click', function() { handleMatchRightClick(rightEl); });
+        grid.appendChild(rightEl);
+      });
+
+      var fb = document.getElementById('exercise3Feedback');
+      if (fb) { fb.className = 'exercise-feedback'; fb.textContent = ''; }
+    }
+
+    function handleMatchLeftClick(el) {
+      if (el.classList.contains('matched')) return;
+      document.querySelectorAll('.match-left.selected').forEach(function(e) { e.classList.remove('selected'); });
+      document.querySelectorAll('.match-left.wrong, .match-right.wrong').forEach(function(e) { e.classList.remove('wrong'); });
+      el.classList.add('selected');
+      matchState.selectedLeft = el;
+    }
+
+    function handleMatchRightClick(el) {
+      if (el.classList.contains('matched') || !matchState.selectedLeft) return;
+      document.querySelectorAll('.match-left.wrong, .match-right.wrong').forEach(function(e) { e.classList.remove('wrong'); });
+
+      var leftId = matchState.selectedLeft.dataset.id;
+      var rightId = el.dataset.id;
+
+      if (leftId === rightId) {
+        matchState.selectedLeft.classList.remove('selected');
+        matchState.selectedLeft.classList.add('matched');
+        el.classList.add('matched');
+        matchState.matched.push(leftId);
+        matchState.selectedLeft = null;
+
+        if (matchState.matched.length === matchData.length) {
+          var fb = document.getElementById('exercise3Feedback');
+          fb.textContent = 'All matched correctly! You understand the functions of Bismillah well.';
+          fb.className = 'exercise-feedback visible success';
+        }
+      } else {
+        matchState.selectedLeft.classList.add('wrong');
+        el.classList.add('wrong');
+        setTimeout(function() {
+          document.querySelectorAll('.match-left.wrong, .match-right.wrong').forEach(function(e) { e.classList.remove('wrong'); });
+          if (matchState.selectedLeft) matchState.selectedLeft.classList.remove('selected');
+          matchState.selectedLeft = null;
+        }, 800);
+      }
+    }
+
+    document.getElementById('exercise3Reset').addEventListener('click', function() { initMatchExercise(); });
+    initMatchExercise();
+
+
+    // ---- EXERCISE 4: SCENARIO BUILDER ----
+    var scenarios = [
+      {
+        question: 'You are about to start a big work presentation. What should you do?',
+        options: [
+          'Rush in and start talking immediately',
+          'Say Bismillah silently before beginning, transforming the task into worship',
+          'Wait until after the presentation to make dua',
+          'Only say Bismillah if the presentation is about Islam'
+        ],
+        correct: 1,
+        explanation: 'Bismillah applies to every lawful activity. Saying it before a work task transforms it into worship and invites Barakah into your effort.'
+      },
+      {
+        question: 'You are halfway through lunch and realise you forgot to say Bismillah. What do you do?',
+        options: [
+          'Stop eating immediately',
+          'Continue eating without concern',
+          'Say "Bismillah awwalahu wa akhirahu" (In the Name of Allah, at its beginning and end)',
+          'Start the meal over from scratch'
+        ],
+        correct: 2,
+        explanation: 'The Prophet (peace be upon him) taught that if you forget and remember mid-meal, say "Bismillah awwalahu wa akhirahu." Allah is merciful.'
+      },
+      {
+        question: 'A friend says Bismillah is only for religious activities like prayer and Quran. How do you respond?',
+        options: [
+          'Agree, since that is the scholarly consensus',
+          'Explain that Bismillah is for every lawful activity -- it prevents the compartmentalisation of religion',
+          'Say it does not matter either way',
+          'Tell them Bismillah is optional in all cases'
+        ],
+        correct: 1,
+        explanation: 'Compartmentalising Bismillah to "religious" activities is the exact danger the chapter warns against. Bismillah unifies all of life under Allah\'s name.'
+      },
+      {
+        question: 'You want to build a consistent Bismillah habit but currently rarely say it. What is the best approach?',
+        options: [
+          'Try to say it before every single activity from day one',
+          'Only say it once a day to keep it simple',
+          'Pick three activities today, add three more tomorrow, and expand daily',
+          'Wait until Ramadan to start'
+        ],
+        correct: 2,
+        explanation: 'The author recommends starting small: pick three activities today and expand daily. Within a week, Bismillah becomes second nature.'
+      }
+    ];
+
+    function initScenarios() {
+      var container = document.getElementById('scenarioContainer');
+      if (!container) return;
+      while (container.firstChild) container.removeChild(container.firstChild);
+
+      scenarios.forEach(function(sc, si) {
+        var card = document.createElement('div');
+        card.className = 'scenario-card';
+        card.id = 'scenario-' + si;
+
+        var q = document.createElement('div');
+        q.className = 'scenario-q';
+        q.textContent = (si + 1) + '. ' + sc.question;
+        card.appendChild(q);
+
+        var optContainer = document.createElement('div');
+        optContainer.className = 'scenario-options';
+
+        sc.options.forEach(function(opt, oi) {
+          var optEl = document.createElement('div');
+          optEl.className = 'scenario-opt';
+          optEl.dataset.scenario = String(si);
+          optEl.dataset.option = String(oi);
+
+          var marker = document.createElement('span');
+          marker.className = 'opt-marker';
+          marker.textContent = String.fromCharCode(65 + oi);
+          optEl.appendChild(marker);
+
+          var txt = document.createElement('span');
+          txt.textContent = opt;
+          optEl.appendChild(txt);
+
+          optEl.addEventListener('click', function() {
+            if (optEl.classList.contains('correct') || optEl.classList.contains('incorrect')) return;
+            var siblings = optContainer.querySelectorAll('.scenario-opt');
+            siblings.forEach(function(s) { s.classList.remove('chosen'); });
+            optEl.classList.add('chosen');
+          });
+
+          optContainer.appendChild(optEl);
+        });
+
+        card.appendChild(optContainer);
+
+        var expl = document.createElement('div');
+        expl.className = 'scenario-explanation';
+        expl.id = 'scenario-expl-' + si;
+        expl.textContent = sc.explanation;
+        card.appendChild(expl);
+
+        container.appendChild(card);
+      });
+
+      var fb = document.getElementById('exercise4Feedback');
+      if (fb) { fb.className = 'exercise-feedback'; fb.textContent = ''; }
+    }
+
+    function checkScenarios() {
+      var correct = 0;
+      var total = scenarios.length;
+      var allAnswered = true;
+
+      scenarios.forEach(function(sc, si) {
+        var card = document.getElementById('scenario-' + si);
+        var chosen = card.querySelector('.scenario-opt.chosen');
+        if (!chosen) {
+          allAnswered = false;
+          return;
+        }
+        var opts = card.querySelectorAll('.scenario-opt');
+        opts.forEach(function(o) {
+          o.style.pointerEvents = 'none';
+          if (parseInt(o.dataset.option) === sc.correct) {
+            o.classList.add('correct');
+          }
+        });
+        if (parseInt(chosen.dataset.option) === sc.correct) {
+          correct++;
+        } else {
+          chosen.classList.add('incorrect');
+        }
+        var expl = document.getElementById('scenario-expl-' + si);
+        if (expl) expl.classList.add('visible');
+      });
+
+      var fb = document.getElementById('exercise4Feedback');
+      if (!allAnswered) {
+        fb.textContent = 'Please answer all scenarios before checking.';
+        fb.className = 'exercise-feedback visible error';
+        return;
+      }
+      if (correct === total) {
+        fb.textContent = 'Perfect score! ' + correct + '/' + total + ' correct. You deeply understand the Bismillah teachings.';
+        fb.className = 'exercise-feedback visible success';
+      } else {
+        fb.textContent = correct + '/' + total + ' correct. Review the explanations to strengthen your understanding.';
+        fb.className = 'exercise-feedback visible error';
+      }
+    }
+
+    document.getElementById('exercise4Check').addEventListener('click', checkScenarios);
+    initScenarios();
+
+
+    // ---- INTERACTIVE MIND MAP ----
+    function initMindMap() {
+      var svg = document.getElementById('mmCh5');
+      if (!svg) return;
+
+      var CX = 400, CY = 260;
+      var data = {
+        label: 'Bismillah', color: 'var(--accent)', x: CX, y: CY, rx: 60, ry: 30,
+        children: [
+          {
+            label: 'Gateway to Barakah', color: 'var(--accent-2)', x: 140, y: 100,
+            children: [
+              { label: 'First manifesto element', color: 'var(--accent-3)', x: 50, y: 30 },
+              { label: 'Opens every surah', color: 'var(--accent-3)', x: 190, y: 25 },
+              { label: 'Simplest practice', color: 'var(--accent-3)', x: 70, y: 170 }
+            ]
+          },
+          {
+            label: 'Prophetic Sunnah', color: 'var(--accent-2)', x: 400, y: 70,
+            children: [
+              { label: 'Before eating', color: 'var(--accent-3)', x: 310, y: 15 },
+              { label: 'Before wudu', color: 'var(--accent-3)', x: 430, y: 10 },
+              { label: 'Entering home', color: 'var(--accent-3)', x: 530, y: 25 },
+              { label: 'Before sleeping', color: 'var(--accent-3)', x: 340, y: 130 }
+            ]
+          },
+          {
+            label: 'Three Functions', color: 'var(--accent-2)', x: 680, y: 160,
+            children: [
+              { label: 'Acknowledgement', color: 'var(--accent-3)', x: 730, y: 80 },
+              { label: 'Request', color: 'var(--accent-3)', x: 760, y: 150 },
+              { label: 'Protection', color: 'var(--accent-3)', x: 740, y: 220 }
+            ]
+          },
+          {
+            label: 'Daily Activities', color: 'var(--accent-2)', x: 130, y: 320,
+            children: [
+              { label: 'Meals', color: 'var(--accent-3)', x: 30, y: 290 },
+              { label: 'Work & study', color: 'var(--accent-3)', x: 30, y: 360 },
+              { label: 'Travel & sleep', color: 'var(--accent-3)', x: 120, y: 410 },
+              { label: 'Meetings & writing', color: 'var(--accent-3)', x: 210, y: 400 }
+            ]
+          },
+          {
+            label: 'Micro-Reset', color: 'var(--accent-2)', x: 400, y: 430,
+            children: [
+              { label: 'Moment of presence', color: 'var(--accent-3)', x: 310, y: 480 },
+              { label: 'Mindfulness in tawhid', color: 'var(--accent-3)', x: 490, y: 490 },
+              { label: 'Breaks autopilot', color: 'var(--accent-3)', x: 400, y: 505 }
+            ]
+          },
+          {
+            label: 'When Absent', color: 'var(--accent-danger)', x: 670, y: 380,
+            children: [
+              { label: 'Abtar (cut off)', color: 'var(--accent-danger)', x: 730, y: 320 },
+              { label: 'Compartmentalisation', color: 'var(--accent-danger)', x: 760, y: 400 },
+              { label: 'Ghaflah', color: 'var(--accent-danger)', x: 720, y: 460 }
+            ]
+          },
+          {
+            label: 'The Basmala', color: 'var(--accent-2)', x: 180, y: 180,
+            children: [
+              { label: 'Bismi = In the name of', color: 'var(--accent-3)', x: 50, y: 210 },
+              { label: 'Ar-Rahman = Encompassing', color: 'var(--accent-3)', x: 60, y: 140 },
+              { label: 'Ar-Rahim = Targeted mercy', color: 'var(--accent-3)', x: 100, y: 250 }
+            ]
+          }
+        ]
+      };
+
+      var expanded = {};
+
+      function buildSVG() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // Branch lines from center to children
+        data.children.forEach(function(ch) {
+          svg.appendChild(createSvgElement('line', {
+            class: 'mm-branch-line', x1: String(CX), y1: String(CY), x2: String(ch.x), y2: String(ch.y)
+          }));
+        });
+
+        // Child lines and child nodes
+        data.children.forEach(function(ch, i) {
+          if (ch.children) {
+            ch.children.forEach(function(gc) {
+              var line = createSvgElement('line', {
+                class: 'mm-child-line' + (expanded[i] ? ' visible' : ''),
+                'data-parent': String(i),
+                x1: String(ch.x), y1: String(ch.y), x2: String(gc.x), y2: String(gc.y)
+              });
+              svg.appendChild(line);
+            });
+          }
+        });
+
+        // Grandchild nodes
+        data.children.forEach(function(ch, i) {
+          if (ch.children) {
+            ch.children.forEach(function(gc) {
+              var g = createSvgElement('g', {
+                class: 'mm-child-group' + (expanded[i] ? ' visible' : ''),
+                'data-parent': String(i)
+              });
+              g.appendChild(createSvgElement('ellipse', {
+                class: 'mm-node-bg', cx: String(gc.x), cy: String(gc.y), rx: '55', ry: '18', fill: gc.color, opacity: '0.7'
+              }));
+              var txt = createSvgElement('text', {
+                class: 'mm-node-text', x: String(gc.x), y: String(gc.y + 4),
+                'text-anchor': 'middle', fill: 'white', 'font-size': '8', 'font-weight': '600'
+              });
+              txt.textContent = gc.label;
+              g.appendChild(txt);
+              svg.appendChild(g);
+            });
+          }
+        });
+
+        // Branch nodes (clickable)
+        data.children.forEach(function(ch, i) {
+          var isExp = expanded[i];
+          var g = createSvgElement('g', { class: 'mm-group' + (isExp ? ' expanded' : ''), 'data-branch': String(i) });
+          g.appendChild(createSvgElement('ellipse', {
+            class: 'mm-node-bg', cx: String(ch.x), cy: String(ch.y), rx: '62', ry: '22', fill: ch.color, opacity: '0.88'
+          }));
+          var lbl = createSvgElement('text', {
+            class: 'mm-node-text', x: String(ch.x), y: String(ch.y + 4),
+            'text-anchor': 'middle', fill: 'white', 'font-size': '10', 'font-weight': '700'
+          });
+          lbl.textContent = ch.label;
+          g.appendChild(lbl);
+          if (!isExp) {
+            var hint = createSvgElement('text', {
+              class: 'mm-expand-hint', x: String(ch.x), y: String(ch.y + 18), 'text-anchor': 'middle'
+            });
+            hint.textContent = 'click to expand';
+            g.appendChild(hint);
+          }
+          g.addEventListener('click', function() {
+            expanded[i] = !expanded[i];
+            buildSVG();
+          });
+          svg.appendChild(g);
+        });
+
+        // Center node
+        svg.appendChild(createSvgElement('ellipse', {
+          cx: String(CX), cy: String(CY), rx: String(data.rx), ry: String(data.ry), fill: data.color, opacity: '0.15'
+        }));
+        svg.appendChild(createSvgElement('ellipse', {
+          cx: String(CX), cy: String(CY), rx: '50', ry: '25', fill: data.color, opacity: '0.92'
+        }));
+        var centerTxt = createSvgElement('text', {
+          x: String(CX), y: String(CY + 5), 'text-anchor': 'middle', fill: 'white',
+          'font-family': 'Inter', 'font-size': '14', 'font-weight': '800'
+        });
+        centerTxt.textContent = data.label;
+        svg.appendChild(centerTxt);
+      }
+
+      buildSVG();
+    }
+
+    initMindMap();
+
+
+    // ---- QUIZ & TABS ----
+    var QUESTIONS = [
       { question: "What is Bismillah's position in the Barakah Culture Manifesto?", options: ["The fifth element", "The last element", "The first and most fundamental element", "An optional element"], correct: 2, explanation: "Bismillah is the first element of the Manifesto -- the gateway to Barakah and the most fundamental practice." },
       { question: "How many chapters of the Quran begin with Bismillah?", options: ["All 114", "113 out of 114", "100 out of 114", "Only the first chapter"], correct: 1, explanation: "Every chapter of the Quran opens with Bismillah except Surah At-Tawbah (chapter 9)." },
       { question: "What does the hadith say about a matter of importance not begun with Bismillah?", options: ["It will succeed regardless", "It is abtar (cut off from blessing)", "It must be repeated", "It is sinful"], correct: 1, explanation: "The Prophet (peace be upon him) indicated that any important matter not begun with Bismillah is 'abtar' -- cut off from divine blessing." },

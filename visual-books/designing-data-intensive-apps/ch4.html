@@ -15,6 +15,53 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animations */
+    .step-through { position: relative; }
+    .step-through .step-controls { display: flex; gap: 0.5rem; align-items: center; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+    .step-through .step-controls .btn { min-width: 100px; justify-content: center; }
+    .step-through .step-indicator { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); padding: 0 0.75rem; }
+    .step-through .step-description { text-align: center; font-size: 0.88rem; color: var(--text); margin-top: 0.75rem; min-height: 2.5em; padding: 0.5rem 1rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+
+    /* Interactive exercises */
+    .exercise-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin: 1.5rem 0; }
+    .exercise-box h3 { display: flex; align-items: center; gap: 0.5rem; color: var(--accent-2); margin-bottom: 0.5rem; font-size: 1.05rem; }
+    .exercise-box .exercise-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .exercise-box .exercise-feedback { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 600; display: none; }
+    .exercise-box .exercise-feedback.visible { display: block; }
+    .exercise-box .exercise-feedback.correct { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .exercise-box .exercise-feedback.incorrect { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+
+    /* Drag-drop / Matching exercise */
+    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .match-col { display: flex; flex-direction: column; gap: 0.5rem; }
+    .match-item { padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; border: 2px solid var(--border-2); background: var(--surface-2); user-select: none; }
+    .match-item:hover { border-color: var(--accent-2); }
+    .match-item.selected { border-color: var(--accent-2); background: rgba(37,99,235,0.1); }
+    .match-item.matched { border-color: var(--accent-3); background: var(--success-bg); pointer-events: none; opacity: 0.7; }
+    .match-item.wrong { border-color: var(--accent-danger); background: var(--error-bg); animation: shake 0.4s; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
+
+    /* Sorting exercise */
+    .sort-items { display: flex; flex-direction: column; gap: 0.5rem; }
+    .sort-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--border-2); cursor: grab; user-select: none; font-size: 0.88rem; transition: all 0.2s; }
+    .sort-item:active { cursor: grabbing; }
+    .sort-item .sort-handle { color: var(--text-light); font-size: 0.8rem; }
+    .sort-item .sort-num { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent-2); color: white; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+    .sort-item.correct-pos { border-color: var(--accent-3); background: var(--success-bg); }
+    .sort-item.wrong-pos { border-color: var(--accent-danger); background: var(--error-bg); }
+    .sort-arrows { display: flex; gap: 0.25rem; margin-left: auto; }
+    .sort-arrows button { background: none; border: 1px solid var(--border-2); border-radius: 4px; padding: 0.2rem 0.4rem; cursor: pointer; color: var(--text-muted); font-size: 0.7rem; }
+    .sort-arrows button:hover { background: var(--surface-hover); }
+
+    /* Mind map interactive */
+    .mm-instructions { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .mm-tooltip { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; font-size: 0.8rem; color: var(--text); max-width: 220px; box-shadow: var(--shadow); pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 10; }
+    .mm-tooltip.visible { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .match-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body data-chapter="ch4">
@@ -53,19 +100,185 @@
     <!-- TAB: Lessons -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- ===== LESSON 1 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>Formats for Encoding Data</h2></div>
         <p>Programs work with data in at least two representations: <strong>in memory</strong> (objects, structs, arrays, hash tables -- optimized for CPU access) and <strong>on disk or network</strong> (self-contained sequences of bytes). The translation from in-memory to bytes is called <strong>encoding</strong> (serialization, marshalling); the reverse is <strong>decoding</strong> (deserialization, unmarshalling).</p>
+
+        <!-- SVG: In-Memory vs On-Wire -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Two Representations of Data</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs>
+              <marker id="arr-enc" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker>
+              <marker id="arr-dec" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/></marker>
+            </defs>
+            <!-- In-Memory box -->
+            <rect x="20" y="30" width="220" height="140" rx="14" fill="var(--accent-2)" opacity="0.07" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="130" y="55" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">In-Memory</text>
+            <rect x="40" y="68" width="80" height="24" rx="5" fill="var(--accent-2)" opacity="0.2"/>
+            <text x="80" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">HashMap</text>
+            <rect x="140" y="68" width="80" height="24" rx="5" fill="var(--accent-2)" opacity="0.2"/>
+            <text x="180" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">Object</text>
+            <rect x="40" y="100" width="80" height="24" rx="5" fill="var(--accent-2)" opacity="0.2"/>
+            <text x="80" y="116" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">Array</text>
+            <rect x="140" y="100" width="80" height="24" rx="5" fill="var(--accent-2)" opacity="0.2"/>
+            <text x="180" y="116" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">Struct</text>
+            <text x="130" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Pointers, vtables, padding</text>
+
+            <!-- Arrows -->
+            <line x1="248" y1="85" x2="368" y2="85" stroke="var(--accent-2)" stroke-width="2" marker-end="url(#arr-enc)"/>
+            <text x="308" y="78" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Encode</text>
+            <line x1="368" y1="115" x2="248" y2="115" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arr-dec)"/>
+            <text x="308" y="133" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Decode</text>
+
+            <!-- On-Wire box -->
+            <rect x="376" y="30" width="220" height="140" rx="14" fill="var(--accent-3)" opacity="0.07" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="486" y="55" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">On Disk / Network</text>
+            <rect x="396" y="72" width="180" height="20" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="486" y="86" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">01001010 11100010 ...</text>
+            <rect x="396" y="98" width="180" height="20" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="486" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">{"name":"Martin",...}</text>
+            <rect x="396" y="124" width="180" height="20" rx="4" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="486" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">&lt;record&gt;...&lt;/record&gt;</text>
+            <text x="486" y="160" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Self-contained byte sequence</text>
+          </svg>
+          <p class="viz-caption">In-memory structures use pointers, padding, and language-specific layouts. Encoded data is a flat byte sequence that any language can read.</p>
+        </div>
+
         <p><strong>Language-specific formats</strong> (Java's <code>java.io.Serializable</code>, Python's <code>pickle</code>, Ruby's <code>Marshal</code>): Convenient but deeply flawed. They tie you to one language, often have <strong>security vulnerabilities</strong> (deserializing untrusted data can execute arbitrary code), poor versioning/forward-backward compatibility, and often poor performance.</p>
+
+        <!-- SVG: Language-Specific Format Problems -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> Problems with Language-Specific Formats</div>
+          <svg viewBox="0 0 620 160" width="100%" height="160">
+            <rect x="10" y="10" width="140" height="140" rx="12" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="80" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-danger)">Language Lock-in</text>
+            <text x="80" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Java pickle can't</text>
+            <text x="80" y="68" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">be read by Python</text>
+            <text x="80" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="var(--accent-danger)"><tspan font-family="Font Awesome 6 Free" font-weight="900">&#xf023;</tspan></text>
+            <text x="80" y="130" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Stuck with one language</text>
+
+            <rect x="165" y="10" width="140" height="140" rx="12" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="235" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-danger)">Security Risk</text>
+            <text x="235" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Deserializing can</text>
+            <text x="235" y="68" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">execute arbitrary code</text>
+            <text x="235" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="var(--accent-danger)"><tspan font-family="Font Awesome 6 Free" font-weight="900">&#xf071;</tspan></text>
+            <text x="235" y="130" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Remote code execution</text>
+
+            <rect x="320" y="10" width="140" height="140" rx="12" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="390" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-danger)">No Versioning</text>
+            <text x="390" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Adding/removing fields</text>
+            <text x="390" y="68" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">breaks old readers</text>
+            <text x="390" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="var(--accent-danger)"><tspan font-family="Font Awesome 6 Free" font-weight="900">&#xf06a;</tspan></text>
+            <text x="390" y="130" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Poor forward/backward compat</text>
+
+            <rect x="475" y="10" width="140" height="140" rx="12" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="545" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-danger)">Poor Performance</text>
+            <text x="545" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Java serialization</text>
+            <text x="545" y="68" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">is notoriously slow</text>
+            <text x="545" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="var(--accent-danger)"><tspan font-family="Font Awesome 6 Free" font-weight="900">&#xf520;</tspan></text>
+            <text x="545" y="130" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Bloated output, slow parsing</text>
+          </svg>
+        </div>
+
         <p><strong>JSON and XML:</strong> Widely supported, human-readable, language-independent. But they have problems. JSON doesn't distinguish integers from floating-point numbers (everything is a "number"). JSON doesn't support binary strings (workaround: Base64, which increases size by 33%). XML is verbose. Neither has a schema mechanism that's widely adopted or enforced.</p>
         <p><strong>Binary JSON variants</strong> (MessagePack, BSON, BJSON, UBJSON, BISON): Encode JSON in binary for compactness and faster parsing. But the space savings are modest -- a 81-byte JSON document might become 66 bytes in MessagePack. The data model is still JSON, so you still have the number ambiguity and no schema.</p>
+
+        <!-- SVG: Format Spectrum -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-ruler-horizontal"></i> Encoding Format Spectrum</div>
+          <svg viewBox="0 0 620 120" width="100%" height="120">
+            <!-- Axis -->
+            <line x1="40" y1="60" x2="580" y2="60" stroke="var(--border)" stroke-width="2"/>
+            <text x="40" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Human</text>
+            <text x="40" y="107" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Readable</text>
+            <text x="580" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Machine</text>
+            <text x="580" y="107" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Optimal</text>
+            <!-- Markers -->
+            <circle cx="80" cy="60" r="18" fill="var(--accent)" opacity="0.8"/>
+            <text x="80" y="64" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">XML</text>
+            <text x="80" y="35" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">verbose</text>
+
+            <circle cx="170" cy="60" r="18" fill="var(--accent)" opacity="0.7"/>
+            <text x="170" y="64" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">JSON</text>
+            <text x="170" y="35" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">81 bytes</text>
+
+            <circle cx="290" cy="60" r="18" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="290" y="64" text-anchor="middle" font-family="Inter" font-size="7" font-weight="600" fill="white">MsgPk</text>
+            <text x="290" y="35" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">66 bytes</text>
+
+            <circle cx="420" cy="60" r="22" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="420" y="64" text-anchor="middle" font-family="Inter" font-size="7" font-weight="600" fill="white">Protobuf</text>
+            <text x="420" y="35" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">33 bytes</text>
+
+            <circle cx="530" cy="60" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="530" y="64" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">Avro</text>
+            <text x="530" y="35" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">32 bytes</text>
+          </svg>
+          <p class="viz-caption">The trade-off: human readability decreases as compactness and parsing speed improve. Schema-based formats offer the best of both worlds with the schema file providing readability.</p>
+        </div>
       </div>
 
+      <!-- ===== LESSON 2 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Thrift, Protocol Buffers, and Avro</h2></div>
         <p>These are <strong>schema-based binary encoding</strong> formats. You define a schema with field names, types, and numeric <strong>field tags</strong>. The encoded data uses field tags instead of field names, making it more compact.</p>
         <p><strong>Apache Thrift</strong> (Facebook) has two encodings: BinaryProtocol (field tag + type + length + value) and CompactProtocol (packs field tag and type into a single byte, uses variable-length integers). <strong>Protocol Buffers (Protobuf)</strong> (Google) is similar to Thrift's CompactProtocol -- very efficient, variable-length integers, packed into minimal bytes.</p>
         <p>Both Thrift and Protobuf use <strong>field tags</strong> (numbers) as the identity of each field. The field name is only for human readability in the schema file -- it never appears in the encoded data. This is critical for schema evolution: you can change a field's name freely, but you must never change its tag number.</p>
+
+        <!-- SVG: Schema Definition -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-file-code"></i> Schema to Binary: How Field Tags Work</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <!-- Schema box -->
+            <rect x="10" y="10" width="280" height="110" rx="10" fill="var(--surface-2)" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="150" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Protobuf Schema (.proto)</text>
+            <text x="28" y="52" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">message Person {</text>
+            <text x="42" y="66" font-family="JetBrains Mono" font-size="9" fill="var(--text)">  string userName    = <tspan fill="var(--accent)" font-weight="700">1</tspan>;</text>
+            <text x="42" y="80" font-family="JetBrains Mono" font-size="9" fill="var(--text)">  int64  favNumber   = <tspan fill="var(--accent)" font-weight="700">2</tspan>;</text>
+            <text x="42" y="94" font-family="JetBrains Mono" font-size="9" fill="var(--text)">  repeated string interests = <tspan fill="var(--accent)" font-weight="700">3</tspan>;</text>
+            <text x="28" y="108" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">}</text>
+
+            <!-- Arrow -->
+            <defs><marker id="arr-schema" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker></defs>
+            <line x1="295" y1="65" x2="330" y2="65" stroke="var(--accent-2)" stroke-width="2" marker-end="url(#arr-schema)"/>
+            <text x="312" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">encode</text>
+
+            <!-- Binary output -->
+            <rect x="335" y="10" width="275" height="110" rx="10" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="472" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Encoded Bytes (33 total)</text>
+            <!-- Field 1 -->
+            <rect x="350" y="44" width="28" height="18" rx="3" fill="var(--accent)" opacity="0.7"/>
+            <text x="364" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">T=1</text>
+            <rect x="380" y="44" width="60" height="18" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="410" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">Martin</text>
+            <!-- Field 2 -->
+            <rect x="350" y="68" width="28" height="18" rx="3" fill="var(--accent)" opacity="0.7"/>
+            <text x="364" y="81" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">T=2</text>
+            <rect x="380" y="68" width="40" height="18" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="400" y="81" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">1337</text>
+            <!-- Field 3 -->
+            <rect x="350" y="92" width="28" height="18" rx="3" fill="var(--accent)" opacity="0.7"/>
+            <text x="364" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">T=3</text>
+            <rect x="380" y="92" width="85" height="18" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="422" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">daydreaming</text>
+            <rect x="468" y="92" width="28" height="18" rx="3" fill="var(--accent)" opacity="0.7"/>
+            <text x="482" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">T=3</text>
+            <rect x="498" y="92" width="58" height="18" rx="3" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="527" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">hacking</text>
+
+            <!-- Key insight -->
+            <rect x="10" y="138" width="600" height="48" rx="8" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="310" y="158" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Key Insight: Field names never appear in the encoded data</text>
+            <text x="310" y="175" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Only numeric tags (1, 2, 3) are stored. You can rename "userName" to "name" freely, but never change tag 1 to tag 4.</text>
+
+            <!-- Avro comparison -->
+            <rect x="10" y="198" width="600" height="36" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="310" y="215" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Avro goes further: no tags at all -- just values in schema order. Relies on writer/reader schema resolution.</text>
+          </svg>
+        </div>
+
         <p><strong>Apache Avro</strong> takes a different approach: <em>no field tags at all</em>. The encoded data is just values concatenated together. To decode it, you need both the <strong>writer's schema</strong> (the schema used when encoding) and the <strong>reader's schema</strong> (the schema the reading code expects). Avro resolves the two schemas at read time, matching fields by name. This makes Avro the most compact, and the writer's schema can be included once per file (for Hadoop) or negotiated per connection (for RPC).</p>
 
         <div class="viz-container">
@@ -120,22 +333,287 @@
           </svg>
           <p class="viz-caption">JSON: 81 bytes (field names as strings). Protobuf: 33 bytes (numeric field tags). Avro: 32 bytes (no tags at all, relies on schema resolution).</p>
         </div>
+
+        <!-- Step-Through 1: Avro Schema Resolution -->
+        <div class="viz-container step-through" id="avroResolution">
+          <div class="viz-title"><i class="fas fa-sync-alt"></i> Step-Through: Avro Writer/Reader Schema Resolution</div>
+          <svg id="avroResSvg" viewBox="0 0 620 260" width="100%" height="260">
+            <defs><marker id="arr-avro" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker></defs>
+
+            <!-- Writer Schema box -->
+            <rect id="avro-ws-box" x="10" y="10" width="180" height="170" rx="10" fill="var(--surface-2)" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="100" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Writer's Schema</text>
+            <rect id="avro-ws-f1" x="25" y="42" width="150" height="22" rx="4" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="0.5"/>
+            <text x="100" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">userName: string</text>
+            <rect id="avro-ws-f2" x="25" y="70" width="150" height="22" rx="4" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="0.5"/>
+            <text x="100" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">favNumber: long</text>
+            <rect id="avro-ws-f3" x="25" y="98" width="150" height="22" rx="4" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="0.5"/>
+            <text x="100" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">interests: [string]</text>
+            <rect id="avro-ws-f4" x="25" y="126" width="150" height="22" rx="4" fill="var(--surface-2)" stroke="var(--border-2)" stroke-width="0.5" opacity="0"/>
+            <text id="avro-ws-f4-text" x="100" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)" opacity="0">email: string</text>
+
+            <!-- Encoded data -->
+            <rect id="avro-data-box" x="220" y="10" width="180" height="170" rx="10" fill="var(--surface-2)" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="310" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Encoded Data</text>
+            <rect id="avro-d1" x="235" y="42" width="150" height="22" rx="4" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="0.5"/>
+            <text id="avro-d1-text" x="310" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">"Martin"</text>
+            <rect id="avro-d2" x="235" y="70" width="150" height="22" rx="4" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="0.5"/>
+            <text id="avro-d2-text" x="310" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">1337</text>
+            <rect id="avro-d3" x="235" y="98" width="150" height="22" rx="4" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="0.5"/>
+            <text id="avro-d3-text" x="310" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">["daydreaming",...]</text>
+
+            <!-- Reader Schema box -->
+            <rect id="avro-rs-box" x="430" y="10" width="180" height="170" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="520" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Reader's Schema</text>
+            <rect id="avro-rs-f1" x="445" y="42" width="150" height="22" rx="4" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="0.5"/>
+            <text x="520" y="57" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">userName: string</text>
+            <rect id="avro-rs-f2" x="445" y="70" width="150" height="22" rx="4" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="0.5"/>
+            <text x="520" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">favNumber: long</text>
+            <rect id="avro-rs-f5" x="445" y="98" width="150" height="22" rx="4" fill="var(--surface-2)" stroke="var(--border-2)" stroke-width="0.5" opacity="0"/>
+            <text id="avro-rs-f5-text" x="520" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)" opacity="0">age: int (default=0)</text>
+
+            <!-- Resolution arrows (hidden initially) -->
+            <line id="avro-match1" x1="175" y1="53" x2="233" y2="53" stroke="var(--accent-3)" stroke-width="0" marker-end="url(#arr-avro)" opacity="0"/>
+            <line id="avro-match2" x1="385" y1="53" x2="443" y2="53" stroke="var(--accent-3)" stroke-width="0" opacity="0"/>
+            <line id="avro-match3" x1="175" y1="81" x2="233" y2="81" stroke="var(--accent-3)" stroke-width="0" marker-end="url(#arr-avro)" opacity="0"/>
+            <line id="avro-match4" x1="385" y1="81" x2="443" y2="81" stroke="var(--accent-3)" stroke-width="0" opacity="0"/>
+
+            <!-- Step label -->
+            <text id="avro-step-label" x="310" y="210" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text-light)">Click "Next Step" to begin</text>
+            <text id="avro-step-label2" x="310" y="230" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)"></text>
+          </svg>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="avroPrevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="avroIndicator">Step 0 / 5</span>
+            <button class="btn btn-primary btn-sm" id="avroNextBtn">Next Step <i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="step-description" id="avroDesc">Avro resolves differences between the writer's schema and reader's schema at read time. Step through to see how.</div>
+        </div>
       </div>
 
+      <!-- ===== LESSON 3 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Schema Evolution</h2></div>
         <p>Schemas inevitably change over time. The key question is whether old and new code can coexist -- typically during rolling upgrades where not all servers are updated simultaneously.</p>
+
+        <!-- SVG: Forward vs Backward Compatibility -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-alt-h"></i> Forward vs Backward Compatibility</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs>
+              <marker id="arr-fwd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker>
+              <marker id="arr-bwd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/></marker>
+            </defs>
+
+            <!-- Forward compat -->
+            <rect x="10" y="10" width="295" height="200" rx="12" fill="var(--accent-2)" opacity="0.04" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="157" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Forward Compatibility</text>
+            <text x="157" y="52" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Old code reads NEW data</text>
+
+            <rect x="30" y="70" width="80" height="50" rx="8" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">New Code</text>
+            <text x="70" y="104" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.7)">v2 writes</text>
+
+            <rect x="200" y="70" width="80" height="50" rx="8" fill="var(--accent-2)" opacity="0.5"/>
+            <text x="240" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Old Code</text>
+            <text x="240" y="104" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.7)">v1 reads</text>
+
+            <line x1="112" y1="95" x2="198" y2="95" stroke="var(--accent-2)" stroke-width="2" marker-end="url(#arr-fwd)"/>
+            <text x="155" y="88" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">data</text>
+
+            <text x="157" y="145" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Unknown fields? Skip them.</text>
+            <text x="157" y="162" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Type annotation tells old code</text>
+            <text x="157" y="175" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">how many bytes to skip.</text>
+            <text x="157" y="198" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">Works automatically in Thrift/Protobuf</text>
+
+            <!-- Backward compat -->
+            <rect x="315" y="10" width="295" height="200" rx="12" fill="var(--accent-3)" opacity="0.04" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="462" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">Backward Compatibility</text>
+            <text x="462" y="52" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">New code reads OLD data</text>
+
+            <rect x="335" y="70" width="80" height="50" rx="8" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="375" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">Old Code</text>
+            <text x="375" y="104" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.7)">v1 wrote</text>
+
+            <rect x="505" y="70" width="80" height="50" rx="8" fill="var(--accent-3)" opacity="0.7"/>
+            <text x="545" y="90" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">New Code</text>
+            <text x="545" y="104" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.7)">v2 reads</text>
+
+            <line x1="417" y1="95" x2="503" y2="95" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arr-bwd)"/>
+            <text x="460" y="88" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">data</text>
+
+            <text x="462" y="145" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Missing fields? Use defaults.</text>
+            <text x="462" y="162" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">New code fills in default values</text>
+            <text x="462" y="175" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">for fields not in old data.</text>
+            <text x="462" y="198" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">New fields must be optional (have defaults)!</text>
+          </svg>
+        </div>
+
         <p><strong>Forward compatibility:</strong> Old code can read data written by new code. When old code encounters an unknown field tag, it simply skips it (the type annotation tells it how many bytes to skip). This works automatically in Thrift and Protobuf.</p>
         <p><strong>Backward compatibility:</strong> New code can read data written by old code. When new code expects a field that's missing from old data, it uses the <strong>default value</strong> defined in the schema. This means you can add new fields freely, as long as they have defaults (or are optional). You must never add a new <em>required</em> field -- old data won't have it, breaking backward compatibility.</p>
+
+        <!-- SVG: Safe vs Unsafe Schema Changes -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shield-alt"></i> Safe vs Unsafe Schema Changes</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Safe -->
+            <rect x="10" y="10" width="295" height="180" rx="12" fill="var(--success-bg)" stroke="var(--success-border)" stroke-width="1.5"/>
+            <text x="157" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">SAFE Changes</text>
+            <rect x="25" y="50" width="265" height="24" rx="5" fill="var(--accent-3)" opacity="0.1"/>
+            <text x="157" y="66" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Add optional field with default value</text>
+            <rect x="25" y="80" width="265" height="24" rx="5" fill="var(--accent-3)" opacity="0.1"/>
+            <text x="157" y="96" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Remove an optional field (retire its tag)</text>
+            <rect x="25" y="110" width="265" height="24" rx="5" fill="var(--accent-3)" opacity="0.1"/>
+            <text x="157" y="126" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Rename a field (tag stays the same)</text>
+            <rect x="25" y="140" width="265" height="24" rx="5" fill="var(--accent-3)" opacity="0.1"/>
+            <text x="157" y="156" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Change field type (if widening, e.g. int32 to int64)</text>
+
+            <!-- Unsafe -->
+            <rect x="315" y="10" width="295" height="180" rx="12" fill="var(--error-bg)" stroke="var(--error-border)" stroke-width="1.5"/>
+            <text x="462" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-danger)">UNSAFE Changes</text>
+            <rect x="330" y="50" width="265" height="24" rx="5" fill="var(--accent-danger)" opacity="0.08"/>
+            <text x="462" y="66" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Add a required field (old data lacks it)</text>
+            <rect x="330" y="80" width="265" height="24" rx="5" fill="var(--accent-danger)" opacity="0.08"/>
+            <text x="462" y="96" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Remove a required field</text>
+            <rect x="330" y="110" width="265" height="24" rx="5" fill="var(--accent-danger)" opacity="0.08"/>
+            <text x="462" y="126" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Reuse a deleted field's tag number</text>
+            <rect x="330" y="140" width="265" height="24" rx="5" fill="var(--accent-danger)" opacity="0.08"/>
+            <text x="462" y="156" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text)">Change a field's tag number</text>
+          </svg>
+        </div>
+
         <p><strong>Rules for safe evolution:</strong> Never remove a required field. Never reuse a field tag number (even after removing the field). Only add optional fields with default values. In Protobuf/Thrift, removing a field means its tag can never be used again.</p>
         <p><strong>Avro's approach</strong> is different: the reader's schema and writer's schema don't need to be identical -- they just need to be <em>compatible</em>. Avro resolves differences by matching fields by name. If the writer has a field the reader doesn't expect, it's ignored. If the reader expects a field the writer didn't include, the default value is used. This makes Avro particularly friendly for schema evolution in data pipelines.</p>
+
+        <!-- Step-Through 2: Rolling Upgrade with Schema Evolution -->
+        <div class="viz-container step-through" id="rollingUpgrade">
+          <div class="viz-title"><i class="fas fa-server"></i> Step-Through: Rolling Upgrade with Schema Evolution</div>
+          <svg id="rollingUpgradeSvg" viewBox="0 0 620 240" width="100%" height="240">
+            <defs><marker id="arr-roll" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+
+            <!-- Servers -->
+            <rect id="ru-s1" x="30" y="30" width="100" height="65" rx="10" fill="var(--accent)" opacity="0.7"/>
+            <text x="80" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Server A</text>
+            <text id="ru-s1-ver" x="80" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.7)">v1 (old)</text>
+
+            <rect id="ru-s2" x="160" y="30" width="100" height="65" rx="10" fill="var(--accent)" opacity="0.7"/>
+            <text x="210" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Server B</text>
+            <text id="ru-s2-ver" x="210" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.7)">v1 (old)</text>
+
+            <rect id="ru-s3" x="290" y="30" width="100" height="65" rx="10" fill="var(--accent)" opacity="0.7"/>
+            <text x="340" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Server C</text>
+            <text id="ru-s3-ver" x="340" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.7)">v1 (old)</text>
+
+            <!-- Database -->
+            <rect id="ru-db" x="420" y="30" width="180" height="65" rx="10" fill="var(--surface-2)" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="510" y="52" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">Shared Database</text>
+            <text id="ru-db-schema" x="510" y="72" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Schema v1 data</text>
+
+            <!-- Data flow arrows -->
+            <line id="ru-arr1" x1="130" y1="62" x2="418" y2="62" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-roll)" opacity="0.3"/>
+            <line id="ru-arr2" x1="260" y1="57" x2="418" y2="57" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-roll)" opacity="0.3"/>
+            <line id="ru-arr3" x1="390" y1="52" x2="418" y2="52" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-roll)" opacity="0.3"/>
+
+            <!-- Compatibility indicators -->
+            <rect id="ru-compat-box" x="30" y="120" width="570" height="50" rx="10" fill="var(--surface-2)" stroke="var(--border-2)" stroke-width="1" opacity="0"/>
+            <text id="ru-compat-label" x="315" y="140" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text)" opacity="0"></text>
+            <text id="ru-compat-detail" x="315" y="158" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)" opacity="0"></text>
+
+            <!-- Status bar -->
+            <rect id="ru-status-bg" x="30" y="190" width="570" height="30" rx="6" fill="var(--surface-2)" stroke="var(--border-2)" stroke-width="1"/>
+            <rect id="ru-status-fill" x="30" y="190" width="0" height="30" rx="6" fill="var(--accent-3)" opacity="0.3"/>
+            <text id="ru-status-text" x="315" y="210" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text-muted)">All servers on v1</text>
+          </svg>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="rollPrevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="rollIndicator">Step 0 / 5</span>
+            <button class="btn btn-primary btn-sm" id="rollNextBtn">Next Step <i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="step-description" id="rollDesc">During a rolling upgrade, servers are updated one at a time. Old and new code must coexist, reading and writing data to the same database. Step through to see the compatibility requirements.</div>
+        </div>
       </div>
 
+      <!-- ===== LESSON 4 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>Modes of Dataflow</h2></div>
         <p>Data gets encoded and decoded in three main contexts:</p>
         <p><strong>Through databases:</strong> The writing process encodes data; the reading process decodes it. The reader might be a different version of the application (or even a different application entirely). Data in a database can outlive the code that wrote it by many years -- you might decode data that was written 5 years ago by long-obsolete code. Forward compatibility is crucial: an older version of the code might read and re-write a record, and must not destroy unknown fields added by newer code.</p>
+
+        <!-- SVG: Database Dataflow Timeline -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-database"></i> Data Outlives Code in Databases</div>
+          <svg viewBox="0 0 620 160" width="100%" height="160">
+            <!-- Timeline -->
+            <line x1="40" y1="80" x2="580" y2="80" stroke="var(--border)" stroke-width="2"/>
+            <!-- Year markers -->
+            <line x1="80" y1="72" x2="80" y2="88" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="80" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-light)">2019</text>
+            <text x="80" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)">v1 writes</text>
+            <circle cx="80" cy="80" r="5" fill="var(--accent)"/>
+
+            <line x1="200" y1="72" x2="200" y2="88" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="200" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-light)">2020</text>
+            <text x="200" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">v2 writes</text>
+            <circle cx="200" cy="80" r="5" fill="var(--accent-2)"/>
+
+            <line x1="320" y1="72" x2="320" y2="88" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="320" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-light)">2021</text>
+            <text x="320" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">v3 writes</text>
+            <circle cx="320" cy="80" r="5" fill="var(--accent-3)"/>
+
+            <line x1="440" y1="72" x2="440" y2="88" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="440" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-light)">2023</text>
+
+            <line x1="540" y1="72" x2="540" y2="88" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="540" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-light)">2024</text>
+            <text x="540" y="58" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)">v5 reads ALL</text>
+            <circle cx="540" cy="80" r="7" fill="var(--accent)" stroke="white" stroke-width="2"/>
+
+            <!-- Arrows showing v5 reads old data -->
+            <path d="M 540 75 Q 540 30 80 45" stroke="var(--accent)" stroke-width="1" fill="none" stroke-dasharray="4 3" opacity="0.5"/>
+            <path d="M 540 75 Q 540 30 200 45" stroke="var(--accent)" stroke-width="1" fill="none" stroke-dasharray="4 3" opacity="0.5"/>
+            <path d="M 540 75 Q 540 35 320 45" stroke="var(--accent)" stroke-width="1" fill="none" stroke-dasharray="4 3" opacity="0.5"/>
+
+            <!-- Data persistence bar -->
+            <rect x="80" y="125" width="460" height="20" rx="4" fill="var(--accent-2)" opacity="0.1"/>
+            <text x="310" y="139" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Data persists across ALL code versions -- backward compat is essential</text>
+          </svg>
+        </div>
+
         <p><strong>Through services (REST and RPC):</strong> A client encodes a request, the server decodes it, processes it, encodes a response, and the client decodes the response. <strong>REST</strong> uses HTTP with JSON (or other formats), is widely adopted, and works well for public APIs. <strong>RPC</strong> (Remote Procedure Call) tries to make network calls look like local function calls -- but this is fundamentally flawed. Network calls are unpredictable (timeouts, retries, variable latency), not idempotent by default, and involve serialization overhead. Modern RPC frameworks (gRPC with Protobuf, Finagle with Thrift) acknowledge these differences. Service compatibility requires maintaining old and new API versions simultaneously during rolling upgrades.</p>
+
+        <!-- SVG: RPC vs Local Call -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-network-wired"></i> RPC vs Local Function Call: The Hidden Differences</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Local call -->
+            <rect x="10" y="10" width="295" height="180" rx="12" fill="var(--accent-3)" opacity="0.04" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="157" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Local Function Call</text>
+            <rect x="30" y="50" width="255" height="22" rx="5" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="157" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Predictable latency (nanoseconds)</text>
+            <rect x="30" y="78" width="255" height="22" rx="5" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="157" y="93" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Either succeeds or throws exception</text>
+            <rect x="30" y="106" width="255" height="22" rx="5" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="157" y="121" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Pass objects by reference (pointers)</text>
+            <rect x="30" y="134" width="255" height="22" rx="5" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="157" y="149" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Same language, same process</text>
+            <text x="157" y="178" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Simple and reliable</text>
+
+            <!-- RPC call -->
+            <rect x="315" y="10" width="295" height="180" rx="12" fill="var(--accent)" opacity="0.04" stroke="var(--accent)" stroke-width="1"/>
+            <text x="462" y="35" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">RPC (Network Call)</text>
+            <rect x="335" y="50" width="255" height="22" rx="5" fill="var(--accent)" opacity="0.06"/>
+            <text x="462" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Unpredictable latency (ms to seconds)</text>
+            <rect x="335" y="78" width="255" height="22" rx="5" fill="var(--accent)" opacity="0.06"/>
+            <text x="462" y="93" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Can timeout, lose packets, or partially fail</text>
+            <rect x="335" y="106" width="255" height="22" rx="5" fill="var(--accent)" opacity="0.06"/>
+            <text x="462" y="121" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Must serialize all data to bytes</text>
+            <rect x="335" y="134" width="255" height="22" rx="5" fill="var(--accent)" opacity="0.06"/>
+            <text x="462" y="149" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Different languages, different machines</text>
+            <text x="462" y="178" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Fundamentally different -- don't hide it!</text>
+          </svg>
+        </div>
+
         <p><strong>Through asynchronous messaging:</strong> <strong>Message brokers</strong> (RabbitMQ, Kafka) act as intermediaries. The sender encodes a message, the broker stores it temporarily, and the recipient decodes it. Advantages: decoupling (sender doesn't need to know who receives the message), buffering (broker handles backpressure), and re-delivery on failure. The <strong>actor model</strong> (Akka, Erlang OTP) is a programming model where actors communicate exclusively by sending asynchronous messages, with each actor processing one message at a time. Distributed actor frameworks (across machines) combine message brokering with the actor model.</p>
 
         <div class="viz-container">
@@ -203,6 +681,7 @@
         </div>
       </div>
 
+      <!-- ===== LESSON 5 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>The Merits of Schemas</h2></div>
         <p>Binary encoding formats with schemas (Protobuf, Thrift, Avro) have several significant advantages over text-based formats like JSON:</p>
@@ -210,8 +689,75 @@
         <p><strong>Schema as documentation:</strong> The schema is always up-to-date because it's required for encoding and decoding. Unlike documentation or comments, it can't become stale -- if the schema doesn't match the data, encoding/decoding fails.</p>
         <p><strong>Compatibility checking:</strong> You can check forward and backward compatibility of schema changes <em>before</em> deploying. The schema registry can reject incompatible changes automatically, preventing data corruption or application crashes.</p>
         <p><strong>Code generation:</strong> For statically typed languages (Java, C++, Go), schemas enable generating classes or structs with type-safe accessors. This gives you compile-time type checking for the data structures, catching errors early.</p>
+
+        <!-- SVG: Schema Benefits -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-star"></i> Four Pillars of Schema Advantages</div>
+          <svg viewBox="0 0 620 150" width="100%" height="150">
+            <rect x="10" y="10" width="140" height="130" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="80" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Compactness</text>
+            <text x="80" y="55" text-anchor="middle" font-family="Inter" font-size="28" fill="var(--accent)">60%</text>
+            <text x="80" y="75" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">smaller than JSON</text>
+            <text x="80" y="95" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">No field names</text>
+            <text x="80" y="108" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">in encoded data</text>
+
+            <rect x="165" y="10" width="140" height="130" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="235" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Documentation</text>
+            <text x="235" y="62" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Schema IS the</text>
+            <text x="235" y="77" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">documentation.</text>
+            <text x="235" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Can't go stale.</text>
+            <text x="235" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Required for encode/decode</text>
+
+            <rect x="320" y="10" width="140" height="130" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="390" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Compat Check</text>
+            <text x="390" y="62" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Verify forward/</text>
+            <text x="390" y="77" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">backward compat</text>
+            <text x="390" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Before deploying.</text>
+            <text x="390" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Schema registry rejects bad</text>
+
+            <rect x="475" y="10" width="140" height="130" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="545" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Code Generation</text>
+            <text x="545" y="62" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Auto-generate</text>
+            <text x="545" y="77" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">type-safe classes</text>
+            <text x="545" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Compile-time checks.</text>
+            <text x="545" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-light)">Java, C++, Go, etc.</text>
+          </svg>
+        </div>
+
         <div class="insight-box">
           <strong>Key insight:</strong> Schema evolution enables rolling upgrades without downtime. By ensuring forward and backward compatibility in your encoding format, you can deploy new code gradually -- some servers run the new version while others still run the old version. This is essential for large-scale systems where you can't update everything simultaneously.
+        </div>
+      </div>
+
+      <!-- ===== INTERACTIVE EXERCISES ===== -->
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number"><i class="fas fa-flask" style="font-size:0.75rem"></i></div><h2>Interactive Exercises</h2></div>
+
+        <!-- Exercise 1: Match Encoding Concepts -->
+        <div class="exercise-box" id="matchExercise">
+          <h3><i class="fas fa-puzzle-piece"></i> Exercise 1: Match the Encoding Concepts</h3>
+          <p class="exercise-desc">Click a concept on the left, then click its matching description on the right. Match all pairs correctly.</p>
+          <div class="match-grid">
+            <div class="match-col" id="matchLeft"></div>
+            <div class="match-col" id="matchRight"></div>
+          </div>
+          <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" id="matchResetBtn"><i class="fas fa-redo"></i> Reset</button>
+            <button class="btn btn-primary btn-sm" id="matchCheckBtn"><i class="fas fa-check"></i> Check Answers</button>
+          </div>
+          <div class="exercise-feedback" id="matchFeedback"></div>
+        </div>
+
+        <!-- Exercise 2: Schema Evolution Validator -->
+        <div class="exercise-box" id="schemaExercise">
+          <h3><i class="fas fa-code-branch"></i> Exercise 2: Is This Schema Change Safe?</h3>
+          <p class="exercise-desc">For each proposed schema change, decide if it is safe (maintains forward and backward compatibility) or unsafe. Click your answer for each scenario.</p>
+          <div id="schemaScenarios"></div>
+          <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" id="schemaResetBtn"><i class="fas fa-redo"></i> Reset</button>
+            <button class="btn btn-primary btn-sm" id="schemaCheckBtn"><i class="fas fa-check"></i> Check All</button>
+          </div>
+          <div class="exercise-feedback" id="schemaFeedback"></div>
         </div>
       </div>
 
@@ -252,55 +798,21 @@
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- TAB: Mind Map (Interactive) -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh4" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+      <p class="mm-instructions">Click any branch node to expand or collapse its children. Hover over nodes for details.</p>
+      <div class="viz-container mindmap-container" style="min-height:520px; display:flex; align-items:center; justify-content:center; flex-direction:column; position:relative;">
+        <svg id="mmCh4" viewBox="0 0 780 520" width="100%" height="520" style="max-width:780px;">
           <style>
-            #mmCh4 .mm-node { animation: mmFadeInCH4 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH4 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+            #mmCh4 .mm-branch { stroke-width:2; fill:none; transition: opacity 0.4s ease; }
+            #mmCh4 .mm-node { cursor:pointer; transition: opacity 0.4s ease; }
             #mmCh4 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh4 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh4 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh4 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+            #mmCh4 .mm-label { font-family:'Inter',sans-serif; pointer-events:none; transition: opacity 0.3s; }
+            #mmCh4 .mm-hidden { opacity: 0; pointer-events: none; }
+            #mmCh4 .mm-visible { opacity: 1; pointer-events: auto; }
           </style>
-          <line class="mm-branch" x1="350" y1="210" x2="120" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="580" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="110" y2="310"/>
-          <line class="mm-branch" x1="350" y1="210" x2="590" y2="310"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="380"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="72" ry="30" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Encoding &</text>
-            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Evolution</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="120" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="120" y="74" text-anchor="middle">JSON / XML</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">Thrift / Protobuf</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="580" cy="70" rx="45" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="580" y="74" text-anchor="middle">Avro</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="110" cy="310" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="110" y="314" text-anchor="middle">Schema Evolution</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="590" cy="310" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="590" y="314" text-anchor="middle">Modes of Dataflow</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="380" rx="55" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="384" text-anchor="middle">REST / RPC</text>
-          </g>
         </svg>
+        <div class="mm-tooltip" id="mmTooltip"></div>
       </div>
     </div>
 
@@ -317,7 +829,8 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    // ========== QUIZ ==========
+    var QUESTIONS = [
       { question: "Why are language-specific serialization formats (like Java Serialization or Python pickle) problematic?", options: ["They are too fast", "They tie you to one language, have security vulnerabilities, and poor versioning support", "They produce the most compact output", "They are the industry standard"], correct: 1, explanation: "Language-specific formats lock you into one language, can execute arbitrary code during deserialization (security risk), and typically have poor support for schema evolution and versioning." },
       { question: "What is the main limitation of JSON as an encoding format?", options: ["It's not human-readable", "It doesn't distinguish integers from floats, doesn't support binary data, and is verbose", "It can only encode strings", "It requires a schema"], correct: 1, explanation: "JSON has number ambiguity (no int vs float distinction), no native binary string support (must use Base64), and is verbose compared to binary formats." },
       { question: "What are 'field tags' in Thrift and Protocol Buffers?", options: ["Human-readable labels", "Numeric identifiers for fields that appear in the encoded data instead of field names", "Database column indexes", "Encryption keys"], correct: 1, explanation: "Field tags are numbers assigned to each field in the schema. The encoded data uses these numbers instead of field names, making it compact. Tags must never change or be reused." },
@@ -331,6 +844,615 @@
     ];
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    // ========== STEP-THROUGH 1: Avro Schema Resolution ==========
+    (function(){
+      var step = 0;
+      var maxStep = 5;
+      var descriptions = [
+        'Avro resolves differences between the writer\'s schema and reader\'s schema at read time. Step through to see how.',
+        'Step 1: The writer (v1) defines a schema with three fields: userName, favNumber, and interests. Data is encoded using this schema.',
+        'Step 2: Encoded data contains ONLY values -- no field names, no tags. Just: "Martin", 1337, ["daydreaming","hacking"]. The schema determines field order.',
+        'Step 3: The reader (v2) has a DIFFERENT schema. It expects userName and favNumber (same), but does NOT have interests. Instead it wants a new field: age (with default=0).',
+        'Step 4: Avro resolution begins -- fields are matched BY NAME between writer and reader schemas. userName matches userName; favNumber matches favNumber.',
+        'Step 5: Writer\'s "interests" has no match in reader -- it is IGNORED. Reader\'s "age" has no match in writer -- the DEFAULT VALUE (0) is used. Both schemas coexist safely!'
+      ];
+
+      function render() {
+        // Reset visual state
+        var elements = ['avro-ws-f4','avro-ws-f4-text','avro-rs-f5','avro-rs-f5-text'];
+        var i;
+        for(i=0;i<elements.length;i++){
+          var el = document.getElementById(elements[i]);
+          if(el) el.setAttribute('opacity','0');
+        }
+        var matchLines = ['avro-match1','avro-match2','avro-match3','avro-match4'];
+        for(i=0;i<matchLines.length;i++){
+          var ml = document.getElementById(matchLines[i]);
+          if(ml){ ml.setAttribute('stroke-width','0'); ml.setAttribute('opacity','0'); }
+        }
+
+        // Highlight fields based on step
+        var wsFields = ['avro-ws-f1','avro-ws-f2','avro-ws-f3'];
+        var dFields = ['avro-d1','avro-d2','avro-d3'];
+        var rsFields = ['avro-rs-f1','avro-rs-f2'];
+
+        // Reset field highlights
+        for(i=0;i<wsFields.length;i++){
+          document.getElementById(wsFields[i]).setAttribute('fill','var(--accent-3)');
+          document.getElementById(wsFields[i]).setAttribute('opacity','0.12');
+        }
+        for(i=0;i<dFields.length;i++){
+          document.getElementById(dFields[i]).setAttribute('fill','var(--accent-2)');
+          document.getElementById(dFields[i]).setAttribute('opacity','0.12');
+        }
+        for(i=0;i<rsFields.length;i++){
+          document.getElementById(rsFields[i]).setAttribute('fill','var(--accent)');
+          document.getElementById(rsFields[i]).setAttribute('opacity','0.1');
+        }
+
+        var label = document.getElementById('avro-step-label');
+        var label2 = document.getElementById('avro-step-label2');
+        label2.textContent = '';
+
+        if(step === 0){
+          label.textContent = 'Click "Next Step" to begin';
+        } else if(step === 1){
+          label.textContent = 'Writer encodes with v1 schema';
+          for(i=0;i<wsFields.length;i++){
+            document.getElementById(wsFields[i]).setAttribute('opacity','0.35');
+          }
+        } else if(step === 2){
+          label.textContent = 'Encoded: values only, no metadata';
+          for(i=0;i<dFields.length;i++){
+            document.getElementById(dFields[i]).setAttribute('opacity','0.35');
+          }
+        } else if(step === 3){
+          label.textContent = 'Reader has a DIFFERENT schema (v2)';
+          // Show the extra reader field
+          document.getElementById('avro-rs-f5').setAttribute('opacity','1');
+          document.getElementById('avro-rs-f5-text').setAttribute('opacity','1');
+          for(i=0;i<rsFields.length;i++){
+            document.getElementById(rsFields[i]).setAttribute('opacity','0.25');
+          }
+          label2.textContent = 'No "interests" field; has new "age" field with default';
+        } else if(step === 4){
+          label.textContent = 'Resolution: matching fields by name';
+          document.getElementById('avro-rs-f5').setAttribute('opacity','1');
+          document.getElementById('avro-rs-f5-text').setAttribute('opacity','1');
+          // Show match arrows for userName and favNumber
+          var mlines = ['avro-match1','avro-match2','avro-match3','avro-match4'];
+          for(i=0;i<mlines.length;i++){
+            var ln = document.getElementById(mlines[i]);
+            ln.setAttribute('stroke-width','2');
+            ln.setAttribute('opacity','1');
+          }
+          document.getElementById('avro-ws-f1').setAttribute('opacity','0.4');
+          document.getElementById('avro-ws-f2').setAttribute('opacity','0.4');
+          document.getElementById('avro-rs-f1').setAttribute('opacity','0.3');
+          document.getElementById('avro-rs-f2').setAttribute('opacity','0.3');
+          document.getElementById('avro-d1').setAttribute('opacity','0.4');
+          document.getElementById('avro-d2').setAttribute('opacity','0.4');
+          label2.textContent = 'userName -> userName, favNumber -> favNumber';
+        } else if(step === 5){
+          label.textContent = 'Resolution complete!';
+          document.getElementById('avro-rs-f5').setAttribute('opacity','1');
+          document.getElementById('avro-rs-f5-text').setAttribute('opacity','1');
+          var mlines2 = ['avro-match1','avro-match2','avro-match3','avro-match4'];
+          for(i=0;i<mlines2.length;i++){
+            var ln2 = document.getElementById(mlines2[i]);
+            ln2.setAttribute('stroke-width','2');
+            ln2.setAttribute('opacity','1');
+          }
+          // Highlight interests as ignored (red)
+          document.getElementById('avro-ws-f3').setAttribute('fill','var(--accent-danger)');
+          document.getElementById('avro-ws-f3').setAttribute('opacity','0.25');
+          document.getElementById('avro-d3').setAttribute('fill','var(--accent-danger)');
+          document.getElementById('avro-d3').setAttribute('opacity','0.25');
+          // Highlight age as defaulted (green)
+          document.getElementById('avro-rs-f5').setAttribute('fill','var(--accent-3)');
+          document.getElementById('avro-rs-f5').setAttribute('opacity','0.4');
+          label2.textContent = '"interests" ignored (red), "age" uses default=0 (green)';
+        }
+
+        document.getElementById('avroIndicator').textContent = 'Step '+step+' / '+maxStep;
+        document.getElementById('avroDesc').textContent = descriptions[step] || '';
+      }
+
+      document.getElementById('avroNextBtn').addEventListener('click', function(){ if(step<maxStep){ step++; render(); } });
+      document.getElementById('avroPrevBtn').addEventListener('click', function(){ if(step>0){ step--; render(); } });
+      render();
+    })();
+
+    // ========== STEP-THROUGH 2: Rolling Upgrade ==========
+    (function(){
+      var step = 0;
+      var maxStep = 5;
+      var descriptions = [
+        'During a rolling upgrade, servers are updated one at a time. Old and new code must coexist, reading and writing data to the same database. Step through to see the compatibility requirements.',
+        'Step 1: All three servers run v1 (old code). The database contains only v1 schema data. Everything is consistent.',
+        'Step 2: Server A is upgraded to v2 (new code, new schema with an added optional field "email"). Servers B and C still run v1. Server A writes v2 data (with email field) to the database.',
+        'Step 3: FORWARD COMPATIBILITY needed! Server B (v1, old code) reads data written by Server A (v2). It encounters the unknown "email" field and must safely skip it without crashing.',
+        'Step 4: Server B is upgraded to v2. Now A and B run v2, only C is still on v1. BACKWARD COMPATIBILITY: Server C reads old v1 data that lacks the "email" field, using the default value.',
+        'Step 5: All servers upgraded to v2. Rolling upgrade complete with zero downtime! Both forward and backward compatibility ensured safe coexistence throughout the process.'
+      ];
+
+      function render() {
+        var s1 = document.getElementById('ru-s1');
+        var s2 = document.getElementById('ru-s2');
+        var s3 = document.getElementById('ru-s3');
+        var s1v = document.getElementById('ru-s1-ver');
+        var s2v = document.getElementById('ru-s2-ver');
+        var s3v = document.getElementById('ru-s3-ver');
+        var dbSchema = document.getElementById('ru-db-schema');
+        var compatBox = document.getElementById('ru-compat-box');
+        var compatLabel = document.getElementById('ru-compat-label');
+        var compatDetail = document.getElementById('ru-compat-detail');
+        var statusFill = document.getElementById('ru-status-fill');
+        var statusText = document.getElementById('ru-status-text');
+
+        // Reset
+        s1.setAttribute('fill','var(--accent)'); s1.setAttribute('opacity','0.7');
+        s2.setAttribute('fill','var(--accent)'); s2.setAttribute('opacity','0.7');
+        s3.setAttribute('fill','var(--accent)'); s3.setAttribute('opacity','0.7');
+        s1v.textContent = 'v1 (old)';
+        s2v.textContent = 'v1 (old)';
+        s3v.textContent = 'v1 (old)';
+        dbSchema.textContent = 'Schema v1 data';
+        compatBox.setAttribute('opacity','0');
+        compatLabel.setAttribute('opacity','0');
+        compatDetail.setAttribute('opacity','0');
+
+        var pct = 0;
+        if(step===0){ pct=0; statusText.textContent='All servers on v1'; }
+        else if(step===1){ pct=0; statusText.textContent='All servers on v1 -- consistent'; }
+        else if(step===2){
+          pct=33;
+          s1.setAttribute('fill','var(--accent-3)'); s1.setAttribute('opacity','0.85');
+          s1v.textContent='v2 (new)';
+          dbSchema.textContent='v1 + v2 data (mixed)';
+          statusText.textContent='1 of 3 upgraded';
+        } else if(step===3){
+          pct=33;
+          s1.setAttribute('fill','var(--accent-3)'); s1.setAttribute('opacity','0.85');
+          s1v.textContent='v2 (new)';
+          s2.setAttribute('fill','var(--accent)'); s2.setAttribute('opacity','0.9');
+          dbSchema.textContent='v1 + v2 data (mixed)';
+          compatBox.setAttribute('opacity','1');
+          compatLabel.setAttribute('opacity','1');
+          compatDetail.setAttribute('opacity','1');
+          compatBox.setAttribute('stroke','var(--accent-2)');
+          compatLabel.textContent = 'FORWARD COMPATIBILITY: Server B (v1) reads v2 data';
+          compatLabel.setAttribute('fill','var(--accent-2)');
+          compatDetail.textContent = 'Old code skips unknown "email" field using type annotation';
+          statusText.textContent='Forward compat in action';
+        } else if(step===4){
+          pct=66;
+          s1.setAttribute('fill','var(--accent-3)'); s1.setAttribute('opacity','0.85');
+          s2.setAttribute('fill','var(--accent-3)'); s2.setAttribute('opacity','0.85');
+          s1v.textContent='v2 (new)';
+          s2v.textContent='v2 (new)';
+          dbSchema.textContent='v1 + v2 data (mixed)';
+          compatBox.setAttribute('opacity','1');
+          compatLabel.setAttribute('opacity','1');
+          compatDetail.setAttribute('opacity','1');
+          compatBox.setAttribute('stroke','var(--accent-3)');
+          compatLabel.textContent = 'BACKWARD COMPATIBILITY: v2 reads old v1 data';
+          compatLabel.setAttribute('fill','var(--accent-3)');
+          compatDetail.textContent = 'New code uses default value for missing "email" field';
+          statusText.textContent='2 of 3 upgraded';
+        } else if(step===5){
+          pct=100;
+          s1.setAttribute('fill','var(--accent-3)'); s1.setAttribute('opacity','0.85');
+          s2.setAttribute('fill','var(--accent-3)'); s2.setAttribute('opacity','0.85');
+          s3.setAttribute('fill','var(--accent-3)'); s3.setAttribute('opacity','0.85');
+          s1v.textContent='v2 (new)';
+          s2v.textContent='v2 (new)';
+          s3v.textContent='v2 (new)';
+          dbSchema.textContent='All v2 data';
+          compatBox.setAttribute('opacity','1');
+          compatLabel.setAttribute('opacity','1');
+          compatDetail.setAttribute('opacity','1');
+          compatBox.setAttribute('stroke','var(--accent-3)');
+          compatLabel.textContent = 'Rolling upgrade COMPLETE -- zero downtime!';
+          compatLabel.setAttribute('fill','var(--accent-3)');
+          compatDetail.textContent = 'Schema evolution with forward + backward compatibility made this possible';
+          statusText.textContent='All servers on v2';
+        }
+
+        statusFill.setAttribute('width', String(570 * pct / 100));
+        document.getElementById('rollIndicator').textContent = 'Step '+step+' / '+maxStep;
+        document.getElementById('rollDesc').textContent = descriptions[step] || '';
+      }
+
+      document.getElementById('rollNextBtn').addEventListener('click', function(){ if(step<maxStep){ step++; render(); } });
+      document.getElementById('rollPrevBtn').addEventListener('click', function(){ if(step>0){ step--; render(); } });
+      render();
+    })();
+
+    // ========== EXERCISE 1: Concept Matching ==========
+    (function(){
+      var pairs = [
+        { concept: 'Field Tag', definition: 'Numeric identifier replacing field name in binary encoding' },
+        { concept: 'Forward Compatibility', definition: 'Old code can read data written by new code' },
+        { concept: 'Backward Compatibility', definition: 'New code can read data written by old code' },
+        { concept: 'Avro Schema Resolution', definition: 'Matches writer and reader schemas by field name' },
+        { concept: 'Message Broker', definition: 'Intermediary that decouples sender and receiver' },
+        { concept: 'RPC', definition: 'Makes network calls look like local function calls' }
+      ];
+
+      var leftCol = document.getElementById('matchLeft');
+      var rightCol = document.getElementById('matchRight');
+      var feedback = document.getElementById('matchFeedback');
+      var selectedLeft = null;
+      var matched = {};
+
+      // Shuffle right side
+      var shuffledRight = pairs.slice();
+      for(var i=shuffledRight.length-1;i>0;i--){
+        var j=Math.floor(Math.random()*(i+1));
+        var tmp=shuffledRight[i]; shuffledRight[i]=shuffledRight[j]; shuffledRight[j]=tmp;
+      }
+
+      function buildUI(){
+        leftCol.innerHTML=''; rightCol.innerHTML='';
+        selectedLeft=null; matched={};
+        feedback.className='exercise-feedback'; feedback.textContent='';
+        for(var i=0;i<pairs.length;i++){
+          var lDiv = document.createElement('div');
+          lDiv.className='match-item';
+          lDiv.textContent=pairs[i].concept;
+          lDiv.dataset.idx=String(i);
+          lDiv.addEventListener('click', function(){ selectLeft(this); });
+          leftCol.appendChild(lDiv);
+        }
+        for(var i=0;i<shuffledRight.length;i++){
+          var rDiv = document.createElement('div');
+          rDiv.className='match-item';
+          rDiv.textContent=shuffledRight[i].definition;
+          rDiv.dataset.concept=shuffledRight[i].concept;
+          rDiv.addEventListener('click', function(){ selectRight(this); });
+          rightCol.appendChild(rDiv);
+        }
+      }
+
+      function selectLeft(el){
+        if(matched[el.dataset.idx]) return;
+        var items = leftCol.querySelectorAll('.match-item');
+        for(var i=0;i<items.length;i++) items[i].classList.remove('selected');
+        el.classList.add('selected');
+        selectedLeft = el;
+      }
+
+      function selectRight(el){
+        if(!selectedLeft) return;
+        if(el.classList.contains('matched')) return;
+        var concept = pairs[parseInt(selectedLeft.dataset.idx)].concept;
+        if(el.dataset.concept === concept){
+          el.classList.add('matched');
+          selectedLeft.classList.remove('selected');
+          selectedLeft.classList.add('matched');
+          matched[selectedLeft.dataset.idx] = true;
+          selectedLeft = null;
+          // Check if all matched
+          if(Object.keys(matched).length === pairs.length){
+            feedback.className='exercise-feedback visible correct';
+            feedback.textContent='All matched correctly! You understand the key encoding concepts.';
+          }
+        } else {
+          el.classList.add('wrong');
+          setTimeout(function(){ el.classList.remove('wrong'); }, 500);
+        }
+      }
+
+      document.getElementById('matchResetBtn').addEventListener('click', buildUI);
+      document.getElementById('matchCheckBtn').addEventListener('click', function(){
+        var count = Object.keys(matched).length;
+        if(count === pairs.length){
+          feedback.className='exercise-feedback visible correct';
+          feedback.textContent='All '+pairs.length+' pairs matched correctly!';
+        } else {
+          feedback.className='exercise-feedback visible incorrect';
+          feedback.textContent=count+' of '+pairs.length+' matched. Keep going -- click a concept, then its definition.';
+        }
+      });
+
+      buildUI();
+    })();
+
+    // ========== EXERCISE 2: Schema Evolution Validator ==========
+    (function(){
+      var scenarios = [
+        { change: 'Add an optional field "email" with default ""', safe: true, explanation: 'Safe: optional with a default. Old code ignores it (forward compat). New code uses default when reading old data (backward compat).' },
+        { change: 'Add a required field "age" with no default value', safe: false, explanation: 'Unsafe: old data does not have "age" and there is no default, so new code reading old data will fail (breaks backward compatibility).' },
+        { change: 'Rename field "userName" to "fullName" (same tag number)', safe: true, explanation: 'Safe in Protobuf/Thrift: the tag number stays the same, and field names are not in encoded data. In Avro this would break because fields are matched by name.' },
+        { change: 'Remove optional field "interests" (tag 3), then add new field "hobbies" reusing tag 3', safe: false, explanation: 'Unsafe: old data with "interests" encoded as tag 3 would be decoded as "hobbies" by new code, causing data corruption.' },
+        { change: 'Remove an optional field "nickname" and retire its tag number', safe: true, explanation: 'Safe: old code reading new data won\'t find "nickname" and uses its default. New code just ignores that tag in old data. The tag is never reused.' },
+        { change: 'Change field type from int32 to string (same tag number)', safe: false, explanation: 'Unsafe: existing data encoded as int32 cannot be decoded as string. Type changes are only safe if they are widening (e.g., int32 to int64).' }
+      ];
+
+      var container = document.getElementById('schemaScenarios');
+      var feedback = document.getElementById('schemaFeedback');
+      var answers = {};
+
+      function buildUI(){
+        container.innerHTML='';
+        answers={};
+        feedback.className='exercise-feedback'; feedback.textContent='';
+        for(var i=0;i<scenarios.length;i++){
+          var div = document.createElement('div');
+          div.style.cssText='padding:0.75rem;margin-bottom:0.75rem;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);';
+          div.innerHTML='<p style="font-size:0.88rem;margin-bottom:0.5rem;"><strong>Scenario '+(i+1)+':</strong> '+scenarios[i].change+'</p>';
+          var btnRow = document.createElement('div');
+          btnRow.style.cssText='display:flex;gap:0.5rem;';
+          var safeBtn = document.createElement('button');
+          safeBtn.className='btn btn-ghost btn-sm';
+          safeBtn.innerHTML='<i class="fas fa-check-circle"></i> Safe';
+          safeBtn.dataset.idx=String(i);
+          safeBtn.dataset.answer='true';
+          safeBtn.addEventListener('click',function(){ pickAnswer(this); });
+          var unsafeBtn = document.createElement('button');
+          unsafeBtn.className='btn btn-ghost btn-sm';
+          unsafeBtn.innerHTML='<i class="fas fa-times-circle"></i> Unsafe';
+          unsafeBtn.dataset.idx=String(i);
+          unsafeBtn.dataset.answer='false';
+          unsafeBtn.addEventListener('click',function(){ pickAnswer(this); });
+          btnRow.appendChild(safeBtn);
+          btnRow.appendChild(unsafeBtn);
+          div.appendChild(btnRow);
+          var expDiv = document.createElement('div');
+          expDiv.id='schema-exp-'+i;
+          expDiv.style.cssText='display:none;margin-top:0.5rem;padding:0.5rem;border-radius:4px;font-size:0.82rem;';
+          div.appendChild(expDiv);
+          container.appendChild(div);
+        }
+      }
+
+      function pickAnswer(btn){
+        var idx = parseInt(btn.dataset.idx);
+        var ans = btn.dataset.answer === 'true';
+        answers[idx] = ans;
+        // Visual feedback on buttons
+        var btns = btn.parentNode.querySelectorAll('button');
+        for(var i=0;i<btns.length;i++){
+          btns[i].style.opacity = btns[i]===btn ? '1' : '0.4';
+          btns[i].style.border = btns[i]===btn ? '2px solid var(--accent-2)' : '';
+        }
+      }
+
+      document.getElementById('schemaResetBtn').addEventListener('click', buildUI);
+      document.getElementById('schemaCheckBtn').addEventListener('click', function(){
+        var correct = 0;
+        for(var i=0;i<scenarios.length;i++){
+          var expDiv = document.getElementById('schema-exp-'+i);
+          if(answers[i] !== undefined){
+            var isCorrect = answers[i] === scenarios[i].safe;
+            if(isCorrect) correct++;
+            expDiv.style.display='block';
+            expDiv.style.background = isCorrect ? 'var(--success-bg)' : 'var(--error-bg)';
+            expDiv.style.border = '1px solid '+(isCorrect ? 'var(--success-border)' : 'var(--error-border)');
+            expDiv.style.color = isCorrect ? 'var(--accent-3)' : 'var(--accent-danger)';
+            expDiv.textContent = (isCorrect ? 'Correct! ' : 'Incorrect. ') + scenarios[i].explanation;
+          } else {
+            expDiv.style.display='block';
+            expDiv.style.background = 'var(--error-bg)';
+            expDiv.style.border = '1px solid var(--error-border)';
+            expDiv.style.color = 'var(--accent-danger)';
+            expDiv.textContent = 'Not answered. ' + scenarios[i].explanation;
+          }
+        }
+        if(correct===scenarios.length){
+          feedback.className='exercise-feedback visible correct';
+          feedback.textContent='Perfect! '+correct+'/'+scenarios.length+' correct. You have a strong grasp of schema evolution rules.';
+        } else {
+          feedback.className='exercise-feedback visible '+(correct >= scenarios.length/2 ? 'correct':'incorrect');
+          feedback.textContent=correct+' of '+scenarios.length+' correct. Review the explanations above.';
+        }
+      });
+
+      buildUI();
+    })();
+
+    // ========== INTERACTIVE MIND MAP ==========
+    (function(){
+      var NS = 'http://www.w3.org/2000/svg';
+      var svg = document.getElementById('mmCh4');
+      var tooltip = document.getElementById('mmTooltip');
+
+      var tree = {
+        id:'root', label:'Encoding &\nEvolution', x:390, y:260, rx:78, ry:32, color:'var(--accent)', isCenter:true,
+        children:[
+          { id:'formats', label:'Encoding Formats', x:120, y:100, rx:68, ry:26, color:'var(--accent)',
+            desc:'Different ways to translate in-memory objects to byte sequences.',
+            children:[
+              { id:'lang-specific', label:'Language-Specific', x:30, y:30, rx:60, ry:18, color:'var(--accent)', desc:'Java Serializable, Python pickle, Ruby Marshal. Tied to one language, security risks, poor compat.' },
+              { id:'json-xml', label:'JSON / XML', x:180, y:30, rx:44, ry:18, color:'var(--accent)', desc:'Human-readable, widely adopted. But verbose, number ambiguity, no binary support, no enforced schemas.' },
+              { id:'binary-json', label:'Binary JSON', x:100, y:170, rx:48, ry:18, color:'var(--accent)', desc:'MessagePack, BSON, etc. Modest space savings over JSON. Still no schema.' }
+            ]
+          },
+          { id:'schema-enc', label:'Schema-Based', x:390, y:70, rx:60, ry:26, color:'var(--accent-2)',
+            desc:'Binary encoding with schemas: Thrift, Protocol Buffers, Avro.',
+            children:[
+              { id:'thrift', label:'Thrift', x:310, y:12, rx:38, ry:16, color:'var(--accent-2)', desc:'Facebook. BinaryProtocol and CompactProtocol encodings. Uses field tags.' },
+              { id:'protobuf', label:'Protobuf', x:390, y:12, rx:40, ry:16, color:'var(--accent-2)', desc:'Google. Similar to Thrift CompactProtocol. Variable-length ints, very efficient.' },
+              { id:'avro', label:'Avro', x:470, y:12, rx:30, ry:16, color:'var(--accent-3)', desc:'No field tags. Values in schema order. Writer + reader schema resolved at read time. Most compact.' }
+            ]
+          },
+          { id:'evolution', label:'Schema Evolution', x:660, y:120, rx:68, ry:26, color:'var(--accent-3)',
+            desc:'How schemas change over time while maintaining compatibility.',
+            children:[
+              { id:'forward', label:'Forward Compat', x:720, y:50, rx:56, ry:16, color:'var(--accent-3)', desc:'Old code reads new data. Unknown fields are skipped.' },
+              { id:'backward', label:'Backward Compat', x:600, y:50, rx:58, ry:16, color:'var(--accent-3)', desc:'New code reads old data. Missing fields use defaults.' },
+              { id:'rules', label:'Safety Rules', x:720, y:195, rx:48, ry:16, color:'var(--accent-3)', desc:'Never reuse tags, never add required fields, only add optionals with defaults.' }
+            ]
+          },
+          { id:'dataflow', label:'Modes of Dataflow', x:120, y:400, rx:72, ry:26, color:'var(--accent-2)',
+            desc:'Three contexts where data is encoded/decoded.',
+            children:[
+              { id:'databases', label:'Through DBs', x:30, y:470, rx:50, ry:16, color:'var(--accent-2)', desc:'Data outlives code by years. Both forward and backward compat needed.' },
+              { id:'services', label:'REST / RPC', x:140, y:470, rx:42, ry:16, color:'var(--accent-2)', desc:'Request-response. REST is simple; RPC hides network complexity (bad idea).' },
+              { id:'messaging', label:'Messaging', x:230, y:470, rx:44, ry:16, color:'var(--accent-2)', desc:'Brokers (Kafka, RabbitMQ) decouple sender/receiver. Actor model.' }
+            ]
+          },
+          { id:'merits', label:'Schema Merits', x:660, y:400, rx:60, ry:26, color:'var(--accent)',
+            desc:'Why schema-based encoding wins over JSON/XML.',
+            children:[
+              { id:'compact', label:'Compactness', x:570, y:470, rx:48, ry:16, color:'var(--accent)', desc:'No field names in data. 60% smaller than JSON.' },
+              { id:'docs', label:'Documentation', x:660, y:470, rx:52, ry:16, color:'var(--accent)', desc:'Schema IS the docs. Can never go stale.' },
+              { id:'codegen', label:'Code Gen', x:750, y:470, rx:42, ry:16, color:'var(--accent)', desc:'Auto-generate type-safe classes for Java, C++, Go, etc.' }
+            ]
+          }
+        ]
+      };
+
+      var expanded = {};
+      var i;
+      for(i=0;i<tree.children.length;i++) expanded[tree.children[i].id] = false;
+
+      function createLine(x1,y1,x2,y2,color,cls){
+        var line = document.createElementNS(NS,'line');
+        line.setAttribute('x1',String(x1)); line.setAttribute('y1',String(y1));
+        line.setAttribute('x2',String(x2)); line.setAttribute('y2',String(y2));
+        line.setAttribute('stroke',color);
+        line.setAttribute('stroke-opacity','0.5');
+        line.setAttribute('class','mm-branch '+cls);
+        return line;
+      }
+
+      function createNode(node, isChild, parentId){
+        var g = document.createElementNS(NS,'g');
+        g.setAttribute('class','mm-node '+(isChild?'mm-hidden':'mm-visible'));
+        if(isChild) g.setAttribute('data-parent', parentId);
+
+        var shape = document.createElementNS(NS,'ellipse');
+        shape.setAttribute('cx',String(node.x)); shape.setAttribute('cy',String(node.y));
+        shape.setAttribute('rx',String(node.rx)); shape.setAttribute('ry',String(node.ry));
+        shape.setAttribute('fill',node.color);
+        shape.setAttribute('opacity', node.isCenter?'0.9':'0.8');
+        g.appendChild(shape);
+
+        // Handle multiline labels
+        var lines = node.label.split('\n');
+        if(lines.length > 1){
+          for(var li=0;li<lines.length;li++){
+            var text = document.createElementNS(NS,'text');
+            text.setAttribute('x',String(node.x));
+            text.setAttribute('y',String(node.y - 4 + li*15));
+            text.setAttribute('text-anchor','middle');
+            text.setAttribute('class','mm-label');
+            text.setAttribute('font-size', node.isCenter?'13px':'11px');
+            text.setAttribute('font-weight', node.isCenter?'700':'600');
+            text.setAttribute('fill','white');
+            text.textContent = lines[li];
+            g.appendChild(text);
+          }
+        } else {
+          var text = document.createElementNS(NS,'text');
+          text.setAttribute('x',String(node.x)); text.setAttribute('y',String(node.y+4));
+          text.setAttribute('text-anchor','middle');
+          text.setAttribute('class','mm-label');
+          text.setAttribute('font-size', node.isCenter?'13px': isChild?'9px':'11px');
+          text.setAttribute('font-weight', node.isCenter?'700':'600');
+          text.setAttribute('fill','white');
+          text.textContent = node.label;
+          g.appendChild(text);
+        }
+
+        // Expand icon for branch nodes
+        if(node.children && node.children.length && !isChild){
+          var icon = document.createElementNS(NS,'text');
+          icon.setAttribute('x',String(node.x+node.rx-8));
+          icon.setAttribute('y',String(node.y-node.ry+12));
+          icon.setAttribute('text-anchor','middle');
+          icon.setAttribute('font-family','Inter');
+          icon.setAttribute('font-size','10');
+          icon.setAttribute('font-weight','700');
+          icon.setAttribute('fill','white');
+          icon.setAttribute('style','pointer-events:none');
+          icon.setAttribute('data-node-id', node.id);
+          icon.textContent = '+';
+          g.appendChild(icon);
+        }
+
+        // Click handler
+        g.addEventListener('click', function(){
+          if(node.children && node.children.length && !isChild){
+            expanded[node.id] = !expanded[node.id];
+            updateVisibility();
+          }
+        });
+
+        // Hover tooltip
+        g.addEventListener('mouseenter', function(){
+          if(node.desc){
+            tooltip.textContent = node.desc;
+            tooltip.classList.add('visible');
+            var container = svg.closest('.viz-container');
+            var rect = container.getBoundingClientRect();
+            var svgRect = svg.getBoundingClientRect();
+            var scaleX = svgRect.width / 780;
+            var scaleY = svgRect.height / 520;
+            var px = node.x * scaleX + svgRect.left - rect.left;
+            var py = (node.y - node.ry - 10) * scaleY + svgRect.top - rect.top;
+            tooltip.style.left = Math.min(Math.max(px-100,10), rect.width-230) + 'px';
+            tooltip.style.top = Math.max(py-60,10) + 'px';
+          }
+        });
+        g.addEventListener('mouseleave', function(){
+          tooltip.classList.remove('visible');
+        });
+
+        return g;
+      }
+
+      function renderTree(){
+        var styleEl = svg.querySelector('style');
+        while(svg.lastChild && svg.lastChild !== styleEl) svg.removeChild(svg.lastChild);
+
+        var c, gc;
+        for(c=0;c<tree.children.length;c++){
+          var child = tree.children[c];
+          svg.appendChild(createLine(tree.x,tree.y,child.x,child.y,child.color,'primary'));
+          if(child.children){
+            for(gc=0;gc<child.children.length;gc++){
+              var grandchild = child.children[gc];
+              var line = createLine(child.x,child.y,grandchild.x,grandchild.y,child.color,'child-branch');
+              line.setAttribute('data-parent', child.id);
+              line.classList.add(expanded[child.id]?'mm-visible':'mm-hidden');
+              svg.appendChild(line);
+            }
+          }
+        }
+
+        svg.appendChild(createNode(tree,false,''));
+
+        for(c=0;c<tree.children.length;c++){
+          var ch = tree.children[c];
+          svg.appendChild(createNode(ch,false,''));
+          if(ch.children){
+            for(gc=0;gc<ch.children.length;gc++){
+              svg.appendChild(createNode(ch.children[gc],true,ch.id));
+            }
+          }
+        }
+      }
+
+      function updateVisibility(){
+        for(var c=0;c<tree.children.length;c++){
+          var child = tree.children[c];
+          var isExp = expanded[child.id];
+          var els = svg.querySelectorAll('[data-parent="'+child.id+'"]');
+          for(var e=0;e<els.length;e++){
+            if(isExp){ els[e].classList.remove('mm-hidden'); els[e].classList.add('mm-visible'); }
+            else { els[e].classList.add('mm-hidden'); els[e].classList.remove('mm-visible'); }
+          }
+          var icon = svg.querySelector('[data-node-id="'+child.id+'"]');
+          if(icon) icon.textContent = isExp ? '-' : '+';
+        }
+      }
+
+      renderTree();
+    })();
   </script>
 </body>
 </html>

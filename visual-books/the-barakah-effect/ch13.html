@@ -36,13 +36,234 @@
       align-items: center;
       gap: 0.3rem;
     }
+
+    /* -- Step-Through Animated Diagrams -- */
+    .step-diagram {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .step-diagram .step-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .step-diagram .step-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .step-diagram .step-nav button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 1.1rem;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: opacity var(--transition);
+    }
+    .step-diagram .step-nav button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .step-diagram .step-counter {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      min-width: 5rem;
+      text-align: center;
+    }
+    .step-diagram .step-frame {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* -- Interactive Exercises -- */
+    .exercise-box {
+      background: var(--surface);
+      border: 2px solid var(--accent-3);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .exercise-box .exercise-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent-3);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .exercise-box textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      font-family: Inter, sans-serif;
+      font-size: 0.9rem;
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .exercise-box .exercise-prompt {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+    .exercise-box .exercise-btn {
+      background: var(--accent-3);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: opacity var(--transition);
+    }
+    .exercise-box .exercise-btn:hover { opacity: 0.85; }
+    .exercise-box .exercise-feedback {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+    }
+    .exercise-box .exercise-feedback.show { display: block; }
+    .exercise-box .exercise-feedback.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--accent-3);
+    }
+
+    /* -- Interactive Mind Map (expandable) -- */
+    .mindmap-interactive {
+      position: relative;
+      width: 100%;
+      overflow: auto;
+    }
+    .mm-node {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    .mm-node:hover { opacity: 0.85; }
+    .mm-sub-group {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .mm-sub-group.collapsed {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .mm-expand-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    /* -- Drag-rank exercise -- */
+    .drag-rank-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.5rem;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: grab;
+      user-select: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .drag-rank-item:active { cursor: grabbing; transform: scale(1.02); }
+    .drag-rank-item.drag-over { border-color: var(--accent); background: var(--surface-hover); }
+    .drag-rank-num {
+      width: 28px; height: 28px; line-height: 28px;
+      border-radius: 50%; text-align: center;
+      font-weight: 700; font-size: 0.82rem; color: #fff;
+      flex-shrink: 0;
+    }
+    .drag-rank-label { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+
+    /* -- Weekly tracker grid -- */
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin: 0.75rem 0;
+    }
+    .tracker-cell {
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface-2);
+    }
+    .tracker-cell.active {
+      background: var(--accent-3);
+      border-color: var(--accent-3);
+      color: #fff;
+    }
+    .tracker-cell i { font-size: 1rem; margin-bottom: 2px; }
+    .tracker-day-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
+
+    /* -- Step SVG animation -- */
+    .step-svg-container { text-align: center; margin-bottom: 0.75rem; }
+    .step-svg-container svg { max-width: 320px; width: 100%; display: inline-block; }
+
+    /* -- Quiz matching exercise -- */
+    .match-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .match-left {
+      flex: 1; min-width: 120px;
+      font-weight: 600; font-size: 0.88rem; color: var(--text);
+    }
+    .match-select {
+      flex: 1; min-width: 140px;
+      padding: 0.4rem 0.6rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      background: var(--bg);
+      color: var(--text);
+    }
   </style>
 </head>
 <body data-chapter="ch13">
 
-  <!-- ══════════════════════════════════════════
-       STICKY HEADER
-  ══════════════════════════════════════════ -->
+  <!-- STICKY HEADER -->
   <header class="site-header">
     <div class="header-left">
       <span class="book-tag">Visual Book</span>
@@ -61,14 +282,12 @@
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT -->
   <main class="page-wrapper">
 
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
-      <span class="sep">›</span>
+      <span class="sep">></span>
       <span class="current">Chapter 13</span>
     </nav>
 
@@ -103,12 +322,12 @@
       </button>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          TAB: LESSONS
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <div class="tab-panel active" id="tab-lessons">
 
-      <!-- LESSON 13.1 -->
+      <!-- ========== LESSON 13.1 ========== -->
       <section class="lesson" id="lesson-13-1">
         <div class="lesson-header">
           <span class="lesson-number">13.1</span>
@@ -123,10 +342,15 @@
 
         <p>The modern world does everything possible to make us forget death — anti-aging industries, euphemistic language ("passed away" instead of "died"), hiding death from public view. Islam takes the opposite approach: it brings death into focus, not to paralyze but to <strong>prioritize</strong>.</p>
 
-        <!-- SVG: Death as a Filter -->
+        <!-- SVG 1: Death as a Filter -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-filter"></i> Death as a Clarifying Filter</div>
           <svg viewBox="0 0 650 300" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <defs>
+              <marker id="arrowCh13" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-3)"/>
+              </marker>
+            </defs>
             <!-- Left: Everything -->
             <rect x="20" y="30" width="180" height="240" rx="14" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.5"/>
             <text x="110" y="58" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="12" font-weight="700">Everything in Life</text>
@@ -165,18 +389,82 @@
             <line x1="345" y1="136" x2="390" y2="136" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrowCh13)"/>
             <line x1="345" y1="170" x2="390" y2="165" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrowCh13)"/>
             <line x1="345" y1="204" x2="390" y2="185" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrowCh13)"/>
-
-            <defs>
-              <marker id="arrowCh13" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-3)"/>
-              </marker>
-            </defs>
           </svg>
           <div class="viz-caption">When you remember death, the trivial falls away and only what has eternal value remains.</div>
         </div>
+
+        <!-- SVG 2: Modern World vs Islamic Approach -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-left-right"></i> Two Approaches to Death</div>
+          <svg viewBox="0 0 650 220" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Left: Modern World -->
+            <rect x="20" y="20" width="280" height="180" rx="14" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="160" y="48" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="12" font-weight="700">Modern World Approach</text>
+            <text x="40" y="78" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">x  Anti-aging obsession</text>
+            <text x="40" y="98" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">x  Euphemistic language</text>
+            <text x="40" y="118" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">x  Hide death from view</text>
+            <text x="40" y="138" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">x  Distract with entertainment</text>
+            <text x="160" y="172" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="10" font-weight="600">Result: Heedlessness</text>
+
+            <!-- Arrow -->
+            <text x="325" y="115" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="18">vs</text>
+
+            <!-- Right: Islamic Approach -->
+            <rect x="350" y="20" width="280" height="180" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="490" y="48" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="12" font-weight="700">Islamic Approach</text>
+            <text x="370" y="78" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">+  "Remember the destroyer of pleasures"</text>
+            <text x="370" y="98" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">+  Visit graveyards regularly</text>
+            <text x="370" y="118" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">+  Write your will (wasiyyah)</text>
+            <text x="370" y="138" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">+  Daily self-accounting</text>
+            <text x="490" y="172" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="600">Result: Clarity &amp; Purpose</text>
+          </svg>
+          <div class="viz-caption">The modern world hides death to sell comfort; Islam reveals death to grant clarity.</div>
+        </div>
+
+        <!-- SVG 3: The Awareness Spectrum (NEW) -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sliders"></i> The Death Awareness Spectrum</div>
+          <svg viewBox="0 0 650 180" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Gradient bar -->
+            <defs>
+              <linearGradient id="specGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.7"/>
+                <stop offset="35%" stop-color="#f59e0b" stop-opacity="0.7"/>
+                <stop offset="55%" stop-color="#10b981" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.7"/>
+              </linearGradient>
+            </defs>
+            <rect x="40" y="50" width="570" height="24" rx="12" fill="url(#specGrad)"/>
+            <!-- Markers -->
+            <line x1="80" y1="45" x2="80" y2="80" stroke="#ef4444" stroke-width="2"/>
+            <text x="80" y="98" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="8.5" font-weight="700">DENIAL</text>
+            <text x="80" y="112" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">Never think</text>
+            <text x="80" y="123" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">about death</text>
+
+            <line x1="240" y1="45" x2="240" y2="80" stroke="#f59e0b" stroke-width="2"/>
+            <text x="240" y="98" text-anchor="middle" fill="#f59e0b" font-family="Inter,sans-serif" font-size="8.5" font-weight="700">OCCASIONAL</text>
+            <text x="240" y="112" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">Think at funerals</text>
+            <text x="240" y="123" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">then forget</text>
+
+            <line x1="380" y1="45" x2="380" y2="80" stroke="#10b981" stroke-width="2.5"/>
+            <text x="380" y="98" text-anchor="middle" fill="#10b981" font-family="Inter,sans-serif" font-size="9" font-weight="800">PROPHETIC</text>
+            <text x="380" y="112" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">Daily awareness</text>
+            <text x="380" y="123" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">drives action</text>
+            <!-- Star marker -->
+            <polygon points="380,30 383,40 393,40 385,46 388,56 380,50 372,56 375,46 367,40 377,40" fill="#10b981"/>
+
+            <line x1="540" y1="45" x2="540" y2="80" stroke="#8b5cf6" stroke-width="2"/>
+            <text x="540" y="98" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="8.5" font-weight="700">MORBID</text>
+            <text x="540" y="112" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">Paralyzed</text>
+            <text x="540" y="123" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">by anxiety</text>
+
+            <text x="325" y="155" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">The Prophetic sweet spot: aware enough to act, not so fixated that you freeze.</text>
+          </svg>
+          <div class="viz-caption">Islam teaches the "Prophetic zone" of death awareness: daily consciousness that motivates purposeful living.</div>
+        </div>
       </section>
 
-      <!-- LESSON 13.2 -->
+      <!-- ========== LESSON 13.2 ========== -->
       <section class="lesson" id="lesson-13-2">
         <div class="lesson-header">
           <span class="lesson-number">13.2</span>
@@ -191,12 +479,114 @@
 
         <p>This perspective is liberating, not depressing. It frees you from the anxiety of "keeping up," the fear of missing out (FOMO), and the despair of temporary setbacks. When you know that eternal success is what matters, you can face worldly challenges with a peace that confuses those around you.</p>
 
+        <!-- SVG: Dunya vs Akhirah Timeline -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-infinity"></i> The Eternal Timeline: Dunya vs Akhirah</div>
+          <svg viewBox="0 0 650 240" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Timeline base -->
+            <line x1="30" y1="100" x2="620" y2="100" stroke="var(--border)" stroke-width="2"/>
+            <!-- Dunya segment (tiny) -->
+            <rect x="30" y="80" width="40" height="40" rx="6" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="2"/>
+            <text x="50" y="74" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Dunya</text>
+            <text x="50" y="135" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">60-100 yrs</text>
+            <!-- Akhirah segment (vast) -->
+            <rect x="80" y="80" width="530" height="40" rx="6" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="345" y="105" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="14" font-weight="800">AKHIRAH — Eternity</text>
+            <text x="600" y="100" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="16" font-weight="800">...</text>
+            <!-- Labels -->
+            <text x="50" y="170" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5" font-style="italic">"Play &amp;</text>
+            <text x="50" y="182" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5" font-style="italic">amusement"</text>
+            <text x="345" y="165" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">"The true, permanent abode"</text>
+            <!-- Drop vs Ocean metaphor -->
+            <circle cx="170" cy="210" r="4" fill="var(--accent)" opacity="0.6"/>
+            <text x="182" y="214" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">= a drop</text>
+            <ellipse cx="310" cy="210" rx="80" ry="14" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="310" y="214" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="8.5" font-weight="600">= the ocean</text>
+          </svg>
+          <div class="viz-caption">A lifetime is a drop compared to the ocean of eternity. The Akhirah perspective reframes everything.</div>
+        </div>
+
+        <!-- SVG: Reframing Setbacks -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> How the Akhirah Reframes Everything</div>
+          <svg viewBox="0 0 650 260" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Without Akhirah Perspective -->
+            <text x="170" y="24" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="700">Without Akhirah Lens</text>
+            <rect x="30" y="35" width="280" height="40" rx="8" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1"/>
+            <text x="170" y="60" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">Hardship = Punishment / Bad luck</text>
+            <rect x="30" y="82" width="280" height="40" rx="8" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1"/>
+            <text x="170" y="107" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">Missed opportunity = Permanent loss</text>
+            <rect x="30" y="129" width="280" height="40" rx="8" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1"/>
+            <text x="170" y="154" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">Struggle = Failure</text>
+            <rect x="30" y="176" width="280" height="40" rx="8" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1"/>
+            <text x="170" y="201" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">Death = The End</text>
+            <!-- Arrow column -->
+            <text x="335" y="60" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="14">&#x2192;</text>
+            <text x="335" y="107" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="14">&#x2192;</text>
+            <text x="335" y="154" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="14">&#x2192;</text>
+            <text x="335" y="201" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="14">&#x2192;</text>
+            <!-- With Akhirah Perspective -->
+            <text x="490" y="24" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">With Akhirah Lens</text>
+            <rect x="350" y="35" width="280" height="40" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="490" y="60" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Hardship = Test &amp; purification</text>
+            <rect x="350" y="82" width="280" height="40" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="490" y="107" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Missed opportunity = Qadr of Allah</text>
+            <rect x="350" y="129" width="280" height="40" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="490" y="154" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Struggle = Planting seeds</text>
+            <rect x="350" y="176" width="280" height="40" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="490" y="201" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Death = A new beginning</text>
+            <!-- Bottom label -->
+            <text x="325" y="245" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">The Akhirah lens transforms every experience</text>
+          </svg>
+          <div class="viz-caption">Every hardship, setback, and struggle is reframed when viewed through the lens of eternity.</div>
+        </div>
+
+        <!-- SVG: True Richness Scale (NEW) -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-scale-balanced"></i> The True Richness Scale</div>
+          <svg viewBox="0 0 650 280" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Scale beam -->
+            <line x1="150" y1="80" x2="500" y2="80" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round"/>
+            <!-- Fulcrum -->
+            <polygon points="325,80 310,110 340,110" fill="var(--accent)" opacity="0.6"/>
+            <text x="325" y="130" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="9" font-weight="700">AKHIRAH SCALE</text>
+
+            <!-- Left pan (dunya rich, akhirah poor) - lower = heavier in dunya but lighter in akhirah -->
+            <line x1="150" y1="80" x2="150" y2="140" stroke="var(--text-muted)" stroke-width="1.5"/>
+            <ellipse cx="150" cy="145" rx="90" ry="12" fill="#ef4444" opacity="0.08" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="150" y="170" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="10" font-weight="700">Person A</text>
+            <text x="150" y="188" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Mansion, luxury cars</text>
+            <text x="150" y="202" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">10k followers, fame</text>
+            <text x="150" y="216" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">No salah, no charity</text>
+            <text x="150" y="230" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Heedless of Akhirah</text>
+            <rect x="65" y="245" width="170" height="24" rx="6" fill="#ef4444" opacity="0.12" stroke="#ef4444" stroke-width="1"/>
+            <text x="150" y="261" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="9" font-weight="700">Truly POOR</text>
+
+            <!-- Right pan (dunya struggling, akhirah rich) -->
+            <line x1="500" y1="80" x2="500" y2="140" stroke="var(--text-muted)" stroke-width="1.5"/>
+            <ellipse cx="500" cy="145" rx="90" ry="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="500" y="170" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Person B</text>
+            <text x="500" y="188" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Modest income</text>
+            <text x="500" y="202" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Unknown to the world</text>
+            <text x="500" y="216" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Consistent in prayer &amp; dhikr</text>
+            <text x="500" y="230" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Generous, forgiving, patient</text>
+            <rect x="415" y="245" width="170" height="24" rx="6" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="500" y="261" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9" font-weight="700">Truly RICH</text>
+
+            <!-- Wing of mosquito reference -->
+            <text x="325" y="22" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5" font-style="italic">"If the world were worth even the wing of a mosquito to Allah,</text>
+            <text x="325" y="36" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5" font-style="italic">He would not have given a disbeliever a drink of water from it."</text>
+            <text x="325" y="52" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="8" font-weight="600">— Tirmidhi</text>
+          </svg>
+          <div class="viz-caption">True richness is measured on the Akhirah scale, not by worldly possessions.</div>
+        </div>
+
         <div class="insight-box">
           <strong>Perspective Shift:</strong> A lifetime of struggle followed by eternal Paradise is an infinitely better deal than a lifetime of luxury followed by eternal loss. The Akhirah perspective transforms how you evaluate every decision, every sacrifice, and every apparent failure.
         </div>
       </section>
 
-      <!-- LESSON 13.3 -->
+      <!-- ========== LESSON 13.3 ========== -->
       <section class="lesson" id="lesson-13-3">
         <div class="lesson-header">
           <span class="lesson-number">13.3</span>
@@ -221,35 +611,30 @@
             <text x="185" y="49" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="14" font-weight="700">before</text>
             <rect x="220" y="20" width="120" height="50" rx="10" fill="#ef4444" opacity="0.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
             <text x="280" y="49" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="600">Old Age</text>
-
             <!-- Row 2 -->
             <rect x="30" y="82" width="120" height="50" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/>
             <text x="90" y="111" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Health</text>
             <text x="185" y="111" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="14" font-weight="700">before</text>
             <rect x="220" y="82" width="120" height="50" rx="10" fill="#ef4444" opacity="0.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
             <text x="280" y="111" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="600">Sickness</text>
-
             <!-- Row 3 -->
             <rect x="30" y="144" width="120" height="50" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/>
             <text x="90" y="173" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Wealth</text>
             <text x="185" y="173" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="14" font-weight="700">before</text>
             <rect x="220" y="144" width="120" height="50" rx="10" fill="#ef4444" opacity="0.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
             <text x="280" y="173" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="600">Poverty</text>
-
             <!-- Row 4 -->
             <rect x="30" y="206" width="120" height="50" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/>
             <text x="90" y="235" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Free Time</text>
             <text x="185" y="235" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="14" font-weight="700">before</text>
             <rect x="220" y="206" width="120" height="50" rx="10" fill="#ef4444" opacity="0.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
             <text x="280" y="235" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="600">Busyness</text>
-
             <!-- Row 5 -->
             <rect x="30" y="268" width="120" height="50" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/>
             <text x="90" y="297" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Life</text>
             <text x="185" y="297" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="14" font-weight="700">before</text>
             <rect x="220" y="268" width="120" height="50" rx="10" fill="#ef4444" opacity="0.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
             <text x="280" y="297" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="11" font-weight="600">Death</text>
-
             <!-- Right side: summary -->
             <rect x="400" y="60" width="220" height="200" rx="16" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1.5"/>
             <text x="510" y="92" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="12" font-weight="700">The Message</text>
@@ -263,9 +648,262 @@
           </svg>
           <div class="viz-caption">"Take advantage of five before five" — the ultimate anti-procrastination counsel from the Prophet.</div>
         </div>
+
+        <!-- SVG: Hourglass Closing Windows (NEW) -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hourglass-end"></i> The Closing Hourglasses</div>
+          <svg viewBox="0 0 650 200" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Five hourglasses, each progressively more filled -->
+            <!-- Hourglass 1: Youth -->
+            <g transform="translate(55,10)">
+              <polygon points="0,0 60,0 45,45 60,90 0,90 15,45" fill="none" stroke="var(--accent-3)" stroke-width="2"/>
+              <rect x="8" y="55" width="44" height="30" rx="2" fill="var(--accent-3)" opacity="0.25"/>
+              <text x="30" y="115" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9" font-weight="700">Youth</text>
+              <text x="30" y="130" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">~25% used</text>
+            </g>
+            <!-- Hourglass 2: Health -->
+            <g transform="translate(175,10)">
+              <polygon points="0,0 60,0 45,45 60,90 0,90 15,45" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="8" y="45" width="44" height="40" rx="2" fill="#f59e0b" opacity="0.25"/>
+              <text x="30" y="115" text-anchor="middle" fill="#f59e0b" font-family="Inter,sans-serif" font-size="9" font-weight="700">Health</text>
+              <text x="30" y="130" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">~45% used</text>
+            </g>
+            <!-- Hourglass 3: Wealth -->
+            <g transform="translate(295,10)">
+              <polygon points="0,0 60,0 45,45 60,90 0,90 15,45" fill="none" stroke="#4f6ef7" stroke-width="2"/>
+              <rect x="8" y="35" width="44" height="50" rx="2" fill="#4f6ef7" opacity="0.25"/>
+              <text x="30" y="115" text-anchor="middle" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="9" font-weight="700">Wealth</text>
+              <text x="30" y="130" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">~60% used</text>
+            </g>
+            <!-- Hourglass 4: Free Time -->
+            <g transform="translate(415,10)">
+              <polygon points="0,0 60,0 45,45 60,90 0,90 15,45" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <rect x="8" y="20" width="44" height="65" rx="2" fill="#8b5cf6" opacity="0.25"/>
+              <text x="30" y="115" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="9" font-weight="700">Free Time</text>
+              <text x="30" y="130" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">~80% used</text>
+            </g>
+            <!-- Hourglass 5: Life -->
+            <g transform="translate(535,10)">
+              <polygon points="0,0 60,0 45,45 60,90 0,90 15,45" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <rect x="8" y="5" width="44" height="80" rx="2" fill="#ef4444" opacity="0.25"/>
+              <text x="30" y="115" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="9" font-weight="700">Life</text>
+              <text x="30" y="130" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="7.5">unknown</text>
+            </g>
+            <text x="325" y="165" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Every hourglass is draining. What are you waiting for?</text>
+            <text x="325" y="182" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">The sand never flows back up.</text>
+          </svg>
+          <div class="viz-caption">Each blessing is an hourglass slowly emptying. You do not know how much sand remains.</div>
+        </div>
+
+        <!-- STEP-THROUGH DIAGRAM 1: Five Before Five Deep Dive -->
+        <div class="step-diagram" id="stepFiveBeforeFive">
+          <div class="step-title"><i class="fas fa-forward-step"></i> Step Through: Unpacking Each "Before"</div>
+          <div class="step-frame" id="stepFiveFrame"></div>
+          <div class="step-nav">
+            <button id="stepFivePrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="step-counter" id="stepFiveCounter">1 / 5</span>
+            <button id="stepFiveNext">Next <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <script>
+        (function() {
+          var steps = [
+            {
+              title: 'Youth before Old Age',
+              icon: 'fas fa-child',
+              color: '#10b981',
+              body: 'Youth is the season of energy, ambition, and few responsibilities. Worship, seek knowledge, build habits, and serve the ummah while your body and mind are at their peak. Old age brings wisdom but takes away stamina.',
+              action: 'Ask yourself: Am I using my youthful energy for what matters eternally?',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox', '0 0 120 120');
+                svg.innerHTML = '<circle cx="60" cy="30" r="18" fill="#10b981" opacity="0.2" stroke="#10b981" stroke-width="2"/><text x="60" y="35" text-anchor="middle" fill="#10b981" font-size="16" font-family="Inter">&#x26A1;</text><line x1="60" y1="48" x2="60" y2="85" stroke="#10b981" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="60" x2="40" y2="50" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="60" x2="80" y2="50" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="85" x2="42" y2="108" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="85" x2="78" y2="108" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>';
+              }
+            },
+            {
+              title: 'Health before Sickness',
+              icon: 'fas fa-heartbeat',
+              color: '#f59e0b',
+              body: 'Good health is one of the most undervalued blessings. When you are healthy, every act of worship is easy — fasting, praying, serving others. Sickness limits what you can do and increases what you wish you had done.',
+              action: 'Ask yourself: Am I taking my health for granted, or using it in worship and service?',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox', '0 0 120 120');
+                svg.innerHTML = '<path d="M60 100 C20 70, 5 40, 30 25 C45 15, 58 25, 60 38 C62 25, 75 15, 90 25 C115 40, 100 70, 60 100Z" fill="#f59e0b" opacity="0.15" stroke="#f59e0b" stroke-width="2.5"/><text x="60" y="65" text-anchor="middle" fill="#f59e0b" font-size="18" font-family="Inter" font-weight="800">+</text>';
+              }
+            },
+            {
+              title: 'Wealth before Poverty',
+              icon: 'fas fa-hand-holding-heart',
+              color: '#4f6ef7',
+              body: 'When Allah blesses you with wealth, it is a test: will you hoard it or invest it in the Akhirah? Charity given today may be the very thing that saves you tomorrow. Wealth is a window — use it for sadaqah, supporting family, and funding good causes.',
+              action: 'Ask yourself: If my wealth disappeared tomorrow, would I be satisfied with what I gave?',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox', '0 0 120 120');
+                svg.innerHTML = '<circle cx="60" cy="55" r="35" fill="#4f6ef7" opacity="0.1" stroke="#4f6ef7" stroke-width="2"/><text x="60" y="50" text-anchor="middle" fill="#4f6ef7" font-size="14" font-family="Inter" font-weight="700">$</text><path d="M40 70 Q60 90 80 70" fill="none" stroke="#4f6ef7" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="85" x2="45" y2="105" stroke="#4f6ef7" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="60" y1="90" x2="60" y2="110" stroke="#4f6ef7" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="70" y1="85" x2="75" y2="105" stroke="#4f6ef7" stroke-width="1.5" stroke-dasharray="3,2"/>';
+              }
+            },
+            {
+              title: 'Free Time before Busyness',
+              icon: 'fas fa-clock',
+              color: '#8b5cf6',
+              body: 'Free time is a blessing most people waste. The Prophet said most people are in loss regarding two blessings: health and free time. When busyness arrives — career, family, obligations — you will wish you had used your free hours for Quran, learning, and worship.',
+              action: 'Ask yourself: How much of my free time goes to entertainment vs eternal benefit?',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox', '0 0 120 120');
+                svg.innerHTML = '<circle cx="60" cy="60" r="40" fill="#8b5cf6" opacity="0.08" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="60" cy="60" r="3" fill="#8b5cf6"/><line x1="60" y1="60" x2="60" y2="32" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="60" x2="82" y2="52" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/><text x="60" y="8" text-anchor="middle" fill="#8b5cf6" font-size="8" font-family="Inter" font-weight="700">12</text><text x="104" y="63" text-anchor="middle" fill="#8b5cf6" font-size="8" font-family="Inter" font-weight="700">3</text><text x="60" y="115" text-anchor="middle" fill="#8b5cf6" font-size="8" font-family="Inter" font-weight="700">6</text><text x="16" y="63" text-anchor="middle" fill="#8b5cf6" font-size="8" font-family="Inter" font-weight="700">9</text>';
+              }
+            },
+            {
+              title: 'Life before Death',
+              icon: 'fas fa-hourglass-end',
+              color: '#ef4444',
+              body: 'This is the ultimate "before." Every other pair is contained within this one. Life itself is the master window of opportunity. When death comes, there are no more chances, no more tawbah, no more good deeds. The door closes forever.',
+              action: 'Ask yourself: If I knew I had one month to live, what would I change starting today?',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox', '0 0 120 120');
+                svg.innerHTML = '<rect x="30" y="10" width="60" height="100" rx="8" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="2"/><rect x="35" y="15" width="50" height="42" rx="4" fill="#ef4444" opacity="0.08"/><rect x="35" y="63" width="50" height="42" rx="4" fill="#ef4444" opacity="0.2"/><line x1="35" y1="57" x2="85" y2="57" stroke="#ef4444" stroke-width="2"/><circle cx="60" cy="80" r="3" fill="#ef4444"/><line x1="60" y1="57" x2="60" y2="77" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>';
+              }
+            }
+          ];
+          var current = 0;
+          var frame = document.getElementById('stepFiveFrame');
+          var counter = document.getElementById('stepFiveCounter');
+          var prevBtn = document.getElementById('stepFivePrev');
+          var nextBtn = document.getElementById('stepFiveNext');
+
+          function render() {
+            var s = steps[current];
+            while (frame.firstChild) frame.removeChild(frame.firstChild);
+
+            var wrap = document.createElement('div');
+            wrap.style.cssText = 'text-align:center;width:100%;';
+
+            // SVG icon
+            var svgDiv = document.createElement('div');
+            svgDiv.className = 'step-svg-container';
+            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.style.cssText = 'max-width:100px;width:100px;height:100px;';
+            s.svgIcon(svg);
+            svgDiv.appendChild(svg);
+            wrap.appendChild(svgDiv);
+
+            var h = document.createElement('h4');
+            h.style.cssText = 'color:' + s.color + ';margin:0.5rem 0 0.4rem;font-size:1.1rem;';
+            var icon = document.createElement('i');
+            icon.className = s.icon;
+            h.appendChild(icon);
+            h.appendChild(document.createTextNode(' ' + s.title));
+            wrap.appendChild(h);
+
+            var p = document.createElement('p');
+            p.style.cssText = 'font-size:0.92rem;color:var(--text);max-width:500px;margin:0 auto 0.6rem;line-height:1.6;';
+            p.textContent = s.body;
+            wrap.appendChild(p);
+
+            var act = document.createElement('p');
+            act.style.cssText = 'font-size:0.88rem;color:' + s.color + ';font-weight:600;font-style:italic;';
+            act.textContent = s.action;
+            wrap.appendChild(act);
+
+            // Progress dots
+            var dots = document.createElement('div');
+            dots.style.cssText = 'display:flex;justify-content:center;gap:6px;margin-top:0.75rem;';
+            for (var i = 0; i < steps.length; i++) {
+              var dot = document.createElement('div');
+              dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:' + (i <= current ? s.color : 'var(--border)') + ';transition:background 0.3s;';
+              dots.appendChild(dot);
+            }
+            wrap.appendChild(dots);
+
+            frame.appendChild(wrap);
+            counter.textContent = (current + 1) + ' / ' + steps.length;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === steps.length - 1;
+          }
+          prevBtn.addEventListener('click', function() { if (current > 0) { current--; render(); } });
+          nextBtn.addEventListener('click', function() { if (current < steps.length - 1) { current++; render(); } });
+          render();
+        })();
+        </script>
+
+        <!-- INTERACTIVE EXERCISE 1: Five Before Five Self-Audit -->
+        <div class="exercise-box" id="exercisePriority">
+          <div class="exercise-title"><i class="fas fa-pen-fancy"></i> Interactive Exercise: "Five Before Five" Self-Audit</div>
+          <div class="exercise-prompt">
+            For each of the five blessings below, rate how well you are currently using that window (1 = not at all, 5 = maximizing it). Then write one specific action you will take this week to improve.
+          </div>
+          <div id="fiveAuditContainer"></div>
+          <button class="exercise-btn" id="fiveAuditSave"><i class="fas fa-save"></i> Save My Audit</button>
+          <div class="exercise-feedback" id="fiveAuditFeedback"></div>
+        </div>
+        <script>
+        (function() {
+          var items = ['Youth / Energy', 'Health', 'Wealth', 'Free Time', 'Life Itself'];
+          var container = document.getElementById('fiveAuditContainer');
+          var savedData = {};
+          try { savedData = JSON.parse(localStorage.getItem('ch13-five-audit') || '{}'); } catch(e) {}
+
+          items.forEach(function(item, i) {
+            var key = 'five-' + i;
+            var saved = savedData[key] || {};
+            var div = document.createElement('div');
+            div.style.cssText = 'margin-bottom:1rem;padding:0.75rem;background:var(--surface-2);border-radius:var(--radius-sm);';
+
+            var label = document.createElement('div');
+            label.style.cssText = 'font-weight:600;font-size:0.9rem;margin-bottom:0.4rem;color:var(--text);';
+            label.textContent = (i + 1) + '. ' + item;
+            div.appendChild(label);
+
+            var ratingRow = document.createElement('div');
+            ratingRow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;';
+
+            var ratingLabel = document.createElement('label');
+            ratingLabel.style.cssText = 'font-size:0.82rem;color:var(--text-muted);min-width:45px;';
+            ratingLabel.textContent = 'Rating:';
+            ratingRow.appendChild(ratingLabel);
+
+            var select = document.createElement('select');
+            select.setAttribute('data-key', key + '-rating');
+            select.style.cssText = 'padding:0.3rem 0.5rem;border:1px solid var(--border);border-radius:4px;font-size:0.85rem;background:var(--bg);color:var(--text);';
+            var opts = ['--', '1', '2', '3', '4', '5'];
+            opts.forEach(function(o) {
+              var opt = document.createElement('option');
+              opt.value = o === '--' ? '' : o;
+              opt.textContent = o;
+              if (saved.rating === o) opt.selected = true;
+              select.appendChild(opt);
+            });
+            ratingRow.appendChild(select);
+            div.appendChild(ratingRow);
+
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'One action I will take this week...';
+            input.setAttribute('data-key', key + '-action');
+            input.value = saved.action || '';
+            input.style.cssText = 'width:100%;padding:0.45rem 0.65rem;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;background:var(--bg);color:var(--text);box-sizing:border-box;';
+            div.appendChild(input);
+
+            container.appendChild(div);
+          });
+
+          document.getElementById('fiveAuditSave').addEventListener('click', function() {
+            var data = {};
+            items.forEach(function(item, i) {
+              var key = 'five-' + i;
+              var rating = container.querySelector('[data-key="' + key + '-rating"]').value;
+              var action = container.querySelector('[data-key="' + key + '-action"]').value;
+              data[key] = { rating: rating, action: action };
+            });
+            localStorage.setItem('ch13-five-audit', JSON.stringify(data));
+            var fb = document.getElementById('fiveAuditFeedback');
+            fb.className = 'exercise-feedback show success';
+            fb.textContent = 'Saved! Your self-audit has been saved. Review it weekly and track your progress. Remember: the windows are closing — act now.';
+          });
+        })();
+        </script>
       </section>
 
-      <!-- LESSON 13.4 -->
+      <!-- ========== LESSON 13.4 ========== -->
       <section class="lesson" id="lesson-13-4">
         <div class="lesson-header">
           <span class="lesson-number">13.4</span>
@@ -280,12 +918,175 @@
 
         <p>The difference between healthy death consciousness and morbid fixation is simple: healthy death consciousness makes you <strong>more engaged</strong> with life, not less. It makes you prioritize better, love more deeply, forgive more readily, and work more purposefully. Morbid fixation, on the other hand, paralyzes — and this is not what Islam teaches.</p>
 
+        <!-- SVG: Healthy vs Morbid Death Consciousness -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-scale-balanced"></i> Healthy vs Morbid Death Consciousness</div>
+          <svg viewBox="0 0 650 280" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Center: Death Awareness -->
+            <rect x="230" y="10" width="190" height="50" rx="12" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="2"/>
+            <text x="325" y="40" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="12" font-weight="800">DEATH AWARENESS</text>
+            <!-- Left branch: Healthy -->
+            <line x1="265" y1="60" x2="150" y2="95" stroke="var(--accent-3)" stroke-width="2"/>
+            <rect x="20" y="85" width="260" height="180" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="150" y="112" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="12" font-weight="700">Healthy (Islamic)</text>
+            <text x="40" y="140" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ More engaged with life</text>
+            <text x="40" y="160" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ Better priorities</text>
+            <text x="40" y="180" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ Deeper love &amp; forgiveness</text>
+            <text x="40" y="200" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ Purposeful work</text>
+            <text x="40" y="220" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ Legacy-focused action</text>
+            <text x="40" y="240" fill="var(--text)" font-family="Inter,sans-serif" font-size="9.5">+ Inner peace &amp; tawakkul</text>
+            <text x="150" y="258" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Result: PRODUCTIVE</text>
+            <!-- Right branch: Morbid -->
+            <line x1="385" y1="60" x2="500" y2="95" stroke="#ef4444" stroke-width="2"/>
+            <rect x="370" y="85" width="260" height="180" rx="14" fill="#ef4444" opacity="0.06" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="500" y="112" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="12" font-weight="700">Morbid (Not Islamic)</text>
+            <text x="390" y="140" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Withdrawn from life</text>
+            <text x="390" y="160" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Paralyzed by fear</text>
+            <text x="390" y="180" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Depressed &amp; hopeless</text>
+            <text x="390" y="200" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Stops planning ahead</text>
+            <text x="390" y="220" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Neglects responsibilities</text>
+            <text x="390" y="240" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">- Constant anxiety</text>
+            <text x="500" y="258" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="10" font-weight="700">Result: PARALYZED</text>
+          </svg>
+          <div class="viz-caption">Islam teaches healthy death awareness that energizes and focuses — not morbid fixation that paralyzes.</div>
+        </div>
+
+        <!-- SVG: Companions — Death-Conscious AND Productive -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-users"></i> The Companions: Death-Conscious AND Productive</div>
+          <svg viewBox="0 0 650 200" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <text x="325" y="20" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="600">What the Sahabah accomplished while remembering death daily:</text>
+            <rect x="40" y="40" width="540" height="28" rx="6" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="50" y="59" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Built a civilization spanning 3 continents</text>
+            <rect x="40" y="75" width="440" height="28" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="50" y="94" fill="var(--accent)" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Established justice, governance, and scholarship</text>
+            <rect x="40" y="110" width="360" height="28" rx="6" fill="#8b5cf6" opacity="0.12" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text x="50" y="129" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Advanced science, medicine, mathematics</text>
+            <rect x="40" y="145" width="580" height="28" rx="6" fill="#4f6ef7" opacity="0.12" stroke="#4f6ef7" stroke-width="1.5"/>
+            <text x="50" y="164" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="9.5" font-weight="600">Maintained 5 daily prayers, night prayers, fasting, Quran, charity — every single day</text>
+          </svg>
+          <div class="viz-caption">Death awareness did not make the Companions passive — it made them the most productive generation in history.</div>
+        </div>
+
+        <!-- SVG: The Motivation Engine (NEW) -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-gears"></i> The Death-to-Action Motivation Engine</div>
+          <svg viewBox="0 0 650 240" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Input -->
+            <rect x="20" y="85" width="120" height="60" rx="12" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="2"/>
+            <text x="80" y="110" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Remember</text>
+            <text x="80" y="125" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Death</text>
+            <!-- Arrow 1 -->
+            <line x1="140" y1="115" x2="170" y2="115" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowCh13)"/>
+            <!-- Gear 1: Urgency -->
+            <circle cx="215" cy="115" r="35" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="215" y="110" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9" font-weight="700">Creates</text>
+            <text x="215" y="125" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="9" font-weight="700">URGENCY</text>
+            <!-- Arrow 2 -->
+            <line x1="250" y1="115" x2="280" y2="115" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowCh13)"/>
+            <!-- Gear 2: Clarity -->
+            <circle cx="325" cy="115" r="35" fill="#4f6ef7" opacity="0.08" stroke="#4f6ef7" stroke-width="2"/>
+            <text x="325" y="110" text-anchor="middle" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="9" font-weight="700">Sharpens</text>
+            <text x="325" y="125" text-anchor="middle" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="9" font-weight="700">CLARITY</text>
+            <!-- Arrow 3 -->
+            <line x1="360" y1="115" x2="390" y2="115" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowCh13)"/>
+            <!-- Gear 3: Intention -->
+            <circle cx="435" cy="115" r="35" fill="#8b5cf6" opacity="0.08" stroke="#8b5cf6" stroke-width="2"/>
+            <text x="435" y="110" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="9" font-weight="700">Purifies</text>
+            <text x="435" y="125" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="9" font-weight="700">INTENTION</text>
+            <!-- Arrow 4 -->
+            <line x1="470" y1="115" x2="500" y2="115" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowCh13)"/>
+            <!-- Output -->
+            <rect x="510" y="85" width="120" height="60" rx="12" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2.5"/>
+            <text x="570" y="110" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="800">Purposeful</text>
+            <text x="570" y="125" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="800">ACTION</text>
+
+            <!-- Feedback loop -->
+            <path d="M570 150 C570 200, 80 200, 80 150" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+            <text x="325" y="195" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="8.5" font-weight="600">Feedback loop: action deepens awareness</text>
+
+            <!-- Top labels -->
+            <text x="325" y="30" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">How death consciousness drives productivity:</text>
+            <text x="325" y="48" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Death awareness is the input. Purposeful action is the output. Repeat daily.</text>
+          </svg>
+          <div class="viz-caption">Death consciousness is not a dead end — it is an engine that converts awareness into purposeful, productive action.</div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 2: Matching Exercise -->
+        <div class="exercise-box" id="exerciseMatch">
+          <div class="exercise-title"><i class="fas fa-puzzle-piece"></i> Interactive Exercise: Match the Response</div>
+          <div class="exercise-prompt">
+            For each scenario, select whether the response reflects <strong>Healthy Death Consciousness</strong> or <strong>Morbid Fixation</strong>. Test your understanding of the difference.
+          </div>
+          <div id="matchContainer"></div>
+          <button class="exercise-btn" id="matchCheck"><i class="fas fa-check-circle"></i> Check Answers</button>
+          <div class="exercise-feedback" id="matchFeedback"></div>
+        </div>
+        <script>
+        (function() {
+          var scenarios = [
+            { text: '"I will pray Fajr on time because I may not see tomorrow."', answer: 'healthy', reason: 'Awareness driving action — this is the Prophetic model.' },
+            { text: '"What is the point of planning anything? We will all die anyway."', answer: 'morbid', reason: 'This leads to passivity and neglect of responsibilities — not what Islam teaches.' },
+            { text: '"I should forgive my brother today rather than waiting for tomorrow."', answer: 'healthy', reason: 'Urgency to reconcile is a sign of healthy death consciousness.' },
+            { text: '"I cannot enjoy anything because death could come at any moment."', answer: 'morbid', reason: 'Islam permits enjoying halal blessings — death awareness adds gratitude, not guilt.' },
+            { text: '"Let me write my will and update my charity goals this month."', answer: 'healthy', reason: 'Practical preparation is exactly what the Prophet recommended.' },
+            { text: '"I am too anxious about dying to focus on my work or family."', answer: 'morbid', reason: 'Anxiety that prevents fulfilling obligations crosses into unhealthy territory.' }
+          ];
+          var container = document.getElementById('matchContainer');
+          scenarios.forEach(function(s, i) {
+            var row = document.createElement('div');
+            row.className = 'match-row';
+            row.style.cssText = 'padding:0.6rem;background:var(--surface-2);border-radius:var(--radius-sm);margin-bottom:0.5rem;';
+            var left = document.createElement('div');
+            left.className = 'match-left';
+            left.textContent = s.text;
+            left.style.fontSize = '0.85rem';
+            row.appendChild(left);
+            var sel = document.createElement('select');
+            sel.className = 'match-select';
+            sel.setAttribute('data-answer', s.answer);
+            sel.setAttribute('data-idx', i);
+            var o1 = document.createElement('option'); o1.value = ''; o1.textContent = '-- Select --'; sel.appendChild(o1);
+            var o2 = document.createElement('option'); o2.value = 'healthy'; o2.textContent = 'Healthy'; sel.appendChild(o2);
+            var o3 = document.createElement('option'); o3.value = 'morbid'; o3.textContent = 'Morbid'; sel.appendChild(o3);
+            row.appendChild(sel);
+            container.appendChild(row);
+          });
+
+          document.getElementById('matchCheck').addEventListener('click', function() {
+            var correct = 0;
+            var total = scenarios.length;
+            var details = [];
+            scenarios.forEach(function(s, i) {
+              var sel = container.querySelector('[data-idx="' + i + '"]');
+              var row = sel.closest('.match-row');
+              if (sel.value === s.answer) {
+                correct++;
+                row.style.borderLeft = '3px solid var(--accent-3)';
+              } else {
+                row.style.borderLeft = '3px solid #ef4444';
+                details.push((i+1) + '. ' + s.reason);
+              }
+            });
+            var fb = document.getElementById('matchFeedback');
+            fb.className = 'exercise-feedback show success';
+            var msg = 'Score: ' + correct + '/' + total + '. ';
+            if (correct === total) {
+              msg += 'Excellent! You clearly understand the difference between healthy and morbid death consciousness.';
+            } else {
+              msg += 'Review these: ' + details.join(' | ');
+            }
+            fb.textContent = msg;
+          });
+        })();
+        </script>
+
         <div class="insight-box">
           <strong>Key Insight:</strong> The most productive people in Islamic history were also the most death-conscious. Death awareness did not make them retreat — it made them strive harder for what truly matters. Remember death to live fully, not to stop living.
         </div>
       </section>
 
-      <!-- LESSON 13.5 -->
+      <!-- ========== LESSON 13.5 ========== -->
       <section class="lesson" id="lesson-13-5">
         <div class="lesson-header">
           <span class="lesson-number">13.5</span>
@@ -302,6 +1103,392 @@
 
         <p><strong>Plan your legacy.</strong> What will people say about you after you've gone? What beneficial projects will continue after you? What knowledge have you shared? What children have you raised? Legacy planning is not morbid — it's the most forward-thinking activity you can engage in.</p>
 
+        <!-- SVG: Six Practical Steps -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-tasks"></i> Six Practical Steps for Death Remembrance</div>
+          <svg viewBox="0 0 650 300" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Step 1 -->
+            <rect x="20" y="15" width="190" height="75" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <circle cx="45" cy="35" r="12" fill="var(--accent-3)" opacity="0.2"/>
+            <text x="45" y="39" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="10" font-weight="800">1</text>
+            <text x="65" y="38" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Visit Graves</text>
+            <text x="30" y="58" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Monthly visits remind you</text>
+            <text x="30" y="70" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">of the Hereafter</text>
+            <!-- Step 2 -->
+            <rect x="230" y="15" width="190" height="75" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <circle cx="255" cy="35" r="12" fill="var(--accent)" opacity="0.2"/>
+            <text x="255" y="39" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="10" font-weight="800">2</text>
+            <text x="275" y="38" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Write Your Will</text>
+            <text x="240" y="58" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Update it regularly;</text>
+            <text x="240" y="70" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">confront mortality</text>
+            <!-- Step 3 -->
+            <rect x="440" y="15" width="190" height="75" rx="12" fill="#8b5cf6" opacity="0.08" stroke="#8b5cf6" stroke-width="1.5"/>
+            <circle cx="465" cy="35" r="12" fill="#8b5cf6" opacity="0.2"/>
+            <text x="465" y="39" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="10" font-weight="800">3</text>
+            <text x="485" y="38" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Daily Question</text>
+            <text x="450" y="58" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">"If I died today, what</text>
+            <text x="450" y="70" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">would I regret?"</text>
+            <!-- Step 4 -->
+            <rect x="20" y="110" width="190" height="75" rx="12" fill="#4f6ef7" opacity="0.08" stroke="#4f6ef7" stroke-width="1.5"/>
+            <circle cx="45" cy="130" r="12" fill="#4f6ef7" opacity="0.2"/>
+            <text x="45" y="134" text-anchor="middle" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="10" font-weight="800">4</text>
+            <text x="65" y="133" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Dua for Deceased</text>
+            <text x="30" y="153" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Send prayers for those</text>
+            <text x="30" y="165" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">who have passed</text>
+            <!-- Step 5 -->
+            <rect x="230" y="110" width="190" height="75" rx="12" fill="#f59e0b" opacity="0.08" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="255" cy="130" r="12" fill="#f59e0b" opacity="0.2"/>
+            <text x="255" y="134" text-anchor="middle" fill="#f59e0b" font-family="Inter,sans-serif" font-size="10" font-weight="800">5</text>
+            <text x="275" y="133" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Sadaqah Jariyah</text>
+            <text x="240" y="153" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Plan ongoing charity</text>
+            <text x="240" y="165" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">that outlasts you</text>
+            <!-- Step 6 -->
+            <rect x="440" y="110" width="190" height="75" rx="12" fill="#ef4444" opacity="0.08" stroke="#ef4444" stroke-width="1.5"/>
+            <circle cx="465" cy="130" r="12" fill="#ef4444" opacity="0.2"/>
+            <text x="465" y="134" text-anchor="middle" fill="#ef4444" font-family="Inter,sans-serif" font-size="10" font-weight="800">6</text>
+            <text x="485" y="133" fill="var(--text)" font-family="Inter,sans-serif" font-size="10" font-weight="700">Reconcile Today</text>
+            <text x="450" y="153" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Forgive grudges now;</text>
+            <text x="450" y="165" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">tomorrow is not promised</text>
+            <!-- Bottom message -->
+            <rect x="130" y="215" width="390" height="60" rx="14" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="325" y="242" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Death remembrance drives ACTION, not anxiety.</text>
+            <text x="325" y="260" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="9.5">Each step makes you more alive, more intentional, more present.</text>
+          </svg>
+          <div class="viz-caption">Six practical habits from the Prophetic tradition that keep death consciousness alive and productive.</div>
+        </div>
+
+        <!-- SVG: The Three Legacy Channels (NEW) -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-seedling"></i> Three Things That Outlast You</div>
+          <svg viewBox="0 0 650 220" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+            <!-- Central: After Death -->
+            <rect x="235" y="10" width="180" height="44" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="2"/>
+            <text x="325" y="37" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="11" font-weight="800">After Death, Only 3 Remain</text>
+
+            <!-- Branch 1: Sadaqah Jariyah -->
+            <line x1="255" y1="54" x2="120" y2="90" stroke="var(--accent-3)" stroke-width="2"/>
+            <rect x="20" y="80" width="200" height="120" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="120" y="105" text-anchor="middle" fill="var(--accent-3)" font-family="Inter,sans-serif" font-size="11" font-weight="700">Sadaqah Jariyah</text>
+            <text x="120" y="125" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Ongoing charity</text>
+            <text x="35" y="148" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">Water wells, masjids, waqf,</text>
+            <text x="35" y="162" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">orphan sponsorship, trees,</text>
+            <text x="35" y="176" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">Islamic education funding</text>
+
+            <!-- Branch 2: Beneficial Knowledge -->
+            <line x1="325" y1="54" x2="325" y2="90" stroke="#4f6ef7" stroke-width="2"/>
+            <rect x="225" y="80" width="200" height="120" rx="14" fill="#4f6ef7" opacity="0.06" stroke="#4f6ef7" stroke-width="2"/>
+            <text x="325" y="105" text-anchor="middle" fill="#4f6ef7" font-family="Inter,sans-serif" font-size="11" font-weight="700">Beneficial Knowledge</text>
+            <text x="325" y="125" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Knowledge people benefit from</text>
+            <text x="240" y="148" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">Teaching, writing, mentoring,</text>
+            <text x="240" y="162" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">courses, Quran lessons,</text>
+            <text x="240" y="176" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">sharing Islamic knowledge</text>
+
+            <!-- Branch 3: Righteous Child -->
+            <line x1="395" y1="54" x2="530" y2="90" stroke="#8b5cf6" stroke-width="2"/>
+            <rect x="430" y="80" width="200" height="120" rx="14" fill="#8b5cf6" opacity="0.06" stroke="#8b5cf6" stroke-width="2"/>
+            <text x="530" y="105" text-anchor="middle" fill="#8b5cf6" font-family="Inter,sans-serif" font-size="11" font-weight="700">Righteous Child</text>
+            <text x="530" y="125" text-anchor="middle" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8.5">Who prays for you</text>
+            <text x="445" y="148" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">Raising children upon Islam,</text>
+            <text x="445" y="162" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">teaching deen &amp; character,</text>
+            <text x="445" y="176" fill="var(--text-muted)" font-family="Inter,sans-serif" font-size="8">legacy that compounds</text>
+
+            <text x="325" y="215" text-anchor="middle" fill="var(--accent)" font-family="Inter,sans-serif" font-size="9" font-weight="600" font-style="italic">"When a person dies, their deeds end except for three..." — Muslim</text>
+          </svg>
+          <div class="viz-caption">The Prophet identified three channels that continue delivering rewards after death. Invest in all three.</div>
+        </div>
+
+        <!-- STEP-THROUGH DIAGRAM 2: Building a Legacy Plan -->
+        <div class="step-diagram" id="stepLegacy">
+          <div class="step-title"><i class="fas fa-forward-step"></i> Step Through: Building Your Legacy Plan</div>
+          <div class="step-frame" id="stepLegacyFrame"></div>
+          <div class="step-nav">
+            <button id="stepLegacyPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="step-counter" id="stepLegacyCounter">1 / 6</span>
+            <button id="stepLegacyNext">Next <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <script>
+        (function() {
+          var steps = [
+            {
+              title: 'Step 1: Identify What Outlasts You',
+              color: '#4f6ef7',
+              icon: 'fas fa-search',
+              body: 'The Prophet said three things continue after death: ongoing charity (sadaqah jariyah), beneficial knowledge, and a righteous child who prays for you. These are your three legacy channels.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<circle cx="50" cy="50" r="38" fill="#4f6ef7" opacity="0.08" stroke="#4f6ef7" stroke-width="2"/><text x="50" y="35" text-anchor="middle" fill="#4f6ef7" font-size="10" font-family="Inter" font-weight="700">3</text><text x="50" y="50" text-anchor="middle" fill="#4f6ef7" font-size="8" font-family="Inter">Legacy</text><text x="50" y="63" text-anchor="middle" fill="#4f6ef7" font-size="8" font-family="Inter">Channels</text><circle cx="25" cy="80" r="8" fill="#4f6ef7" opacity="0.15"/><circle cx="50" cy="85" r="8" fill="#4f6ef7" opacity="0.15"/><circle cx="75" cy="80" r="8" fill="#4f6ef7" opacity="0.15"/>';
+              }
+            },
+            {
+              title: 'Step 2: Audit Your Current Contributions',
+              color: '#f59e0b',
+              icon: 'fas fa-clipboard-check',
+              body: 'Ask yourself: What beneficial projects have I started? What knowledge have I taught or shared? How am I raising the next generation? Be honest — this is where most people discover large gaps.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<rect x="20" y="10" width="60" height="80" rx="6" fill="#f59e0b" opacity="0.08" stroke="#f59e0b" stroke-width="2"/><line x1="30" y1="30" x2="70" y2="30" stroke="#f59e0b" stroke-width="1.5"/><line x1="30" y1="45" x2="70" y2="45" stroke="#f59e0b" stroke-width="1.5"/><line x1="30" y1="60" x2="55" y2="60" stroke="#f59e0b" stroke-width="1.5"/><text x="65" y="65" fill="#f59e0b" font-size="14" font-family="Inter" font-weight="700">?</text>';
+              }
+            },
+            {
+              title: 'Step 3: Choose Your Sadaqah Jariyah',
+              color: '#10b981',
+              icon: 'fas fa-hand-holding-heart',
+              body: 'Ongoing charity can be a water well, a masjid contribution, an endowment (waqf), sponsoring an orphan, planting trees, or funding Islamic education. Choose at least one project that benefits people long after you are gone.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<path d="M50 85 C25 65, 10 45, 30 30 C40 22, 48 28, 50 38 C52 28, 60 22, 70 30 C90 45, 75 65, 50 85Z" fill="#10b981" opacity="0.15" stroke="#10b981" stroke-width="2"/><line x1="50" y1="55" x2="50" y2="40" stroke="#10b981" stroke-width="2"/><line x1="42" y1="48" x2="58" y2="48" stroke="#10b981" stroke-width="2"/>';
+              }
+            },
+            {
+              title: 'Step 4: Share Beneficial Knowledge',
+              color: '#8b5cf6',
+              icon: 'fas fa-book-open',
+              body: 'Teach what you know. Write articles, mentor someone, create courses, record lessons, or simply teach your children Quran. Knowledge that benefits others after your death is one of the greatest legacies.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<path d="M50 20 L25 30 L25 75 L50 65 L75 75 L75 30 Z" fill="#8b5cf6" opacity="0.08" stroke="#8b5cf6" stroke-width="2"/><line x1="50" y1="20" x2="50" y2="65" stroke="#8b5cf6" stroke-width="1.5"/><circle cx="50" cy="82" r="6" fill="#8b5cf6" opacity="0.2"/><line x1="40" y1="82" x2="60" y2="82" stroke="#8b5cf6" stroke-width="1.5"/>';
+              }
+            },
+            {
+              title: 'Step 5: Invest in the Next Generation',
+              color: '#ef4444',
+              icon: 'fas fa-child',
+              body: 'Raise righteous children who will continue to pray for you, teach them the deen, instill good character, and model Islamic productivity. A righteous child is a legacy that compounds across generations.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<circle cx="35" cy="25" r="10" fill="#ef4444" opacity="0.15" stroke="#ef4444" stroke-width="1.5"/><line x1="35" y1="35" x2="35" y2="60" stroke="#ef4444" stroke-width="2"/><line x1="35" y1="60" x2="25" y2="78" stroke="#ef4444" stroke-width="1.5"/><line x1="35" y1="60" x2="45" y2="78" stroke="#ef4444" stroke-width="1.5"/><circle cx="65" cy="35" r="7" fill="#ef4444" opacity="0.15" stroke="#ef4444" stroke-width="1.5"/><line x1="65" y1="42" x2="65" y2="60" stroke="#ef4444" stroke-width="1.5"/><line x1="65" y1="60" x2="58" y2="75" stroke="#ef4444" stroke-width="1.5"/><line x1="65" y1="60" x2="72" y2="75" stroke="#ef4444" stroke-width="1.5"/><path d="M45 45 Q55 40 55 45" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>';
+              }
+            },
+            {
+              title: 'Step 6: Write It Down and Act',
+              color: '#06b6d4',
+              icon: 'fas fa-pen',
+              body: 'A legacy plan that lives only in your head is not a plan. Write it down: your will, your sadaqah jariyah projects, your knowledge-sharing goals, your parenting intentions. Review it monthly. Start today — tomorrow is not guaranteed.',
+              svgIcon: function(svg) {
+                svg.setAttribute('viewBox','0 0 100 100');
+                svg.innerHTML = '<rect x="20" y="15" width="55" height="70" rx="6" fill="#06b6d4" opacity="0.08" stroke="#06b6d4" stroke-width="2"/><line x1="30" y1="32" x2="65" y2="32" stroke="#06b6d4" stroke-width="1.5"/><line x1="30" y1="45" x2="65" y2="45" stroke="#06b6d4" stroke-width="1.5"/><line x1="30" y1="58" x2="55" y2="58" stroke="#06b6d4" stroke-width="1.5"/><path d="M65 60 L80 45 L85 50 L70 65 Z" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="1.5"/>';
+              }
+            }
+          ];
+          var current = 0;
+          var frame = document.getElementById('stepLegacyFrame');
+          var counter = document.getElementById('stepLegacyCounter');
+          var prevBtn = document.getElementById('stepLegacyPrev');
+          var nextBtn = document.getElementById('stepLegacyNext');
+
+          function render() {
+            var s = steps[current];
+            while (frame.firstChild) frame.removeChild(frame.firstChild);
+
+            var wrap = document.createElement('div');
+            wrap.style.cssText = 'text-align:center;width:100%;';
+
+            // SVG icon
+            if (s.svgIcon) {
+              var svgDiv = document.createElement('div');
+              svgDiv.className = 'step-svg-container';
+              var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+              svg.style.cssText = 'max-width:80px;width:80px;height:80px;';
+              s.svgIcon(svg);
+              svgDiv.appendChild(svg);
+              wrap.appendChild(svgDiv);
+            }
+
+            var stepNum = document.createElement('div');
+            stepNum.style.cssText = 'display:inline-block;width:48px;height:48px;line-height:48px;border-radius:50%;background:' + s.color + ';color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:0.75rem;';
+            stepNum.textContent = (current + 1);
+            wrap.appendChild(stepNum);
+
+            var h = document.createElement('h4');
+            h.style.cssText = 'color:' + s.color + ';margin:0.5rem 0 0.6rem;font-size:1.05rem;';
+            var icon = document.createElement('i');
+            icon.className = s.icon;
+            h.appendChild(icon);
+            h.appendChild(document.createTextNode(' ' + s.title));
+            wrap.appendChild(h);
+
+            var p = document.createElement('p');
+            p.style.cssText = 'font-size:0.92rem;color:var(--text);max-width:520px;margin:0 auto;line-height:1.6;';
+            p.textContent = s.body;
+            wrap.appendChild(p);
+
+            // Progress dots
+            var dots = document.createElement('div');
+            dots.style.cssText = 'display:flex;justify-content:center;gap:6px;margin-top:1rem;';
+            for (var i = 0; i < steps.length; i++) {
+              var dot = document.createElement('div');
+              dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:' + (i <= current ? s.color : 'var(--border)') + ';transition:background 0.3s;';
+              dots.appendChild(dot);
+            }
+            wrap.appendChild(dots);
+
+            frame.appendChild(wrap);
+            counter.textContent = (current + 1) + ' / ' + steps.length;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === steps.length - 1;
+          }
+          prevBtn.addEventListener('click', function() { if (current > 0) { current--; render(); } });
+          nextBtn.addEventListener('click', function() { if (current < steps.length - 1) { current++; render(); } });
+          render();
+        })();
+        </script>
+
+        <!-- INTERACTIVE EXERCISE 3: "If I Died Today" Reflection -->
+        <div class="exercise-box" id="exerciseRegret">
+          <div class="exercise-title"><i class="fas fa-pen-fancy"></i> Interactive Exercise: "If I Died Today" Reflection</div>
+          <div class="exercise-prompt">
+            Take a moment of sincere reflection. If you were to die today, answer these questions honestly. Your answers are saved locally and can serve as a weekly review tool.
+          </div>
+
+          <div id="regretFieldsContainer"></div>
+
+          <button class="exercise-btn" id="regretSave"><i class="fas fa-save"></i> Save My Reflection</button>
+          <div class="exercise-feedback" id="regretFeedback"></div>
+        </div>
+        <script>
+        (function() {
+          var questions = [
+            { id: 'regret1', label: '1. What would I regret not having done?', placeholder: 'E.g., I would regret not calling my parents more often...' },
+            { id: 'regret2', label: '2. Who would I want to reconcile with?', placeholder: 'E.g., I have a grudge with my cousin that I need to resolve...' },
+            { id: 'regret3', label: '3. What good deed would I wish I had done more of?', placeholder: 'E.g., I wish I had given more in charity, prayed more tahajjud...' },
+            { id: 'regret4', label: '4. What is ONE thing I will do TODAY based on these reflections?', placeholder: 'E.g., I will call my parents tonight and give sadaqah before bed...' }
+          ];
+          var container = document.getElementById('regretFieldsContainer');
+          var saved = {};
+          try { saved = JSON.parse(localStorage.getItem('ch13-regret-reflection') || '{}'); } catch(e) {}
+
+          questions.forEach(function(q) {
+            var div = document.createElement('div');
+            div.style.cssText = 'margin-bottom:1rem;';
+
+            var label = document.createElement('label');
+            label.style.cssText = 'font-weight:600;font-size:0.9rem;display:block;margin-bottom:0.3rem;color:var(--text);';
+            label.textContent = q.label;
+            div.appendChild(label);
+
+            var ta = document.createElement('textarea');
+            ta.id = q.id;
+            ta.placeholder = q.placeholder;
+            if (saved[q.id]) ta.value = saved[q.id];
+            div.appendChild(ta);
+
+            container.appendChild(div);
+          });
+
+          document.getElementById('regretSave').addEventListener('click', function() {
+            var data = {};
+            var filled = 0;
+            questions.forEach(function(q) {
+              var val = document.getElementById(q.id).value;
+              data[q.id] = val;
+              if (val.trim()) filled++;
+            });
+            localStorage.setItem('ch13-regret-reflection', JSON.stringify(data));
+            var fb = document.getElementById('regretFeedback');
+            fb.className = 'exercise-feedback show success';
+            if (filled === 4) {
+              fb.textContent = 'MashaAllah! All four reflections saved. Now the crucial part: act on #4 TODAY. Return to this exercise weekly for ongoing muhasabah (self-accounting).';
+            } else if (filled > 0) {
+              fb.textContent = 'Saved! You answered ' + filled + ' of 4. Try completing all four for a deeper reflection. Remember: "Take account of yourselves before you are taken to account."';
+            } else {
+              fb.textContent = 'Nothing written yet. Take a quiet moment, be honest with yourself, and fill in at least one reflection. This exercise works best when done sincerely.';
+            }
+          });
+        })();
+        </script>
+
+        <!-- INTERACTIVE EXERCISE 4: Weekly Death Awareness Tracker (NEW) -->
+        <div class="exercise-box" id="exerciseTracker">
+          <div class="exercise-title"><i class="fas fa-calendar-check"></i> Interactive Exercise: Weekly Death Awareness Tracker</div>
+          <div class="exercise-prompt">
+            Track your daily death-awareness practices for this week. Click each day to mark it as completed. The practices include: visiting/recalling graves, reviewing your will, the daily regret question, dua for the deceased, sadaqah, and reconciliation efforts. Build a streak to make these habits stick.
+          </div>
+          <div id="trackerContainer"></div>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem;">
+            <button class="exercise-btn" id="trackerReset" style="background:var(--accent);"><i class="fas fa-redo"></i> Reset Week</button>
+          </div>
+          <div class="exercise-feedback" id="trackerFeedback"></div>
+        </div>
+        <script>
+        (function() {
+          var practices = [
+            { key: 'graves', label: 'Graves / Akhirah Reflection', icon: 'fas fa-pray' },
+            { key: 'will', label: 'Will / Wasiyyah Review', icon: 'fas fa-file-signature' },
+            { key: 'question', label: '"If I died today..." Question', icon: 'fas fa-question' },
+            { key: 'dua', label: 'Dua for Deceased', icon: 'fas fa-hands-praying' },
+            { key: 'sadaqah', label: 'Sadaqah / Charity', icon: 'fas fa-hand-holding-heart' },
+            { key: 'reconcile', label: 'Reconciliation / Forgiveness', icon: 'fas fa-handshake' }
+          ];
+          var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          var container = document.getElementById('trackerContainer');
+          var saved = {};
+          try { saved = JSON.parse(localStorage.getItem('ch13-weekly-tracker') || '{}'); } catch(e) {}
+
+          function save() { localStorage.setItem('ch13-weekly-tracker', JSON.stringify(saved)); updateFeedback(); }
+
+          function updateFeedback() {
+            var total = practices.length * 7;
+            var done = 0;
+            practices.forEach(function(p) {
+              days.forEach(function(d) { if (saved[p.key + '-' + d]) done++; });
+            });
+            var fb = document.getElementById('trackerFeedback');
+            if (done === 0) { fb.className = 'exercise-feedback'; return; }
+            fb.className = 'exercise-feedback show success';
+            var pct = Math.round((done / total) * 100);
+            fb.textContent = done + '/' + total + ' practices completed (' + pct + '%). ' + (pct >= 80 ? 'MashaAllah! Outstanding consistency. Keep this up every week.' : pct >= 50 ? 'Good progress! Try to fill more cells this week.' : 'A good start. Even one practice a day builds the habit.');
+          }
+
+          practices.forEach(function(p) {
+            var section = document.createElement('div');
+            section.style.cssText = 'margin-bottom:0.75rem;';
+            var heading = document.createElement('div');
+            heading.style.cssText = 'font-weight:600;font-size:0.82rem;color:var(--text);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.4rem;';
+            heading.innerHTML = '<i class="' + p.icon + '" style="color:var(--accent);width:16px;text-align:center;"></i> ' + p.label;
+            section.appendChild(heading);
+
+            var grid = document.createElement('div');
+            grid.className = 'tracker-grid';
+            days.forEach(function(d) {
+              var cell = document.createElement('div');
+              cell.className = 'tracker-cell' + (saved[p.key + '-' + d] ? ' active' : '');
+              cell.innerHTML = '<i class="' + (saved[p.key + '-' + d] ? 'fas fa-check' : 'far fa-circle') + '"></i>';
+              var dayLabel = document.createElement('span');
+              dayLabel.className = 'tracker-day-label';
+              dayLabel.textContent = d;
+              cell.appendChild(dayLabel);
+              cell.addEventListener('click', function() {
+                var key = p.key + '-' + d;
+                saved[key] = !saved[key];
+                if (saved[key]) {
+                  cell.classList.add('active');
+                  cell.querySelector('i').className = 'fas fa-check';
+                } else {
+                  cell.classList.remove('active');
+                  cell.querySelector('i').className = 'far fa-circle';
+                }
+                save();
+              });
+              grid.appendChild(cell);
+            });
+            section.appendChild(grid);
+            container.appendChild(section);
+          });
+
+          document.getElementById('trackerReset').addEventListener('click', function() {
+            saved = {};
+            save();
+            container.querySelectorAll('.tracker-cell').forEach(function(cell) {
+              cell.classList.remove('active');
+              cell.querySelector('i').className = 'far fa-circle';
+            });
+          });
+
+          updateFeedback();
+        })();
+        </script>
+
         <div class="insight-box">
           <strong>Death-Awareness Exercises:</strong> (1) Visit a graveyard monthly. (2) Write and update your will. (3) Ask yourself daily: "If I died today, what would I regret?" (4) Send du'a for the deceased. (5) Plan your Sadaqah Jariyah. (6) Reconcile with anyone you have a grudge against — today, not tomorrow.
         </div>
@@ -309,9 +1496,9 @@
 
     </div><!-- /#tab-lessons -->
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          TAB: SUMMARY
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <div class="tab-panel" id="tab-summary">
       <div class="summary-box glass">
         <h3><i class="fas fa-bookmark"></i> Chapter 13 — Key Takeaways</h3>
@@ -338,9 +1525,9 @@
       </div>
     </div><!-- /#tab-summary -->
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          TAB: QUIZ
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <div class="tab-panel" id="tab-quiz">
       <div class="quiz-box glass">
         <h3><i class="fas fa-circle-question"></i> Chapter 13 Quiz</h3>
@@ -349,28 +1536,97 @@
       </div>
     </div><!-- /#tab-quiz -->
 
-    <!-- ══════════════════════════════════════════
-         TAB: MIND MAP
-    ══════════════════════════════════════════ -->
+    <!-- ============================
+         TAB: MIND MAP (Interactive, Expandable)
+    ============================ -->
     <div class="tab-panel" id="tab-mindmap">
       <div class="viz-container">
         <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 13 Mind Map — Remember Death</div>
-        <svg id="mmCh13" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 13: Remember Death"></svg>
+        <p class="mm-expand-hint"><i class="fas fa-hand-pointer"></i> Click any branch node to expand/collapse its sub-topics. Click the center to reset all.</p>
+        <svg id="mmCh13" viewBox="0 0 900 700" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 13: Remember Death"></svg>
       </div>
       <script>
       (function() {
         var svg = document.getElementById('mmCh13');
         var NS = 'http://www.w3.org/2000/svg';
-        var cx = 400, cy = 300;
+        var cx = 450, cy = 350;
         var branches = [
-          { label: 'Death as Lens', angle: -90, color: '#4f6ef7', subs: ['Clarifying Filter', 'Not Morbid', 'Prioritize'] },
-          { label: 'Akhirah View', angle: -25, color: '#f59e0b', subs: ['Eternal Timeline', 'Dunya = Test', 'Reframe Setbacks'] },
-          { label: 'Five Before Five', angle: 30, color: '#10b981', subs: ['Youth', 'Health', 'Wealth', 'Free Time', 'Life'] },
-          { label: 'Motivation', angle: 90, color: '#8b5cf6', subs: ['Companions Example', 'Engage More', 'Muhasabah'] },
-          { label: 'Practical Steps', angle: 150, color: '#ef4444', subs: ['Visit Graves', 'Write Will', 'Daily Question'] },
-          { label: 'Legacy Planning', angle: 210, color: '#06b6d4', subs: ['Sadaqah Jariyah', 'Reconcile', 'Forward Thinking'] }
+          {
+            label: 'Death as Lens',
+            angle: -90,
+            color: '#4f6ef7',
+            icon: '\u{1F50D}',
+            subs: [
+              { text: 'Clarifying Filter', detail: 'Separates essential from trivial' },
+              { text: 'Not Morbid', detail: 'A tool, not a torment' },
+              { text: 'Prioritize', detail: 'Focus on what matters' },
+              { text: 'Modern vs Islamic', detail: 'Hide vs Reveal death' }
+            ]
+          },
+          {
+            label: 'Akhirah View',
+            angle: -30,
+            color: '#f59e0b',
+            icon: '\u{267E}',
+            subs: [
+              { text: 'Eternal Timeline', detail: 'Drop vs Ocean' },
+              { text: 'Dunya = Test', detail: 'Play & amusement' },
+              { text: 'Reframe Setbacks', detail: 'Hardship = purification' },
+              { text: 'True Richness', detail: 'Akhirah wealth counts' }
+            ]
+          },
+          {
+            label: 'Five Before Five',
+            angle: 25,
+            color: '#10b981',
+            icon: '\u{23F3}',
+            subs: [
+              { text: 'Youth', detail: 'Before old age' },
+              { text: 'Health', detail: 'Before sickness' },
+              { text: 'Wealth', detail: 'Before poverty' },
+              { text: 'Free Time', detail: 'Before busyness' },
+              { text: 'Life', detail: 'Before death' }
+            ]
+          },
+          {
+            label: 'Motivation',
+            angle: 90,
+            color: '#8b5cf6',
+            icon: '\u{1F525}',
+            subs: [
+              { text: 'Companions\' Example', detail: 'Most productive generation' },
+              { text: 'Engage More', detail: 'Not less' },
+              { text: 'Muhasabah', detail: 'Self-accounting daily' },
+              { text: 'Healthy vs Morbid', detail: 'Action vs paralysis' }
+            ]
+          },
+          {
+            label: 'Practical Steps',
+            angle: 155,
+            color: '#ef4444',
+            icon: '\u{2705}',
+            subs: [
+              { text: 'Visit Graves', detail: 'Monthly practice' },
+              { text: 'Write Will', detail: 'Wasiyyah obligation' },
+              { text: 'Daily Question', detail: '"If I died today..."' },
+              { text: 'Reconcile', detail: 'Forgive now' }
+            ]
+          },
+          {
+            label: 'Legacy Planning',
+            angle: 210,
+            color: '#06b6d4',
+            icon: '\u{1F331}',
+            subs: [
+              { text: 'Sadaqah Jariyah', detail: 'Ongoing charity' },
+              { text: 'Beneficial Knowledge', detail: 'Teach & share' },
+              { text: 'Righteous Children', detail: 'Pray for you' },
+              { text: 'Write It Down', detail: 'Plan & review monthly' }
+            ]
+          }
         ];
-        var branchR = 150, subR = 90;
+        var branchR = 180, subR = 110;
+
         function toRad(deg) { return deg * Math.PI / 180; }
         function makeSVGEl(tag, attrs) {
           var el = document.createElementNS(NS, tag);
@@ -383,7 +1639,7 @@
           var lines = [], cur = '';
           words.forEach(function(w) {
             var test = cur ? cur + ' ' + w : w;
-            if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
+            if (test.length > 16) { lines.push(cur || w); cur = cur ? w : ''; }
             else { cur = test; }
           });
           if (cur) lines.push(cur);
@@ -394,70 +1650,148 @@
             parent.appendChild(t);
           });
         }
+
+        var branchExpanded = branches.map(function() { return true; });
         var allBranchGroups = [];
-        var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
-        centerG.appendChild(makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' }));
-        addText(centerG, cx, cy - 8, 'Remember', 11, '#fff', true);
-        addText(centerG, cx, cy + 10, 'Death', 11, '#fff', true);
+        var allSubGroups = [];
+
+        // Background ring
+        svg.appendChild(makeSVGEl('circle', { cx: cx, cy: cy, r: branchR + subR + 30, fill: 'none', stroke: 'var(--border)', 'stroke-width': '0.5', 'stroke-dasharray': '4,6', opacity: '0.4' }));
+        svg.appendChild(makeSVGEl('circle', { cx: cx, cy: cy, r: branchR - 10, fill: 'none', stroke: 'var(--border)', 'stroke-width': '0.5', 'stroke-dasharray': '4,6', opacity: '0.3' }));
+
+        // Center node
+        var centerG = makeSVGEl('g', { class: 'mm-center mm-node', style: 'cursor:pointer' });
+        centerG.appendChild(makeSVGEl('circle', { cx: cx, cy: cy, r: 62, fill: 'var(--accent, #d4a106)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(212,161,6,0.4))' }));
+        addText(centerG, cx, cy - 12, 'Remember', 13, '#fff', true);
+        addText(centerG, cx, cy + 8, 'Death', 13, '#fff', true);
+        var centerHint = makeSVGEl('text', { x: cx, y: cy + 28, 'text-anchor': 'middle', 'font-size': '8', fill: 'rgba(255,255,255,0.6)', 'font-family': 'Inter, sans-serif', 'pointer-events': 'none' });
+        centerHint.textContent = 'click to reset';
+        centerG.appendChild(centerHint);
         svg.appendChild(centerG);
 
         branches.forEach(function(b, bi) {
           var rad = toRad(b.angle);
           var bx = cx + branchR * Math.cos(rad);
           var by = cy + branchR * Math.sin(rad);
-          var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
-          g.appendChild(makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' }));
-          g.appendChild(makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' }));
-          addText(g, bx, by, b.label, 9.5, '#fff', true);
+
+          var g = makeSVGEl('g', { class: 'mm-branch mm-node', 'data-branch': bi, style: 'cursor:pointer' });
+
+          // Curved connection line
+          var midX = cx + (branchR * 0.4) * Math.cos(rad);
+          var midY = cy + (branchR * 0.4) * Math.sin(rad);
+          var path = makeSVGEl('path', {
+            d: 'M' + cx + ',' + cy + ' Q' + midX + ',' + midY + ' ' + bx + ',' + by,
+            fill: 'none', stroke: b.color, 'stroke-width': '3', opacity: '0.5', 'stroke-linecap': 'round'
+          });
+          g.appendChild(path);
+
+          g.appendChild(makeSVGEl('circle', { cx: bx, cy: by, r: 46, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.2))' }));
+          addText(g, bx, by - 5, b.label, 10, '#fff', true);
+          var indicator = makeSVGEl('text', { x: bx, y: by + 16, 'text-anchor': 'middle', 'font-size': '9', fill: 'rgba(255,255,255,0.7)', 'font-family': 'Inter, sans-serif', 'pointer-events': 'none', class: 'mm-indicator' });
+          indicator.textContent = '[-]';
+          g.appendChild(indicator);
+
+          // Sub-nodes
+          var subG = makeSVGEl('g', { class: 'mm-sub-group', 'data-branch-subs': bi });
           var subCount = b.subs.length;
           b.subs.forEach(function(sub, si) {
-            var spread = 50;
+            var spread = 36;
             var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
             var srad = toRad(baseAngle);
             var sx = bx + subR * Math.cos(srad);
             var sy = by + subR * Math.sin(srad);
-            g.appendChild(makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' }));
-            var sw = 68, sh = 26;
-            g.appendChild(makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' }));
-            addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
+            subG.appendChild(makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.35', 'stroke-linecap': 'round' }));
+
+            var sw = 90, sh = 38;
+            subG.appendChild(makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 10, fill: b.color, opacity: '0', 'fill-opacity': '0.15', stroke: b.color, 'stroke-width': '1.5' }));
+
+            // Sub-node text
+            var subText = typeof sub === 'object' ? sub.text : sub;
+            addText(subG, sx, sy - 4, subText, 8.5, 'var(--text, #1e293b)', true);
+
+            // Detail text
+            if (typeof sub === 'object' && sub.detail) {
+              var dt = makeSVGEl('text', { x: sx, y: sy + 10, 'text-anchor': 'middle', 'font-size': '7', fill: 'var(--text-muted)', 'font-family': 'Inter, sans-serif', 'pointer-events': 'none' });
+              dt.textContent = sub.detail;
+              subG.appendChild(dt);
+            }
           });
+
+          svg.insertBefore(subG, centerG);
           svg.insertBefore(g, centerG);
           allBranchGroups.push(g);
+          allSubGroups.push(subG);
         });
 
+        // Animate in
         var allNodes = svg.querySelectorAll('circle, rect');
         allNodes.forEach(function(n, i) {
           setTimeout(function() {
-            n.style.transition = 'opacity 0.4s ease';
-            n.setAttribute('opacity', n.getAttribute('fill-opacity') ? n.getAttribute('fill-opacity') : '1');
-            if (n.getAttribute('fill-opacity')) n.setAttribute('opacity', '1');
-          }, i * 60);
+            n.style.transition = 'opacity 0.5s ease';
+            n.setAttribute('opacity', '1');
+          }, i * 30);
         });
+
+        // Click branch to toggle expand/collapse
         allBranchGroups.forEach(function(g, gi) {
           g.addEventListener('click', function(e) {
             e.stopPropagation();
+            branchExpanded[gi] = !branchExpanded[gi];
+            var subG = allSubGroups[gi];
+            var indicator = g.querySelector('.mm-indicator');
+
+            if (branchExpanded[gi]) {
+              subG.classList.remove('collapsed');
+              subG.style.opacity = '1';
+              subG.style.pointerEvents = 'auto';
+              if (indicator) indicator.textContent = '[-]';
+            } else {
+              subG.classList.add('collapsed');
+              subG.style.opacity = '0';
+              subG.style.pointerEvents = 'none';
+              if (indicator) indicator.textContent = '[+]';
+            }
+
+            // Highlight active branch, dim others
             allBranchGroups.forEach(function(og, oi) {
-              var opacity = (oi === gi) ? '1' : '0.25';
-              og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', opacity); });
-              og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', opacity); });
-              og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', oi === gi ? '0.8' : '0.15'); });
+              if (oi === gi) {
+                og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
+                og.querySelectorAll('path, line').forEach(function(l) { l.setAttribute('opacity', '0.8'); });
+              } else {
+                og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '0.3'); });
+                og.querySelectorAll('path, line').forEach(function(l) { l.setAttribute('opacity', '0.15'); });
+                if (branchExpanded[oi]) {
+                  allSubGroups[oi].style.opacity = '0.2';
+                }
+              }
             });
           });
         });
+
+        // Click center to reset all
         centerG.addEventListener('click', function() {
-          allBranchGroups.forEach(function(g) {
+          allBranchGroups.forEach(function(g, gi) {
             g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
-            g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
-            g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
+            g.querySelectorAll('path, line').forEach(function(l) { l.setAttribute('opacity', '0.5'); });
+            var indicator = g.querySelector('.mm-indicator');
+            branchExpanded[gi] = true;
+            allSubGroups[gi].classList.remove('collapsed');
+            allSubGroups[gi].style.opacity = '1';
+            allSubGroups[gi].style.pointerEvents = 'auto';
+            if (indicator) indicator.textContent = '[-]';
+          });
+          allSubGroups.forEach(function(sg) {
+            sg.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
+            sg.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.35'); });
           });
         });
       })();
       </script>
     </div><!-- /#tab-mindmap -->
 
-    <!-- ══════════════════════════════════════════
+    <!-- ============================
          CHAPTER NAV
-    ══════════════════════════════════════════ -->
+    ============================ -->
     <nav class="chapter-nav" aria-label="Chapter navigation">
       <a href="ch12.html" class="nav-prev" aria-label="Previous chapter">
         <i class="fas fa-arrow-left"></i> Ch12: Pray &amp; Persist
@@ -469,18 +1803,14 @@
 
   </main>
 
-  <!-- ══════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════ -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <p class="copyright">Content based on <em>"The Barakah Effect"</em> by Mohammed Faris, &copy; 2024 Claritas Books.</p>
     <p>This is an independent educational companion — not affiliated with Claritas Books or the author.</p>
     <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
   </footer>
 
-  <!-- ══════════════════════════════════════════
-       SCRIPTS
-  ══════════════════════════════════════════ -->
+  <!-- SCRIPTS -->
   <script src="app.js"></script>
   <script>
     const QUESTIONS = [

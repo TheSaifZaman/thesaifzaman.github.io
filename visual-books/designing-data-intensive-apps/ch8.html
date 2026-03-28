@@ -15,6 +15,135 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animation controls */
+    .step-controls {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-top: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .step-controls .btn { min-width: 90px; justify-content: center; }
+    .step-info {
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+      background: var(--surface-2); padding: 0.3rem 0.9rem;
+      border-radius: 20px; border: 1px solid var(--border);
+    }
+    .step-desc {
+      text-align: center; font-size: 0.88rem; color: var(--text);
+      margin-top: 0.75rem; min-height: 2.5em; font-weight: 500;
+      padding: 0.5rem; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(16,185,129,0.03));
+      border: 1px solid var(--border-2);
+    }
+
+    /* Interactive exercise styling */
+    .exercise-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem; margin: 1.5rem 0;
+    }
+    .exercise-box h3 {
+      font-size: 0.95rem; font-weight: 700; color: var(--accent-2);
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .exercise-box .exercise-prompt {
+      font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6;
+    }
+    .exercise-option {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.7rem 1rem; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); cursor: pointer;
+      transition: all var(--transition); font-size: 0.88rem;
+      color: var(--text-muted); margin-bottom: 0.5rem; user-select: none;
+    }
+    .exercise-option:hover { border-color: var(--accent); background: rgba(220,38,38,0.04); }
+    .exercise-option.ex-selected { border-color: var(--accent-2); background: rgba(37,99,235,0.08); color: var(--text); }
+    .exercise-option.ex-correct { border-color: var(--accent-3); background: var(--success-bg); color: var(--text); }
+    .exercise-option.ex-wrong { border-color: var(--accent-danger); background: var(--error-bg); color: var(--text); }
+    .exercise-option .ex-marker {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--border-2); font-weight: 700; font-size: 0.75rem; flex-shrink: 0;
+    }
+    .exercise-option.ex-correct .ex-marker { background: var(--accent-3); color: white; }
+    .exercise-option.ex-wrong .ex-marker { background: var(--accent-danger); color: white; }
+    .exercise-feedback {
+      display: none; margin-top: 0.75rem; padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm); font-size: 0.85rem; line-height: 1.6;
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted);
+    }
+    .exercise-feedback.visible { display: block; }
+    .exercise-actions { margin-top: 1rem; display: flex; gap: 0.75rem; }
+
+    /* Drag-drop exercise */
+    .drag-zone {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 1rem;
+      border: 2px dashed var(--border); border-radius: var(--radius-sm);
+      min-height: 60px; margin-bottom: 0.75rem; background: var(--surface-2);
+      transition: border-color 0.2s;
+    }
+    .drag-zone.drag-over { border-color: var(--accent-2); background: rgba(37,99,235,0.04); }
+    .drag-item {
+      padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.82rem;
+      font-weight: 600; cursor: grab; user-select: none;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text); transition: all 0.15s;
+    }
+    .drag-item:active { cursor: grabbing; opacity: 0.7; }
+    .drag-item.placed { opacity: 0.5; pointer-events: none; }
+    .drop-slot {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border: 2px dashed var(--border);
+      border-radius: var(--radius-sm); min-width: 120px; min-height: 40px;
+      background: var(--surface-2); margin: 0.3rem 0; font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .drop-slot.filled { border-style: solid; border-color: var(--accent-2); background: rgba(37,99,235,0.06); }
+    .drop-slot.correct-slot { border-color: var(--accent-3); background: var(--success-bg); }
+    .drop-slot.wrong-slot { border-color: var(--accent-danger); background: var(--error-bg); }
+    .drop-label { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+
+    /* Mind map interactive styles */
+    .mm-interactive { cursor: pointer; transition: all 0.3s ease; }
+    .mm-interactive:hover { filter: brightness(1.1); }
+    .mm-child-group { transition: opacity 0.4s ease, transform 0.4s ease; transform-origin: center; }
+    .mm-child-group.collapsed { opacity: 0; pointer-events: none; transform: scale(0.8); }
+    .mm-expand-hint {
+      font-family: 'Inter', sans-serif; font-size: 8px; fill: rgba(255,255,255,0.7);
+      pointer-events: none; text-anchor: middle;
+    }
+    .mm-tooltip {
+      position: absolute; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.82rem;
+      color: var(--text-muted); box-shadow: var(--shadow); max-width: 260px;
+      z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.2s;
+      line-height: 1.5;
+    }
+    .mm-tooltip.visible { opacity: 1; }
+    .mm-legend {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-muted);
+    }
+    .mm-legend span { display: flex; align-items: center; gap: 0.3rem; }
+    .mm-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    /* Network partition SVG animation */
+    @keyframes packetMove { 0% { opacity: 1; } 50% { opacity: 1; } 51% { opacity: 0; } 100% { opacity: 0; } }
+    @keyframes pulseNode { 0%, 100% { r: 22; } 50% { r: 25; } }
+    @keyframes fadeInSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-fade-in { animation: fadeInSlide 0.4s ease forwards; }
+
+    /* Scenario cards */
+    .scenario-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem; margin: 1rem 0;
+    }
+    .scenario-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem; text-align: center;
+      font-size: 0.85rem; color: var(--text-muted); transition: all 0.2s;
+    }
+    .scenario-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .scenario-card .sc-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    .scenario-card .sc-title { font-weight: 700; color: var(--text); font-size: 0.88rem; margin-bottom: 0.3rem; }
   </style>
 </head>
 <body data-chapter="ch8">
@@ -53,14 +182,83 @@
     <!-- TAB: Lessons -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- LESSON 1: Faults and Partial Failures -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>Faults and Partial Failures</h2></div>
         <p>A single computer is fundamentally different from a distributed system. When a program runs on one machine, it is largely <strong>deterministic</strong>: the same operation produces the same result. If something goes wrong, the entire machine typically crashes -- a total failure. You don't usually get a "partially working" computer.</p>
         <p>In a <strong>distributed system</strong>, things are fundamentally different. Some parts of the system may be working while other parts are broken. These <strong>partial failures</strong> are nondeterministic: the system may behave in unpredictable ways because you cannot know for sure what state remote nodes are in.</p>
         <p><strong>Cloud vs HPC:</strong> High-Performance Computing (HPC) treats the cluster more like a single computer -- if a node fails, the entire job is restarted from a checkpoint. Cloud computing takes the opposite approach: systems are built from commodity hardware with high failure rates. Rather than trying to prevent failures, cloud systems are designed to <strong>tolerate partial failures</strong>. In a shared-nothing architecture, nodes communicate only via an unreliable network.</p>
         <p>Building reliable systems from unreliable components is possible (like TCP providing reliable transport over unreliable IP), but you must understand and handle the failure modes explicitly.</p>
+
+        <!-- SVG: Single Machine vs Distributed System -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-server"></i> Single Machine vs Distributed System</div>
+          <svg viewBox="0 0 640 260" width="100%" height="260">
+            <defs>
+              <linearGradient id="gradOk" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.05"/>
+              </linearGradient>
+              <linearGradient id="gradBad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.03"/>
+              </linearGradient>
+            </defs>
+            <!-- Single machine side -->
+            <rect x="20" y="20" width="280" height="220" rx="14" fill="url(#gradOk)" stroke="var(--accent-3)" stroke-width="1.5" stroke-opacity="0.3"/>
+            <text x="160" y="50" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">Single Machine</text>
+            <rect x="80" y="70" width="160" height="50" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="160" y="92" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Working</text>
+            <text x="160" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Deterministic</text>
+            <text x="160" y="148" text-anchor="middle" font-family="Inter" font-size="28" fill="var(--accent-3)">OR</text>
+            <rect x="80" y="170" width="160" height="50" rx="10" fill="var(--accent)" opacity="0.85"/>
+            <text x="160" y="192" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">Total Crash</text>
+            <text x="160" y="208" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Everything stops</text>
+
+            <!-- Distributed system side -->
+            <rect x="340" y="20" width="280" height="220" rx="14" fill="url(#gradBad)" stroke="var(--accent)" stroke-width="1.5" stroke-opacity="0.3"/>
+            <text x="480" y="50" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Distributed System</text>
+            <!-- Node states -->
+            <circle cx="400" cy="100" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="400" y="104" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">OK</text>
+            <circle cx="480" cy="85" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="480" y="89" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">OK</text>
+            <circle cx="560" cy="100" r="22" fill="var(--accent)" opacity="0.85"/>
+            <text x="560" y="104" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">FAIL</text>
+            <circle cx="430" cy="170" r="22" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="430" y="174" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">SLOW</text>
+            <circle cx="530" cy="175" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="530" y="179" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">OK</text>
+            <!-- Lines between nodes -->
+            <line x1="420" y1="105" x2="460" y2="90" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="500" y1="90" x2="540" y2="100" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <line x1="408" y1="120" x2="425" y2="150" stroke="var(--border)" stroke-width="1"/>
+            <line x1="450" y1="165" x2="510" y2="172" stroke="var(--border)" stroke-width="1"/>
+            <text x="480" y="215" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partial failure: nondeterministic</text>
+          </svg>
+          <p class="viz-caption">A single machine is all-or-nothing. A distributed system can be partially broken, creating complex, unpredictable failure modes.</p>
+        </div>
+
+        <div class="scenario-grid">
+          <div class="scenario-card">
+            <span class="sc-icon"><i class="fas fa-desktop" style="color:var(--accent-3)"></i></span>
+            <div class="sc-title">HPC Approach</div>
+            Node fails? Restart entire job from checkpoint. Treat cluster as one big machine.
+          </div>
+          <div class="scenario-card">
+            <span class="sc-icon"><i class="fas fa-cloud" style="color:var(--accent-2)"></i></span>
+            <div class="sc-title">Cloud Approach</div>
+            Expect failures. Build systems that tolerate partial failure gracefully.
+          </div>
+          <div class="scenario-card">
+            <span class="sc-icon"><i class="fas fa-puzzle-piece" style="color:var(--accent)"></i></span>
+            <div class="sc-title">Shared-Nothing</div>
+            Nodes communicate only over unreliable network. No shared memory or disk.
+          </div>
+        </div>
       </div>
 
+      <!-- LESSON 2: Unreliable Networks -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Unreliable Networks</h2></div>
         <p>When you send a request over the network to another node, many things can go wrong. The request may be <strong>lost</strong> (dropped by the network). It may be <strong>waiting in a queue</strong> (delayed at a switch or the recipient's OS buffer). The <strong>remote node may have crashed</strong>. The remote node may have processed the request but the <strong>response was lost</strong>. Or the response may be <strong>delayed</strong> (queued on the way back).</p>
@@ -116,8 +314,67 @@
           </svg>
           <p class="viz-caption">A network request can fail in many ways, but the sender cannot distinguish between them. The only option is to wait for a timeout.</p>
         </div>
+
+        <!-- SVG: Network Partition -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-unlink"></i> Network Partition</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <defs>
+              <marker id="arrGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/></marker>
+            </defs>
+            <!-- Partition line -->
+            <line x1="310" y1="10" x2="310" y2="230" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.6"/>
+            <text x="310" y="228" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">NETWORK PARTITION</text>
+
+            <!-- Left partition -->
+            <rect x="30" y="30" width="250" height="170" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1" stroke-opacity="0.3"/>
+            <text x="155" y="52" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Partition A</text>
+            <circle cx="90" cy="110" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="90" y="114" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">N1</text>
+            <circle cx="170" cy="90" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="170" y="94" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">N2</text>
+            <circle cx="150" cy="160" r="22" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="150" y="164" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">N3</text>
+            <line x1="110" y1="105" x2="150" y2="95" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrGreen)"/>
+            <line x1="160" y1="110" x2="155" y2="140" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrGreen)"/>
+            <line x1="130" y1="155" x2="105" y2="130" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrGreen)"/>
+
+            <!-- Right partition -->
+            <rect x="340" y="30" width="250" height="170" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1" stroke-opacity="0.3"/>
+            <text x="465" y="52" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Partition B</text>
+            <circle cx="420" cy="100" r="22" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="420" y="104" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">N4</text>
+            <circle cx="520" cy="120" r="22" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="520" y="124" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white">N5</text>
+            <line x1="442" y1="105" x2="498" y2="117" stroke="var(--accent-2)" stroke-width="1.5"/>
+
+            <!-- Broken links -->
+            <line x1="240" y1="105" x2="290" y2="105" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" opacity="0.5"/>
+            <text x="265" y="98" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--accent)">&#x2717;</text>
+            <line x1="240" y1="145" x2="290" y2="135" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" opacity="0.5"/>
+            <text x="265" y="148" text-anchor="middle" font-family="Inter" font-size="14" fill="var(--accent)">&#x2717;</text>
+          </svg>
+          <p class="viz-caption">A network partition splits nodes into groups that can communicate internally but not with each other. Both sides may believe the other has failed.</p>
+        </div>
+
+        <!-- STEP-THROUGH: Timeout Dilemma -->
+        <div class="viz-container" id="timeoutAnim">
+          <div class="viz-title"><i class="fas fa-stopwatch"></i> Step-Through: The Timeout Dilemma</div>
+          <svg id="timeoutSvg" viewBox="0 0 620 220" width="100%" height="220">
+            <defs>
+              <marker id="arrTO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker>
+            </defs>
+          </svg>
+          <div class="step-desc" id="timeoutDesc">Click "Next" to step through the timeout dilemma scenarios.</div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="timeoutPrev"><i class="fas fa-arrow-left"></i> Prev</button>
+            <span class="step-info" id="timeoutInfo">Step 0 / 4</span>
+            <button class="btn btn-primary btn-sm" id="timeoutNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
       </div>
 
+      <!-- LESSON 3: Unreliable Clocks -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Unreliable Clocks</h2></div>
         <p>Each machine in a distributed system has its own clock, and they are never perfectly synchronized. <strong>NTP</strong> (Network Time Protocol) can synchronize clocks, but only to limited accuracy -- network delays, clock drift, and misconfiguration all introduce errors. Relying on clock synchronization across nodes is dangerous.</p>
@@ -160,21 +417,329 @@
           </svg>
           <p class="viz-caption">Clock skew means timestamps across nodes cannot be trusted for ordering events. B's event happened later in real time but has an earlier timestamp.</p>
         </div>
+
+        <!-- SVG: Two Types of Clocks -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Time-of-Day vs Monotonic Clocks</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Time-of-day side -->
+            <rect x="20" y="15" width="280" height="170" rx="12" fill="var(--accent)" opacity="0.05" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.2"/>
+            <text x="160" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Time-of-Day Clock</text>
+            <text x="160" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">System.currentTimeMillis()</text>
+            <!-- Timeline with jump -->
+            <line x1="40" y1="95" x2="280" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+            <circle cx="80" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="80" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">10:00:01</text>
+            <circle cx="140" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="140" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">10:00:02</text>
+            <!-- NTP jump backward -->
+            <path d="M 170 95 Q 190 65 210 95" stroke="var(--accent)" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+            <text x="190" y="62" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="var(--accent)">NTP jump!</text>
+            <circle cx="210" cy="95" r="4" fill="var(--accent)"/>
+            <text x="210" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--accent)">9:59:58</text>
+            <circle cx="260" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="260" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">9:59:59</text>
+            <text x="160" y="145" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">Can jump forward or backward</text>
+            <text x="160" y="160" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Bad for measuring duration</text>
+            <text x="160" y="175" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">Good for: wall-clock time</text>
+
+            <!-- Monotonic side -->
+            <rect x="320" y="15" width="280" height="170" rx="12" fill="var(--accent-3)" opacity="0.05" stroke="var(--accent-3)" stroke-width="1" stroke-opacity="0.2"/>
+            <text x="460" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Monotonic Clock</text>
+            <text x="460" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">System.nanoTime()</text>
+            <!-- Steady timeline -->
+            <line x1="340" y1="95" x2="580" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+            <circle cx="370" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="370" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">1000</text>
+            <circle cx="420" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="420" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">1050</text>
+            <circle cx="470" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="470" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">1100</text>
+            <circle cx="520" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="520" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">1150</text>
+            <circle cx="560" cy="95" r="4" fill="var(--accent-3)"/>
+            <text x="560" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">1200</text>
+            <text x="460" y="145" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">Always moves forward</text>
+            <text x="460" y="160" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Absolute value meaningless</text>
+            <text x="460" y="175" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">Good for: measuring duration</text>
+          </svg>
+          <p class="viz-caption">Time-of-day clocks can jump due to NTP synchronization. Monotonic clocks always move forward but only measure elapsed time on one machine.</p>
+        </div>
+
+        <!-- SVG: Google TrueTime -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-satellite-dish"></i> Google TrueTime Confidence Intervals</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <line x1="60" y1="155" x2="580" y2="155" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="60" y="175" font-family="Inter" font-size="9" fill="var(--text-muted)">Time</text>
+            <!-- Event A interval -->
+            <rect x="120" y="30" width="140" height="30" rx="6" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+            <line x1="120" y1="45" x2="120" y2="155" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3" opacity="0.3"/>
+            <line x1="260" y1="45" x2="260" y2="155" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3" opacity="0.3"/>
+            <text x="190" y="50" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Event A: [earliest, latest]</text>
+            <!-- Event B interval (overlapping) -->
+            <rect x="220" y="75" width="140" height="30" rx="6" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <line x1="360" y1="90" x2="360" y2="155" stroke="var(--accent-2)" stroke-width="1" stroke-dasharray="3 3" opacity="0.3"/>
+            <text x="290" y="95" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Event B: [earliest, latest]</text>
+            <!-- Overlap zone -->
+            <rect x="220" y="115" width="40" height="20" rx="4" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="240" y="130" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">overlap</text>
+            <!-- Arrow showing wait -->
+            <text x="420" y="55" font-family="Inter" font-size="9" font-weight="600" fill="var(--text)">If intervals overlap:</text>
+            <text x="420" y="72" font-family="Inter" font-size="9" fill="var(--text-muted)">Wait until they separate</text>
+            <text x="420" y="100" font-family="Inter" font-size="9" font-weight="600" fill="var(--text)">If no overlap:</text>
+            <text x="420" y="117" font-family="Inter" font-size="9" fill="var(--accent-3)">Safe to order A before B</text>
+            <!-- Hardware note -->
+            <rect x="400" y="135" width="180" height="22" rx="4" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1" stroke-opacity="0.3"/>
+            <text x="490" y="150" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)">Requires GPS + atomic clocks</text>
+          </svg>
+          <p class="viz-caption">TrueTime returns time as a confidence interval. Events can only be ordered when their intervals do not overlap, guaranteeing correctness.</p>
+        </div>
       </div>
 
+      <!-- LESSON 4: Process Pauses -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>Process Pauses</h2></div>
         <p>Even on a single machine, a thread can be paused for an arbitrarily long time and there is nothing it can do about it. Sources of unexpected pauses include: <strong>garbage collection</strong> (stop-the-world GC pauses can last seconds in large heaps), <strong>virtual machine suspension</strong> (VM live migration, snapshots), <strong>disk I/O</strong> (thrashing when memory is overcommitted, or synchronous disk writes), <strong>OS context switches</strong>, and <strong>SIGSTOP/SIGCONT</strong> signals.</p>
         <p>The danger: a thread might be paused <em>in the middle of a critical section</em> without knowing it was paused. Consider a <strong>lease-based leader</strong>: a node obtains a lease (time-limited lock) saying "I am the leader for the next 10 seconds." It checks the lease, sees it's still valid, then proceeds to write. But if a GC pause happened between the check and the write, the lease may have already expired and another node became the leader -- both nodes now believe they are the leader.</p>
         <p><strong>Fencing tokens</strong> solve this problem. Every time a lock or lease is granted, the lock service issues a monotonically increasing <strong>fencing token</strong> (a number). The client includes this token in every write. The storage server rejects any write with a token lower than the highest token it has already seen. Even if a paused client sends a delayed write with an old token, the storage server rejects it because it has already seen a higher token from the new leader.</p>
+
+        <!-- SVG: Sources of Process Pauses -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-pause-circle"></i> Sources of Process Pauses</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Central process -->
+            <rect x="230" y="70" width="160" height="60" rx="12" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="310" y="96" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="white">Running Thread</text>
+            <text x="310" y="115" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Can pause anytime</text>
+
+            <!-- GC -->
+            <rect x="20" y="15" width="120" height="45" rx="8" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="80" y="34" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">GC Pause</text>
+            <text x="80" y="49" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Stop-the-world</text>
+            <line x1="140" y1="45" x2="230" y2="80" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- VM Suspend -->
+            <rect x="480" y="15" width="120" height="45" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="540" y="34" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-3)">VM Suspend</text>
+            <text x="540" y="49" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Live migration</text>
+            <line x1="480" y1="45" x2="390" y2="80" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- Disk I/O -->
+            <rect x="20" y="140" width="120" height="45" rx="8" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="80" y="159" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-2)">Disk I/O</text>
+            <text x="80" y="174" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Sync writes / thrash</text>
+            <line x1="140" y1="155" x2="230" y2="120" stroke="var(--accent-2)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- Context switch -->
+            <rect x="250" y="155" width="120" height="35" rx="8" fill="var(--text-muted)" opacity="0.12" stroke="var(--text-muted)" stroke-width="1.5"/>
+            <text x="310" y="177" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--text-muted)">Context Switch</text>
+            <line x1="310" y1="155" x2="310" y2="130" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- SIGSTOP -->
+            <rect x="480" y="140" width="120" height="45" rx="8" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="540" y="159" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">SIGSTOP</text>
+            <text x="540" y="174" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Signal pause</text>
+            <line x1="480" y1="155" x2="390" y2="120" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 3"/>
+          </svg>
+          <p class="viz-caption">A thread can be paused by GC, VM suspension, disk I/O, context switches, or signals -- all without the thread's knowledge.</p>
+        </div>
+
+        <!-- STEP-THROUGH: Fencing Tokens -->
+        <div class="viz-container" id="fencingAnim">
+          <div class="viz-title"><i class="fas fa-shield-alt"></i> Step-Through: Fencing Tokens in Action</div>
+          <svg id="fencingSvg" viewBox="0 0 620 260" width="100%" height="260">
+          </svg>
+          <div class="step-desc" id="fencingDesc">Click "Next" to see how fencing tokens prevent stale writes from paused clients.</div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="fencingPrev"><i class="fas fa-arrow-left"></i> Prev</button>
+            <span class="step-info" id="fencingInfo">Step 0 / 6</span>
+            <button class="btn btn-primary btn-sm" id="fencingNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
       </div>
 
+      <!-- LESSON 5: Knowledge, Truth, and Lies -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Knowledge, Truth, and Lies</h2></div>
         <p>In a distributed system, a node cannot trust its own judgment alone. A node might think it is the leader, think its lease is valid, or think another node is dead -- and be wrong about all of these. <strong>Truth is defined by quorum</strong>: a majority of nodes must agree on a fact (e.g., which node is the leader, whether a node is alive).</p>
         <p><strong>Byzantine faults</strong> occur when nodes actively <em>lie</em> or send corrupted data -- either due to bugs, hardware errors, or malicious actors. Most datacenter systems do not protect against Byzantine faults because it is expensive and most nodes are trusted. Byzantine fault tolerance is mainly relevant in peer-to-peer networks and blockchain systems.</p>
         <p><strong>System models</strong> formalize our assumptions about what can go wrong. For timing: <em>synchronous model</em> assumes bounded network delay and bounded clock drift (unrealistic for most systems). <em>Partially synchronous model</em> assumes the system is usually well-behaved but occasionally has unbounded delays (most realistic). <em>Asynchronous model</em> makes no timing assumptions at all (theoretical, very conservative).</p>
-        <p>For crash behavior: <em>crash-stop</em> assumes a node that crashes never comes back. <em>Crash-recovery</em> assumes nodes may crash and later restart with durable state. <em>Byzantine</em> assumes nodes may behave arbitrarily, including sending malicious messages. Most practical systems assume crash-recovery in a partially synchronous network.</p>
+        <p>For crash behavior: <em>crash-stop</em> assumes a node that crashes never comes back. <em>crash-recovery</em> assumes nodes may crash and later restart with durable state. <em>Byzantine</em> assumes nodes may behave arbitrarily, including sending malicious messages. Most practical systems assume crash-recovery in a partially synchronous network.</p>
+
+        <!-- SVG: Byzantine Faults -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-user-secret"></i> Byzantine Faults: The Lying Node</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <!-- Honest nodes -->
+            <circle cx="160" cy="60" r="28" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="160" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node A</text>
+            <text x="160" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.8)">Honest</text>
+
+            <circle cx="460" cy="60" r="28" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="460" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node C</text>
+            <text x="460" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.8)">Honest</text>
+
+            <!-- Byzantine node -->
+            <circle cx="310" cy="190" r="32" fill="var(--accent)" opacity="0.85"/>
+            <text x="310" y="183" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node B</text>
+            <text x="310" y="198" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.8)">Byzantine</text>
+            <text x="310" y="213" text-anchor="middle" font-family="Inter" font-size="14" fill="white">&#x1F608;</text>
+
+            <!-- Messages from Byzantine node -->
+            <line x1="285" y1="165" x2="185" y2="85" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <rect x="185" y="110" width="100" height="30" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="235" y="129" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent)">Says: "value=42"</text>
+
+            <line x1="335" y1="165" x2="435" y2="85" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <rect x="335" y="110" width="120" height="30" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="395" y="129" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent)">Says: "value=99"</text>
+
+            <!-- Honest communication -->
+            <line x1="188" y1="60" x2="432" y2="60" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <rect x="255" y="30" width="110" height="22" rx="6" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="310" y="45" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">Agree: "value=42"</text>
+
+            <!-- Note -->
+            <text x="310" y="237" text-anchor="middle" font-family="Inter" font-size="9" font-style="italic" fill="var(--text-muted)">Node B sends different values to A and C. Requires 3f+1 nodes to tolerate f Byzantine faults.</text>
+          </svg>
+          <p class="viz-caption">A Byzantine node sends conflicting information to different peers. Tolerating f Byzantine faults requires at least 3f+1 nodes total.</p>
+        </div>
+
+        <!-- SVG: System Models Grid -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-cubes"></i> System Models at a Glance</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <!-- Timing models -->
+            <text x="20" y="25" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">Timing Models</text>
+            <rect x="20" y="35" width="185" height="65" rx="8" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="112" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Synchronous</text>
+            <text x="112" y="70" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Bounded delays</text>
+            <text x="112" y="83" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">(Unrealistic)</text>
+
+            <rect x="218" y="35" width="185" height="65" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="310" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Partially Synchronous</text>
+            <text x="310" y="70" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Usually bounded</text>
+            <text x="310" y="83" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">Most realistic</text>
+
+            <rect x="416" y="35" width="185" height="65" rx="8" fill="var(--text-muted)" opacity="0.08" stroke="var(--text-muted)" stroke-width="1.5"/>
+            <text x="508" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text-muted)">Asynchronous</text>
+            <text x="508" y="70" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">No timing assumptions</text>
+            <text x="508" y="83" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">(Very conservative)</text>
+
+            <!-- Crash models -->
+            <text x="20" y="135" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">Crash Models</text>
+            <rect x="20" y="145" width="185" height="65" rx="8" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="112" y="165" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Crash-Stop</text>
+            <text x="112" y="180" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Node crashes = gone forever</text>
+            <text x="112" y="195" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Simplest model</text>
+
+            <rect x="218" y="145" width="185" height="65" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="310" y="165" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Crash-Recovery</text>
+            <text x="310" y="180" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Crash + restart with state</text>
+            <text x="310" y="195" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">Most practical</text>
+
+            <rect x="416" y="145" width="185" height="65" rx="8" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="508" y="165" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Byzantine</text>
+            <text x="508" y="180" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Nodes may lie / cheat</text>
+            <text x="508" y="195" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Hardest to handle</text>
+
+            <!-- Highlight box -->
+            <rect x="195" y="230" width="230" height="35" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="310" y="252" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Most systems: partially sync + crash-recovery</text>
+          </svg>
+          <p class="viz-caption">System models formalize what can go wrong. Most practical distributed systems assume partial synchrony with crash-recovery behavior.</p>
+        </div>
+
+        <!-- SVG: Quorum / Truth by Majority -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-vote-yea"></i> Truth is Defined by Quorum</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <!-- 5 nodes voting -->
+            <circle cx="80" cy="80" r="30" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="80" y="75" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node 1</text>
+            <text x="80" y="92" text-anchor="middle" font-family="Inter" font-size="16" fill="white">&#x2714;</text>
+
+            <circle cx="190" cy="80" r="30" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="190" y="75" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node 2</text>
+            <text x="190" y="92" text-anchor="middle" font-family="Inter" font-size="16" fill="white">&#x2714;</text>
+
+            <circle cx="300" cy="80" r="30" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="300" y="75" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node 3</text>
+            <text x="300" y="92" text-anchor="middle" font-family="Inter" font-size="16" fill="white">&#x2714;</text>
+
+            <circle cx="410" cy="80" r="30" fill="var(--accent)" opacity="0.6"/>
+            <text x="410" y="75" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node 4</text>
+            <text x="410" y="92" text-anchor="middle" font-family="Inter" font-size="16" fill="white">&#x2717;</text>
+
+            <circle cx="520" cy="80" r="30" fill="var(--text-muted)" opacity="0.4"/>
+            <text x="520" y="75" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">Node 5</text>
+            <text x="520" y="92" text-anchor="middle" font-family="Inter" font-size="10" fill="white">???</text>
+
+            <!-- Bracket for majority -->
+            <path d="M 50 120 L 50 130 L 330 130 L 330 120" stroke="var(--accent-3)" stroke-width="2" fill="none"/>
+            <text x="190" y="150" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Majority (3 of 5) = Quorum</text>
+
+            <text x="310" y="175" text-anchor="middle" font-family="Inter" font-size="9" font-style="italic" fill="var(--text-muted)">A node alone cannot determine truth. Only a quorum can declare who is the leader, which node is alive, etc.</text>
+          </svg>
+          <p class="viz-caption">In a 5-node cluster, at least 3 nodes must agree for a decision to hold. Even if Node 4 disagrees and Node 5 is unreachable, the quorum decides.</p>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 1: Diagnose the Failure -->
+      <div class="exercise-box" id="exercise1">
+        <h3><i class="fas fa-flask"></i> Exercise 1: Diagnose the Failure</h3>
+        <div class="exercise-prompt">
+          <strong>Scenario:</strong> Node A sends a request to Node B. After 5 seconds, Node A has received no response.
+          Node A then sends a request to Node C and gets a response in 50ms. What can Node A conclude about Node B?
+        </div>
+        <div id="ex1Options">
+          <div class="exercise-option" data-idx="0" onclick="handleEx1(0)">
+            <span class="ex-marker">A</span>
+            <span>Node B has crashed and is permanently down.</span>
+          </div>
+          <div class="exercise-option" data-idx="1" onclick="handleEx1(1)">
+            <span class="ex-marker">B</span>
+            <span>The network link between A and B is broken, but B might be fine.</span>
+          </div>
+          <div class="exercise-option" data-idx="2" onclick="handleEx1(2)">
+            <span class="ex-marker">C</span>
+            <span>Nothing definitive. The request or response may be lost, delayed, or B may have crashed. All are indistinguishable.</span>
+          </div>
+          <div class="exercise-option" data-idx="3" onclick="handleEx1(3)">
+            <span class="ex-marker">D</span>
+            <span>Since Node C responded, the network is working fine -- B must have crashed.</span>
+          </div>
+        </div>
+        <div class="exercise-feedback" id="ex1Feedback"></div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 2: Order the Events -->
+      <div class="exercise-box" id="exercise2">
+        <h3><i class="fas fa-sort-amount-down"></i> Exercise 2: Fencing Token Ordering</h3>
+        <div class="exercise-prompt">
+          <strong>Scenario:</strong> Three clients obtain locks from a lock service with fencing tokens.
+          The storage server has seen token 33 so far. Drag the operations into the correct order
+          of what the storage server will <strong>accept vs reject</strong>.
+        </div>
+        <div style="margin-bottom:0.75rem;">
+          <div class="drop-label" style="margin-bottom:0.3rem;"><i class="fas fa-check-circle" style="color:var(--accent-3)"></i> Accepted writes (drag here):</div>
+          <div class="drag-zone" id="acceptZone" ondragover="allowDrop(event)" ondrop="dropItem(event,'acceptZone')"></div>
+          <div class="drop-label" style="margin-bottom:0.3rem;"><i class="fas fa-times-circle" style="color:var(--accent)"></i> Rejected writes (drag here):</div>
+          <div class="drag-zone" id="rejectZone" ondragover="allowDrop(event)" ondrop="dropItem(event,'rejectZone')"></div>
+        </div>
+        <div class="drop-label" style="margin-bottom:0.3rem;">Operations (drag to a zone above):</div>
+        <div class="drag-zone" id="sourceZone">
+          <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-id="op1" data-token="34">Write X=A (token 34)</div>
+          <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-id="op2" data-token="31">Write X=B (token 31)</div>
+          <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-id="op3" data-token="35">Write X=C (token 35)</div>
+          <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-id="op4" data-token="29">Write X=D (token 29)</div>
+        </div>
+        <div class="exercise-actions">
+          <button class="btn btn-primary btn-sm" onclick="checkEx2()"><i class="fas fa-check"></i> Check Answer</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetEx2()"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        <div class="exercise-feedback" id="ex2Feedback"></div>
       </div>
 
     </div>
@@ -203,6 +768,8 @@
             <dt style="font-weight:700; color:var(--text);">Byzantine Fault</dt><dd style="color:var(--text-muted); margin:0;">A node that lies, sends corrupted data, or behaves maliciously.</dd>
             <dt style="font-weight:700; color:var(--text);">Quorum</dt><dd style="color:var(--text-muted); margin:0;">Majority agreement among nodes to determine the truth in a distributed system.</dd>
             <dt style="font-weight:700; color:var(--text);">NTP</dt><dd style="color:var(--text-muted); margin:0;">Network Time Protocol -- synchronizes clocks across machines with limited accuracy.</dd>
+            <dt style="font-weight:700; color:var(--text);">Network Partition</dt><dd style="color:var(--text-muted); margin:0;">When some nodes can communicate with each other but not with others due to network failure.</dd>
+            <dt style="font-weight:700; color:var(--text);">TrueTime</dt><dd style="color:var(--text-muted); margin:0;">Google's time API returning confidence intervals, backed by GPS and atomic clocks.</dd>
           </dl>
         </div>
       </div>
@@ -215,58 +782,16 @@
 
     <!-- TAB: Mind Map -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh8" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
-          <style>
-            #mmCh8 .mm-node { animation: mmFadeInCH8 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH8 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh8 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh8 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh8 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh8 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
-          </style>
-          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
-          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
-          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
-          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="75" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Distributed</text>
-            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Troubles</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="130" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="130" y="74" text-anchor="middle">Partial Failures</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">Unreliable Networks</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="570" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="570" y="74" text-anchor="middle">Unreliable Clocks</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="110" cy="280" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="110" y="284" text-anchor="middle">Process Pauses</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="590" cy="280" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="590" y="284" text-anchor="middle">Fencing Tokens</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="200" cy="370" rx="58" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="200" y="374" text-anchor="middle">Byzantine Faults</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="500" cy="370" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="500" y="374" text-anchor="middle">System Models</text>
-          </g>
-        </svg>
+      <p style="font-size:0.85rem; color:var(--text-muted); text-align:center; margin-bottom:1rem;">Click any node to expand or collapse its children. Hover over leaf nodes for details.</p>
+      <div class="viz-container" style="min-height:520px; display:flex; align-items:center; justify-content:center; position:relative;">
+        <svg id="mmCh8" viewBox="0 0 760 520" width="100%" height="520" style="max-width:760px;"></svg>
+        <div class="mm-tooltip" id="mmTooltip"></div>
+      </div>
+      <div class="mm-legend">
+        <span><span class="dot" style="background:var(--accent);"></span> Core topic</span>
+        <span><span class="dot" style="background:var(--accent-2);"></span> Category</span>
+        <span><span class="dot" style="background:var(--accent-3);"></span> Concept / detail</span>
+        <span style="font-style:italic;">Click to expand/collapse</span>
       </div>
     </div>
 
@@ -283,16 +808,532 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    /* ============================================================
+       Chapter 8 Interactive Logic
+       ============================================================ */
+
+    // ---- STEP-THROUGH 1: Timeout Dilemma ----
+    (function() {
+      var step = 0, totalSteps = 4;
+      var svg = document.getElementById('timeoutSvg');
+      var desc = document.getElementById('timeoutDesc');
+      var info = document.getElementById('timeoutInfo');
+
+      var descriptions = [
+        'Click "Next" to step through the timeout dilemma scenarios.',
+        'Step 1: Node A sends a request to Node B and starts a timer. How long should it wait?',
+        'Step 2: Short timeout (200ms). Node B was just slow due to GC. Node A declares B dead -- false positive! Triggers unnecessary failover.',
+        'Step 3: Long timeout (30s). Node B has actually crashed. Node A waits 30 seconds before detecting the failure -- slow recovery.',
+        'Step 4: No perfect answer. Adaptive timeouts (like Phi Accrual Failure Detector) adjust based on observed response times. Trade-off is always between fast detection and false positives.'
+      ];
+
+      function render() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        // Reuse defs
+        var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+        defs.innerHTML = '<marker id="arrTO2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker>';
+        svg.appendChild(defs);
+
+        // Node A
+        var rA = rect(20,40,85,40,10,'var(--accent)',0.85);
+        svg.appendChild(rA);
+        svg.appendChild(txt(62,57,'Node A','white',11,true));
+
+        // Node B
+        var rB = rect(510,40,85,40,10,'var(--accent-2)',0.85);
+        svg.appendChild(rB);
+        svg.appendChild(txt(552,57,'Node B','white',11,true));
+
+        if (step >= 1) {
+          // Request arrow
+          svg.appendChild(line(105,60,510,60,'var(--accent)',1.5,false,'arrTO2'));
+          svg.appendChild(txt(310,52,'Request','var(--text-muted)',9,false));
+          // Timer
+          svg.appendChild(rect(20,95,85,25,6,'var(--accent)',0.1));
+          svg.appendChild(txt(62,112,'Timer started','var(--accent)',8,false));
+        }
+
+        if (step >= 2) {
+          // Short timeout scenario
+          svg.appendChild(rect(15,135,280,70,10,'var(--accent)',0.06));
+          svg.appendChild(txt(155,153,'Short timeout (200ms)','var(--accent)',10,true));
+          // GC on B
+          svg.appendChild(rect(510,100,85,30,6,'var(--accent-2)',0.15));
+          svg.appendChild(txt(552,119,'GC pause','var(--accent-2)',8,true));
+          // Timeout fires
+          svg.appendChild(txt(30,175,'A declares B dead!','var(--accent)',9,true));
+          svg.appendChild(txt(30,190,'False positive','var(--text-muted)',8,false));
+          // Late response
+          svg.appendChild(line(510,150,280,175,'var(--accent-3)',1.2,true));
+          svg.appendChild(txt(400,160,'Late response...','var(--accent-3)',8,false));
+        }
+
+        if (step >= 3) {
+          // Long timeout scenario
+          svg.appendChild(rect(325,135,280,70,10,'var(--accent-3)',0.06));
+          svg.appendChild(txt(465,153,'Long timeout (30s)','var(--accent-3)',10,true));
+          // Crash on B
+          svg.appendChild(rect(510,100,85,30,6,'var(--accent)',0.15));
+          svg.appendChild(txt(552,119,'Crashed!','var(--accent)',8,true));
+          svg.appendChild(txt(340,175,'A waits 30 seconds...','var(--accent-3)',9,true));
+          svg.appendChild(txt(340,190,'Slow detection','var(--text-muted)',8,false));
+        }
+
+        if (step >= 4) {
+          // Adaptive
+          svg.appendChild(rect(170,210,280,35,8,'var(--accent-2)',0.1));
+          svg.appendChild(txt(310,232,'Adaptive timeout: learn from observations','var(--accent-2)',9,true));
+        }
+
+        desc.textContent = descriptions[step];
+        info.textContent = 'Step ' + step + ' / ' + totalSteps;
+      }
+
+      function rect(x,y,w,h,r,fill,op) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        el.setAttribute('x',x); el.setAttribute('y',y);
+        el.setAttribute('width',w); el.setAttribute('height',h);
+        el.setAttribute('rx',r); el.setAttribute('fill',fill);
+        el.setAttribute('opacity',op);
+        return el;
+      }
+      function txt(x,y,t,fill,size,bold) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','text');
+        el.setAttribute('x',x); el.setAttribute('y',y);
+        el.setAttribute('text-anchor','middle');
+        el.setAttribute('font-family','Inter');
+        el.setAttribute('font-size',size);
+        if (bold) el.setAttribute('font-weight','700');
+        el.setAttribute('fill',fill);
+        el.textContent = t;
+        return el;
+      }
+      function line(x1,y1,x2,y2,stroke,w,dash,marker) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','line');
+        el.setAttribute('x1',x1); el.setAttribute('y1',y1);
+        el.setAttribute('x2',x2); el.setAttribute('y2',y2);
+        el.setAttribute('stroke',stroke); el.setAttribute('stroke-width',w);
+        if (dash) el.setAttribute('stroke-dasharray','5 3');
+        if (marker) el.setAttribute('marker-end','url(#'+marker+')');
+        return el;
+      }
+
+      document.getElementById('timeoutNext').addEventListener('click', function() {
+        if (step < totalSteps) { step++; render(); }
+      });
+      document.getElementById('timeoutPrev').addEventListener('click', function() {
+        if (step > 0) { step--; render(); }
+      });
+      render();
+    })();
+
+    // ---- STEP-THROUGH 2: Fencing Tokens ----
+    (function() {
+      var step = 0, totalSteps = 6;
+      var svg = document.getElementById('fencingSvg');
+      var desc = document.getElementById('fencingDesc');
+      var info = document.getElementById('fencingInfo');
+
+      var descriptions = [
+        'Click "Next" to see how fencing tokens prevent stale writes from paused clients.',
+        'Step 1: Client A obtains a lock from the lock service and receives fencing token #33.',
+        'Step 2: Client A checks its lease -- still valid. But then a long GC pause begins...',
+        'Step 3: While Client A is paused, its lease expires. Client B obtains the lock and receives fencing token #34.',
+        'Step 4: Client B writes to storage with token #34. Storage accepts it and records highest token = 34.',
+        'Step 5: Client A resumes from GC pause (unaware it was paused). It tries to write with its old token #33.',
+        'Step 6: Storage rejects Client A\'s write because token 33 < 34 (the highest seen). Split-brain prevented!'
+      ];
+
+      function render() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        var ns = 'http://www.w3.org/2000/svg';
+
+        // Lock service
+        r(230,10,160,40,10,'var(--accent-2)',0.85);
+        t(310,35,'Lock Service','white',11,true);
+
+        // Client A
+        r(20,90,100,40,10,'var(--accent)',step>=2&&step<=5?0.4:0.85);
+        t(70,115,'Client A','white',10,true);
+
+        // Client B
+        r(20,180,100,40,10,'var(--accent-3)',0.85);
+        t(70,205,'Client B','white',10,true);
+
+        // Storage
+        r(480,130,120,50,10,'var(--accent-2)',0.7);
+        t(540,152,'Storage','white',10,true);
+        t(540,167,'Server','white',9,false);
+
+        if (step >= 1) {
+          // Token 33 to Client A
+          l(230,35,120,100,'var(--accent)',1.5,true);
+          badge(170,60,'Token #33','var(--accent)');
+        }
+
+        if (step >= 2) {
+          // GC pause on A
+          r(15,140,110,28,6,'var(--accent)',0.15);
+          t(70,158,'GC PAUSE','var(--accent)',8,true);
+        }
+
+        if (step >= 3) {
+          // Token 34 to Client B
+          l(280,50,120,185,'var(--accent-3)',1.5,true);
+          badge(190,120,'Token #34','var(--accent-3)');
+        }
+
+        if (step >= 4) {
+          // Client B writes
+          l(120,195,480,155,'var(--accent-3)',2,false);
+          badge(310,178,'Write X=B, token=34','var(--accent-3)');
+          // Storage accepts
+          r(480,190,120,22,4,'var(--accent-3)',0.15);
+          t(540,205,'Accepted! Max=34','var(--accent-3)',8,true);
+        }
+
+        if (step >= 5) {
+          // Client A resumes and writes
+          l(120,105,480,145,'var(--accent)',1.5,true);
+          badge(310,95,'Write X=A, token=33','var(--accent)');
+        }
+
+        if (step >= 6) {
+          // Storage rejects
+          r(480,215,120,30,4,'var(--accent)',0.15);
+          t(540,228,'REJECTED!','var(--accent)',9,true);
+          t(540,240,'33 < 34','var(--text-muted)',7,false);
+          // Big shield
+          t(420,110,'\u26D4','var(--accent)',24,false);
+        }
+
+        desc.textContent = descriptions[step];
+        info.textContent = 'Step ' + step + ' / ' + totalSteps;
+      }
+
+      function r(x,y,w,h,rx,fill,op) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('width',w); el.setAttribute('height',h);
+        el.setAttribute('rx',rx); el.setAttribute('fill',fill); el.setAttribute('opacity',op);
+        svg.appendChild(el);
+      }
+      function t(x,y,text,fill,size,bold) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','text');
+        el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('text-anchor','middle');
+        el.setAttribute('font-family','Inter'); el.setAttribute('font-size',size);
+        if (bold) el.setAttribute('font-weight','700');
+        el.setAttribute('fill',fill); el.textContent = text;
+        svg.appendChild(el);
+      }
+      function l(x1,y1,x2,y2,stroke,w,dash) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg','line');
+        el.setAttribute('x1',x1); el.setAttribute('y1',y1); el.setAttribute('x2',x2); el.setAttribute('y2',y2);
+        el.setAttribute('stroke',stroke); el.setAttribute('stroke-width',w);
+        if (dash) el.setAttribute('stroke-dasharray','5 3');
+        svg.appendChild(el);
+      }
+      function badge(x,y,text,color) {
+        r(x-2,y-12,text.length*6+12,18,4,color,0.12);
+        t(x+text.length*3+4,y+1,text,color,8,true);
+      }
+
+      document.getElementById('fencingNext').addEventListener('click', function() {
+        if (step < totalSteps) { step++; render(); }
+      });
+      document.getElementById('fencingPrev').addEventListener('click', function() {
+        if (step > 0) { step--; render(); }
+      });
+      render();
+    })();
+
+    // ---- EXERCISE 1: Diagnose the Failure ----
+    var ex1Answered = false;
+    function handleEx1(idx) {
+      if (ex1Answered) return;
+      ex1Answered = true;
+      var correct = 2;
+      var opts = document.querySelectorAll('#ex1Options .exercise-option');
+      opts.forEach(function(o, i) {
+        if (i === correct) o.classList.add('ex-correct');
+        else if (i === idx && idx !== correct) o.classList.add('ex-wrong');
+      });
+      var fb = document.getElementById('ex1Feedback');
+      if (idx === correct) {
+        fb.textContent = 'Correct! Node A cannot determine why B did not respond. The request may have been lost, B may have crashed, or B may have processed the request but the response was lost or delayed. Even though C responded, that only tells us the link to C works -- it says nothing about B. This is the fundamental ambiguity of unreliable networks.';
+      } else {
+        fb.textContent = 'Not quite. The correct answer is C. Node A cannot distinguish between these failure modes. The fact that C responded only proves the A-C link works. B could be crashed, overloaded, or the A-B network link could be broken. This ambiguity is the core challenge of distributed systems.';
+      }
+      fb.classList.add('visible');
+    }
+
+    // ---- EXERCISE 2: Drag and Drop Fencing Tokens ----
+    var draggedId = null;
+    function dragStart(e) {
+      draggedId = e.target.dataset.id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', draggedId);
+    }
+    function allowDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+    function dropItem(e, zoneId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      var id = e.dataTransfer.getData('text/plain') || draggedId;
+      var item = document.querySelector('.drag-item[data-id="'+id+'"]');
+      if (item) {
+        document.getElementById(zoneId).appendChild(item);
+        item.classList.remove('placed');
+      }
+    }
+    // Remove drag-over on dragleave
+    document.querySelectorAll('.drag-zone').forEach(function(z) {
+      z.addEventListener('dragleave', function() { z.classList.remove('drag-over'); });
+    });
+
+    function checkEx2() {
+      var accepted = document.querySelectorAll('#acceptZone .drag-item');
+      var rejected = document.querySelectorAll('#rejectZone .drag-item');
+      var fb = document.getElementById('ex2Feedback');
+
+      // Correct: tokens 34 and 35 accepted (>33), tokens 31 and 29 rejected (<=33)
+      var acceptedTokens = [];
+      var rejectedTokens = [];
+      accepted.forEach(function(el) { acceptedTokens.push(parseInt(el.dataset.token)); });
+      rejected.forEach(function(el) { rejectedTokens.push(parseInt(el.dataset.token)); });
+
+      var allPlaced = acceptedTokens.length + rejectedTokens.length === 4;
+      if (!allPlaced) {
+        fb.textContent = 'Please drag all four operations into either the Accepted or Rejected zone before checking.';
+        fb.classList.add('visible');
+        return;
+      }
+
+      var correctAccept = acceptedTokens.sort().join(',') === '34,35';
+      var correctReject = rejectedTokens.sort().join(',') === '29,31';
+
+      accepted.forEach(function(el) {
+        var tok = parseInt(el.dataset.token);
+        if (tok > 33) el.style.borderColor = 'var(--accent-3)';
+        else el.style.borderColor = 'var(--accent)';
+      });
+      rejected.forEach(function(el) {
+        var tok = parseInt(el.dataset.token);
+        if (tok <= 33) el.style.borderColor = 'var(--accent-3)';
+        else el.style.borderColor = 'var(--accent)';
+      });
+
+      if (correctAccept && correctReject) {
+        fb.textContent = 'Correct! Tokens 34 and 35 are greater than the highest seen (33), so those writes are accepted. Tokens 31 and 29 are less than or equal to 33, so those writes are rejected. This is exactly how fencing tokens prevent stale writes from paused or delayed clients.';
+        fb.style.borderColor = 'var(--success-border)';
+      } else {
+        fb.textContent = 'Not quite. Remember: the storage server has seen token 33. It will accept writes with tokens > 33 (tokens 34 and 35) and reject writes with tokens <= 33 (tokens 31 and 29). Try again!';
+        fb.style.borderColor = 'var(--error-border)';
+      }
+      fb.classList.add('visible');
+    }
+
+    function resetEx2() {
+      var source = document.getElementById('sourceZone');
+      document.querySelectorAll('#acceptZone .drag-item, #rejectZone .drag-item').forEach(function(el) {
+        el.style.borderColor = '';
+        source.appendChild(el);
+      });
+      var fb = document.getElementById('ex2Feedback');
+      fb.classList.remove('visible');
+      fb.style.borderColor = '';
+    }
+
+    // ---- INTERACTIVE MIND MAP ----
+    (function() {
+      var svg = document.getElementById('mmCh8');
+      var tooltip = document.getElementById('mmTooltip');
+      if (!svg) return;
+
+      var ns = 'http://www.w3.org/2000/svg';
+
+      // Mind map data as a tree
+      var tree = {
+        label: 'Distributed\nTroubles', x: 380, y: 260, rx: 80, ry: 34, color: 'var(--accent)', textColor: 'white',
+        children: [
+          { label: 'Partial\nFailures', x: 100, y: 80, rx: 60, ry: 26, color: 'var(--accent)', textColor: 'white',
+            tip: 'Some parts of the system work while others are broken. Nondeterministic and unpredictable.',
+            children: [
+              { label: 'Cloud\nvs HPC', x: 30, y: 165, rx: 42, ry: 20, color: 'var(--accent-3)', textColor: 'white', tip: 'HPC: restart on failure. Cloud: tolerate partial failure.' },
+              { label: 'Shared\nNothing', x: 130, y: 175, rx: 44, ry: 20, color: 'var(--accent-3)', textColor: 'white', tip: 'Nodes communicate only via unreliable network. No shared memory or disk.' }
+            ]
+          },
+          { label: 'Unreliable\nNetworks', x: 340, y: 65, rx: 62, ry: 26, color: 'var(--accent-2)', textColor: 'white',
+            tip: 'Requests can be lost, delayed, duplicated, or reordered. You cannot distinguish lost from slow.',
+            children: [
+              { label: 'Request\nLost', x: 260, y: 15, rx: 38, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'The request never arrives at the destination.' },
+              { label: 'Response\nLost', x: 340, y: 8, rx: 40, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'The request was processed but the response never arrives.' },
+              { label: 'Timeout\nDilemma', x: 430, y: 15, rx: 42, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Too short = false positives. Too long = slow detection. No perfect value.' }
+            ]
+          },
+          { label: 'Unreliable\nClocks', x: 650, y: 80, rx: 58, ry: 26, color: 'var(--accent-2)', textColor: 'white',
+            tip: 'Clocks on different machines are never perfectly synchronized. NTP has limited accuracy.',
+            children: [
+              { label: 'Time-of-Day', x: 610, y: 15, rx: 46, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Wall clock. Can jump forward/backward. Bad for duration.' },
+              { label: 'Monotonic', x: 710, y: 25, rx: 42, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Always moves forward. Good for duration. Absolute value meaningless.' },
+              { label: 'TrueTime', x: 720, y: 80, rx: 40, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Google API: returns [earliest, latest] interval. Requires GPS + atomic clocks.' }
+            ]
+          },
+          { label: 'Process\nPauses', x: 120, y: 400, rx: 55, ry: 26, color: 'var(--accent)', textColor: 'white',
+            tip: 'A thread can be paused for arbitrarily long: GC, VM suspend, disk I/O, context switches.',
+            children: [
+              { label: 'GC\nPause', x: 30, y: 340, rx: 34, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Stop-the-world garbage collection can last seconds.' },
+              { label: 'VM\nSuspend', x: 30, y: 460, rx: 36, ry: 18, color: 'var(--accent-3)', textColor: 'white', tip: 'Live migration or snapshots freeze the entire VM.' },
+              { label: 'Lease\nDanger', x: 160, y: 480, rx: 40, ry: 18, color: 'var(--accent)', textColor: 'white', tip: 'A GC pause between checking and using a lease can cause split-brain.' }
+            ]
+          },
+          { label: 'Fencing\nTokens', x: 380, y: 460, rx: 52, ry: 26, color: 'var(--accent-2)', textColor: 'white',
+            tip: 'Monotonically increasing tokens issued with each lock. Storage rejects stale tokens.',
+            children: []
+          },
+          { label: 'Truth by\nQuorum', x: 580, y: 430, rx: 52, ry: 26, color: 'var(--accent)', textColor: 'white',
+            tip: 'A node cannot trust its own judgment. Majority must agree for a fact to be true.',
+            children: []
+          },
+          { label: 'Byzantine\nFaults', x: 650, y: 340, rx: 52, ry: 26, color: 'var(--accent-2)', textColor: 'white',
+            tip: 'Nodes that lie or send corrupted data. Requires 3f+1 nodes to tolerate f faults.',
+            children: []
+          },
+          { label: 'System\nModels', x: 700, y: 440, rx: 48, ry: 24, color: 'var(--accent-3)', textColor: 'white',
+            tip: 'Timing: sync / partial sync / async. Crash: stop / recovery / Byzantine.',
+            children: []
+          }
+        ]
+      };
+
+      // Track expanded state (all start expanded)
+      var expanded = {};
+      tree.children.forEach(function(c, i) { expanded[i] = true; });
+
+      function drawMindMap() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // Draw branches from center to children
+        tree.children.forEach(function(child, i) {
+          drawBranch(tree.x, tree.y, child.x, child.y, 'var(--border)', 1.8);
+
+          // Draw sub-branches if expanded
+          if (expanded[i] && child.children) {
+            child.children.forEach(function(gc) {
+              drawBranch(child.x, child.y, gc.x, gc.y, 'var(--border)', 1.2);
+            });
+          }
+        });
+
+        // Draw child nodes first (so center overlaps them)
+        tree.children.forEach(function(child, i) {
+          // Draw grandchildren if expanded
+          if (expanded[i] && child.children) {
+            child.children.forEach(function(gc) {
+              drawNode(gc, false);
+            });
+          }
+          drawNode(child, true, i);
+        });
+
+        // Center node (always on top)
+        drawNode(tree, false);
+      }
+
+      function drawBranch(x1, y1, x2, y2, stroke, width) {
+        var el = document.createElementNS(ns, 'line');
+        el.setAttribute('x1', x1); el.setAttribute('y1', y1);
+        el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+        el.setAttribute('stroke', stroke); el.setAttribute('stroke-width', width);
+        el.setAttribute('opacity', '0.5');
+        svg.appendChild(el);
+      }
+
+      function drawNode(node, clickable, childIdx) {
+        var g = document.createElementNS(ns, 'g');
+        g.style.cursor = clickable ? 'pointer' : 'default';
+
+        var el = document.createElementNS(ns, 'ellipse');
+        el.setAttribute('cx', node.x); el.setAttribute('cy', node.y);
+        el.setAttribute('rx', node.rx); el.setAttribute('ry', node.ry);
+        el.setAttribute('fill', node.color); el.setAttribute('opacity', '0.88');
+        g.appendChild(el);
+
+        // Label (handle multiline)
+        var lines = node.label.split('\n');
+        var baseY = node.y - (lines.length - 1) * 6;
+        lines.forEach(function(line, li) {
+          var t = document.createElementNS(ns, 'text');
+          t.setAttribute('x', node.x); t.setAttribute('y', baseY + li * 13);
+          t.setAttribute('text-anchor', 'middle');
+          t.setAttribute('font-family', 'Inter');
+          t.setAttribute('font-size', node === tree ? '12' : '10');
+          t.setAttribute('font-weight', '700');
+          t.setAttribute('fill', node.textColor);
+          t.setAttribute('pointer-events', 'none');
+          t.textContent = line;
+          g.appendChild(t);
+        });
+
+        // Expand/collapse indicator for clickable nodes with children
+        if (clickable && node.children && node.children.length > 0) {
+          var indicator = document.createElementNS(ns, 'text');
+          indicator.setAttribute('x', node.x); indicator.setAttribute('y', node.y + node.ry - 2);
+          indicator.setAttribute('text-anchor', 'middle');
+          indicator.setAttribute('font-family', 'Inter');
+          indicator.setAttribute('font-size', '8');
+          indicator.setAttribute('fill', 'rgba(255,255,255,0.6)');
+          indicator.setAttribute('pointer-events', 'none');
+          indicator.textContent = expanded[childIdx] ? '[-]' : '[+]';
+          g.appendChild(indicator);
+        }
+
+        // Click to toggle
+        if (clickable && node.children && node.children.length > 0) {
+          g.addEventListener('click', function() {
+            expanded[childIdx] = !expanded[childIdx];
+            drawMindMap();
+          });
+        }
+
+        // Tooltip on hover for leaf/detail nodes
+        if (node.tip) {
+          g.addEventListener('mouseenter', function(e) {
+            tooltip.textContent = node.tip;
+            tooltip.classList.add('visible');
+            var rect = svg.closest('.viz-container').getBoundingClientRect();
+            tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+            tooltip.style.top = (e.clientY - rect.top - 40) + 'px';
+          });
+          g.addEventListener('mousemove', function(e) {
+            var rect = svg.closest('.viz-container').getBoundingClientRect();
+            tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+            tooltip.style.top = (e.clientY - rect.top - 40) + 'px';
+          });
+          g.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('visible');
+          });
+        }
+
+        svg.appendChild(g);
+      }
+
+      drawMindMap();
+    })();
+
+    // ---- Quiz ----
+    var QUESTIONS = [
       { question: "What is a 'partial failure' in a distributed system?", options: ["When a database loses some data", "When some parts of the system are working while others are broken, in an unpredictable way", "When a transaction partially commits", "When a network loses exactly half its packets"], correct: 1, explanation: "Partial failures mean some nodes, disks, or network links are working while others are not. Unlike a single computer that either works or crashes entirely, distributed systems can be in a 'partially broken' state." },
-      { question: "Why can't you tell the difference between a lost request and a slow one?", options: ["You can, using checksums", "You can, using TCP", "Because from the sender's perspective, a lost message and a very delayed message look identical — there is no response in either case", "Because network protocols don't support acknowledgments"], correct: 2, explanation: "The sender sees the same thing in both cases: no response. The only option is to wait for a timeout and then make a judgment call, but you can never be certain whether the request was lost or just delayed." },
-      { question: "What is the danger of setting timeouts too short?", options: ["Increased network traffic", "False positives — declaring nodes dead when they're merely slow, potentially causing unnecessary failovers", "Data corruption", "Memory leaks"], correct: 1, explanation: "Short timeouts mean you quickly declare slow nodes as dead. This triggers unnecessary failovers, load redistribution, and potentially cascading failures if the node was just temporarily slow." },
-      { question: "Why are time-of-day clocks unsuitable for measuring elapsed time?", options: ["They are too imprecise", "They can jump forward or backward when NTP adjusts them or during leap seconds", "They only work on Linux", "They require network access"], correct: 1, explanation: "Time-of-day clocks are synchronized with NTP and can jump — forward if the local clock is behind, or backward if it's ahead. This means the difference between two readings might be negative or wildly incorrect." },
+      { question: "Why can't you tell the difference between a lost request and a slow one?", options: ["You can, using checksums", "You can, using TCP", "Because from the sender's perspective, a lost message and a very delayed message look identical -- there is no response in either case", "Because network protocols don't support acknowledgments"], correct: 2, explanation: "The sender sees the same thing in both cases: no response. The only option is to wait for a timeout and then make a judgment call, but you can never be certain whether the request was lost or just delayed." },
+      { question: "What is the danger of setting timeouts too short?", options: ["Increased network traffic", "False positives -- declaring nodes dead when they're merely slow, potentially causing unnecessary failovers", "Data corruption", "Memory leaks"], correct: 1, explanation: "Short timeouts mean you quickly declare slow nodes as dead. This triggers unnecessary failovers, load redistribution, and potentially cascading failures if the node was just temporarily slow." },
+      { question: "Why are time-of-day clocks unsuitable for measuring elapsed time?", options: ["They are too imprecise", "They can jump forward or backward when NTP adjusts them or during leap seconds", "They only work on Linux", "They require network access"], correct: 1, explanation: "Time-of-day clocks are synchronized with NTP and can jump -- forward if the local clock is behind, or backward if it's ahead. This means the difference between two readings might be negative or wildly incorrect." },
       { question: "What does Google's TrueTime API return instead of a single timestamp?", options: ["Two timestamps from different servers", "A confidence interval [earliest, latest] guaranteed to contain the actual time", "A hash of the current time", "The time on the nearest atomic clock"], correct: 1, explanation: "TrueTime returns an interval [earliest, latest]. The actual time is guaranteed to be somewhere within that range. To order events, the system waits until intervals don't overlap, ensuring correct ordering at the cost of some delay." },
-      { question: "How can a GC pause cause a leader to make incorrect writes?", options: ["GC corrupts the data being written", "The leader's lease may expire during the pause, another node becomes leader, but the paused node doesn't know and writes with a stale lease", "GC changes the network routing tables", "GC resets the leader's clock"], correct: 1, explanation: "A leader checks its lease, sees it's valid, then gets paused by GC. During the pause, the lease expires and another node becomes leader. When the original node resumes, it still thinks it's the leader and writes — causing a split-brain scenario." },
+      { question: "How can a GC pause cause a leader to make incorrect writes?", options: ["GC corrupts the data being written", "The leader's lease may expire during the pause, another node becomes leader, but the paused node doesn't know and writes with a stale lease", "GC changes the network routing tables", "GC resets the leader's clock"], correct: 1, explanation: "A leader checks its lease, sees it's valid, then gets paused by GC. During the pause, the lease expires and another node becomes leader. When the original node resumes, it still thinks it's the leader and writes -- causing a split-brain scenario." },
       { question: "How do fencing tokens prevent stale writes from paused clients?", options: ["They encrypt the data", "Each lock grant issues an increasing token; the storage server rejects writes with tokens lower than the highest it has seen", "They add a checksum to each write", "They prevent GC from running"], correct: 1, explanation: "Fencing tokens are monotonically increasing. If client A got token 33 and was paused, and client B got token 34 and wrote successfully, then when A resumes and tries to write with token 33, the storage server rejects it because it has already seen token 34." },
-      { question: "What does 'truth is defined by quorum' mean?", options: ["All nodes must agree", "A majority of nodes must agree on a fact (like who is the leader) for it to be considered true", "Only the leader's view counts", "The fastest node's view counts"], correct: 1, explanation: "A single node can't trust its own judgment in a distributed system — it might be isolated or delusional. A fact is only 'true' if a majority of nodes agree on it, ensuring that even if some nodes are faulty, the system makes correct decisions." },
-      { question: "What are Byzantine faults?", options: ["Faults caused by network partitions", "Faults where nodes actively lie, send corrupted data, or behave maliciously", "Faults caused by clock skew", "Any fault in a distributed system"], correct: 1, explanation: "Byzantine faults are the worst-case scenario: nodes that don't just crash but actively misbehave — sending conflicting messages to different nodes, corrupting data, or being controlled by an attacker. Most datacenter systems don't protect against them." },
+      { question: "What does 'truth is defined by quorum' mean?", options: ["All nodes must agree", "A majority of nodes must agree on a fact (like who is the leader) for it to be considered true", "Only the leader's view counts", "The fastest node's view counts"], correct: 1, explanation: "A single node can't trust its own judgment in a distributed system -- it might be isolated or delusional. A fact is only 'true' if a majority of nodes agree on it, ensuring that even if some nodes are faulty, the system makes correct decisions." },
+      { question: "What are Byzantine faults?", options: ["Faults caused by network partitions", "Faults where nodes actively lie, send corrupted data, or behave maliciously", "Faults caused by clock skew", "Any fault in a distributed system"], correct: 1, explanation: "Byzantine faults are the worst-case scenario: nodes that don't just crash but actively misbehave -- sending conflicting messages to different nodes, corrupting data, or being controlled by an attacker. Most datacenter systems don't protect against them." },
       { question: "Which system model is most realistic for practical distributed systems?", options: ["Synchronous model with crash-stop faults", "Partially synchronous model with crash-recovery faults", "Asynchronous model with Byzantine faults", "Synchronous model with Byzantine faults"], correct: 1, explanation: "Most real systems are partially synchronous (usually well-behaved timing, occasionally unbounded delays) with crash-recovery behavior (nodes may crash and restart). This model is realistic enough to be useful while allowing meaningful correctness proofs." }
     ];
     VB.initQuiz('quizContainer', QUESTIONS);

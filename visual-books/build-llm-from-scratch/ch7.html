@@ -36,6 +36,44 @@
       gap: 0.3rem;
     }
 
+    /* ── Step-through diagrams ── */
+    .step-through { position: relative; }
+    .step-through .step-display { min-height: 260px; display: flex; align-items: center; justify-content: center; }
+    .step-through .step-controls { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem; }
+    .step-through .step-indicator { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); min-width: 80px; text-align: center; }
+    .step-through .step-desc { text-align: center; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem; min-height: 2.5em; line-height: 1.5; }
+
+    /* ── Interactive exercises ── */
+    .exercise-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius, 12px); padding: 1.5rem; margin: 1.5rem 0; }
+    .exercise-box .exercise-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem; }
+    .exercise-box .exercise-instruction { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .template-builder { display: flex; flex-direction: column; gap: 0.5rem; }
+    .template-line { display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    .template-line .tl-marker { font-weight: 700; color: var(--accent); min-width: 140px; }
+    .template-line .tl-content { flex: 1; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface-2); color: var(--text); font-size: 0.78rem; }
+    .template-line .tl-content.editable { border-color: var(--accent); cursor: text; }
+    .check-btn { padding: 0.5rem 1.25rem; border-radius: 8px; border: none; font-weight: 700; font-size: 0.82rem; cursor: pointer; margin-top: 0.75rem; margin-right: 0.5rem; }
+    .check-btn.primary { background: var(--accent); color: white; }
+    .check-btn.ghost { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+    .feedback-msg { font-size: 0.85rem; font-weight: 600; margin-top: 0.75rem; min-height: 1.5em; }
+    .feedback-msg.correct { color: var(--accent-3); }
+    .feedback-msg.wrong { color: #ef4444; }
+    .loss-mask-row { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0.5rem 0; }
+    .loss-mask-token { padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; user-select: none; }
+    .loss-mask-token.prompt-tok { background: rgba(107,114,128,0.1); color: var(--text-muted); }
+    .loss-mask-token.response-tok { background: rgba(16,185,129,0.12); color: var(--accent-3); }
+    .loss-mask-token.selected { border-color: var(--accent); transform: scale(1.05); }
+    .loss-mask-token.correct-tok { border-color: var(--accent-3); background: rgba(16,185,129,0.2); }
+    .loss-mask-token.wrong-tok { border-color: #ef4444; background: rgba(239,68,68,0.15); }
+    .mm-hint { text-align: center; font-size: 0.78rem; color: var(--text-light); margin-bottom: 0.5rem; font-style: italic; }
+    .mm-detail-panel { margin-top: 1rem; padding: 1rem; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); min-height: 2em; text-align: center; transition: all 0.3s; }
+
+    @media (max-width: 600px) {
+      .step-through .step-display { min-height: 200px; }
+      .template-line { flex-wrap: wrap; }
+      .template-line .tl-marker { min-width: auto; }
+    }
+
     /* ── Prompt format comparison grid ── */
     .format-grid {
       display: grid;
@@ -513,6 +551,30 @@ is Paris.&lt;|end|&gt;</pre>
           <div class="viz-caption">The model sees the full input_ids for context but is only supervised on response tokens. Prompt tokens and padding positions are masked with -100 so cross_entropy(ignore_index=-100) skips them.</div>
         </div>
 
+        <!-- STEP-THROUGH: Instruction Fine-tuning Pipeline -->
+        <div class="viz-container step-through" id="stepInstPipeline">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step Through: From Base Model to Assistant</div>
+          <div class="step-display" id="stepInstPipelineDisplay"></div>
+          <div class="step-desc" id="stepInstPipelineDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-sm btn-ghost" id="stepInstPipelinePrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepInstPipelineIndicator">1 / 5</span>
+            <button class="btn btn-sm btn-primary" id="stepInstPipelineNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- EXERCISE: Loss Masking -->
+        <div class="exercise-box" id="lossMaskExercise">
+          <div class="exercise-title"><i class="fas fa-mask"></i> Interactive: Which Tokens Get Loss?</div>
+          <p class="exercise-instruction">Click the tokens that should have loss computed on them (the response tokens). Prompt and padding tokens should NOT be selected.</p>
+          <div class="loss-mask-row" id="lossMaskRow"></div>
+          <div>
+            <button class="check-btn primary" id="lossMaskCheck">Check</button>
+            <button class="check-btn ghost" id="lossMaskReset">Reset</button>
+          </div>
+          <div class="feedback-msg" id="lossMaskFeedback"></div>
+        </div>
+
       </section><!-- /#lesson-7-4 -->
 
       <!-- ══════════════════
@@ -696,6 +758,32 @@ Score: [1-10]"""</span>
           <p>RLHF, Constitutional AI, and DPO all build on top of instruction fine-tuning — they assume the model already knows how to follow instructions and push it further toward human preferences. Instruction fine-tuning is not the end of alignment training; it is the necessary foundation for every advanced alignment technique that follows.</p>
         </div>
 
+        <!-- STEP-THROUGH: Evaluation Methods -->
+        <div class="viz-container step-through" id="stepEval">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step Through: How to Evaluate an Instruction-Tuned Model</div>
+          <div class="step-display" id="stepEvalDisplay"></div>
+          <div class="step-desc" id="stepEvalDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-sm btn-ghost" id="stepEvalPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepEvalIndicator">1 / 4</span>
+            <button class="btn btn-sm btn-primary" id="stepEvalNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- EXERCISE: Match evaluation method to use case -->
+        <div class="exercise-box" id="evalMatchExercise">
+          <div class="exercise-title"><i class="fas fa-puzzle-piece"></i> Interactive: Match Evaluation Methods</div>
+          <p class="exercise-instruction">Click a method, then click the matching use case. Match all 4 pairs correctly.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" id="evalMatchArea">
+            <div id="evalMethods"></div>
+            <div id="evalUseCases"></div>
+          </div>
+          <div>
+            <button class="check-btn ghost" id="evalMatchReset" style="margin-top:0.75rem;">Reset</button>
+          </div>
+          <div class="feedback-msg" id="evalMatchFeedback"></div>
+        </div>
+
       </section><!-- /#lesson-7-9 -->
 
     </div><!-- /#tab-lessons -->
@@ -737,9 +825,14 @@ Score: [1-10]"""</span>
          TAB: MIND MAP
     ══════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container">
-        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click a node to explore</div>
-        <svg id="mindmap-ch7" viewBox="0 0 900 660" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+      <div class="mindmap-container">
+        <p class="mm-hint">Click any branch to expand/collapse its children. Click a child for details.</p>
+        <div id="interactiveMindmap7"></div>
+        <div class="mm-detail-panel" id="mmDetailPanel7">Click a node to see details</div>
+      </div>
+      <!-- OLD SVG mindmap replaced with interactive JS version below -->
+      <div style="display:none;">
+        <svg id="mindmap-ch7-old" viewBox="0 0 900 660" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
           <style>
             #mindmap-ch7 .mm-branch { cursor:pointer; transition:opacity 0.3s; }
             #mindmap-ch7 .mm-branch.dimmed { opacity:0.15; }
@@ -923,31 +1016,6 @@ Score: [1-10]"""</span>
       </div>
     </div><!-- /#tab-mindmap -->
 
-    <script>
-    (function(){
-      var svg = document.getElementById('mindmap-ch7');
-      if (!svg) return;
-      var branches = svg.querySelectorAll('.mm-branch');
-      var center   = svg.querySelector('.mm-center');
-      function resetAll() {
-        branches.forEach(function(b){ b.classList.remove('dimmed','highlighted'); });
-      }
-      branches.forEach(function(branch) {
-        branch.addEventListener('click', function(e) {
-          e.stopPropagation();
-          var isHighlighted = branch.classList.contains('highlighted');
-          resetAll();
-          if (!isHighlighted) {
-            branches.forEach(function(b){ b.classList.add('dimmed'); });
-            branch.classList.remove('dimmed');
-            branch.classList.add('highlighted');
-          }
-        });
-      });
-      center.addEventListener('click', function(){ resetAll(); });
-    })();
-    </script>
-
     <!-- ══════════════════════════════════════════
          CHAPTER NAV (outside tabs)
     ══════════════════════════════════════════ -->
@@ -1072,6 +1140,296 @@ Score: [1-10]"""</span>
 
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    /* ═══════════════════════════════════════════
+       STEP-THROUGH 1: Instruction Fine-tuning Pipeline
+    ═══════════════════════════════════════════ */
+    (function() {
+      var steps = [
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="140" y="50" width="200" height="60" rx="12" fill="var(--accent)" opacity="0.9"/><text x="240" y="75" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Inter">Pretrained GPT-2</text><text x="240" y="92" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.8">Text completer (not an assistant)</text></svg>', desc: 'Start: a pretrained GPT that predicts next tokens but cannot follow instructions.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="30" y="30" width="190" height="100" rx="10" fill="var(--surface-2)" stroke="var(--accent-3)" stroke-width="2"/><text x="125" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">Instruction Dataset</text><text x="125" y="75" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">instruction + input + response</text><text x="125" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Diverse tasks: QA, code,</text><text x="125" y="106" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">summarization, creative</text><rect x="260" y="40" width="190" height="80" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2"/><text x="355" y="65" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">Format with Template</text><text x="355" y="85" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Alpaca: ### Instruction:</text><text x="355" y="100" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">or Phi-3: &lt;|user|&gt; tokens</text></svg>', desc: 'Prepare: curate instruction-response pairs and format with a consistent prompt template.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="20" y="30" width="200" height="100" rx="10" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="2"/><text x="120" y="55" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="700" font-family="Inter">Loss Masking</text><text x="120" y="75" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Prompt tokens → label = -100</text><text x="120" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Response tokens → real labels</text><text x="120" y="110" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Only learn to generate responses</text><rect x="260" y="40" width="200" height="80" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="2"/><text x="360" y="65" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">Collate Function</text><text x="360" y="85" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Tokenize + pad + mask</text><text x="360" y="100" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Creates input_ids & target_ids</text></svg>', desc: 'Key innovation: mask the loss over prompt tokens — the model only learns to generate responses, not reconstruct instructions.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="40" y="30" width="180" height="100" rx="10" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/><text x="130" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">Fine-tune (2 epochs)</text><text x="130" y="75" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Same loop as pretraining</text><text x="130" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Next-token cross-entropy</text><text x="130" y="110" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">on response tokens only</text><rect x="260" y="40" width="180" height="80" rx="10" fill="var(--accent)" opacity="0.9"/><text x="350" y="68" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Inter">Instruction-tuned</text><text x="350" y="84" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Inter">Assistant!</text><text x="350" y="104" text-anchor="middle" fill="white" font-size="8" font-family="Inter" opacity="0.8">Follows instructions reliably</text></svg>', desc: 'Train for just 2 epochs with the same cross-entropy loss. The result: a model that behaves as an assistant.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="20" y="20" width="130" height="120" rx="10" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.5"/><text x="85" y="45" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">Evaluate</text><text x="85" y="65" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">LLM-as-judge</text><text x="85" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">MMLU benchmark</text><text x="85" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">BLEU/ROUGE</text><text x="85" y="115" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Human preference</text><rect x="180" y="30" width="130" height="100" rx="10" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1.5"/><text x="245" y="55" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Deploy</text><text x="245" y="75" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Export to GGUF</text><text x="245" y="90" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Run via Ollama</text><text x="245" y="110" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Local inference</text><rect x="340" y="40" width="120" height="80" rx="10" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1.5"/><text x="400" y="65" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Next Steps</text><text x="400" y="85" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">RLHF / DPO</text><text x="400" y="100" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">LoRA / QLoRA</text></svg>', desc: 'Evaluate with multiple methods, deploy locally with Ollama, then consider RLHF/DPO for further alignment.' }
+      ];
+      var curr = 0;
+      var display = document.getElementById('stepInstPipelineDisplay');
+      var desc = document.getElementById('stepInstPipelineDesc');
+      var indicator = document.getElementById('stepInstPipelineIndicator');
+      if (!display) return;
+      function render() { display.innerHTML = steps[curr].svg; desc.textContent = steps[curr].desc; indicator.textContent = (curr+1)+' / '+steps.length; }
+      render();
+      document.getElementById('stepInstPipelineNext').onclick = function() { curr = Math.min(curr+1, steps.length-1); render(); };
+      document.getElementById('stepInstPipelinePrev').onclick = function() { curr = Math.max(curr-1, 0); render(); };
+    })();
+
+    /* ═══════════════════════════════════════════
+       STEP-THROUGH 2: Evaluation Methods
+    ═══════════════════════════════════════════ */
+    (function() {
+      var steps = [
+        { svg: '<svg viewBox="0 0 460 120" width="100%"><rect x="100" y="20" width="260" height="80" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="2"/><text x="230" y="50" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="700" font-family="Inter">Training Loss Curve</text><text x="230" y="72" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Monitor loss is decreasing over batches</text><text x="230" y="88" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Necessary but not sufficient — loss can drop while quality degrades</text></svg>', desc: 'First check: is training loss decreasing? Low loss means the model predicts response tokens well.' },
+        { svg: '<svg viewBox="0 0 460 120" width="100%"><rect x="100" y="20" width="260" height="80" rx="12" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/><text x="230" y="50" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-weight="700" font-family="Inter">LLM-as-Judge</text><text x="230" y="72" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Use GPT-4 to score your model\'s responses</text><text x="230" y="88" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Scalable proxy for human evaluation — correlates well with human preference</text></svg>', desc: 'Use a stronger model (GPT-4) to judge response quality — a scalable proxy for human evaluation.' },
+        { svg: '<svg viewBox="0 0 460 120" width="100%"><rect x="100" y="20" width="260" height="80" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/><text x="230" y="50" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-weight="700" font-family="Inter">MMLU Benchmark</text><text x="230" y="72" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">57 subjects, multiple-choice: tests broad knowledge</text><text x="230" y="88" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Standard academic benchmark — compare against published baselines</text></svg>', desc: 'MMLU: standardized 57-subject benchmark for factual knowledge. Compare with published baselines.' },
+        { svg: '<svg viewBox="0 0 460 120" width="100%"><rect x="50" y="20" width="160" height="80" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="1.5"/><text x="130" y="50" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">BLEU / ROUGE</text><text x="130" y="70" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">N-gram overlap metrics</text><text x="130" y="85" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Good for translation/summary</text><rect x="250" y="20" width="160" height="80" rx="10" fill="var(--surface-2)" stroke="var(--accent-3)" stroke-width="1.5"/><text x="330" y="50" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">Human Preference</text><text x="330" y="70" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Gold standard evaluation</text><text x="330" y="85" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Expensive but most reliable</text></svg>', desc: 'BLEU/ROUGE for structured tasks; human preference for overall quality. Use multiple methods together.' }
+      ];
+      var curr = 0;
+      var display = document.getElementById('stepEvalDisplay');
+      var desc = document.getElementById('stepEvalDesc');
+      var indicator = document.getElementById('stepEvalIndicator');
+      if (!display) return;
+      function render() { display.innerHTML = steps[curr].svg; desc.textContent = steps[curr].desc; indicator.textContent = (curr+1)+' / '+steps.length; }
+      render();
+      document.getElementById('stepEvalNext').onclick = function() { curr = Math.min(curr+1, steps.length-1); render(); };
+      document.getElementById('stepEvalPrev').onclick = function() { curr = Math.max(curr-1, 0); render(); };
+    })();
+
+    /* ═══════════════════════════════════════════
+       EXERCISE 1: Loss Masking Token Selector
+    ═══════════════════════════════════════════ */
+    (function() {
+      var tokens = [
+        { text: '### Instruction:', type: 'prompt' },
+        { text: 'What', type: 'prompt' },
+        { text: 'is', type: 'prompt' },
+        { text: 'the', type: 'prompt' },
+        { text: 'capital', type: 'prompt' },
+        { text: '### Response:', type: 'prompt' },
+        { text: 'The', type: 'response' },
+        { text: 'capital', type: 'response' },
+        { text: 'of', type: 'response' },
+        { text: 'France', type: 'response' },
+        { text: 'is', type: 'response' },
+        { text: 'Paris', type: 'response' },
+        { text: '.', type: 'response' },
+        { text: '<PAD>', type: 'prompt' },
+        { text: '<PAD>', type: 'prompt' }
+      ];
+      var row = document.getElementById('lossMaskRow');
+      if (!row) return;
+      var selected = {};
+
+      function buildTokens() {
+        row.innerHTML = '';
+        tokens.forEach(function(tok, i) {
+          var el = document.createElement('span');
+          el.className = 'loss-mask-token ' + (tok.type === 'prompt' ? 'prompt-tok' : 'response-tok');
+          if (selected[i]) el.classList.add('selected');
+          el.textContent = tok.text;
+          el.onclick = function() { selected[i] = !selected[i]; buildTokens(); };
+          row.appendChild(el);
+        });
+      }
+      buildTokens();
+
+      document.getElementById('lossMaskCheck').onclick = function() {
+        var correct = 0, total = tokens.length;
+        tokens.forEach(function(tok, i) {
+          var shouldSelect = tok.type === 'response';
+          var el = row.children[i];
+          if ((!!selected[i]) === shouldSelect) {
+            correct++;
+            el.classList.add('correct-tok');
+            el.classList.remove('wrong-tok');
+          } else {
+            el.classList.add('wrong-tok');
+            el.classList.remove('correct-tok');
+          }
+        });
+        var fb = document.getElementById('lossMaskFeedback');
+        if (correct === total) {
+          fb.textContent = 'Perfect! Only response tokens (The capital of France is Paris.) should have loss computed.';
+          fb.className = 'feedback-msg correct';
+        } else {
+          fb.textContent = correct + '/' + total + ' correct. Remember: prompt tokens (### markers, instruction text) and <PAD> are masked with -100. Only response tokens get real labels.';
+          fb.className = 'feedback-msg wrong';
+        }
+      };
+      document.getElementById('lossMaskReset').onclick = function() {
+        selected = {};
+        document.getElementById('lossMaskFeedback').textContent = '';
+        document.getElementById('lossMaskFeedback').className = 'feedback-msg';
+        buildTokens();
+      };
+    })();
+
+    /* ═══════════════════════════════════════════
+       EXERCISE 2: Match Evaluation Methods
+    ═══════════════════════════════════════════ */
+    (function() {
+      var pairs = [
+        { method: 'LLM-as-Judge', useCase: 'Scalable proxy for human evaluation of response quality' },
+        { method: 'MMLU Benchmark', useCase: 'Standardized 57-subject multiple-choice knowledge test' },
+        { method: 'BLEU / ROUGE', useCase: 'N-gram overlap metrics for translation and summarization' },
+        { method: 'Human Preference', useCase: 'Gold-standard evaluation where humans rate responses directly' }
+      ];
+      var methodsEl = document.getElementById('evalMethods');
+      var useCasesEl = document.getElementById('evalUseCases');
+      if (!methodsEl) return;
+
+      var shuffledUC = pairs.map(function(p, i) { return { text: p.useCase, idx: i }; }).sort(function() { return Math.random() - 0.5; });
+      var selectedMethod = null;
+      var matched = {};
+      var matchCount = 0;
+
+      function render() {
+        methodsEl.innerHTML = '<div style="font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Methods</div>';
+        pairs.forEach(function(p, i) {
+          var el = document.createElement('div');
+          el.style.cssText = 'padding:0.6rem 1rem;border-radius:8px;margin-bottom:0.4rem;cursor:pointer;font-size:0.82rem;font-weight:600;border:2px solid var(--border);transition:all 0.2s;';
+          if (matched[i] !== undefined) {
+            el.style.borderColor = 'var(--accent-3)';
+            el.style.background = 'rgba(16,185,129,0.08)';
+            el.style.color = 'var(--accent-3)';
+            el.style.cursor = 'default';
+          } else if (selectedMethod === i) {
+            el.style.borderColor = 'var(--accent)';
+            el.style.background = 'rgba(79,110,247,0.08)';
+          }
+          el.textContent = p.method;
+          if (matched[i] === undefined) {
+            el.onclick = function() { selectedMethod = i; render(); };
+          }
+          methodsEl.appendChild(el);
+        });
+
+        useCasesEl.innerHTML = '<div style="font-size:0.78rem;font-weight:700;color:var(--accent-3);text-transform:uppercase;margin-bottom:0.5rem;">Use Cases</div>';
+        shuffledUC.forEach(function(uc) {
+          var el = document.createElement('div');
+          el.style.cssText = 'padding:0.6rem 1rem;border-radius:8px;margin-bottom:0.4rem;cursor:pointer;font-size:0.8rem;border:2px solid var(--border);transition:all 0.2s;color:var(--text-muted);';
+          var isMatched = Object.values(matched).indexOf(uc.idx) !== -1;
+          if (isMatched) {
+            el.style.borderColor = 'var(--accent-3)';
+            el.style.background = 'rgba(16,185,129,0.08)';
+            el.style.cursor = 'default';
+          }
+          el.textContent = uc.text;
+          if (!isMatched) {
+            el.onclick = function() {
+              if (selectedMethod === null) return;
+              if (selectedMethod === uc.idx) {
+                matched[selectedMethod] = uc.idx;
+                matchCount++;
+                selectedMethod = null;
+                var fb = document.getElementById('evalMatchFeedback');
+                if (matchCount === pairs.length) {
+                  fb.textContent = 'All matched correctly!';
+                  fb.className = 'feedback-msg correct';
+                }
+              } else {
+                el.style.borderColor = '#ef4444';
+                el.style.background = 'rgba(239,68,68,0.08)';
+                setTimeout(function() { el.style.borderColor = 'var(--border)'; el.style.background = ''; }, 600);
+              }
+              render();
+            };
+          }
+          useCasesEl.appendChild(el);
+        });
+      }
+      render();
+
+      document.getElementById('evalMatchReset').onclick = function() {
+        selectedMethod = null; matched = {}; matchCount = 0;
+        document.getElementById('evalMatchFeedback').textContent = '';
+        document.getElementById('evalMatchFeedback').className = 'feedback-msg';
+        shuffledUC.sort(function() { return Math.random() - 0.5; });
+        render();
+      };
+    })();
+
+    /* ═══════════════════════════════════════════
+       INTERACTIVE MIND MAP (Ch7)
+    ═══════════════════════════════════════════ */
+    (function() {
+      var container = document.getElementById('interactiveMindmap7');
+      var detailPanel = document.getElementById('mmDetailPanel7');
+      if (!container) return;
+
+      var tree = {
+        label: 'Instruction Fine-tuning', color: '#6c63ff',
+        children: [
+          { label: 'Goal', color: '#f97316', detail: 'Transform a text completer into an instruction-following assistant',
+            children: [
+              { label: 'Assistant Behavior', detail: 'Model recognizes instruction structure and generates helpful responses' },
+              { label: 'Not Text Completion', detail: 'Raw GPT continues text — instruction-tuned GPT follows commands' },
+              { label: 'Alpaca 52K', detail: 'Stanford showed 52K instruction pairs can create a capable assistant' }
+            ]
+          },
+          { label: 'Dataset Format', color: '#10b981', detail: 'Structured instruction + optional input + response pairs in JSON',
+            children: [
+              { label: 'Three Fields', detail: 'instruction (task), input (optional context), response (expected output)' },
+              { label: 'Diversity Matters', detail: 'Cover QA, code, summarization, creative writing, translation, reasoning' },
+              { label: 'JSON Format', detail: 'Simple list of {instruction, input, response} objects' }
+            ]
+          },
+          { label: 'Prompt Templates', color: '#3b82f6', detail: 'Consistent formatting that the model learns to recognize',
+            children: [
+              { label: 'Alpaca Format', detail: '### Instruction: / ### Input: / ### Response: — text-based markers' },
+              { label: 'Phi-3 / ChatML', detail: 'Special tokens <|user|>, <|assistant|>, <|end|> — more robust' },
+              { label: 'Consistency Rule', detail: 'Template at inference MUST match template used during training' }
+            ]
+          },
+          { label: 'Loss Masking', color: '#ec4899', detail: 'Only compute loss on response tokens — prompt tokens masked with -100',
+            children: [
+              { label: 'ignore_index=-100', detail: 'PyTorch cross_entropy skips positions with label -100' },
+              { label: 'Prompt Masked', detail: 'Instruction and template markers get -100 labels' },
+              { label: 'Response Only', detail: 'Model only learns to generate responses, not reconstruct prompts' }
+            ]
+          },
+          { label: 'Training', color: '#f59e0b', detail: 'Same training loop as pretraining, just with masked instruction data',
+            children: [
+              { label: 'Cross-Entropy Loss', detail: 'Same next-token prediction objective, applied only to response tokens' },
+              { label: '2 Epochs Typical', detail: 'Converges quickly from pretrained starting point' },
+              { label: 'AdamW + Warmup', detail: 'Standard optimizer with cosine learning rate schedule' }
+            ]
+          },
+          { label: 'Evaluation', color: '#8b5cf6', detail: 'Multiple methods needed — no single metric captures quality',
+            children: [
+              { label: 'LLM-as-Judge', detail: 'Use GPT-4 to score responses — scalable proxy for human evaluation' },
+              { label: 'MMLU Benchmark', detail: '57-subject multiple choice — standardized knowledge test' },
+              { label: 'BLEU/ROUGE', detail: 'N-gram overlap for translation and summarization tasks' },
+              { label: 'Human Preference', detail: 'Gold standard — humans directly rate and compare responses' }
+            ]
+          },
+          { label: 'Beyond', color: '#06b6d4', detail: 'Advanced alignment techniques that build on instruction fine-tuning',
+            children: [
+              { label: 'RLHF', detail: 'Reinforcement Learning from Human Feedback — reward model + PPO' },
+              { label: 'DPO', detail: 'Direct Preference Optimization — simpler alternative to RLHF' },
+              { label: 'LoRA', detail: 'Low-Rank Adaptation — parameter-efficient fine-tuning' },
+              { label: 'Constitutional AI', detail: 'Self-supervised alignment using a set of principles' }
+            ]
+          }
+        ]
+      };
+
+      var expanded = {};
+      function renderTree() {
+        var html = '<div style="text-align:center;margin-bottom:1rem;">';
+        html += '<span style="display:inline-block;padding:0.75rem 2rem;border-radius:12px;background:'+tree.color+';color:white;font-weight:700;font-size:1rem;cursor:pointer;" onclick="document.getElementById(\'mmDetailPanel7\').textContent=\'Click any branch to explore.\'">'+tree.label+'</span></div>';
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">';
+        tree.children.forEach(function(branch, bi) {
+          var isExp = expanded[bi];
+          html += '<div style="border:2px solid '+branch.color+';border-radius:10px;overflow:hidden;">';
+          html += '<div style="background:'+branch.color+';color:white;padding:0.6rem 1rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:0.85rem;" data-branch="'+bi+'" class="mm7-toggle">'+branch.label+' <span style="font-size:0.75rem;">'+(isExp?'[-]':'[+]')+'</span></div>';
+          if (isExp && branch.children) {
+            branch.children.forEach(function(child) {
+              html += '<div style="padding:0.5rem 1rem;border-top:1px solid '+branch.color+'22;cursor:pointer;font-size:0.8rem;color:var(--text);transition:background 0.2s;" class="mm7-child" data-detail="'+child.detail.replace(/"/g,'&quot;')+'" onmouseover="this.style.background=\''+branch.color+'11\'" onmouseout="this.style.background=\'transparent\'"><strong style="color:'+branch.color+';">'+child.label+'</strong></div>';
+            });
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        container.querySelectorAll('.mm7-toggle').forEach(function(el) {
+          el.onclick = function() { var bi = parseInt(el.dataset.branch); expanded[bi] = !expanded[bi]; detailPanel.textContent = tree.children[bi].detail; renderTree(); };
+        });
+        container.querySelectorAll('.mm7-child').forEach(function(el) {
+          el.onclick = function() { detailPanel.textContent = el.dataset.detail; };
+        });
+      }
+      renderTree();
+    })();
   </script>
 </body>
 </html>

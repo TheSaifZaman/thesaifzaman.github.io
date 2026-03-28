@@ -203,6 +203,267 @@
     @media (max-width: 500px) {
       .temp-controls { gap: 0.5rem; }
     }
+
+    /* ── Step-through animated diagrams ── */
+    .step-diagram {
+      margin: 1.2rem 0;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .step-diagram-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .step-diagram-header .step-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .step-diagram-nav {
+      display: flex;
+      gap: 0.4rem;
+    }
+    .step-diagram-nav button {
+      padding: 0.3rem 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .step-diagram-nav button:hover:not(:disabled) {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .step-diagram-nav button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .step-diagram-body {
+      padding: 1rem;
+      min-height: 200px;
+    }
+    .step-diagram-body .step-content {
+      display: none;
+      animation: stepFadeIn 0.35s ease;
+    }
+    .step-diagram-body .step-content.active {
+      display: block;
+    }
+    @keyframes stepFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .step-content h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    .step-content p {
+      font-size: 0.82rem;
+      margin: 0.4rem 0;
+      line-height: 1.55;
+    }
+
+    /* ── Interactive exercises ── */
+    .exercise-box {
+      margin: 1.2rem 0;
+      border: 2px solid rgba(79,110,247,0.25);
+      border-radius: 12px;
+      background: rgba(79,110,247,0.03);
+      overflow: hidden;
+    }
+    .exercise-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      background: rgba(79,110,247,0.08);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .exercise-body {
+      padding: 1rem;
+    }
+    .exercise-body p {
+      font-size: 0.82rem;
+      margin: 0 0 0.65rem;
+      line-height: 1.55;
+    }
+    .exercise-body .exercise-input-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    .exercise-body input[type="number"],
+    .exercise-body input[type="text"] {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.82rem;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      width: 120px;
+    }
+    .exercise-body select {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.82rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .exercise-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .exercise-btn:hover { filter: brightness(1.1); }
+    .exercise-feedback {
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      display: none;
+    }
+    .exercise-feedback.correct {
+      display: block;
+      background: rgba(16,185,129,0.1);
+      border: 1.5px solid rgba(16,185,129,0.3);
+      color: var(--accent-3);
+    }
+    .exercise-feedback.incorrect {
+      display: block;
+      background: rgba(239,68,68,0.08);
+      border: 1.5px solid rgba(239,68,68,0.25);
+      color: #ef4444;
+    }
+
+    /* ── Interactive mind map ── */
+    .mindmap-container {
+      position: relative;
+    }
+    .mm-interactive {
+      width: 100%;
+      min-height: 480px;
+      position: relative;
+    }
+    .mm-node {
+      position: absolute;
+      padding: 0.5rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease;
+      white-space: nowrap;
+      user-select: none;
+      z-index: 2;
+    }
+    .mm-node:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .mm-node.mm-center-node {
+      padding: 0.7rem 1.3rem;
+      font-size: 0.92rem;
+      font-weight: 800;
+      z-index: 3;
+    }
+    .mm-node .mm-expand-icon {
+      display: inline-block;
+      margin-left: 0.4rem;
+      font-size: 0.7rem;
+      transition: transform 0.25s ease;
+    }
+    .mm-node.expanded .mm-expand-icon {
+      transform: rotate(90deg);
+    }
+    .mm-node.dimmed {
+      opacity: 0.2;
+    }
+    .mm-sub-node {
+      position: absolute;
+      padding: 0.35rem 0.65rem;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 1;
+      opacity: 0;
+      transform: scale(0.7);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .mm-sub-node.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+    .mm-line {
+      position: absolute;
+      height: 2.5px;
+      border-radius: 2px;
+      transform-origin: left center;
+      z-index: 0;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+    .mm-line.dimmed { opacity: 0.08; }
+    .mm-sub-line {
+      position: absolute;
+      height: 1.5px;
+      border-radius: 1px;
+      transform-origin: left center;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .mm-sub-line.visible { opacity: 0.4; }
+    .mm-reset-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.15s;
+    }
+    .mm-reset-btn:hover {
+      background: var(--surface-2);
+    }
   </style>
 </head>
 <body data-chapter="ch5">
@@ -230,7 +491,7 @@
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
-      <span class="sep">›</span>
+      <span class="sep">&rsaquo;</span>
       <span class="current">Chapter 5</span>
     </nav>
 
@@ -289,7 +550,60 @@
 
         <p>Before diving into the training machinery, it is worth revisiting exactly what the GPT model produces during a forward pass. Given a batch of token-ID sequences of shape <code>[B, T]</code>, the model outputs a tensor of <strong>logits</strong> with shape <code>[B, T, vocab_size]</code>. Each of the T positions holds a raw, unnormalised score for every token in the vocabulary — essentially the model's "vote" for what token should come next. At inference time, you take the logits at the final position (index T-1), apply softmax to turn the scores into a probability distribution, then either pick the argmax (greedy decoding) or sample from the distribution to obtain the next token ID.</p>
 
-        <p>During training, however, we exploit a critical advantage: we already know the correct next token at every position in the sequence. We can therefore compute T separate next-token predictions in a single forward pass and compare each one against its ground-truth label. This technique is called <strong>teacher forcing</strong>. Concretely, if your input token sequence is <code>[t₀, t₁, t₂, …, t_{T-1}]</code>, the corresponding target sequence is shifted one position right: <code>[t₁, t₂, t₃, …, t_T]</code>. The model sees the full input, predicts a distribution at each position, and is immediately supervised against the next real token — all in one vectorised operation.</p>
+        <p>During training, however, we exploit a critical advantage: we already know the correct next token at every position in the sequence. We can therefore compute T separate next-token predictions in a single forward pass and compare each one against its ground-truth label. This technique is called <strong>teacher forcing</strong>. Concretely, if your input token sequence is <code>[t&#8320;, t&#8321;, t&#8322;, &#8230;, t_{T-1}]</code>, the corresponding target sequence is shifted one position right: <code>[t&#8321;, t&#8322;, t&#8323;, &#8230;, t_T]</code>. The model sees the full input, predicts a distribution at each position, and is immediately supervised against the next real token — all in one vectorised operation.</p>
+
+        <!-- SVG: Teacher Forcing Diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Teacher Forcing: Input vs Target Alignment</div>
+          <svg viewBox="0 0 520 190" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <style>
+              .tf-box { rx: 6; ry: 6; }
+              .tf-txt { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-anchor: middle; }
+              .tf-label { font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; fill: var(--text-muted); }
+              .tf-arrow { fill: var(--text-muted); }
+            </style>
+            <!-- Input row -->
+            <text x="40" y="50" class="tf-label">Input:</text>
+            <rect x="90" y="32" width="70" height="32" class="tf-box" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+            <text x="125" y="53" class="tf-txt" fill="var(--accent)">The</text>
+            <rect x="170" y="32" width="70" height="32" class="tf-box" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+            <text x="205" y="53" class="tf-txt" fill="var(--accent)">cat</text>
+            <rect x="250" y="32" width="70" height="32" class="tf-box" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+            <text x="285" y="53" class="tf-txt" fill="var(--accent)">sat</text>
+            <rect x="330" y="32" width="70" height="32" class="tf-box" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+            <text x="365" y="53" class="tf-txt" fill="var(--accent)">on</text>
+            <rect x="410" y="32" width="70" height="32" class="tf-box" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.4)" stroke-width="1.5"/>
+            <text x="445" y="53" class="tf-txt" fill="var(--accent)">the</text>
+            <!-- Arrows -->
+            <g>
+              <line x1="125" y1="67" x2="125" y2="108" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="125,113 121,106 129,106" class="tf-arrow"/>
+              <line x1="205" y1="67" x2="205" y2="108" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="205,113 201,106 209,106" class="tf-arrow"/>
+              <line x1="285" y1="67" x2="285" y2="108" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="285,113 281,106 289,106" class="tf-arrow"/>
+              <line x1="365" y1="67" x2="365" y2="108" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="365,113 361,106 369,106" class="tf-arrow"/>
+              <line x1="445" y1="67" x2="445" y2="108" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="445,113 441,106 449,106" class="tf-arrow"/>
+            </g>
+            <text x="265" y="98" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="var(--text-muted)">predict next</text>
+            <!-- Target row -->
+            <text x="40" y="138" class="tf-label">Target:</text>
+            <rect x="90" y="117" width="70" height="32" class="tf-box" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+            <text x="125" y="138" class="tf-txt" fill="var(--accent-3)">cat</text>
+            <rect x="170" y="117" width="70" height="32" class="tf-box" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+            <text x="205" y="138" class="tf-txt" fill="var(--accent-3)">sat</text>
+            <rect x="250" y="117" width="70" height="32" class="tf-box" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+            <text x="285" y="138" class="tf-txt" fill="var(--accent-3)">on</text>
+            <rect x="330" y="117" width="70" height="32" class="tf-box" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+            <text x="365" y="138" class="tf-txt" fill="var(--accent-3)">the</text>
+            <rect x="410" y="117" width="70" height="32" class="tf-box" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+            <text x="445" y="138" class="tf-txt" fill="var(--accent-3)">mat</text>
+            <text x="265" y="172" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="var(--text-muted)">Targets = inputs shifted right by one position</text>
+          </svg>
+          <div class="viz-caption">Teacher forcing: the model predicts the next token at every position. At position 0, input "The" should predict target "cat"; at position 1, "cat" predicts "sat", etc. All T predictions happen in one forward pass.</div>
+        </div>
 
         <p>Teacher forcing is highly efficient but it does introduce a subtle training-inference mismatch. During inference the model conditions on its own (potentially imperfect) previous outputs, whereas during training it always has the perfect ground-truth context. For large language models this so-called <em>exposure bias</em> is rarely a practical problem because the enormous diversity of the training corpus means the model sees enough variation to generalise, but it is worth keeping in mind when analysing failure modes of smaller models trained on narrow datasets.</p>
 
@@ -304,9 +618,9 @@
           <h2>Cross-Entropy Loss</h2>
         </div>
 
-        <p>Cross-entropy loss is the standard objective for next-token prediction, and understanding it intuitively helps you debug training runs. The formula for a single token is simple: <code>−log(p_correct_token)</code>, where <code>p_correct_token</code> is the probability the model assigned to the token that actually appeared next in the text. If the model is perfectly confident and correct, it assigns probability 1.0 and the loss contribution is <code>−log(1) = 0</code>. Any uncertainty or incorrect prediction pushes the loss above zero. Because the logarithm grows very steeply near zero, assigning even a tiny probability to the wrong token incurs a large penalty — this is by design, as it strongly encourages the model to concentrate probability mass on the correct answer.</p>
+        <p>Cross-entropy loss is the standard objective for next-token prediction, and understanding it intuitively helps you debug training runs. The formula for a single token is simple: <code>&minus;log(p_correct_token)</code>, where <code>p_correct_token</code> is the probability the model assigned to the token that actually appeared next in the text. If the model is perfectly confident and correct, it assigns probability 1.0 and the loss contribution is <code>&minus;log(1) = 0</code>. Any uncertainty or incorrect prediction pushes the loss above zero. Because the logarithm grows very steeply near zero, assigning even a tiny probability to the wrong token incurs a large penalty — this is by design, as it strongly encourages the model to concentrate probability mass on the correct answer.</p>
 
-        <p>A useful sanity check is to compute the expected loss at initialisation. A freshly initialised model with random weights will distribute probability roughly uniformly across all 50,257 tokens in GPT-2's vocabulary, giving each token a probability of about <code>1/50257 ≈ 1.99 × 10⁻⁵</code>. Plugging that into the formula: <code>−log(1.99 × 10⁻⁵) ≈ 10.82</code>. Whenever you start training a GPT-style model you should see an initial loss very close to this value — if the starting loss is dramatically higher or lower, something is wrong with the initialisation or the data pipeline. In practice we flatten the <code>[B, T, V]</code> logit tensor to <code>[B*T, V]</code> so PyTorch's <code>F.cross_entropy</code> can vectorise the computation across all token positions in a single efficient call.</p>
+        <p>A useful sanity check is to compute the expected loss at initialisation. A freshly initialised model with random weights will distribute probability roughly uniformly across all 50,257 tokens in GPT-2's vocabulary, giving each token a probability of about <code>1/50257 &asymp; 1.99 &times; 10&#8315;&#8309;</code>. Plugging that into the formula: <code>&minus;log(1.99 &times; 10&#8315;&#8309;) &asymp; 10.82</code>. Whenever you start training a GPT-style model you should see an initial loss very close to this value — if the starting loss is dramatically higher or lower, something is wrong with the initialisation or the data pipeline. In practice we flatten the <code>[B, T, V]</code> logit tensor to <code>[B*T, V]</code> so PyTorch's <code>F.cross_entropy</code> can vectorise the computation across all token positions in a single efficient call.</p>
 
         <p>One subtlety is how PyTorch handles the reduction. By default <code>F.cross_entropy</code> averages the per-token losses across the entire flattened batch, giving a single scalar. This means the effective loss scale depends on the sequence length and batch size — two hyperparameters that may change across experiments. Some practitioners use <code>reduction='sum'</code> instead and divide manually to get more explicit control, but for most purposes the default mean reduction works well and matches the convention used by OpenAI's original GPT training code.</p>
 
@@ -320,32 +634,62 @@ loss = F.<span class="fn">cross_entropy</span>(
           <div class="viz-title"><i class="fas fa-project-diagram"></i> 6-Step Training Pass</div>
 
           <div class="viz-flow" id="lossFlowDiagram">
-            <div class="viz-node vn-forward">① Forward pass → logits
+            <div class="viz-node vn-forward">&oplus; Forward pass &rarr; logits
               <span class="vn-sub">[B, T, vocab_size]</span>
             </div>
             <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
-            <div class="viz-node vn-flatten">② Flatten logits &amp; targets
+            <div class="viz-node vn-flatten">&oplus; Flatten logits &amp; targets
               <span class="vn-sub">[B*T, vocab_size]  and  [B*T]</span>
             </div>
             <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
-            <div class="viz-node vn-loss">③ Cross-entropy: −log(p[correct])
+            <div class="viz-node vn-loss">&oplus; Cross-entropy: &minus;log(p[correct])
               <span class="vn-sub">one scalar loss per token position</span>
             </div>
             <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
-            <div class="viz-node vn-mean">④ Mean over batch
+            <div class="viz-node vn-mean">&oplus; Mean over batch
               <span class="vn-sub">single scalar loss value</span>
             </div>
             <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
-            <div class="viz-node vn-backward">⑤ loss.backward()
+            <div class="viz-node vn-backward">&oplus; loss.backward()
               <span class="vn-sub">compute gradients for every parameter</span>
             </div>
             <div class="viz-arrow"><i class="fas fa-arrow-down"></i></div>
-            <div class="viz-node vn-optim">⑥ optimizer.step()
-              <span class="vn-sub">update weights in direction of −∇loss</span>
+            <div class="viz-node vn-optim">&oplus; optimizer.step()
+              <span class="vn-sub">update weights in direction of &minus;&nabla;loss</span>
             </div>
           </div>
 
-          <div class="viz-caption">Every training step follows this 6-stage cycle. Steps ①–④ are the forward pass; ⑤–⑥ are the backward pass and parameter update.</div>
+          <div class="viz-caption">Every training step follows this 6-stage cycle. Steps 1-4 are the forward pass; 5-6 are the backward pass and parameter update.</div>
+        </div>
+
+        <!-- SVG: Cross-Entropy Intuition -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-area"></i> Cross-Entropy Loss Curve: &minus;log(p)</div>
+          <svg id="ceLossCurve" viewBox="0 0 440 200" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          </svg>
+          <div class="viz-caption">The &minus;log(p) curve shows why even a small drop in predicted probability causes a large loss spike. At p=1 the loss is zero; at p=0.01 the loss is 4.6 — a steep penalty for low-confidence correct predictions.</div>
+        </div>
+
+        <!-- Exercise 1: Cross-Entropy Calculator -->
+        <div class="exercise-box" id="exercise-ce">
+          <div class="exercise-header"><i class="fas fa-flask"></i> Exercise: Cross-Entropy Calculator</div>
+          <div class="exercise-body">
+            <p>A model assigns the following probability to the correct next token. Compute the cross-entropy loss <code>&minus;log(p)</code> using the natural logarithm (base e).</p>
+            <div class="exercise-input-row">
+              <label style="font-size:0.82rem;font-weight:600;">p(correct) =</label>
+              <select id="ce-prob-select">
+                <option value="1.0">1.0</option>
+                <option value="0.5">0.5</option>
+                <option value="0.1">0.1</option>
+                <option value="0.01" selected>0.01</option>
+                <option value="0.00002">1/50257</option>
+              </select>
+              <label style="font-size:0.82rem;font-weight:600;">Your answer:</label>
+              <input type="number" id="ce-answer" step="0.01" placeholder="e.g. 4.61" />
+              <button class="exercise-btn" onclick="checkCEExercise()">Check</button>
+            </div>
+            <div class="exercise-feedback" id="ce-feedback"></div>
+          </div>
         </div>
 
       </section><!-- /#lesson-5-2 -->
@@ -379,6 +723,64 @@ loss = F.<span class="fn">cross_entropy</span>(
           <div class="viz-caption">Both loss curves trend downward during healthy pretraining. A growing gap between train (blue) and val (amber) signals overfitting — the model memorizes rather than generalizes.</div>
         </div>
 
+        <!-- Step-through: Loss Curve Diagnosis -->
+        <div class="step-diagram" id="lossDiagnosisSteps">
+          <div class="step-diagram-header">
+            <span><i class="fas fa-stethoscope"></i> Step-through: Diagnosing Loss Curves</span>
+            <span class="step-counter" id="lossDiag-counter">Step 1 / 4</span>
+            <div class="step-diagram-nav">
+              <button id="lossDiag-prev" disabled>&laquo; Prev</button>
+              <button id="lossDiag-next">Next &raquo;</button>
+            </div>
+          </div>
+          <div class="step-diagram-body" id="lossDiag-body">
+            <div class="step-content active" data-step="0">
+              <h4>Healthy Training</h4>
+              <svg viewBox="0 0 300 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="10" x2="30" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <line x1="30" y1="100" x2="280" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <polyline points="30,20 90,45 150,60 210,72 270,80" fill="none" stroke="#4f6ef7" stroke-width="2.5"/>
+                <polyline points="30,22 90,48 150,64 210,78 270,85" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5,3"/>
+                <text x="155" y="115" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="Inter">epoch</text>
+              </svg>
+              <p>Both train and val curves decline together with only a small gap. The model is genuinely learning generalisable language patterns. No action needed — keep training.</p>
+            </div>
+            <div class="step-content" data-step="1">
+              <h4>Overfitting Detected</h4>
+              <svg viewBox="0 0 300 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="10" x2="30" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <line x1="30" y1="100" x2="280" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <polyline points="30,20 90,45 150,60 210,72 270,85" fill="none" stroke="#4f6ef7" stroke-width="2.5"/>
+                <polyline points="30,22 90,48 150,58 210,54 270,48" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5,3"/>
+                <line x1="150" y1="10" x2="150" y2="100" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <text x="158" y="18" font-size="8" fill="#ef4444" font-family="Inter">gap widens</text>
+              </svg>
+              <p>Train loss keeps falling but val loss rises. The model is memorising training data. Action: stop training, reduce model capacity, increase dropout, or add more data.</p>
+            </div>
+            <div class="step-content" data-step="2">
+              <h4>Underfitting</h4>
+              <svg viewBox="0 0 300 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="10" x2="30" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <line x1="30" y1="100" x2="280" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <polyline points="30,30 90,35 150,38 210,39 270,39" fill="none" stroke="#4f6ef7" stroke-width="2.5"/>
+                <polyline points="30,28 90,33 150,37 210,38 270,38" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5,3"/>
+              </svg>
+              <p>Both curves plateau at a high value and stop improving. The model cannot learn the data well enough. Action: increase model size, increase learning rate, or train longer.</p>
+            </div>
+            <div class="step-content" data-step="3">
+              <h4>Loss Spike (Exploding Gradients)</h4>
+              <svg viewBox="0 0 300 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="10" x2="30" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <line x1="30" y1="100" x2="280" y2="100" stroke="var(--border)" stroke-width="1"/>
+                <polyline points="30,20 70,40 110,55 140,15 170,50 210,65 270,78" fill="none" stroke="#4f6ef7" stroke-width="2.5"/>
+                <circle cx="140" cy="15" r="4" fill="#ef4444"/>
+                <text x="148" y="18" font-size="8" fill="#ef4444" font-family="Inter">spike</text>
+              </svg>
+              <p>A sudden sharp increase in loss indicates exploding gradients. Action: apply gradient clipping (clip_grad_norm_ = 1.0), reduce learning rate, or check for data corruption.</p>
+            </div>
+          </div>
+        </div>
+
       </section><!-- /#lesson-5-3 -->
 
       <!-- ══════════════════
@@ -409,6 +811,108 @@ loss = F.<span class="fn">cross_entropy</span>(
 
         <p>The choice of <strong>AdamW</strong> as the optimizer deserves its own explanation. Adam tracks both the first moment (mean gradient) and the second moment (variance of gradients) for each parameter, which produces adaptive per-parameter learning rates that work far better than a single global learning rate for the heterogeneous parameters in a Transformer. However, vanilla Adam's original weight decay implementation is flawed at scale — weight decay is applied to the update that already includes the adaptive learning rate scaling, which means parameters with small gradients receive less regularisation than parameters with large gradients, an unintended asymmetry. AdamW fixes this by applying weight decay directly to the raw parameter values, completely decoupled from the gradient update. For large models this distinction meaningfully affects both final quality and training stability.</p>
 
+        <!-- Step-through: Training Loop Walkthrough -->
+        <div class="step-diagram" id="trainingLoopSteps">
+          <div class="step-diagram-header">
+            <span><i class="fas fa-cogs"></i> Step-through: One Training Iteration</span>
+            <span class="step-counter" id="trainLoop-counter">Step 1 / 6</span>
+            <div class="step-diagram-nav">
+              <button id="trainLoop-prev" disabled>&laquo; Prev</button>
+              <button id="trainLoop-next">Next &raquo;</button>
+            </div>
+          </div>
+          <div class="step-diagram-body" id="trainLoop-body">
+            <div class="step-content active" data-step="0">
+              <h4>Step 1: optimizer.zero_grad()</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="150" height="50" rx="8" fill="rgba(239,68,68,0.12)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>
+                <text x="85" y="32" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444" font-family="Inter">Old Gradients</text>
+                <text x="85" y="48" text-anchor="middle" font-size="9" fill="#ef4444" font-family="JetBrains Mono" opacity="0.7">.grad = [0.3, -0.7, ...]</text>
+                <text x="195" y="40" text-anchor="middle" font-size="16" fill="var(--text-muted)">&rarr;</text>
+                <rect x="220" y="10" width="130" height="50" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+                <text x="285" y="32" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-3)" font-family="Inter">Cleared</text>
+                <text x="285" y="48" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono" opacity="0.7">.grad = [0, 0, ...]</text>
+              </svg>
+              <p>Clear all accumulated gradients from the previous step. Without this, PyTorch adds new gradients to old ones, corrupting the update direction.</p>
+            </div>
+            <div class="step-content" data-step="1">
+              <h4>Step 2: Forward Pass</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="15" width="80" height="45" rx="8" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.35)" stroke-width="1.5"/>
+                <text x="50" y="35" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent)" font-family="Inter">input_ids</text>
+                <text x="50" y="48" text-anchor="middle" font-size="8" fill="var(--accent)" font-family="JetBrains Mono" opacity="0.7">[B, T]</text>
+                <text x="115" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&rarr;</text>
+                <rect x="135" y="8" width="100" height="58" rx="8" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/>
+                <text x="185" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#a855f7" font-family="Inter">GPT Model</text>
+                <text x="185" y="45" text-anchor="middle" font-size="8" fill="#a855f7" font-family="Inter">12 blocks</text>
+                <text x="185" y="57" text-anchor="middle" font-size="8" fill="#a855f7" font-family="JetBrains Mono" opacity="0.7">124M params</text>
+                <text x="260" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&rarr;</text>
+                <rect x="280" y="15" width="70" height="45" rx="8" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+                <text x="315" y="35" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-2)" font-family="Inter">logits</text>
+                <text x="315" y="48" text-anchor="middle" font-size="8" fill="var(--accent-2)" font-family="JetBrains Mono" opacity="0.7">[B, T, V]</text>
+              </svg>
+              <p>Pass input tokens through all 12 transformer blocks. The output is a tensor of shape [B, T, 50257] — one score per vocabulary token per position.</p>
+            </div>
+            <div class="step-content" data-step="2">
+              <h4>Step 3: Compute Cross-Entropy Loss</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="15" width="80" height="45" rx="8" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+                <text x="50" y="35" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-2)" font-family="Inter">logits</text>
+                <text x="50" y="48" text-anchor="middle" font-size="8" fill="var(--accent-2)" font-family="JetBrains Mono" opacity="0.7">[B*T, V]</text>
+                <rect x="110" y="15" width="80" height="45" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+                <text x="150" y="35" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-3)" font-family="Inter">targets</text>
+                <text x="150" y="48" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono" opacity="0.7">[B*T]</text>
+                <text x="218" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&rarr;</text>
+                <rect x="240" y="15" width="110" height="45" rx="8" fill="rgba(239,68,68,0.12)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>
+                <text x="295" y="32" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444" font-family="Inter">&minus;log(p[correct])</text>
+                <text x="295" y="48" text-anchor="middle" font-size="8" fill="#ef4444" font-family="JetBrains Mono" opacity="0.7">loss = 4.23</text>
+              </svg>
+              <p>Flatten logits and targets, then compute &minus;log(p) for every correct token. Average across all positions to get a single scalar loss.</p>
+            </div>
+            <div class="step-content" data-step="3">
+              <h4>Step 4: loss.backward()</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="240" y="15" width="110" height="45" rx="8" fill="rgba(239,68,68,0.12)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>
+                <text x="295" y="35" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444" font-family="Inter">loss = 4.23</text>
+                <text x="295" y="48" text-anchor="middle" font-size="8" fill="#ef4444" font-family="JetBrains Mono" opacity="0.7">scalar</text>
+                <text x="218" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&larr;</text>
+                <rect x="30" y="15" width="160" height="45" rx="8" fill="rgba(168,85,247,0.12)" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/>
+                <text x="110" y="32" text-anchor="middle" font-size="9" font-weight="600" fill="#a855f7" font-family="Inter">Backpropagation</text>
+                <text x="110" y="48" text-anchor="middle" font-size="8" fill="#a855f7" font-family="JetBrains Mono" opacity="0.7">&part;loss/&part;W for all 124M params</text>
+              </svg>
+              <p>Reverse-mode automatic differentiation traverses the computation graph backwards, computing &part;loss/&part;W for every parameter in the model.</p>
+            </div>
+            <div class="step-content" data-step="4">
+              <h4>Step 5: Gradient Clipping</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="15" width="130" height="45" rx="8" fill="rgba(239,68,68,0.12)" stroke="rgba(239,68,68,0.3)" stroke-width="1.5"/>
+                <text x="75" y="32" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444" font-family="Inter">Raw Grad Norm</text>
+                <text x="75" y="48" text-anchor="middle" font-size="8" fill="#ef4444" font-family="JetBrains Mono" opacity="0.7">||g|| = 47.3</text>
+                <text x="170" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&rarr;</text>
+                <rect x="200" y="5" width="150" height="65" rx="8" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+                <text x="275" y="25" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-3)" font-family="Inter">Clipped (max_norm=1.0)</text>
+                <text x="275" y="42" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono" opacity="0.7">g' = g &times; (1.0 / 47.3)</text>
+                <text x="275" y="58" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono" opacity="0.7">||g'|| = 1.0</text>
+              </svg>
+              <p>If the global gradient norm exceeds the threshold (1.0), all gradients are rescaled proportionally. The update direction is preserved; only its magnitude is capped.</p>
+            </div>
+            <div class="step-content" data-step="5">
+              <h4>Step 6: optimizer.step()</h4>
+              <svg viewBox="0 0 360 80" width="100%" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="15" width="120" height="45" rx="8" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.35)" stroke-width="1.5"/>
+                <text x="70" y="32" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent)" font-family="Inter">W_old</text>
+                <text x="70" y="48" text-anchor="middle" font-size="8" fill="var(--accent)" font-family="JetBrains Mono" opacity="0.7">[0.12, -0.34, ...]</text>
+                <text x="155" y="42" text-anchor="middle" font-size="12" fill="var(--text-muted)">&minus; lr &times; g'</text>
+                <text x="220" y="42" text-anchor="middle" font-size="14" fill="var(--text-muted)">&rarr;</text>
+                <rect x="240" y="15" width="110" height="45" rx="8" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.35)" stroke-width="1.5"/>
+                <text x="295" y="32" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-3)" font-family="Inter">W_new</text>
+                <text x="295" y="48" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono" opacity="0.7">[0.11, -0.33, ...]</text>
+              </svg>
+              <p>AdamW updates each parameter using its adaptive learning rate (from momentum estimates), then applies weight decay directly to the parameter values. One step complete.</p>
+            </div>
+          </div>
+        </div>
+
       </section><!-- /#lesson-5-4 -->
 
       <!-- ══════════════════
@@ -435,6 +939,62 @@ idx_next = torch.<span class="fn">multinomial</span>(probs, num_samples=<span cl
 logits[logits &lt; top_k_logits[..., <span class="num">-1</span>:]] = <span class="fn">float</span>(<span class="str">'-inf'</span>)
 probs = F.<span class="fn">softmax</span>(logits, dim=<span class="num">-1</span>)</code></pre>
 
+        <!-- SVG: Decoding Strategies Comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-random"></i> Decoding Strategy Comparison</div>
+          <svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <style>
+              .ds-label { font-family: Inter, sans-serif; font-size: 10px; font-weight: 700; }
+              .ds-bar { rx: 4; ry: 4; }
+              .ds-tok { font-family: 'JetBrains Mono', monospace; font-size: 9px; }
+            </style>
+            <!-- Greedy -->
+            <text x="15" y="26" class="ds-label" fill="#ef4444">Greedy</text>
+            <rect x="80" y="14" width="180" height="18" class="ds-bar" fill="rgba(239,68,68,0.7)"/>
+            <text x="90" y="27" class="ds-tok" fill="#fff">"the" (72%)</text>
+            <rect x="265" y="14" width="40" height="18" class="ds-bar" fill="rgba(239,68,68,0.3)"/>
+            <rect x="310" y="14" width="25" height="18" class="ds-bar" fill="rgba(239,68,68,0.15)"/>
+            <text x="400" y="27" font-size="9" fill="var(--text-muted)" font-family="Inter">Always picks top token</text>
+            <!-- Temp 0.5 -->
+            <text x="15" y="62" class="ds-label" fill="var(--accent)">T=0.5</text>
+            <rect x="80" y="50" width="220" height="18" class="ds-bar" fill="rgba(79,110,247,0.7)"/>
+            <text x="90" y="63" class="ds-tok" fill="#fff">"the" (85%)</text>
+            <rect x="305" y="50" width="20" height="18" class="ds-bar" fill="rgba(79,110,247,0.3)"/>
+            <rect x="330" y="50" width="10" height="18" class="ds-bar" fill="rgba(79,110,247,0.15)"/>
+            <text x="400" y="63" font-size="9" fill="var(--text-muted)" font-family="Inter">Sharper &mdash; more focused</text>
+            <!-- Temp 1.0 -->
+            <text x="15" y="98" class="ds-label" fill="var(--accent-2)">T=1.0</text>
+            <rect x="80" y="86" width="130" height="18" class="ds-bar" fill="rgba(245,158,11,0.7)"/>
+            <text x="90" y="99" class="ds-tok" fill="#fff">"the" (52%)</text>
+            <rect x="215" y="86" width="55" height="18" class="ds-bar" fill="rgba(245,158,11,0.45)"/>
+            <text x="222" y="99" class="ds-tok" fill="#fff">"a"</text>
+            <rect x="275" y="86" width="40" height="18" class="ds-bar" fill="rgba(245,158,11,0.3)"/>
+            <rect x="320" y="86" width="25" height="18" class="ds-bar" fill="rgba(245,158,11,0.15)"/>
+            <text x="400" y="99" font-size="9" fill="var(--text-muted)" font-family="Inter">Original distribution</text>
+            <!-- Temp 2.0 -->
+            <text x="15" y="134" class="ds-label" fill="var(--accent-3)">T=2.0</text>
+            <rect x="80" y="122" width="80" height="18" class="ds-bar" fill="rgba(16,185,129,0.6)"/>
+            <text x="90" y="135" class="ds-tok" fill="#fff">"the"</text>
+            <rect x="165" y="122" width="60" height="18" class="ds-bar" fill="rgba(16,185,129,0.45)"/>
+            <text x="172" y="135" class="ds-tok" fill="#fff">"a"</text>
+            <rect x="230" y="122" width="50" height="18" class="ds-bar" fill="rgba(16,185,129,0.35)"/>
+            <rect x="285" y="122" width="40" height="18" class="ds-bar" fill="rgba(16,185,129,0.25)"/>
+            <rect x="330" y="122" width="30" height="18" class="ds-bar" fill="rgba(16,185,129,0.15)"/>
+            <text x="400" y="135" font-size="9" fill="var(--text-muted)" font-family="Inter">Flatter &mdash; more creative</text>
+            <!-- Top-k -->
+            <text x="15" y="170" class="ds-label" fill="#a855f7">Top-k=3</text>
+            <rect x="80" y="158" width="130" height="18" class="ds-bar" fill="rgba(168,85,247,0.6)"/>
+            <text x="90" y="171" class="ds-tok" fill="#fff">"the"</text>
+            <rect x="215" y="158" width="55" height="18" class="ds-bar" fill="rgba(168,85,247,0.4)"/>
+            <text x="222" y="171" class="ds-tok" fill="#fff">"a"</text>
+            <rect x="275" y="158" width="40" height="18" class="ds-bar" fill="rgba(168,85,247,0.25)"/>
+            <text x="282" y="171" class="ds-tok" fill="#fff">"is"</text>
+            <line x1="320" y1="152" x2="320" y2="178" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="400" y="170" font-size="9" fill="var(--text-muted)" font-family="Inter">Only top 3 allowed</text>
+          </svg>
+          <div class="viz-caption">Greedy always picks the top token. Temperature reshapes the distribution. Top-k hard-cuts the tail. In practice, combine temperature + top-k for both quality and diversity.</div>
+        </div>
+
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-sliders-h"></i> Temperature Effect on Token Distribution</div>
 
@@ -451,6 +1011,20 @@ probs = F.<span class="fn">softmax</span>(logits, dim=<span class="num">-1</span
           <div class="viz-caption">Drag the slider to adjust temperature. Lower values make the model more confident (peaked distribution); higher values spread probability more evenly across tokens.</div>
         </div>
 
+        <!-- Exercise 2: Top-k Sampling -->
+        <div class="exercise-box" id="exercise-topk">
+          <div class="exercise-header"><i class="fas fa-flask"></i> Exercise: Top-k Token Selection</div>
+          <div class="exercise-body">
+            <p>Given the following logits for 6 tokens after softmax: <code>[0.40, 0.25, 0.15, 0.10, 0.07, 0.03]</code>. If you apply <strong>top-k = 3</strong>, what is the total probability mass available for sampling? (Round to 2 decimal places.)</p>
+            <div class="exercise-input-row">
+              <label style="font-size:0.82rem;font-weight:600;">Total mass:</label>
+              <input type="number" id="topk-answer" step="0.01" placeholder="e.g. 0.80" />
+              <button class="exercise-btn" onclick="checkTopKExercise()">Check</button>
+            </div>
+            <div class="exercise-feedback" id="topk-feedback"></div>
+          </div>
+        </div>
+
       </section><!-- /#lesson-5-5 -->
 
       <!-- ══════════════════
@@ -465,6 +1039,24 @@ probs = F.<span class="fn">softmax</span>(logits, dim=<span class="num">-1</span
         <p>Pretraining runs can last hours or days even on reasonably powerful hardware, which makes checkpointing — periodically saving the model's state to disk — absolutely essential. The most common disaster scenario is a job crash or GPU out-of-memory error partway through training: without checkpoints you would have to restart from scratch. Beyond crash recovery, checkpoints let you compare models from different points in training (sometimes an earlier checkpoint generalises better to your specific downstream task than the final one), and they are the artifacts you share with collaborators or deploy to production. The habit of saving checkpoints regularly is one of the most valuable practices you can build from your very first training run.</p>
 
         <p>There is an important detail about <em>what</em> to save. It is tempting to save only the model's <code>state_dict</code> (the parameter tensors), but this is insufficient if you ever want to resume training rather than just run inference. The optimizer — especially AdamW — maintains internal momentum buffers for every parameter, representing a running average of past gradients. These buffers encode "momentum" that took many steps to build up. If you restart training without them, the optimizer effectively starts cold and you often see a brief but harmful spike in the loss before it recovers. Always save both the model state and the optimizer state, along with the current epoch and loss value for bookkeeping. The <code>map_location='cpu'</code> argument when loading ensures the checkpoint can be read on any machine, regardless of whether a GPU is present — PyTorch will move tensors to the appropriate device after loading.</p>
+
+        <!-- SVG: Checkpoint Contents -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-save"></i> What Goes Into a Checkpoint</div>
+          <svg viewBox="0 0 480 170" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect x="130" y="10" width="220" height="150" rx="12" fill="var(--surface-2)" stroke="var(--border)" stroke-width="2"/>
+            <text x="240" y="35" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text)" font-family="Inter">checkpoint.pt</text>
+            <rect x="150" y="45" width="180" height="24" rx="5" fill="rgba(79,110,247,0.15)" stroke="rgba(79,110,247,0.35)" stroke-width="1"/>
+            <text x="240" y="61" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent)" font-family="JetBrains Mono">model.state_dict()</text>
+            <rect x="150" y="75" width="180" height="24" rx="5" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <text x="240" y="91" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-3)" font-family="JetBrains Mono">optimizer.state_dict()</text>
+            <rect x="150" y="105" width="85" height="24" rx="5" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+            <text x="192" y="121" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-2)" font-family="JetBrains Mono">epoch: 7</text>
+            <rect x="245" y="105" width="85" height="24" rx="5" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.25)" stroke-width="1"/>
+            <text x="287" y="121" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444" font-family="JetBrains Mono">loss: 1.82</text>
+          </svg>
+          <div class="viz-caption">Always save model + optimizer states together, plus metadata (epoch, loss). Without optimizer state, resuming training causes a loss spike because AdamW's momentum buffers are lost.</div>
+        </div>
 
         <p>For production-scale models there are more sophisticated checkpointing strategies. Large models (tens of billions of parameters) have checkpoints too big to save after every step, so practitioners save every few thousand steps and use <em>rolling checkpoints</em> that keep only the last N saved states to avoid filling up disk. Frameworks like DeepSpeed and FSDP have their own sharded checkpoint formats for distributed training, where parameters are spread across multiple GPUs. The principles remain the same — save model state, optimizer state, and training metadata — but the implementation details become more complex as you scale up.</p>
 
@@ -500,6 +1092,50 @@ model.<span class="fn">load_state_dict</span>(checkpoint[<span class="str">'mode
         <pre class="code-block"><code><span class="kw">from</span> transformers <span class="kw">import</span> GPT2Model
 gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2'</span>)
 <span class="cmt"># Map weights to your custom model architecture</span></code></pre>
+
+        <!-- SVG: Weight Mapping Diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Weight Name Mapping: OpenAI to Custom</div>
+          <svg viewBox="0 0 520 160" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <style>
+              .wm-box { rx: 6; }
+              .wm-txt { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; }
+              .wm-label { font-family: Inter, sans-serif; font-size: 10px; font-weight: 700; }
+            </style>
+            <text x="110" y="16" text-anchor="middle" class="wm-label" fill="var(--accent)">OpenAI Checkpoint</text>
+            <text x="400" y="16" text-anchor="middle" class="wm-label" fill="var(--accent-3)">Your Custom Model</text>
+            <!-- Row 1 -->
+            <rect x="10" y="25" width="200" height="22" class="wm-box" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+            <text x="110" y="40" text-anchor="middle" class="wm-txt" fill="var(--accent)">h.0.attn.c_attn.weight</text>
+            <line x1="215" y1="36" x2="285" y2="36" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrowhead5)"/>
+            <text x="250" y="30" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter">.T + split</text>
+            <rect x="290" y="25" width="220" height="22" class="wm-box" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <text x="400" y="40" text-anchor="middle" class="wm-txt" fill="var(--accent-3)">blocks.0.attn.qkv.weight</text>
+            <!-- Row 2 -->
+            <rect x="10" y="55" width="200" height="22" class="wm-box" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+            <text x="110" y="70" text-anchor="middle" class="wm-txt" fill="var(--accent)">h.0.mlp.c_fc.weight</text>
+            <line x1="215" y1="66" x2="285" y2="66" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrowhead5)"/>
+            <text x="250" y="60" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter">transpose</text>
+            <rect x="290" y="55" width="220" height="22" class="wm-box" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <text x="400" y="70" text-anchor="middle" class="wm-txt" fill="var(--accent-3)">blocks.0.ffn.fc1.weight</text>
+            <!-- Row 3 -->
+            <rect x="10" y="85" width="200" height="22" class="wm-box" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+            <text x="110" y="100" text-anchor="middle" class="wm-txt" fill="var(--accent)">wte.weight</text>
+            <line x1="215" y1="96" x2="285" y2="96" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrowhead5)"/>
+            <text x="250" y="90" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter">direct copy</text>
+            <rect x="290" y="85" width="220" height="22" class="wm-box" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <text x="400" y="100" text-anchor="middle" class="wm-txt" fill="var(--accent-3)">tok_emb.weight</text>
+            <!-- Row 4 -->
+            <rect x="10" y="115" width="200" height="22" class="wm-box" fill="rgba(79,110,247,0.1)" stroke="rgba(79,110,247,0.3)" stroke-width="1"/>
+            <text x="110" y="130" text-anchor="middle" class="wm-txt" fill="var(--accent)">ln_f.weight / .bias</text>
+            <line x1="215" y1="126" x2="285" y2="126" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrowhead5)"/>
+            <text x="250" y="120" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter">direct copy</text>
+            <rect x="290" y="115" width="220" height="22" class="wm-box" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+            <text x="400" y="130" text-anchor="middle" class="wm-txt" fill="var(--accent-3)">final_norm.weight / .bias</text>
+            <defs><marker id="arrowhead5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+          </svg>
+          <div class="viz-caption">OpenAI uses Conv1D (transposed weights) for attention/FFN layers. You must transpose these before copying to your nn.Linear layers. Embedding and LayerNorm weights copy directly.</div>
+        </div>
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-table"></i> GPT-2 Model Family</div>
@@ -561,8 +1197,8 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
       <div class="summary-box glass">
         <h3><i class="fas fa-bookmark"></i> Chapter 5 — Key Takeaways</h3>
         <ul>
-          <li><strong>Cross-entropy loss</strong> measures prediction quality: <code>−log(p_correct)</code>. Random baseline ≈ 10.8 for a 50k-token vocabulary. Lower is better.</li>
-          <li><strong>Training loop:</strong> forward → loss → backward → clip → step → repeat. This is the complete cycle for every batch.</li>
+          <li><strong>Cross-entropy loss</strong> measures prediction quality: <code>&minus;log(p_correct)</code>. Random baseline &asymp; 10.8 for a 50k-token vocabulary. Lower is better.</li>
+          <li><strong>Training loop:</strong> forward &rarr; loss &rarr; backward &rarr; clip &rarr; step &rarr; repeat. This is the complete cycle for every batch.</li>
           <li><strong>AdamW + gradient clipping</strong> (norm = 1.0) is the standard pretraining setup. AdamW decouples weight decay; clipping prevents exploding gradients.</li>
           <li><strong>Temperature</strong> controls output randomness; <strong>top-k</strong> restricts the sampling vocabulary at each decoding step. Both can be combined.</li>
           <li><strong>Always track both train and val loss</strong> to detect overfitting early. Healthy pretraining shows both curves declining together.</li>
@@ -586,206 +1222,18 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
     </div><!-- /#tab-quiz -->
 
     <!-- ══════════════════════════════════════════
-         TAB: MIND MAP
+         TAB: MIND MAP (Interactive)
     ══════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-mindmap">
       <div class="viz-container">
-        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click a node to explore</div>
-        <svg id="mindmap-ch5" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-          <style>
-            #mindmap-ch5 .mm-branch { cursor:pointer; transition:opacity 0.3s; }
-            #mindmap-ch5 .mm-branch.dimmed { opacity:0.15; }
-            #mindmap-ch5 .mm-branch.highlighted .mm-branch-node rect,
-            #mindmap-ch5 .mm-branch.highlighted .mm-center rect { filter:brightness(1.2); }
-            #mindmap-ch5 .mm-center { cursor:pointer; }
-            #mindmap-ch5 .mm-sub { animation: mmFadeIn 0.5s ease both; }
-            @keyframes mmFadeIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
-            #mindmap-ch5 text { font-family: Inter, sans-serif; }
-          </style>
-          <!-- Center node -->
-          <g class="mm-center" id="mm5-center">
-            <rect x="310" y="265" width="180" height="70" rx="16" fill="#6c63ff" filter="url(#mm5-shadow)"/>
-            <text x="400" y="296" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Pretraining</text>
-            <text x="400" y="315" text-anchor="middle" fill="#ffffffcc" font-size="11">Ch 5</text>
-          </g>
-          <defs>
-            <filter id="mm5-shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0004"/>
-            </filter>
-          </defs>
-          <!-- Branch 1: Cross-Entropy Loss (top-left) -->
-          <g class="mm-branch" id="mm5-b1">
-            <line x1="350" y1="280" x2="195" y2="175" stroke="#f97316" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="100" y="148" width="190" height="42" rx="10" fill="#f97316"/>
-              <text x="195" y="168" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Cross-Entropy Loss</text>
-              <text x="195" y="183" text-anchor="middle" fill="#ffffffcc" font-size="10">loss signal</text>
-            </g>
-            <!-- Sub-nodes -->
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="145" y1="165" x2="88" y2="115" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
-              <rect x="20" y="98" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
-              <text x="88" y="118" text-anchor="middle" fill="#b45309" font-size="10">next-token prediction</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="195" y1="148" x2="195" y2="98" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
-              <rect x="127" y="68" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
-              <text x="195" y="88" text-anchor="middle" fill="#b45309" font-size="10">-log(p_correct)</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="245" y1="165" x2="302" y2="115" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
-              <rect x="234" y="98" width="136" height="30" rx="7" fill="#fff3ea" stroke="#f97316" stroke-width="1.5"/>
-              <text x="302" y="118" text-anchor="middle" fill="#b45309" font-size="10">~10.8 random baseline</text>
-            </g>
-          </g>
-          <!-- Branch 2: Train/Val Loss (top-right) -->
-          <g class="mm-branch" id="mm5-b2">
-            <line x1="450" y1="280" x2="590" y2="185" stroke="#10b981" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="510" y="158" width="160" height="42" rx="10" fill="#10b981"/>
-              <text x="590" y="178" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Train/Val Loss</text>
-              <text x="590" y="193" text-anchor="middle" fill="#ffffffcc" font-size="10">monitoring</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="545" y1="172" x2="510" y2="120" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
-              <rect x="442" y="103" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
-              <text x="510" y="123" text-anchor="middle" fill="#065f46" font-size="10">teacher forcing</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="590" y1="158" x2="590" y2="108" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
-              <rect x="522" y="78" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
-              <text x="590" y="98" text-anchor="middle" fill="#065f46" font-size="10">overfitting signal</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="635" y1="172" x2="665" y2="120" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
-              <rect x="597" y="103" width="136" height="30" rx="7" fill="#e6faf4" stroke="#10b981" stroke-width="1.5"/>
-              <text x="665" y="123" text-anchor="middle" fill="#065f46" font-size="10">perplexity</text>
-            </g>
-          </g>
-          <!-- Branch 3: Training Loop (right) -->
-          <g class="mm-branch" id="mm5-b3">
-            <line x1="490" y1="300" x2="630" y2="300" stroke="#3b82f6" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="630" y="278" width="155" height="42" rx="10" fill="#3b82f6"/>
-              <text x="707" y="298" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Training Loop</text>
-              <text x="707" y="313" text-anchor="middle" fill="#ffffffcc" font-size="10">gradient updates</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="707" y1="278" x2="707" y2="248" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="639" y="218" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-              <text x="707" y="238" text-anchor="middle" fill="#1e40af" font-size="10">zero_grad / forward</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="755" y1="295" x2="760" y2="248" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="692" y="218" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" transform="translate(0 30)"/>
-              <text x="760" y="268" text-anchor="middle" fill="#1e40af" font-size="10">backward / clip_grad</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="755" y1="315" x2="760" y2="355" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="692" y="348" width="136" height="30" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-              <text x="760" y="368" text-anchor="middle" fill="#1e40af" font-size="10">optimizer step</text>
-            </g>
-          </g>
-          <!-- Branch 4: Decoding Strategies (bottom-right) -->
-          <g class="mm-branch" id="mm5-b4">
-            <line x1="450" y1="320" x2="575" y2="430" stroke="#ec4899" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="495" y="408" width="170" height="42" rx="10" fill="#ec4899"/>
-              <text x="580" y="428" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Decoding Strategies</text>
-              <text x="580" y="443" text-anchor="middle" fill="#ffffffcc" font-size="10">text generation</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="530" y1="445" x2="500" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
-              <rect x="432" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
-              <text x="500" y="495" text-anchor="middle" fill="#9d174d" font-size="10">greedy argmax</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="580" y1="450" x2="580" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
-              <rect x="512" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
-              <text x="580" y="495" text-anchor="middle" fill="#9d174d" font-size="10">temperature</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="630" y1="445" x2="660" y2="490" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
-              <rect x="592" y="475" width="136" height="30" rx="7" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/>
-              <text x="660" y="495" text-anchor="middle" fill="#9d174d" font-size="10">top-k sampling</text>
-            </g>
-          </g>
-          <!-- Branch 5: Saving Weights (bottom-left) -->
-          <g class="mm-branch" id="mm5-b5">
-            <line x1="350" y1="320" x2="225" y2="430" stroke="#f59e0b" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="135" y="408" width="160" height="42" rx="10" fill="#f59e0b"/>
-              <text x="215" y="428" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Saving Weights</text>
-              <text x="215" y="443" text-anchor="middle" fill="#ffffffcc" font-size="10">persistence</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="170" y1="445" x2="130" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
-              <rect x="62" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
-              <text x="130" y="495" text-anchor="middle" fill="#92400e" font-size="10">state_dict</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="215" y1="450" x2="215" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
-              <rect x="147" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
-              <text x="215" y="495" text-anchor="middle" fill="#92400e" font-size="10">checkpoint</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="260" y1="445" x2="300" y2="490" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
-              <rect x="232" y="475" width="136" height="30" rx="7" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
-              <text x="300" y="495" text-anchor="middle" fill="#92400e" font-size="10">optimizer state</text>
-            </g>
-          </g>
-          <!-- Branch 6: GPT-2 Weights (left) -->
-          <g class="mm-branch" id="mm5-b6">
-            <line x1="310" y1="300" x2="175" y2="300" stroke="#8b5cf6" stroke-width="2.5" opacity="0.7"/>
-            <g class="mm-branch-node">
-              <rect x="15" y="278" width="160" height="42" rx="10" fill="#8b5cf6"/>
-              <text x="95" y="298" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">GPT-2 Weights</text>
-              <text x="95" y="313" text-anchor="middle" fill="#ffffffcc" font-size="10">pretrained loading</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.05s">
-              <line x1="55" y1="278" x2="55" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="-13" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
-              <text x="55" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">pretrained weights</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.1s">
-              <line x1="95" y1="278" x2="95" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="27" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
-              <text x="95" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">weight mapping</text>
-            </g>
-            <g class="mm-sub" style="animation-delay:0.15s">
-              <line x1="135" y1="278" x2="135" y2="248" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
-              <rect x="67" y="218" width="136" height="30" rx="7" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
-              <text x="135" y="238" text-anchor="middle" fill="#4c1d95" font-size="10">124M–1.5B</text>
-            </g>
-          </g>
-        </svg>
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter Mind Map — click branches to expand/collapse</div>
+        <div class="mindmap-container" id="mindmap-ch5-container">
+          <button class="mm-reset-btn" id="mm5-reset"><i class="fas fa-undo"></i> Reset</button>
+          <canvas id="mm5-canvas" width="800" height="520" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+          <div class="mm-interactive" id="mm5-map" style="height:520px;"></div>
+        </div>
       </div>
     </div><!-- /#tab-mindmap -->
-
-    <script>
-    (function(){
-      var svg = document.getElementById('mindmap-ch5');
-      if (!svg) return;
-      var branches = svg.querySelectorAll('.mm-branch');
-      var center   = svg.querySelector('.mm-center');
-      function resetAll() {
-        branches.forEach(function(b){ b.classList.remove('dimmed','highlighted'); });
-      }
-      branches.forEach(function(branch) {
-        branch.addEventListener('click', function(e) {
-          e.stopPropagation();
-          var isHighlighted = branch.classList.contains('highlighted');
-          resetAll();
-          if (!isHighlighted) {
-            branches.forEach(function(b){ b.classList.add('dimmed'); });
-            branch.classList.remove('dimmed');
-            branch.classList.add('highlighted');
-          }
-        });
-      });
-      center.addEventListener('click', function(){ resetAll(); });
-    })();
-    </script>
 
     <!-- ══════════════════════════════════════════
          CHAPTER NAV (outside tabs)
@@ -823,7 +1271,7 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
         question: "What is the cross-entropy loss for a model making a completely random prediction over 50,257 tokens?",
         options: ["0.0", "~1.0", "~10.8", "~100"],
         correct: 2,
-        explanation: "Random prediction assigns probability 1/50257 ≈ 0.0000199 to the correct token. −log(0.0000199) ≈ 10.8. This is the starting loss you'd expect from an untrained GPT model."
+        explanation: "Random prediction assigns probability 1/50257 to the correct token. -log(0.0000199) = 10.8. This is the starting loss you'd expect from an untrained GPT model."
       },
       {
         question: "Why do we call optimizer.zero_grad() at the start of each training step?",
@@ -847,24 +1295,72 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
         question: "What does top-k sampling do?",
         options: ["Samples from the full vocabulary", "Restricts sampling to only the k highest-probability tokens", "Takes the average of top-k logits", "Uses k separate models"],
         correct: 1,
-        explanation: "Top-k filters the vocabulary to the k most likely tokens, sets all others to -infinity (→ 0 after softmax), then samples from that reduced distribution. Prevents low-probability garbage tokens."
+        explanation: "Top-k filters the vocabulary to the k most likely tokens, sets all others to -infinity (0 after softmax), then samples from that reduced distribution. Prevents low-probability garbage tokens."
       },
       {
         question: "What is the sign that a model is overfitting during LLM pretraining?",
         options: ["Both train and val loss increase", "Train loss decreases but validation loss stops improving or increases", "Validation loss drops faster than train loss", "Loss oscillates between epochs"],
         correct: 1,
-        explanation: "Overfitting = model memorizes training data rather than learning generalizable patterns. Train loss keeps improving; val loss plateaus or worsens. At LLM pretraining scale, both curves usually improve together."
+        explanation: "Overfitting = model memorizes training data rather than learning generalizable patterns. Train loss keeps improving; val loss plateaus or worsens."
       },
       {
         question: "What optimizer is standard for LLM pretraining?",
         options: ["SGD with momentum", "Adam", "AdamW (Adam with decoupled weight decay)", "RMSprop"],
         correct: 2,
-        explanation: "AdamW decouples weight decay from the gradient update (unlike Adam where weight decay is entangled with the adaptive learning rates). This is critical for large models to avoid regularization artifacts."
+        explanation: "AdamW decouples weight decay from the gradient update (unlike Adam where weight decay is entangled with the adaptive learning rates). This is critical for large models."
       }
     ];
 
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    /* ─────────────────────────────────────────
+       Cross-Entropy loss curve SVG (Lesson 5.2)
+    ───────────────────────────────────────── */
+    (function() {
+      var svg = document.getElementById('ceLossCurve');
+      if (!svg) return;
+      var W = 440, H = 200;
+      var PAD = { top: 15, bottom: 30, left: 42, right: 15 };
+      var plotW = W - PAD.left - PAD.right;
+      var plotH = H - PAD.top - PAD.bottom;
+      function xS(x) { return PAD.left + x * plotW; }
+      function yS(y) { return PAD.top + (1 - y / 5) * plotH; }
+      // Axes
+      svg.innerHTML = '<line x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+plotH)+'" stroke="var(--border)" stroke-width="1.5"/>';
+      svg.innerHTML += '<line x1="'+PAD.left+'" y1="'+(PAD.top+plotH)+'" x2="'+(W-PAD.right)+'" y2="'+(PAD.top+plotH)+'" stroke="var(--border)" stroke-width="1.5"/>';
+      // Y labels
+      [0,1,2,3,4,5].forEach(function(v){
+        var sy = yS(v);
+        svg.innerHTML += '<line x1="'+PAD.left+'" y1="'+sy+'" x2="'+(W-PAD.right)+'" y2="'+sy+'" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
+        svg.innerHTML += '<text x="'+(PAD.left-5)+'" y="'+(sy+4)+'" text-anchor="end" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+v+'</text>';
+      });
+      svg.innerHTML += '<text x="'+(PAD.left-5)+'" y="'+(PAD.top-3)+'" text-anchor="end" font-size="9" fill="var(--text-muted)" font-family="Inter">loss</text>';
+      // X labels
+      [0, 0.2, 0.4, 0.6, 0.8, 1.0].forEach(function(v){
+        var sx = xS(v);
+        svg.innerHTML += '<text x="'+sx+'" y="'+(PAD.top+plotH+14)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">'+v.toFixed(1)+'</text>';
+      });
+      svg.innerHTML += '<text x="'+xS(0.5)+'" y="'+H+'" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="Inter">p(correct token)</text>';
+      // Curve: -ln(p) from p=0.01 to p=1.0
+      var pts = [];
+      for (var p = 0.007; p <= 1.0; p += 0.005) {
+        var loss = -Math.log(p);
+        if (loss > 5) loss = 5;
+        pts.push(xS(p).toFixed(1)+','+yS(loss).toFixed(1));
+      }
+      svg.innerHTML += '<polyline points="'+pts.join(' ')+'" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      // Annotations
+      var annoP = 0.01; var annoLoss = Math.min(-Math.log(annoP), 5);
+      svg.innerHTML += '<circle cx="'+xS(annoP)+'" cy="'+yS(annoLoss)+'" r="4" fill="#ef4444"/>';
+      svg.innerHTML += '<text x="'+(xS(annoP)+6)+'" y="'+(yS(annoLoss)+4)+'" font-size="8" fill="#ef4444" font-family="Inter">p=0.01 loss=4.6</text>';
+      annoP = 0.5; annoLoss = -Math.log(annoP);
+      svg.innerHTML += '<circle cx="'+xS(annoP)+'" cy="'+yS(annoLoss)+'" r="4" fill="var(--accent)"/>';
+      svg.innerHTML += '<text x="'+(xS(annoP)+6)+'" y="'+(yS(annoLoss)-4)+'" font-size="8" fill="var(--accent)" font-family="Inter">p=0.5 loss=0.69</text>';
+      annoP = 1.0; annoLoss = 0;
+      svg.innerHTML += '<circle cx="'+xS(annoP)+'" cy="'+yS(annoLoss)+'" r="4" fill="var(--accent-3)"/>';
+      svg.innerHTML += '<text x="'+(xS(annoP)-50)+'" y="'+(yS(annoLoss)-6)+'" font-size="8" fill="var(--accent-3)" font-family="Inter">p=1.0 loss=0</text>';
+    })();
 
     /* ─────────────────────────────────────────
        Loss curve SVG (Lesson 5.3)
@@ -876,39 +1372,33 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
       const plotW = W - PAD.left - PAD.right;
       const plotH = H - PAD.top - PAD.bottom;
 
-      // Epoch range: 0–9; Loss range: 0.5–11.5
       const xMin = 0, xMax = 9;
       const yMin = 0.5, yMax = 11.5;
 
       function xS(x) { return PAD.left + (x - xMin) / (xMax - xMin) * plotW; }
       function yS(y) { return PAD.top + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
 
-      // Draw grid lines + axes
       const yAxis = PAD.left;
       const xAxis = PAD.top + plotH;
       svg.innerHTML += `<line x1="${yAxis}" y1="${PAD.top}" x2="${yAxis}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
       svg.innerHTML += `<line x1="${yAxis}" y1="${xAxis}" x2="${W - PAD.right}" y2="${xAxis}" stroke="var(--border)" stroke-width="1.5"/>`;
 
-      // Y-axis labels
       [2, 4, 6, 8, 10].forEach(yv => {
         const sy = yS(yv);
         svg.innerHTML += `<line x1="${yAxis}" y1="${sy}" x2="${W - PAD.right}" y2="${sy}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
         svg.innerHTML += `<text x="${yAxis - 6}" y="${sy + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${yv}</text>`;
       });
 
-      // X-axis labels
       for (let ep = 0; ep <= 9; ep++) {
         const sx = xS(ep);
         svg.innerHTML += `<text x="${sx}" y="${xAxis + 14}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="JetBrains Mono, monospace">${ep}</text>`;
       }
       svg.innerHTML += `<text x="${xS(4.5)}" y="${H}" text-anchor="middle" font-size="10" fill="var(--text-muted)" font-family="Inter, sans-serif">epoch</text>`;
 
-      // Train loss points: steeply decreasing
       const trainPts = [
         [0, 10.8], [1, 7.2], [2, 5.1], [3, 3.8], [4, 2.9],
         [5, 2.2], [6, 1.8], [7, 1.5], [8, 1.3], [9, 1.1]
       ];
-      // Val loss: slightly higher, flattens a bit at end
       const valPts = [
         [0, 10.9], [1, 7.5], [2, 5.4], [3, 4.1], [4, 3.3],
         [5, 2.7], [6, 2.4], [7, 2.2], [8, 2.1], [9, 2.0]
@@ -921,11 +1411,9 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
       svg.innerHTML += `<polyline points="${toPolyline(trainPts)}" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
       svg.innerHTML += `<polyline points="${toPolyline(valPts)}"   fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>`;
 
-      // Dots on train
       trainPts.forEach(([x, y]) => {
         svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3" fill="#4f6ef7"/>`;
       });
-      // Dots on val
       valPts.forEach(([x, y]) => {
         svg.innerHTML += `<circle cx="${xS(x)}" cy="${yS(y)}" r="3" fill="#f59e0b"/>`;
       });
@@ -935,7 +1423,6 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
        Temperature slider viz (Lesson 5.5)
     ───────────────────────────────────────── */
     (function() {
-      // 6 representative tokens with base logit scores
       const TOKENS = [
         { label: '"the"',    logit: 4.2 },
         { label: '"a"',      logit: 3.1 },
@@ -1019,9 +1506,253 @@ gpt2 = GPT2Model.<span class="fn">from_pretrained</span>(<span class="str">'gpt2
         render(t);
       });
 
-      // Initial render
       render(1.0);
       updateMode(1.0);
+    })();
+
+    /* ─────────────────────────────────────────
+       Step-through diagram engine
+    ───────────────────────────────────────── */
+    function initStepDiagram(prefix, bodyId) {
+      var body = document.getElementById(bodyId);
+      var steps = body.querySelectorAll('.step-content');
+      var counter = document.getElementById(prefix + '-counter');
+      var prevBtn = document.getElementById(prefix + '-prev');
+      var nextBtn = document.getElementById(prefix + '-next');
+      var current = 0;
+
+      function show(idx) {
+        steps.forEach(function(s, i) {
+          s.classList.toggle('active', i === idx);
+        });
+        counter.textContent = 'Step ' + (idx + 1) + ' / ' + steps.length;
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === steps.length - 1;
+        current = idx;
+      }
+
+      prevBtn.addEventListener('click', function() { if (current > 0) show(current - 1); });
+      nextBtn.addEventListener('click', function() { if (current < steps.length - 1) show(current + 1); });
+      show(0);
+    }
+
+    initStepDiagram('lossDiag', 'lossDiag-body');
+    initStepDiagram('trainLoop', 'trainLoop-body');
+
+    /* ─────────────────────────────────────────
+       Exercise: Cross-Entropy Calculator
+    ───────────────────────────────────────── */
+    function checkCEExercise() {
+      var prob = parseFloat(document.getElementById('ce-prob-select').value);
+      var answer = parseFloat(document.getElementById('ce-answer').value);
+      var fb = document.getElementById('ce-feedback');
+      var correct = -Math.log(prob);
+      if (isNaN(answer)) {
+        fb.className = 'exercise-feedback incorrect';
+        fb.textContent = 'Please enter a number.';
+        return;
+      }
+      if (Math.abs(answer - correct) < 0.15) {
+        fb.className = 'exercise-feedback correct';
+        fb.innerHTML = 'Correct! -ln(' + prob + ') = ' + correct.toFixed(2) + '. ' +
+          (prob < 0.001 ? 'This is close to the ~10.82 random baseline for GPT-2.' : '');
+      } else {
+        fb.className = 'exercise-feedback incorrect';
+        fb.textContent = 'Not quite. The formula is -ln(' + prob + ') = ' + correct.toFixed(2) + '. Remember to use the natural log (base e).';
+      }
+    }
+
+    /* ─────────────────────────────────────────
+       Exercise: Top-k Sampling
+    ───────────────────────────────────────── */
+    function checkTopKExercise() {
+      var answer = parseFloat(document.getElementById('topk-answer').value);
+      var fb = document.getElementById('topk-feedback');
+      if (isNaN(answer)) {
+        fb.className = 'exercise-feedback incorrect';
+        fb.textContent = 'Please enter a number.';
+        return;
+      }
+      if (Math.abs(answer - 0.80) < 0.02) {
+        fb.className = 'exercise-feedback correct';
+        fb.textContent = 'Correct! Top-3 keeps tokens with probs 0.40 + 0.25 + 0.15 = 0.80. The remaining 0.20 (tokens 4-6) is discarded. After renormalization, "the" gets 50%, "a" gets 31.25%, "is" gets 18.75%.';
+      } else {
+        fb.className = 'exercise-feedback incorrect';
+        fb.textContent = 'Not quite. Sum the top 3 probabilities: 0.40 + 0.25 + 0.15 = 0.80. Top-k=3 keeps only these three tokens for sampling.';
+      }
+    }
+
+    /* ─────────────────────────────────────────
+       Interactive Mind Map (Tab: Mind Map)
+    ───────────────────────────────────────── */
+    (function() {
+      var container = document.getElementById('mm5-map');
+      var canvasEl = document.getElementById('mm5-canvas');
+      var resetBtn = document.getElementById('mm5-reset');
+      if (!container) return;
+
+      var W = 800, H = 520;
+      var centerX = W / 2, centerY = H / 2;
+
+      var branches = [
+        {
+          id: 'ce-loss', label: 'Cross-Entropy Loss', color: '#f97316', bgLight: '#fff3ea', textDark: '#b45309',
+          x: 140, y: 140,
+          subs: [
+            { label: 'next-token prediction', dx: -70, dy: -52 },
+            { label: '-log(p_correct)', dx: 0, dy: -52 },
+            { label: '~10.8 random baseline', dx: 70, dy: -52 }
+          ]
+        },
+        {
+          id: 'train-val', label: 'Train / Val Loss', color: '#10b981', bgLight: '#e6faf4', textDark: '#065f46',
+          x: 590, y: 145,
+          subs: [
+            { label: 'teacher forcing', dx: -60, dy: -50 },
+            { label: 'overfitting signal', dx: 10, dy: -50 },
+            { label: 'perplexity', dx: 80, dy: -50 }
+          ]
+        },
+        {
+          id: 'train-loop', label: 'Training Loop', color: '#3b82f6', bgLight: '#eff6ff', textDark: '#1e40af',
+          x: 660, y: 280,
+          subs: [
+            { label: 'zero_grad / forward', dx: 30, dy: -48 },
+            { label: 'backward / clip_grad', dx: 30, dy: 0 },
+            { label: 'optimizer step', dx: 30, dy: 48 }
+          ]
+        },
+        {
+          id: 'decoding', label: 'Decoding Strategies', color: '#ec4899', bgLight: '#fdf2f8', textDark: '#9d174d',
+          x: 560, y: 430,
+          subs: [
+            { label: 'greedy argmax', dx: -40, dy: 48 },
+            { label: 'temperature', dx: 30, dy: 48 },
+            { label: 'top-k sampling', dx: 100, dy: 48 }
+          ]
+        },
+        {
+          id: 'saving', label: 'Saving Weights', color: '#f59e0b', bgLight: '#fffbeb', textDark: '#92400e',
+          x: 200, y: 430,
+          subs: [
+            { label: 'state_dict', dx: -50, dy: 48 },
+            { label: 'checkpoint', dx: 20, dy: 48 },
+            { label: 'optimizer state', dx: 90, dy: 48 }
+          ]
+        },
+        {
+          id: 'gpt2', label: 'GPT-2 Weights', color: '#8b5cf6', bgLight: '#f5f3ff', textDark: '#4c1d95',
+          x: 80, y: 290,
+          subs: [
+            { label: 'pretrained weights', dx: -30, dy: -48 },
+            { label: 'weight mapping', dx: -30, dy: 0 },
+            { label: '124M-1.5B', dx: -30, dy: 48 }
+          ]
+        }
+      ];
+
+      var expandedBranch = null;
+
+      function buildMap() {
+        container.innerHTML = '';
+        // Center node
+        var center = document.createElement('div');
+        center.className = 'mm-node mm-center-node';
+        center.style.cssText = 'left:' + (centerX - 70) + 'px;top:' + (centerY - 22) + 'px;background:#6c63ff;color:#fff;border:2px solid #5548d4;';
+        center.innerHTML = 'Pretraining<br><span style="font-size:0.7rem;opacity:0.8;font-weight:500;">Ch 5</span>';
+        center.addEventListener('click', function() { resetMap(); });
+        container.appendChild(center);
+
+        branches.forEach(function(b) {
+          // Branch node
+          var node = document.createElement('div');
+          node.className = 'mm-node';
+          node.id = 'mm5-' + b.id;
+          node.style.cssText = 'left:' + (b.x - 65) + 'px;top:' + (b.y - 18) + 'px;background:' + b.color + ';color:#fff;border:2px solid ' + b.color + ';';
+          node.innerHTML = b.label + ' <span class="mm-expand-icon"><i class="fas fa-chevron-right"></i></span>';
+          node.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleBranch(b.id);
+          });
+          container.appendChild(node);
+
+          // Sub-nodes
+          b.subs.forEach(function(s, si) {
+            var sub = document.createElement('div');
+            sub.className = 'mm-sub-node';
+            sub.id = 'mm5-sub-' + b.id + '-' + si;
+            sub.style.cssText = 'left:' + (b.x + s.dx - 55) + 'px;top:' + (b.y + s.dy - 12) + 'px;background:' + b.bgLight + ';color:' + b.textDark + ';border:1.5px solid ' + b.color + ';';
+            sub.textContent = s.label;
+            container.appendChild(sub);
+          });
+        });
+
+        drawLines();
+      }
+
+      function drawLines() {
+        var ctx = canvasEl.getContext('2d');
+        ctx.clearRect(0, 0, W, H);
+        branches.forEach(function(b) {
+          // Main line to center
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = b.color;
+          ctx.lineWidth = 2.5;
+          ctx.globalAlpha = (expandedBranch && expandedBranch !== b.id) ? 0.08 : 0.5;
+          ctx.stroke();
+
+          // Sub lines
+          if (expandedBranch === b.id) {
+            b.subs.forEach(function(s) {
+              ctx.beginPath();
+              ctx.moveTo(b.x, b.y);
+              ctx.lineTo(b.x + s.dx, b.y + s.dy);
+              ctx.strokeStyle = b.color;
+              ctx.lineWidth = 1.5;
+              ctx.globalAlpha = 0.4;
+              ctx.stroke();
+            });
+          }
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      function toggleBranch(id) {
+        if (expandedBranch === id) {
+          expandedBranch = null;
+        } else {
+          expandedBranch = id;
+        }
+        updateVisuals();
+      }
+
+      function resetMap() {
+        expandedBranch = null;
+        updateVisuals();
+      }
+
+      function updateVisuals() {
+        branches.forEach(function(b) {
+          var node = document.getElementById('mm5-' + b.id);
+          if (expandedBranch && expandedBranch !== b.id) {
+            node.classList.add('dimmed');
+          } else {
+            node.classList.remove('dimmed');
+          }
+          node.classList.toggle('expanded', expandedBranch === b.id);
+
+          b.subs.forEach(function(s, si) {
+            var sub = document.getElementById('mm5-sub-' + b.id + '-' + si);
+            sub.classList.toggle('visible', expandedBranch === b.id);
+          });
+        });
+        drawLines();
+      }
+
+      resetBtn.addEventListener('click', resetMap);
+      buildMap();
     })();
   </script>
 </body>

@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 1: What is Productivity? — The Productive Muslim Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --accent: #2ecc71;
+      --accent-2: #27ae60;
+      --accent-3: #1abc9c;
+      --border: rgba(46,204,113,0.18);
+      --shadow: 0 4px 24px rgba(46,204,113,0.10);
+      --shadow-lg: 0 8px 40px rgba(46,204,113,0.18);
+    }
+    [data-theme="dark"] {
+      --accent: #2ecc71;
+      --accent-2: #27ae60;
+      --accent-3: #1abc9c;
+      --border: rgba(46,204,113,0.22);
+    }
+
+    /* ---- Animations ---- */
+    @keyframes pm1FadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pm1ScaleIn { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
+    @keyframes pm1Pulse { 0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,0.28);} 50%{box-shadow:0 0 0 8px rgba(46,204,113,0);} }
+    @keyframes growBar { from { width:0; } }
+    @keyframes rotateCw { from{transform:rotate(0deg);}to{transform:rotate(360deg);} }
+
+    /* ---- Step-Through ---- */
+    .step-through-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      animation: pm1FadeIn 0.4s ease both;
+    }
+    .step-through-box h4 { margin: 0 0 1rem; color: var(--accent); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .step-svg-wrap { background: var(--surface-2); border-radius: var(--radius-sm); min-height: 160px; display:flex; align-items:center; justify-content:center; padding: 1rem; margin-bottom: 1rem; overflow:hidden; }
+    .step-svg-wrap svg { max-width: 100%; }
+    .step-desc { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; min-height: 3.5rem; text-align: center; margin-bottom: 1rem; padding: 0 0.5rem; transition: opacity 0.2s; }
+    .step-controls { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .step-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); padding: 0.45rem 1.2rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity var(--transition), transform 0.1s; }
+    .step-btn:hover:not(:disabled) { opacity:0.88; transform:scale(1.03); }
+    .step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .step-indicator { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; background:var(--surface-2); padding:0.25rem 0.7rem; border-radius:20px; }
+
+    /* ---- Exercise Box ---- */
+    .exercise-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .exercise-box h4 { margin: 0 0 0.3rem; color: var(--accent-2); font-size: 1rem; }
+    .exercise-box .ex-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
+
+    /* ---- Calculator ---- */
+    .calc-sliders { display: flex; flex-direction: column; gap: 1rem; }
+    .calc-row { display: flex; flex-direction: column; gap: 0.3rem; }
+    .calc-row label { font-size: 0.85rem; font-weight: 600; color: var(--text); display: flex; justify-content: space-between; align-items:center; }
+    .calc-row label span { color: var(--accent); font-weight: 700; background:rgba(46,204,113,0.12); padding:0.1rem 0.5rem; border-radius:10px; }
+    .calc-row input[type=range] { width: 100%; accent-color: var(--accent); height:6px; }
+    .calc-result { margin-top: 1.2rem; background: var(--surface-2); border-radius: var(--radius-sm); padding: 1rem; text-align: center; border:1px solid var(--border); }
+    .calc-result .score-val { font-size: 2.4rem; font-weight: 800; color: var(--accent); transition: color 0.3s; }
+    .calc-result .score-label { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .calc-bars { display:flex; gap:0.5rem; align-items:flex-end; justify-content:center; margin-top:0.8rem; height:50px; }
+    .calc-bar-wrap { display:flex; flex-direction:column; align-items:center; gap:3px; }
+    .calc-bar { width:32px; border-radius:4px 4px 0 0; transition: height 0.35s ease; }
+    .calc-bar-label { font-size:0.7rem; color:var(--text-muted); font-weight:600; }
+
+    /* ---- Checklist ---- */
+    .checklist-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.65rem 0.9rem; border-radius: var(--radius-sm); background: var(--surface-2); border: 1.5px solid transparent; cursor: pointer; transition: all var(--transition); }
+    .checklist-item:hover { background: var(--surface-hover); }
+    .checklist-item.checked { border-color: var(--accent); background: rgba(46,204,113,0.07); }
+    .checklist-item .check-icon { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all var(--transition); background:var(--surface); }
+    .checklist-item.checked .check-icon { background: var(--accent); border-color: var(--accent); color: #fff; animation: pm1Pulse 0.6s ease; }
+    .checklist-item span { font-size: 0.88rem; color: var(--text); line-height: 1.45; }
+    .checklist-save { margin-top: 0.75rem; font-size: 0.82rem; color: var(--accent); font-weight: 600; min-height:1.2em; }
+    .checklist-progress-bar { height:6px; border-radius:3px; background:var(--surface-2); margin-top:0.6rem; overflow:hidden; border:1px solid var(--border); }
+    .checklist-progress-fill { height:100%; border-radius:3px; background:var(--accent); transition:width 0.4s ease; }
+
+    /* ---- Sort Exercise ---- */
+    .sort-exercise { display: flex; flex-direction: column; gap: 1rem; }
+    .sort-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .sort-pool { background: var(--surface-2); border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 0.75rem; min-height: 110px; transition: border-color 0.2s; }
+    .sort-pool.drag-over { border-color: var(--accent); background: rgba(46,204,113,0.05); }
+    .sort-pool h5 { font-size: 0.8rem; font-weight: 700; margin: 0 0 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .sort-pool.myth-pool h5 { color: #e74c3c; }
+    .sort-pool.fact-pool h5 { color: var(--accent-3); }
+    .sort-cards { display: flex; flex-direction: column; gap: 0.4rem; min-height:40px; }
+    .sort-source { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; min-height:36px; }
+    .sort-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 6px; padding: 0.45rem 0.75rem; font-size: 0.8rem; cursor: grab; color: var(--text); transition: box-shadow var(--transition), transform 0.1s; user-select: none; line-height:1.4; }
+    .sort-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.12); transform:translateY(-1px); }
+    .sort-card:active { cursor: grabbing; transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+    .sort-card.placed-myth { border-color: #e74c3c; background: rgba(231,76,60,0.06); }
+    .sort-card.placed-fact { border-color: var(--accent-3); background: rgba(26,188,156,0.06); }
+    .sort-card.correct { border-color: var(--accent-3) !important; background: rgba(26,188,156,0.12) !important; }
+    .sort-card.wrong { border-color: #e74c3c !important; background: rgba(231,76,60,0.12) !important; }
+    .ex-btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+    .ex-btn { padding: 0.42rem 1.1rem; border-radius: var(--radius-sm); border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity var(--transition), transform 0.1s; }
+    .ex-btn:hover { opacity:0.88; transform:scale(1.02); }
+    .ex-btn-check { background: var(--accent); color: #fff; }
+    .ex-btn-reset { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+    .ex-feedback { font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-top: 0.6rem; min-height: 1.5em; }
+
+    /* ---- Viz Container ---- */
+    .viz-container { background:var(--surface-2); border-radius:var(--radius); padding:1rem; margin:1.5rem 0; border:1px solid var(--border); overflow:hidden; }
+    .viz-label { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.5rem; }
+
+    /* ---- Icon Grid ---- */
+    .icon-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap:0.75rem; margin:1.2rem 0; }
+    .icon-card { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:1rem 0.75rem; text-align:center; transition: all var(--transition); cursor:default; }
+    .icon-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .icon-card .ic-icon { font-size:1.6rem; margin-bottom:0.5rem; }
+    .icon-card .ic-label { font-size:0.8rem; font-weight:700; color:var(--text); }
+    .icon-card .ic-sub { font-size:0.72rem; color:var(--text-muted); margin-top:0.2rem; line-height:1.3; }
+
+    /* ---- Comparison Table ---- */
+    .compare-table { width:100%; border-collapse:collapse; font-size:0.85rem; margin:1rem 0; }
+    .compare-table th { background:var(--accent); color:#fff; padding:0.6rem 0.9rem; text-align:left; font-weight:700; }
+    .compare-table th:first-child { border-radius:var(--radius-sm) 0 0 0; }
+    .compare-table th:last-child { border-radius:0 var(--radius-sm) 0 0; }
+    .compare-table td { padding:0.55rem 0.9rem; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; }
+    .compare-table tr:last-child td { border-bottom:none; }
+    .compare-table tr:nth-child(even) td { background:rgba(46,204,113,0.04); }
+    .compare-table .bad { color:#e74c3c; font-weight:600; }
+    .compare-table .good { color:var(--accent-3); font-weight:600; }
+
+    /* ---- Timeline ---- */
+    .timeline { display:flex; flex-direction:column; gap:0; margin:1.2rem 0; }
+    .timeline-item { display:flex; gap:1rem; position:relative; padding-bottom:1.2rem; }
+    .timeline-item:last-child { padding-bottom:0; }
+    .tl-line { display:flex; flex-direction:column; align-items:center; }
+    .tl-dot { width:16px; height:16px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+    .tl-connector { width:2px; flex:1; background:var(--border); margin-top:4px; }
+    .timeline-item:last-child .tl-connector { display:none; }
+    .tl-content { flex:1; }
+    .tl-title { font-size:0.88rem; font-weight:700; color:var(--text); margin-bottom:0.2rem; }
+    .tl-desc { font-size:0.82rem; color:var(--text-muted); line-height:1.45; }
+
+    /* ---- Radial Score ---- */
+    .radial-wrap { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin:1rem 0; }
+    .radial-item { display:flex; flex-direction:column; align-items:center; gap:0.4rem; }
+    .radial-svg { width:70px; height:70px; }
+    .radial-label { font-size:0.75rem; font-weight:700; color:var(--text-muted); text-align:center; }
+
+    /* ---- Match Exercise ---- */
+    .match-exercise { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .match-col { display:flex; flex-direction:column; gap:0.5rem; }
+    .match-col-label { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:0.2rem; }
+    .match-term { padding:0.5rem 0.8rem; border-radius:var(--radius-sm); background:var(--surface-2); border:2px solid transparent; font-size:0.82rem; font-weight:600; color:var(--text); cursor:pointer; transition:all var(--transition); }
+    .match-term:hover { border-color:var(--accent); background:rgba(46,204,113,0.07); }
+    .match-term.selected { border-color:var(--accent); background:rgba(46,204,113,0.12); }
+    .match-term.matched { border-color:var(--accent-3); background:rgba(26,188,156,0.12); cursor:default; }
+    .match-term.wrong-flash { border-color:#e74c3c !important; background:rgba(231,76,60,0.1) !important; }
+    .match-def { padding:0.5rem 0.8rem; border-radius:var(--radius-sm); background:var(--surface-2); border:2px solid transparent; font-size:0.78rem; color:var(--text-muted); cursor:pointer; transition:all var(--transition); line-height:1.4; }
+    .match-def:hover { border-color:var(--accent-3); }
+    .match-def.matched { border-color:var(--accent-3); background:rgba(26,188,156,0.1); cursor:default; color:var(--text); }
+    .match-score { font-size:0.88rem; font-weight:700; color:var(--accent); margin-top:0.5rem; }
+
+    /* ---- Mind Map (interactive cards) ---- */
+    .mindmap-grid { display:flex; flex-direction:column; gap:1rem; }
+    .mm-center-card { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#fff; border-radius:var(--radius); padding:1.2rem 1.5rem; text-align:center; margin-bottom:0.5rem; }
+    .mm-center-card h3 { margin:0 0 0.3rem; font-size:1.1rem; font-weight:800; }
+    .mm-center-card p { margin:0; font-size:0.82rem; opacity:0.9; }
+    .mm-branch { border:1.5px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; transition: box-shadow var(--transition); }
+    .mm-branch:hover { box-shadow:var(--shadow); }
+    .mm-branch-header { display:flex; align-items:center; gap:0.75rem; padding:0.8rem 1rem; cursor:pointer; user-select:none; }
+    .mm-branch-header:hover { background:var(--surface-hover); }
+    .mm-branch-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+    .mm-branch-title { font-size:0.9rem; font-weight:700; color:var(--text); flex:1; }
+    .mm-branch-icon { color:var(--text-muted); font-size:0.8rem; transition:transform 0.25s; }
+    .mm-branch.open .mm-branch-icon { transform:rotate(180deg); }
+    .mm-branch-body { display:none; padding:0.8rem 1rem 1rem 2.5rem; background:var(--surface-2); border-top:1px solid var(--border); animation: pm1FadeIn 0.25s ease; }
+    .mm-branch.open .mm-branch-body { display:block; }
+    .mm-branch-desc { font-size:0.85rem; color:var(--text-muted); line-height:1.55; margin-bottom:0.75rem; }
+    .mm-children { display:flex; flex-direction:column; gap:0.4rem; }
+    .mm-child { display:flex; align-items:flex-start; gap:0.6rem; padding:0.4rem 0.6rem; border-radius:6px; background:var(--surface); border:1px solid var(--border); font-size:0.8rem; color:var(--text); line-height:1.4; cursor:pointer; transition:all var(--transition); }
+    .mm-child:hover { border-color:var(--accent); background:rgba(46,204,113,0.06); }
+    .mm-child.open { border-color:var(--accent); background:rgba(46,204,113,0.08); }
+    .mm-child-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+    .mm-child-detail { font-size:0.77rem; color:var(--text-muted); margin-top:0.35rem; line-height:1.4; padding-top:0.3rem; border-top:1px dashed var(--border); }
+
+    /* ---- Barakah Diagram ---- */
+    .barakah-flow { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; justify-content:center; padding:1rem; }
+    .barakah-node { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-sm); padding:0.6rem 0.9rem; font-size:0.8rem; font-weight:600; color:var(--text); text-align:center; min-width:90px; transition:all var(--transition); }
+    .barakah-node:hover { border-color:var(--accent); transform:scale(1.04); }
+    .barakah-node.center { background:linear-gradient(135deg,var(--accent),var(--accent-3)); color:#fff; border-color:transparent; font-size:0.9rem; font-weight:800; min-width:110px; }
+    .barakah-arrow { color:var(--accent); font-size:1rem; font-weight:700; }
+
+    /* ---- Progress Insight ---- */
+    .insight-chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.8rem; }
+    .insight-chip { padding:0.3rem 0.75rem; border-radius:20px; font-size:0.78rem; font-weight:600; background:rgba(46,204,113,0.12); color:var(--accent-2); border:1px solid rgba(46,204,113,0.25); }
+
+    /* ---- Energy Wheel ---- */
+    .energy-wheel { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin:1rem 0; }
+    .energy-spoke { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:0.9rem 0.7rem; text-align:center; transition:all var(--transition); }
+    .energy-spoke:hover { border-color:var(--accent); box-shadow:var(--shadow); }
+    .energy-spoke .es-icon { font-size:1.5rem; margin-bottom:0.4rem; }
+    .energy-spoke .es-title { font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:0.25rem; }
+    .energy-spoke .es-items { font-size:0.73rem; color:var(--text-muted); line-height:1.5; }
+
+    /* ---- Hadith Callout ---- */
+    .hadith-callout { background:linear-gradient(135deg,rgba(46,204,113,0.08),rgba(26,188,156,0.06)); border-left:4px solid var(--accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:1rem 1.2rem; margin:1.2rem 0; }
+    .hadith-callout .hc-text { font-size:0.92rem; color:var(--text); font-style:italic; line-height:1.65; margin-bottom:0.4rem; }
+    .hadith-callout .hc-source { font-size:0.78rem; color:var(--accent-2); font-weight:600; }
+
+    /* ---- Five Before Five ---- */
+    .five-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; margin:1.2rem 0; }
+    @media(max-width:600px){ .five-grid{grid-template-columns:1fr 1fr;} }
+    .five-card { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:0.8rem 0.5rem; text-align:center; cursor:pointer; transition:all var(--transition); }
+    .five-card:hover,.five-card.active { border-color:var(--accent); background:rgba(46,204,113,0.08); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .five-card .fc-icon { font-size:1.4rem; margin-bottom:0.4rem; }
+    .five-card .fc-before { font-size:0.72rem; font-weight:700; color:var(--accent-2); }
+    .five-card .fc-after { font-size:0.7rem; color:var(--text-muted); margin-top:0.15rem; }
+    .five-detail { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.9rem 1rem; font-size:0.85rem; color:var(--text-muted); line-height:1.55; min-height:3rem; transition:opacity 0.2s; }
+
+    /* ---- Summary tab upgrades ---- */
+    .summary-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem 1.75rem; }
+    .summary-box h3 { margin:0 0 1rem; color:var(--accent); font-size:1.05rem; }
+    .summary-box ul { list-style:none; padding:0; display:flex; flex-direction:column; gap:0.6rem; }
+    .summary-box ul li { padding:0.55rem 0.9rem 0.55rem 2.5rem; border-radius:var(--radius-sm); background:var(--surface-2); position:relative; font-size:0.88rem; color:var(--text); line-height:1.5; border:1px solid transparent; transition:border-color var(--transition); }
+    .summary-box ul li:hover { border-color:var(--border); }
+    .summary-box ul li::before { content:'✦'; position:absolute; left:0.85rem; color:var(--accent); font-size:0.7rem; top:0.7rem; }
+
+    @media(max-width:520px){
+      .sort-pools { grid-template-columns:1fr; }
+      .match-exercise { grid-template-columns:1fr; }
+      .energy-wheel { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body data-chapter="ch1">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">The Productive Muslim</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill chapter-progress-fill" id="progressFill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 1</div>
+      <h1>What is Productivity?</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-bolt"></i> Foundations</span>
+        <span><i class="fas fa-puzzle-piece"></i> 6 Exercises</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- ===================== TAB: LESSONS ===================== -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <!-- ===== 1.1 ===== -->
+      <div class="lesson-section">
+        <h2>1.1 Defining True Productivity</h2>
+        <p>Most people think of productivity as doing as many things as possible in the least amount of time — a packed schedule, a long to-do list, constant motion. But doing a lot of things that don't matter is not productivity; it is organised distraction.</p>
+        <p>Mohammed Faris proposes a richer definition: <strong>productivity is the ability to achieve the best results in the least time with the least effort.</strong> The key phrase is "best results" — not most results. Quality and meaning take precedence over volume. Instead of asking "how can I do more?" the productive Muslim asks "what is truly worth doing?"</p>
+        <p>Islamic productivity adds another layer: results must be <em>nafi'</em> (beneficial) — tied to your higher purpose as a <em>khalifah</em> (steward) on Earth. The benchmark is not a CEO's quarterly report but Allah's pleasure and the wellbeing of humanity.</p>
+
+        <!-- Comparison diagram: Busyness vs. True Productivity -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-balance-scale" style="margin-right:0.4rem;"></i>Busyness vs. True Productivity</div>
+          <table class="compare-table">
+            <thead>
+              <tr><th>Dimension</th><th>Busyness Mindset</th><th>True Productivity</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Question asked</strong></td><td class="bad">How can I do more?</td><td class="good">What is truly worth doing?</td></tr>
+              <tr><td><strong>Measure of success</strong></td><td class="bad">Tasks completed</td><td class="good">Beneficial results achieved</td></tr>
+              <tr><td><strong>Energy approach</strong></td><td class="bad">Burn it all; hustle</td><td class="good">Manage spiritually, physically, socially</td></tr>
+              <tr><td><strong>Rest &amp; recovery</strong></td><td class="bad">Sign of weakness</td><td class="good">Built-in Prophetic practice</td></tr>
+              <tr><td><strong>Ultimate benchmark</strong></td><td class="bad">Quarterly targets</td><td class="good">Allah's pleasure &amp; Hereafter reward</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Formula flow SVG -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-equals" style="margin-right:0.4rem;"></i>The Islamic Productivity Definition</div>
+          <svg viewBox="0 0 560 100" width="100%" style="display:block;">
+            <defs>
+              <marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)" />
+              </marker>
+            </defs>
+            <rect x="8" y="18" width="128" height="54" rx="12" fill="var(--accent)" opacity="0.88"/>
+            <text x="72" y="41" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">Best Results</text>
+            <text x="72" y="57" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">(Nafi' — Beneficial)</text>
+            <line x1="136" y1="45" x2="166" y2="45" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arr1)"/>
+            <rect x="168" y="18" width="128" height="54" rx="12" fill="var(--accent-3)" opacity="0.88"/>
+            <text x="232" y="41" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">Least Time</text>
+            <text x="232" y="57" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">(Efficient)</text>
+            <line x1="296" y1="45" x2="326" y2="45" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arr1)"/>
+            <rect x="328" y="18" width="128" height="54" rx="12" fill="var(--accent-2)" opacity="0.88"/>
+            <text x="392" y="41" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">Least Effort</text>
+            <text x="392" y="57" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">(Optimised)</text>
+            <text x="478" y="52" font-family="Inter" font-size="22" font-weight="800" fill="var(--accent)">= P</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ===== 1.2 ===== -->
+      <div class="lesson-section">
+        <h2>1.2 The Productivity Formula: Focus × Energy × Time</h2>
+        <p>The core formula is <strong>Productivity = Focus × Energy × Time</strong>. These three variables are the raw materials of all productive output. Pull all three up and your output multiplies. Let even one collapse to zero and productivity vanishes — because any number multiplied by zero is zero.</p>
+
+        <!-- Energy Wheel -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-battery-full" style="margin-right:0.4rem;"></i>The Three Dimensions of Energy</div>
+          <div class="energy-wheel">
+            <div class="energy-spoke">
+              <div class="es-icon">🕌</div>
+              <div class="es-title">Spiritual Energy</div>
+              <div class="es-items">Salah · Dhikr · Quran<br>Righteous deeds · Dua</div>
+            </div>
+            <div class="energy-spoke" style="border-color:var(--accent-3);">
+              <div class="es-icon">🏃</div>
+              <div class="es-title">Physical Energy</div>
+              <div class="es-items">Sleep · Nutrition<br>Exercise · Qailula nap</div>
+            </div>
+            <div class="energy-spoke" style="border-color:var(--accent-2);">
+              <div class="es-icon">🤝</div>
+              <div class="es-title">Social Energy</div>
+              <div class="es-items">Family · Community<br>Mentors · Good company</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hadith callout -->
+        <div class="hadith-callout">
+          <div class="hc-text">"Take advantage of five before five: your youth before your old age, your health before your sickness, your wealth before your poverty, your free time before your preoccupation, and your life before your death."</div>
+          <div class="hc-source">— Prophet Muhammad ﷺ (Al-Hakim, authenticated)</div>
+        </div>
+
+        <!-- Five Before Five Interactive -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-hourglass-half" style="margin-right:0.4rem;"></i>Five Before Five — Click each to explore</div>
+          <div class="five-grid" id="fiveGrid"></div>
+          <div class="five-detail" id="fiveDetail">Click any card above to reveal its meaning for the productive Muslim.</div>
+        </div>
+
+        <!-- Step-through: Missing Elements -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-play-circle" style="margin-right:0.4rem;"></i>Step-Through: When One Element is Missing</h4>
+          <div class="step-svg-wrap" id="step1svg"></div>
+          <div class="step-desc" id="step1desc">Click "Next Step" to explore what happens when each productivity element is missing.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step1prev" onclick="pm1Step(-1)" disabled>&#8592; Prev Step</button>
+            <span class="step-indicator" id="step1ind">0 / 4</span>
+            <button class="step-btn" id="step1next" onclick="pm1Step(1)">Next Step &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Productivity Calculator -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-calculator" style="margin-right:0.4rem;"></i>Exercise 1: Your Productivity Score</h4>
+          <p class="ex-desc">Rate your current Focus, Energy, and Time management from 1–10. See your multiplied score and bar chart visualisation.</p>
+          <div class="calc-sliders">
+            <div class="calc-row">
+              <label>Focus <span id="focusVal">5</span>/10</label>
+              <input type="range" min="1" max="10" value="5" id="focusSlider" oninput="pm1Calc()">
+            </div>
+            <div class="calc-row">
+              <label>Energy <span id="energyVal">5</span>/10</label>
+              <input type="range" min="1" max="10" value="5" id="energySlider" oninput="pm1Calc()">
+            </div>
+            <div class="calc-row">
+              <label>Time Management <span id="timeVal">5</span>/10</label>
+              <input type="range" min="1" max="10" value="5" id="timeSlider" oninput="pm1Calc()">
+            </div>
+          </div>
+          <div class="calc-result">
+            <div class="score-val" id="calcScore">125</div>
+            <div class="score-label">Productivity Score (max 1000)</div>
+            <div id="calcComment" style="font-size:0.82rem;color:var(--text-muted);margin-top:0.4rem;">Room for growth across all three dimensions.</div>
+            <div class="calc-bars" id="calcBars"></div>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div id="calcInsight" class="insight-chips"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 1.3 ===== -->
+      <div class="lesson-section">
+        <h2>1.3 The Four Myths About Productivity</h2>
+        <p>Before building a productive life, you must dismantle the lies society has sold you. Mohammed Faris identifies four pervasive myths that keep people stuck in busyness without progress.</p>
+
+        <!-- Myths icon grid -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-times-circle" style="margin-right:0.4rem;color:#e74c3c;"></i>The Four Myths — Debunked</div>
+          <div class="icon-grid">
+            <div class="icon-card">
+              <div class="ic-icon">⚡</div>
+              <div class="ic-label">Myth 1</div>
+              <div class="ic-sub">"More things faster = productive"<br><strong style="color:var(--accent-3);font-size:0.7rem;">Reality: Quality over volume</strong></div>
+            </div>
+            <div class="icon-card">
+              <div class="ic-icon">💪</div>
+              <div class="ic-label">Myth 2</div>
+              <div class="ic-sub">"Sacrifice health &amp; faith for work"<br><strong style="color:var(--accent-3);font-size:0.7rem;">Reality: These are your fuel</strong></div>
+            </div>
+            <div class="icon-card">
+              <div class="ic-icon">🔄</div>
+              <div class="ic-label">Myth 3</div>
+              <div class="ic-sub">"Productive people are always on"<br><strong style="color:var(--accent-3);font-size:0.7rem;">Reality: Rest is part of the system</strong></div>
+            </div>
+            <div class="icon-card">
+              <div class="ic-icon">🧬</div>
+              <div class="ic-label">Myth 4</div>
+              <div class="ic-sub">"Productivity is a personality trait"<br><strong style="color:var(--accent-3);font-size:0.7rem;">Reality: It is a learnable skill</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercise 2: Myth vs Reality Sort -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-sort" style="margin-right:0.4rem;"></i>Exercise 2: Sort Myths from Realities</h4>
+          <p class="ex-desc">Drag each card to the correct column — Myth or Reality. Press "Check Answers" when done.</p>
+          <div class="sort-exercise">
+            <div class="sort-source" id="sortSource"></div>
+            <div class="sort-pools">
+              <div class="sort-pool myth-pool" id="mythPool"
+                   ondragover="event.preventDefault();this.classList.add('drag-over');"
+                   ondragleave="this.classList.remove('drag-over');"
+                   ondrop="pm1Drop(event,'myth')">
+                <h5><i class="fas fa-times-circle"></i> Myth</h5>
+                <div class="sort-cards" id="mythCards"></div>
+              </div>
+              <div class="sort-pool fact-pool" id="factPool"
+                   ondragover="event.preventDefault();this.classList.add('drag-over');"
+                   ondragleave="this.classList.remove('drag-over');"
+                   ondrop="pm1Drop(event,'fact')">
+                <h5><i class="fas fa-check-circle"></i> Reality</h5>
+                <div class="sort-cards" id="factCards"></div>
+              </div>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm1CheckSort()">Check Answers</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm1ResetSort()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="sortFeedback"></div>
+        </div>
+      </div>
+
+      <!-- ===== 1.4 ===== -->
+      <div class="lesson-section">
+        <h2>1.4 The Barakah Dimension of Productivity</h2>
+        <p>What separates Islamic productivity from secular frameworks is <strong>Barakah</strong> — divine blessing in time, effort, and output. Barakah is when Allah increases the productivity and benefit of your work beyond what its physical quantity would suggest.</p>
+        <p>The Prophet ﷺ asked Allah for Barakah in everything he did. His life stands as the greatest example: one person — no army, no technology, no capital — transformed the world within twenty-three years. Barakah also flows from character: honesty, gratitude (shukr), tawakkul, and serving others all invite it, while deception and ingratitude drive it away.</p>
+
+        <!-- Barakah Conditions Flow -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-star-and-crescent" style="margin-right:0.4rem;"></i>Conditions that Invite Barakah</div>
+          <div class="barakah-flow">
+            <div class="barakah-node">Niyyah<br><small style="font-weight:400;color:var(--text-muted);">Pure intention</small></div>
+            <div class="barakah-arrow">+</div>
+            <div class="barakah-node">Bismillah<br><small style="font-weight:400;color:var(--text-muted);">Begin with Allah</small></div>
+            <div class="barakah-arrow">+</div>
+            <div class="barakah-node">Halal means<br><small style="font-weight:400;color:var(--text-muted);">Lawful effort</small></div>
+            <div class="barakah-arrow">+</div>
+            <div class="barakah-node">Tawakkul<br><small style="font-weight:400;color:var(--text-muted);">Trust in Allah</small></div>
+            <div class="barakah-arrow">+</div>
+            <div class="barakah-node">Shukr<br><small style="font-weight:400;color:var(--text-muted);">Gratitude</small></div>
+            <div class="barakah-arrow">=</div>
+            <div class="barakah-node center">BARAKAH<br><small style="font-weight:400;opacity:0.85;">Multiplied output</small></div>
+          </div>
+        </div>
+
+        <!-- Barakah-rich times radial -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-clock" style="margin-right:0.4rem;"></i>Barakah-Rich Times in Islam</div>
+          <svg viewBox="0 0 560 140" width="100%" style="display:block;">
+            <defs>
+              <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.7"/>
+              </radialGradient>
+            </defs>
+            <!-- Timeline of barakah times -->
+            <rect x="10" y="55" width="540" height="4" rx="2" fill="var(--border)"/>
+            <!-- Fajr -->
+            <circle cx="60" cy="57" r="18" fill="var(--accent)" opacity="0.88"/>
+            <text x="60" y="53" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Fajr</text>
+            <text x="60" y="64" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Dawn</text>
+            <text x="60" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Most</text>
+            <text x="60" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Barakah</text>
+            <!-- Duha -->
+            <circle cx="170" cy="57" r="14" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="170" y="53" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Duha</text>
+            <text x="170" y="64" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Morning</text>
+            <text x="170" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">High</text>
+            <text x="170" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Energy</text>
+            <!-- Jumu'ah -->
+            <circle cx="280" cy="57" r="16" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="280" y="52" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">Jumu'ah</text>
+            <text x="280" y="64" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Friday</text>
+            <text x="280" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Weekly</text>
+            <text x="280" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Barakah</text>
+            <!-- Laylatul Qadr -->
+            <circle cx="390" cy="57" r="18" fill="var(--accent)" opacity="0.88"/>
+            <text x="390" y="52" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">Laylat</text>
+            <text x="390" y="63" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">al-Qadr</text>
+            <text x="390" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">&gt;1000</text>
+            <text x="390" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">months</text>
+            <!-- Ramadan -->
+            <circle cx="500" cy="57" r="20" fill="var(--accent-3)" opacity="0.88"/>
+            <text x="500" y="52" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Ramadan</text>
+            <text x="500" y="65" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.85)">Full month</text>
+            <text x="500" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Rewards</text>
+            <text x="500" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">multiplied</text>
+            <!-- labels -->
+            <text x="280" y="130" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">→ Time increases in spiritual value →</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ===== 1.5 ===== -->
+      <div class="lesson-section">
+        <h2>1.5 Self-Diagnosis: Where Are You Now?</h2>
+        <p>Before any change is possible, you need an honest assessment. Mohammed Faris stresses that self-awareness is the starting point of all personal development. The Prophet ﷺ engaged in regular <em>muhasabah</em>: "Take account of yourselves before you are taken account of."</p>
+        <p>This is not a guilt exercise — it is a diagnostic tool. You cannot improve what you do not measure, and you cannot measure what you do not notice.</p>
+
+        <!-- Exercise 3: Self-Assessment Checklist -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-clipboard-check" style="margin-right:0.4rem;"></i>Exercise 3: My Productivity Baseline</h4>
+          <p class="ex-desc">Tick what currently applies to you. Your selections are saved automatically to localStorage.</p>
+          <div class="checklist-grid" id="pm1checklist"></div>
+          <div class="checklist-progress-bar"><div class="checklist-progress-fill" id="pm1checkFill" style="width:0%"></div></div>
+          <div class="checklist-save" id="pm1checkSave"></div>
+        </div>
+
+        <!-- Exercise 4: Term-Matching -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-link" style="margin-right:0.4rem;"></i>Exercise 4: Match Terms to Definitions</h4>
+          <p class="ex-desc">Click a term on the left, then click its matching definition on the right. All 6 pairs must be matched.</p>
+          <div class="match-exercise">
+            <div class="match-col">
+              <div class="match-col-label">Terms</div>
+              <div id="matchTerms"></div>
+            </div>
+            <div class="match-col">
+              <div class="match-col-label">Definitions</div>
+              <div id="matchDefs"></div>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm1ResetMatch()">Reset</button>
+          </div>
+          <div class="match-score" id="matchScore"></div>
+        </div>
+      </div>
+
+      <!-- ===== 1.6 ===== -->
+      <div class="lesson-section">
+        <h2>1.6 The Hereafter as the Ultimate Productivity Goal</h2>
+        <p>Islamic productivity is distinguished from all secular frameworks by one fundamental premise: the <em>akhira</em> (hereafter) is the ultimate measure of success. Every productive effort must ultimately be evaluated against whether it brings you closer to Allah and to Jannah.</p>
+        <p>When your work is motivated by akhira consciousness, it gains a quality of permanence. Work done purely for dunya fades; work done as <em>ibadah</em> earns rewards that continue even after death — the concept of <em>sadaqah jariyah</em> (ongoing charity). A teacher who educates one student who goes on to benefit millions has sent a charity outlasting their lifetime. Time is not just a resource; it is a divine trust (<em>amanah</em>) you will be questioned about.</p>
+
+        <!-- Secular vs Islamic Productivity Timeline -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-infinity" style="margin-right:0.4rem;"></i>Dunya vs. Akhira Orientation of Effort</div>
+          <svg viewBox="0 0 560 130" width="100%" style="display:block;">
+            <!-- Dunya line -->
+            <text x="10" y="30" font-family="Inter" font-size="10" font-weight="700" fill="#e74c3c">SECULAR (Dunya-only)</text>
+            <rect x="10" y="38" width="300" height="12" rx="6" fill="#e74c3c" opacity="0.7"/>
+            <text x="316" y="49" font-family="Inter" font-size="9" fill="#e74c3c">→ ends at death</text>
+            <!-- Islamic line -->
+            <text x="10" y="78" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">ISLAMIC (Dunya + Akhira)</text>
+            <rect x="10" y="86" width="300" height="12" rx="6" fill="var(--accent)" opacity="0.8"/>
+            <rect x="310" y="86" width="240" height="12" rx="6" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="316" y="97" font-family="Inter" font-size="9" fill="var(--accent-3)">→ continues as sadaqah jariyah →→→</text>
+            <!-- Death marker -->
+            <line x1="310" y1="22" x2="310" y2="116" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="310" y="118" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">↑ Death</text>
+          </svg>
+        </div>
+
+        <!-- Islamic vs Secular Question -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-question-circle" style="margin-right:0.4rem;"></i>The Reframe: What Question Are You Asking?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.5rem;">
+            <div style="background:rgba(231,76,60,0.07);border:1.5px solid rgba(231,76,60,0.25);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.75rem;font-weight:700;color:#e74c3c;margin-bottom:0.4rem;text-transform:uppercase;">Secular Question</div>
+              <div style="font-size:0.88rem;color:var(--text);font-style:italic;">"How do I get <strong>more</strong> done in less time?"</div>
+            </div>
+            <div style="background:rgba(46,204,113,0.07);border:1.5px solid rgba(46,204,113,0.25);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem;text-transform:uppercase;">Muslim Question</div>
+              <div style="font-size:0.88rem;color:var(--text);font-style:italic;">"What is the most <strong>beneficial</strong> thing I can do with this time, for this life and the next?"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 1.7 ===== -->
+      <div class="lesson-section">
+        <h2>1.7 The Five Pillars of Productive Behaviour</h2>
+        <p>Translating insight into action requires a framework. Mohammed Faris lays out five foundational behaviours that underpin all productive Muslim activity — not hacks or tips, but character traits rooted in prophetic example.</p>
+        <p>The five pillars form a cycle: set intention → plan → execute with focus → maintain consistency → reflect and recalibrate. This is a daily practice, like salah itself, which resets you five times a day.</p>
+
+        <!-- Step-through: The Five Pillars Cycle -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-sync" style="margin-right:0.4rem;"></i>Step-Through: The 5-Pillar Productivity Cycle</h4>
+          <div class="step-svg-wrap" id="step2svg"></div>
+          <div class="step-desc" id="step2desc">Click "Next Step" to walk through each pillar of productive behaviour.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step2prev" onclick="pm1Step2(-1)" disabled>&#8592; Prev Step</button>
+            <span class="step-indicator" id="step2ind">0 / 5</span>
+            <button class="step-btn" id="step2next" onclick="pm1Step2(1)">Next Step &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Timeline of the cycle -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-redo" style="margin-right:0.4rem;"></i>The Daily Productive Cycle</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="tl-line"><div class="tl-dot" style="background:var(--accent);"></div><div class="tl-connector"></div></div>
+              <div class="tl-content"><div class="tl-title">1. Niyyah — Set Intention</div><div class="tl-desc">Before any action, ask: "Why am I doing this? Is it for Allah's sake?" The niyyah determines spiritual reward.</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-line"><div class="tl-dot" style="background:var(--accent-3);"></div><div class="tl-connector"></div></div>
+              <div class="tl-content"><div class="tl-title">2. Planning — Map the How &amp; When</div><div class="tl-desc">The Prophet planned meticulously — battles, speeches, daily schedule. Planning is a sunnah, not a Western import.</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-line"><div class="tl-dot" style="background:var(--accent-2);"></div><div class="tl-connector"></div></div>
+              <div class="tl-content"><div class="tl-title">3. Focus — Execute with Ihsan</div><div class="tl-desc">Do one thing at a time with full attention. Ihsan (excellence) means giving every task your complete presence.</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-line"><div class="tl-dot" style="background:var(--accent);"></div><div class="tl-connector"></div></div>
+              <div class="tl-content"><div class="tl-title">4. Istiqamah — Be Consistent</div><div class="tl-desc">The most beloved deeds to Allah are the consistent ones, even if small. Sporadic bursts do not build lasting results.</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-line"><div class="tl-dot" style="background:var(--accent-3);"></div><div class="tl-connector"></div></div>
+              <div class="tl-content"><div class="tl-title">5. Muhasabah — Reflect &amp; Recalibrate</div><div class="tl-desc">At day's end: What worked? What didn't? Adjust the next cycle. Without review, errors compound silently.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 1.8 ===== -->
+      <div class="lesson-section">
+        <h2>1.8 Deeper Dive: Building Your Productive Muslim System</h2>
+        <p>The concepts in Chapter 1 are not isolated ideas — they interlock into a system. True productivity requires aligning your intentions, energy sources, time allocation, and daily habits with your ultimate purpose as a khalifah on Earth.</p>
+
+        <!-- Exercise 5: Productivity Priority Ranker -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-sort-amount-down" style="margin-right:0.4rem;"></i>Exercise 5: Rank Your Weak Spots</h4>
+          <p class="ex-desc">Click each dimension to rate your current performance (1 = very weak, 5 = strong). See your personalised improvement priority.</p>
+          <div id="rankGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:1rem;"></div>
+          <div id="rankResult" style="font-size:0.85rem;color:var(--text-muted);padding:0.75rem;background:var(--surface-2);border-radius:var(--radius-sm);min-height:2.5rem;border:1px solid var(--border);"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm1ResetRank()">Reset Ratings</button>
+          </div>
+        </div>
+
+        <!-- Exercise 6: Weekly Intentions Builder -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-pen-nib" style="margin-right:0.4rem;"></i>Exercise 6: Set Your Weekly Niyyah</h4>
+          <p class="ex-desc">Write one intention for each productivity dimension. Saved to localStorage.</p>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;" id="niyyahBuilder"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm1SaveNiyyah()">Save Intentions</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm1ClearNiyyah()">Clear</button>
+          </div>
+          <div class="ex-feedback" id="niyyahFeedback"></div>
+        </div>
+
+        <!-- Concept map: How everything connects -->
+        <div class="viz-container">
+          <div class="viz-label"><i class="fas fa-sitemap" style="margin-right:0.4rem;"></i>How Chapter 1 Concepts Connect</div>
+          <svg viewBox="0 0 560 220" width="100%" style="display:block;">
+            <defs>
+              <marker id="cmarr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="var(--accent-3)" />
+              </marker>
+            </defs>
+            <!-- Central node -->
+            <rect x="195" y="85" width="170" height="50" rx="14" fill="var(--accent)" opacity="0.9"/>
+            <text x="280" y="107" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Islamic Productivity</text>
+            <text x="280" y="124" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Focus × Energy × Time</text>
+
+            <!-- Top: Niyyah -->
+            <rect x="210" y="10" width="140" height="40" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="280" y="26" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Niyyah + Akhira Goal</text>
+            <text x="280" y="40" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">Direction &amp; Purpose</text>
+            <line x1="280" y1="50" x2="280" y2="85" stroke="var(--accent-3)" stroke-width="1.6" marker-end="url(#cmarr)"/>
+
+            <!-- Bottom: 5 Pillars -->
+            <rect x="210" y="168" width="140" height="40" rx="10" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="280" y="184" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">5-Pillar Daily Cycle</text>
+            <text x="280" y="198" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">Plan→Focus→Reflect</text>
+            <line x1="280" y1="135" x2="280" y2="168" stroke="var(--accent-2)" stroke-width="1.6" marker-end="url(#cmarr)"/>
+
+            <!-- Left: Barakah -->
+            <rect x="10" y="90" width="130" height="40" rx="10" fill="var(--accent)" opacity="0.75"/>
+            <text x="75" y="106" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Barakah</text>
+            <text x="75" y="120" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">Multiplied output</text>
+            <line x1="140" y1="110" x2="195" y2="110" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#cmarr)"/>
+
+            <!-- Right: Energy -->
+            <rect x="420" y="90" width="130" height="40" rx="10" fill="var(--accent-3)" opacity="0.75"/>
+            <text x="485" y="106" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Energy (3 Dims)</text>
+            <text x="485" y="120" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">Spiritual·Physical·Social</text>
+            <line x1="420" y1="110" x2="365" y2="110" stroke="var(--accent-3)" stroke-width="1.6" marker-end="url(#cmarr)"/>
+          </svg>
+        </div>
+      </div>
+
+    </div><!-- #tab-lessons -->
+
+    <!-- ===================== TAB: Summary ===================== -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 1 Summary</h3>
+        <ul>
+          <li><strong>True productivity</strong> means achieving the best (beneficial) results in the least time with the least effort — not doing the most things fastest.</li>
+          <li><strong>The formula</strong> Productivity = Focus × Energy × Time is multiplicative — any element reaching zero collapses all output.</li>
+          <li><strong>Focus</strong> means directing mental and physical faculties to one task at a time, resisting distraction with discipline.</li>
+          <li><strong>Energy</strong> has three dimensions: spiritual (salah, dhikr, righteous deeds), physical (sleep, nutrition, exercise), and social (healthy relationships).</li>
+          <li><strong>Time</strong> is non-renewable amanah; the Prophet's "five before five" hadith provides a complete time-philosophy.</li>
+          <li><strong>Myth 1</strong> — Productivity is doing more faster. <strong>Reality:</strong> Doing the right things with excellence (ihsan).</li>
+          <li><strong>Myth 2</strong> — Productivity requires sacrificing health and faith. <strong>Reality:</strong> These are sources of productive energy, not costs.</li>
+          <li><strong>Myth 3</strong> — Productive people are always "on." <strong>Reality:</strong> Rest (qailula, weekly, annual) is a Prophetic practice.</li>
+          <li><strong>Myth 4</strong> — Productivity is innate. <strong>Reality:</strong> It is a learnable, improvable skill.</li>
+          <li><strong>Barakah</strong> — divine blessing — multiplies the output of honest, intention-driven, Allah-conscious effort beyond what raw inputs suggest.</li>
+          <li><strong>The Hereafter</strong> is the ultimate productivity goal; sadaqah jariyah means effort can outlast your lifetime as eternal reward.</li>
+          <li><strong>Five pillars</strong> of productive behaviour: Niyyah → Planning → Focus → Istiqamah → Muhasabah — a continuous daily cycle.</li>
+        </ul>
+
+        <!-- Key Terms -->
+        <div style="margin-top:1.75rem;">
+          <h4 style="margin-bottom:0.85rem;color:var(--accent);font-size:0.95rem;"><i class="fas fa-book" style="margin-right:0.4rem;"></i>Key Terms</h4>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:0.5rem 1.2rem;font-size:0.87rem;">
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Niyyah</dt><dd style="color:var(--text-muted);margin:0;">Intention — the inner purpose that gives an action its spiritual value.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Barakah</dt><dd style="color:var(--text-muted);margin:0;">Divine blessing that increases the benefit and effect of an action beyond its raw inputs.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Khalifah</dt><dd style="color:var(--text-muted);margin:0;">Steward/vicegerent of Allah on Earth — the Muslim's fundamental role and identity.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Muhasabah</dt><dd style="color:var(--text-muted);margin:0;">Self-accounting — periodic honest reflection on one's state and actions before Allah takes account.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Istiqamah</dt><dd style="color:var(--text-muted);margin:0;">Steadfastness and consistency on the straight path; the most beloved deed pattern to Allah.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Tawakkul</dt><dd style="color:var(--text-muted);margin:0;">Complete reliance and trust in Allah after taking all the necessary means.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Amanah</dt><dd style="color:var(--text-muted);margin:0;">Trust/divine responsibility — time is an amanah you will be questioned about on the Day of Judgement.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Qailula</dt><dd style="color:var(--text-muted);margin:0;">Midday nap — a Prophetic practice with significant scientific benefits for afternoon energy.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Sadaqah Jariyah</dt><dd style="color:var(--text-muted);margin:0;">Ongoing charity — actions whose benefit continues after death, the ultimate productivity leverage.</dd>
+            <dt style="font-weight:700;color:var(--text);align-self:start;">Ihsan</dt><dd style="color:var(--text-muted);margin:0;">Excellence/perfection — doing every task as though Allah is watching; the quality standard of the productive Muslim.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: Quiz ===================== -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- ===================== TAB: Mind Map ===================== -->
+    <div class="tab-panel" id="tab-mindmap">
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;"><i class="fas fa-info-circle" style="margin-right:0.35rem;"></i>Click any branch to expand its details and sub-concepts. Click the sub-concepts for deeper descriptions.</p>
+      <div class="mindmap-grid" id="mmCh1Interactive"></div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="index.html" class="btn btn-secondary"><i class="fas fa-home"></i> Book Index</a>
+      <a href="ch2.html" class="btn btn-primary">Ch 2: Islam &amp; Productivity <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+  </div><!-- .page-wrapper -->
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "The Productive Muslim: Where Faith Meets Productivity" by Mohammed Faris, &copy; 2016 Awakening Publications.</p>
+    <p>Independent educational companion &mdash; not affiliated with Awakening Publications or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+  /* ============================================================
+     Chapter 1 Interactive Script
+  ============================================================ */
+
+  VB.initQuiz('quizContainer', [
+    {
+      question: "According to Mohammed Faris, how is productivity best defined?",
+      options: ["Doing as many tasks as possible in a day","Achieving the best beneficial results in the least time with the least effort","Working for the longest hours without distraction","Completing every item on your to-do list"],
+      correct: 1,
+      explanation: "Faris defines productivity as achieving the best (beneficial) results in the least time with the least effort — prioritising quality and meaning over sheer volume."
+    },
+    {
+      question: "What is the productivity formula introduced in Chapter 1?",
+      options: ["Productivity = Goals ÷ Time","Productivity = Focus + Energy + Time","Productivity = Focus × Energy × Time","Productivity = Effort × Speed"],
+      correct: 2,
+      explanation: "The formula is multiplicative: P = Focus × Energy × Time. If any element is zero, productivity collapses to zero regardless of the others."
+    },
+    {
+      question: "Which THREE dimensions make up Energy in the productivity formula?",
+      options: ["Mental, Emotional, Physical","Spiritual, Physical, Social","Intellectual, Emotional, Spiritual","Financial, Physical, Mental"],
+      correct: 1,
+      explanation: "Energy has spiritual (salah, dhikr), physical (sleep, nutrition, exercise), and social (healthy relationships) dimensions — all must be managed."
+    },
+    {
+      question: "Which statement best describes Myth 1 about productivity?",
+      options: ["Productive people never rest","Productivity requires sacrificing your health","Productivity is about doing more things faster","You must be born productive"],
+      correct: 2,
+      explanation: "Myth 1 conflates speed and busyness with true productivity. Doing more faster without beneficial purpose is organised distraction, not productivity."
+    },
+    {
+      question: "What does 'Barakah' mean in the context of Islamic productivity?",
+      options: ["A detailed daily schedule","Divine blessing that multiplies the benefit of effort","The quantity of work completed in a day","A Quranic recitation technique"],
+      correct: 1,
+      explanation: "Barakah is divine blessing in time, effort, and output — it allows Allah-conscious work to achieve results beyond what the raw inputs would logically produce."
+    },
+    {
+      question: "The Prophet's hadith 'Take advantage of five before five' illustrates which concept?",
+      options: ["The importance of Ramadan","The non-renewable nature of time","The Barakah of early mornings","The five pillars of Islam"],
+      correct: 1,
+      explanation: "The hadith — youth, health, wealth, free time, life — illustrates that time is non-renewable and must be invested before its window closes."
+    },
+    {
+      question: "What is 'muhasabah'?",
+      options: ["A type of supplication (du'a)","Periodic honest self-accounting and reflection","The midday rest practised by the Prophet","A form of charity"],
+      correct: 1,
+      explanation: "Muhasabah is self-accounting — regular honest reflection on one's state and actions, a practice the Prophet encouraged before Allah takes us to account."
+    },
+    {
+      question: "Which of the following is NOT one of the five pillars of productive behaviour?",
+      options: ["Niyyah (intention)","Planning","Multitasking","Muhasabah (reflection)"],
+      correct: 2,
+      explanation: "The five pillars are Niyyah, Planning, Focus, Istiqamah (consistency), and Muhasabah. Multitasking contradicts the focus principle."
+    },
+    {
+      question: "Why does Islamic productivity frame the Hereafter as the ultimate goal?",
+      options: ["Because dunya achievements are worthless","Because it gives work a quality of permanence as potential ibadah","Because Muslims should not care about worldly success","Because productivity is only measured after death"],
+      correct: 1,
+      explanation: "Work done as ibadah earns eternal rewards (sadaqah jariyah), making effort extend beyond the lifetime — a far more motivating and sustainable benchmark than worldly targets."
+    },
+    {
+      question: "What does 'istiqamah' mean?",
+      options: ["Divine decree","Midday nap","Steadfastness and consistency on the right path","Self-diagnosis"],
+      correct: 2,
+      explanation: "Istiqamah means steadfastness and consistency. The Prophet said the most beloved deeds to Allah are the consistent ones, even if small — making consistency a core productive virtue."
+    }
+  ]);
+  VB.initTabs('chapterTabs');
+
+  /* ===================================================
+     FIVE BEFORE FIVE — Interactive Grid
+  =================================================== */
+  var fiveData = [
+    { icon:'🌱', before:'Youth', after:'before Old Age', detail:'Your physical capacity, mental sharpness, and risk-tolerance are highest when you are young. Use this window to build skills, habits, and momentum you cannot easily build later.' },
+    { icon:'💪', before:'Health', after:'before Sickness', detail:'Your body is a trust (amanah). Prioritise sleep, exercise, and nutrition not as luxuries but as Islamic obligations to maintain the body Allah gave you as a tool for worship.' },
+    { icon:'💰', before:'Wealth', after:'before Poverty', detail:'Invest, give in charity (sadaqah), and spend in righteous causes while you have the means. Wealth given in the path of Allah multiplies through Barakah; hoarded wealth is tested and diminished.' },
+    { icon:'⏰', before:'Free Time', after:'before Busyness', detail:'Unscheduled time is productivity gold. Use pockets of freedom for deep work, memorisation, learning, and connection — before obligations fill every gap in your calendar.' },
+    { icon:'🌟', before:'Life', after:'before Death', detail:'The entirety of life is a window before the inevitable. Every breath is an opportunity for ibadah. The productive Muslim does not wait for "someday" — today is the resource, and it expires.' }
+  ];
+  var fiveGrid = document.getElementById('fiveGrid');
+  var fiveDetail = document.getElementById('fiveDetail');
+  var fiveActive = -1;
+  fiveData.forEach(function(f, i){
+    var card = document.createElement('div');
+    card.className = 'five-card';
+    card.innerHTML = '<div class="fc-icon">'+f.icon+'</div><div class="fc-before">'+f.before+'</div><div class="fc-after">'+f.after+'</div>';
+    card.addEventListener('click', function(){
+      document.querySelectorAll('.five-card').forEach(function(c){ c.classList.remove('active'); });
+      if(fiveActive === i){ fiveActive=-1; fiveDetail.textContent='Click any card above to reveal its meaning for the productive Muslim.'; return; }
+      fiveActive = i;
+      card.classList.add('active');
+      fiveDetail.textContent = f.detail;
+    });
+    fiveGrid.appendChild(card);
+  });
+
+  /* ===================================================
+     STEP-THROUGH 1: Missing Elements
+  =================================================== */
+  var s1idx = 0;
+  var s1data = [
+    {
+      title: "Full Formula — All Strong",
+      desc: "When Focus × Energy × Time are all strong, productivity is maximised. All three levers are up and output is high.",
+      draw: function(svg) {
+        var ns = 'http://www.w3.org/2000/svg';
+        svg.setAttribute('viewBox','0 0 560 120');
+        [
+          {x:10,label:'Focus',sub:'Strong 💪',color:'var(--accent)',faded:false},
+          {x:170,label:'Energy',sub:'Strong ⚡',color:'var(--accent-3)',faded:false},
+          {x:330,label:'Time',sub:'Managed ⏰',color:'var(--accent-2)',faded:false}
+        ].forEach(function(b, i){
+          var g = document.createElementNS(ns,'g');
+          var r = document.createElementNS(ns,'rect'); r.setAttribute('x',b.x); r.setAttribute('y','25'); r.setAttribute('width','130'); r.setAttribute('height','65'); r.setAttribute('rx','12'); r.setAttribute('fill',b.color); r.setAttribute('opacity','0.88');
+          var t = document.createElementNS(ns,'text'); t.setAttribute('x',b.x+65); t.setAttribute('y','53'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-family','Inter'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff'); t.textContent = b.label;
+          var t2 = document.createElementNS(ns,'text'); t2.setAttribute('x',b.x+65); t2.setAttribute('y','72'); t2.setAttribute('text-anchor','middle'); t2.setAttribute('font-family','Inter'); t2.setAttribute('font-size','11'); t2.setAttribute('fill','rgba(255,255,255,0.85)'); t2.textContent = b.sub;
+          g.appendChild(r); g.appendChild(t); g.appendChild(t2); svg.appendChild(g);
+          if(i<2){
+            var op = document.createElementNS(ns,'text'); op.setAttribute('x',b.x+145); op.setAttribute('y','66'); op.setAttribute('text-anchor','middle'); op.setAttribute('font-family','Inter'); op.setAttribute('font-size','22'); op.setAttribute('font-weight','700'); op.setAttribute('fill','var(--accent)'); op.textContent='×'; svg.appendChild(op);
+          }
+        });
+        var eq = document.createElementNS(ns,'text'); eq.setAttribute('x','476'); eq.setAttribute('y','66'); eq.setAttribute('font-family','Inter'); eq.setAttribute('font-size','22'); eq.setAttribute('font-weight','700'); eq.setAttribute('fill','var(--accent)'); eq.textContent='='; svg.appendChild(eq);
+        var res = document.createElementNS(ns,'text'); res.setAttribute('x','510'); res.setAttribute('y','68'); res.setAttribute('font-family','Inter'); res.setAttribute('font-size','20'); res.setAttribute('font-weight','800'); res.setAttribute('fill','var(--accent)'); res.textContent='HIGH'; svg.appendChild(res);
+      }
+    },
+    {
+      title: "No Focus — Zero Output",
+      desc: "Without Focus, even great Energy and Time management yield nothing. You are busy but directionless — scattered across a hundred shallow tasks. A × 0 = 0.",
+      draw: function(svg) {
+        var ns='http://www.w3.org/2000/svg'; svg.setAttribute('viewBox','0 0 560 120');
+        var data=[{x:10,label:'Focus',sub:'= 0 ❌',color:'var(--accent)',faded:true},{x:170,label:'Energy',sub:'Strong ⚡',color:'var(--accent-3)',faded:false},{x:330,label:'Time',sub:'Managed ⏰',color:'var(--accent-2)',faded:false}];
+        data.forEach(function(b,i){
+          var g=document.createElementNS(ns,'g'); if(b.faded) g.setAttribute('opacity','0.22');
+          var r=document.createElementNS(ns,'rect'); r.setAttribute('x',b.x); r.setAttribute('y','25'); r.setAttribute('width','130'); r.setAttribute('height','65'); r.setAttribute('rx','12'); r.setAttribute('fill',b.color); r.setAttribute('opacity','0.88');
+          var t=document.createElementNS(ns,'text'); t.setAttribute('x',b.x+65); t.setAttribute('y','53'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-family','Inter'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff'); t.textContent=b.label;
+          var t2=document.createElementNS(ns,'text'); t2.setAttribute('x',b.x+65); t2.setAttribute('y','72'); t2.setAttribute('text-anchor','middle'); t2.setAttribute('font-family','Inter'); t2.setAttribute('font-size','11'); t2.setAttribute('fill','rgba(255,255,255,0.85)'); t2.textContent=b.sub;
+          g.appendChild(r); g.appendChild(t); g.appendChild(t2); svg.appendChild(g);
+          if(i<2){var op=document.createElementNS(ns,'text'); op.setAttribute('x',b.x+145); op.setAttribute('y','66'); op.setAttribute('text-anchor','middle'); op.setAttribute('font-family','Inter'); op.setAttribute('font-size','22'); op.setAttribute('font-weight','700'); op.setAttribute('fill','var(--text-muted)'); op.textContent='×'; svg.appendChild(op);}
+        });
+        var eq=document.createElementNS(ns,'text'); eq.setAttribute('x','476'); eq.setAttribute('y','66'); eq.setAttribute('font-family','Inter'); eq.setAttribute('font-size','22'); eq.setAttribute('font-weight','700'); eq.setAttribute('fill','var(--text-muted)'); eq.textContent='='; svg.appendChild(eq);
+        var res=document.createElementNS(ns,'text'); res.setAttribute('x','506'); res.setAttribute('y','68'); res.setAttribute('font-family','Inter'); res.setAttribute('font-size','20'); res.setAttribute('font-weight','800'); res.setAttribute('fill','#e74c3c'); res.textContent='ZERO'; svg.appendChild(res);
+      }
+    },
+    {
+      title: "No Energy — Zero Output",
+      desc: "Without Energy — physical, spiritual, or social — you cannot sustain Focus. Burnout, spiritual emptiness, and isolation drain the tank. Focus × 0 × Time = 0.",
+      draw: function(svg) {
+        var ns='http://www.w3.org/2000/svg'; svg.setAttribute('viewBox','0 0 560 120');
+        var data=[{x:10,label:'Focus',sub:'Strong 💪',color:'var(--accent)',faded:false},{x:170,label:'Energy',sub:'= 0 ❌',color:'var(--accent-3)',faded:true},{x:330,label:'Time',sub:'Managed ⏰',color:'var(--accent-2)',faded:false}];
+        data.forEach(function(b,i){
+          var g=document.createElementNS(ns,'g'); if(b.faded) g.setAttribute('opacity','0.22');
+          var r=document.createElementNS(ns,'rect'); r.setAttribute('x',b.x); r.setAttribute('y','25'); r.setAttribute('width','130'); r.setAttribute('height','65'); r.setAttribute('rx','12'); r.setAttribute('fill',b.color); r.setAttribute('opacity','0.88');
+          var t=document.createElementNS(ns,'text'); t.setAttribute('x',b.x+65); t.setAttribute('y','53'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-family','Inter'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff'); t.textContent=b.label;
+          var t2=document.createElementNS(ns,'text'); t2.setAttribute('x',b.x+65); t2.setAttribute('y','72'); t2.setAttribute('text-anchor','middle'); t2.setAttribute('font-family','Inter'); t2.setAttribute('font-size','11'); t2.setAttribute('fill','rgba(255,255,255,0.85)'); t2.textContent=b.sub;
+          g.appendChild(r); g.appendChild(t); g.appendChild(t2); svg.appendChild(g);
+          if(i<2){var op=document.createElementNS(ns,'text'); op.setAttribute('x',b.x+145); op.setAttribute('y','66'); op.setAttribute('text-anchor','middle'); op.setAttribute('font-family','Inter'); op.setAttribute('font-size','22'); op.setAttribute('font-weight','700'); op.setAttribute('fill','var(--text-muted)'); op.textContent='×'; svg.appendChild(op);}
+        });
+        var eq=document.createElementNS(ns,'text'); eq.setAttribute('x','476'); eq.setAttribute('y','66'); eq.setAttribute('font-family','Inter'); eq.setAttribute('font-size','22'); eq.setAttribute('font-weight','700'); eq.setAttribute('fill','var(--text-muted)'); eq.textContent='='; svg.appendChild(eq);
+        var res=document.createElementNS(ns,'text'); res.setAttribute('x','506'); res.setAttribute('y','68'); res.setAttribute('font-family','Inter'); res.setAttribute('font-size','20'); res.setAttribute('font-weight','800'); res.setAttribute('fill','#e74c3c'); res.textContent='ZERO'; svg.appendChild(res);
+      }
+    },
+    {
+      title: "No Time Management — Zero Output",
+      desc: "Without Time management, Focus and Energy are wasted on the wrong things at the wrong moments. Procrastination kills output even when the other two are strong.",
+      draw: function(svg) {
+        var ns='http://www.w3.org/2000/svg'; svg.setAttribute('viewBox','0 0 560 120');
+        var data=[{x:10,label:'Focus',sub:'Strong 💪',color:'var(--accent)',faded:false},{x:170,label:'Energy',sub:'Strong ⚡',color:'var(--accent-3)',faded:false},{x:330,label:'Time',sub:'= 0 ❌',color:'var(--accent-2)',faded:true}];
+        data.forEach(function(b,i){
+          var g=document.createElementNS(ns,'g'); if(b.faded) g.setAttribute('opacity','0.22');
+          var r=document.createElementNS(ns,'rect'); r.setAttribute('x',b.x); r.setAttribute('y','25'); r.setAttribute('width','130'); r.setAttribute('height','65'); r.setAttribute('rx','12'); r.setAttribute('fill',b.color); r.setAttribute('opacity','0.88');
+          var t=document.createElementNS(ns,'text'); t.setAttribute('x',b.x+65); t.setAttribute('y','53'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-family','Inter'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff'); t.textContent=b.label;
+          var t2=document.createElementNS(ns,'text'); t2.setAttribute('x',b.x+65); t2.setAttribute('y','72'); t2.setAttribute('text-anchor','middle'); t2.setAttribute('font-family','Inter'); t2.setAttribute('font-size','11'); t2.setAttribute('fill','rgba(255,255,255,0.85)'); t2.textContent=b.sub;
+          g.appendChild(r); g.appendChild(t); g.appendChild(t2); svg.appendChild(g);
+          if(i<2){var op=document.createElementNS(ns,'text'); op.setAttribute('x',b.x+145); op.setAttribute('y','66'); op.setAttribute('text-anchor','middle'); op.setAttribute('font-family','Inter'); op.setAttribute('font-size','22'); op.setAttribute('font-weight','700'); op.setAttribute('fill','var(--text-muted)'); op.textContent='×'; svg.appendChild(op);}
+        });
+        var eq=document.createElementNS(ns,'text'); eq.setAttribute('x','476'); eq.setAttribute('y','66'); eq.setAttribute('font-family','Inter'); eq.setAttribute('font-size','22'); eq.setAttribute('font-weight','700'); eq.setAttribute('fill','var(--text-muted)'); eq.textContent='='; svg.appendChild(eq);
+        var res=document.createElementNS(ns,'text'); res.setAttribute('x','506'); res.setAttribute('y','68'); res.setAttribute('font-family','Inter'); res.setAttribute('font-size','20'); res.setAttribute('font-weight','800'); res.setAttribute('fill','#e74c3c'); res.textContent='ZERO'; svg.appendChild(res);
+      }
+    }
+  ];
+
+  function pm1RenderStep1() {
+    var wrap = document.getElementById('step1svg');
+    var svg = wrap.querySelector('svg');
+    if (!svg) { svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('width','100%'); wrap.appendChild(svg); }
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    if(s1idx < 0 || s1idx >= s1data.length) return;
+    s1data[s1idx].draw(svg);
+    document.getElementById('step1desc').textContent = s1data[s1idx].desc;
+    document.getElementById('step1ind').textContent = (s1idx+1)+' / '+s1data.length;
+    document.getElementById('step1prev').disabled = (s1idx===0);
+    document.getElementById('step1next').disabled = (s1idx===s1data.length-1);
+  }
+  function pm1Step(dir){ s1idx=Math.max(0,Math.min(s1data.length-1,s1idx+dir)); pm1RenderStep1(); }
+  pm1RenderStep1();
+
+  /* ===================================================
+     PRODUCTIVITY CALCULATOR
+  =================================================== */
+  function pm1Calc() {
+    var f=parseInt(document.getElementById('focusSlider').value);
+    var e=parseInt(document.getElementById('energySlider').value);
+    var t=parseInt(document.getElementById('timeSlider').value);
+    document.getElementById('focusVal').textContent=f;
+    document.getElementById('energyVal').textContent=e;
+    document.getElementById('timeVal').textContent=t;
+    var score=f*e*t;
+    var scoreEl=document.getElementById('calcScore');
+    scoreEl.textContent=score;
+    var pct=score/1000;
+    if(pct>=0.7) scoreEl.style.color='var(--accent)';
+    else if(pct>=0.4) scoreEl.style.color='var(--accent-3)';
+    else scoreEl.style.color='#e74c3c';
+    var comment='';
+    if(score>=700) comment='Excellent! You are in the high-performance zone — maintain all three levers.';
+    else if(score>=400) comment='Good momentum. Identify your weakest lever and raise it by just 2 points.';
+    else if(score>=200) comment='Room to grow. Focus on one dimension at a time — start with Energy (spiritual first).';
+    else comment='Start small. Even raising one lever from 1 to 5 multiplies output dramatically.';
+    document.getElementById('calcComment').textContent=comment;
+
+    // Bar chart
+    var bars=document.getElementById('calcBars');
+    bars.innerHTML='';
+    [{label:'F',val:f,color:'var(--accent)'},{label:'E',val:e,color:'var(--accent-3)'},{label:'T',val:t,color:'var(--accent-2)'}].forEach(function(b){
+      var wrap=document.createElement('div'); wrap.className='calc-bar-wrap';
+      var bar=document.createElement('div'); bar.className='calc-bar';
+      bar.style.height=(b.val*4.5)+'px'; bar.style.background=b.color;
+      var lbl=document.createElement('div'); lbl.className='calc-bar-label'; lbl.textContent=b.label;
+      wrap.appendChild(bar); wrap.appendChild(lbl); bars.appendChild(wrap);
+    });
+
+    // Insight chips
+    var insights=[]; var min=Math.min(f,e,t);
+    if(f===min) insights.push('Strengthen Focus first');
+    if(e===min) insights.push('Boost Energy (try Qailula + salah)');
+    if(t===min) insights.push('Improve Time planning');
+    if(f>=8&&e>=8&&t>=8) insights.push('All levers strong — seek Barakah!');
+    var ic=document.getElementById('calcInsight'); ic.innerHTML='';
+    insights.forEach(function(ins){ var chip=document.createElement('span'); chip.className='insight-chip'; chip.textContent=ins; ic.appendChild(chip); });
+  }
+  pm1Calc();
+
+  /* ===================================================
+     CHECKLIST
+  =================================================== */
+  var checkItems = [
+    'I pray all five daily prayers consistently and on time.',
+    'I get 7–8 hours of sleep most nights.',
+    'I know my top 3 priorities for today before opening my phone.',
+    'I protect at least 1 deep-work block (60+ min) daily.',
+    'I spend quality time with family or community each week.',
+    'I reflect on my day before sleeping (muhasabah).',
+    'I exercise or walk at least 3 times a week.',
+    'I have a meaningful long-term goal I am actively working toward.',
+    'I start important tasks with Bismillah and clear niyyah.',
+    'I limit social media / notifications during work hours.'
+  ];
+  var checkState = JSON.parse(localStorage.getItem('vb-pm-ch1-checklist') || 'null') || checkItems.map(function(){return false;});
+  if(checkState.length !== checkItems.length) checkState = checkItems.map(function(){return false;});
+
+  function pm1UpdateCheckProgress(){
+    var count=checkState.filter(Boolean).length;
+    var pct=Math.round(count/checkItems.length*100);
+    document.getElementById('pm1checkFill').style.width=pct+'%';
+    document.getElementById('pm1checkSave').textContent=count+' / '+checkItems.length+' habits tracked — '+pct+'% baseline established.';
+  }
+
+  var clGrid=document.getElementById('pm1checklist');
+  checkItems.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='checklist-item'+(checkState[i]?' checked':'');
+    div.dataset.idx=i;
+    var icon=document.createElement('div'); icon.className='check-icon';
+    if(checkState[i]){ var tick=document.createElement('i'); tick.className='fas fa-check'; tick.style.fontSize='11px'; icon.appendChild(tick); }
+    var span=document.createElement('span'); span.textContent=item;
+    div.appendChild(icon); div.appendChild(span);
+    div.addEventListener('click',function(){
+      var idx=parseInt(this.dataset.idx);
+      checkState[idx]=!checkState[idx];
+      this.classList.toggle('checked',checkState[idx]);
+      var ic=this.querySelector('.check-icon'); ic.innerHTML='';
+      if(checkState[idx]){ var t=document.createElement('i'); t.className='fas fa-check'; t.style.fontSize='11px'; ic.appendChild(t); }
+      localStorage.setItem('vb-pm-ch1-checklist',JSON.stringify(checkState));
+      pm1UpdateCheckProgress();
+    });
+    clGrid.appendChild(div);
+  });
+  pm1UpdateCheckProgress();
+
+  /* ===================================================
+     SORT EXERCISE
+  =================================================== */
+  var sortCards = [
+    {text:'Doing more = being productive',type:'myth'},
+    {text:'Consistent small deeds beat sporadic big ones',type:'fact'},
+    {text:'Productive people never rest',type:'myth'},
+    {text:'Energy must be managed spiritually, physically & socially',type:'fact'},
+    {text:'Productivity is a fixed personality trait',type:'myth'},
+    {text:'Barakah can multiply output beyond raw effort',type:'fact'},
+    {text:'Sacrificing salah is worth the extra work time',type:'myth'},
+    {text:'Muhasabah (self-review) is part of productive practice',type:'fact'},
+    {text:'Multitasking maximises productivity',type:'myth'},
+    {text:'Niyyah (intention) gives work its spiritual value',type:'fact'}
+  ];
+  var sortPlaced={};
+
+  function pm1BuildSort(){
+    var src=document.getElementById('sortSource');
+    var mc=document.getElementById('mythCards');
+    var fc=document.getElementById('factCards');
+    src.innerHTML=''; mc.innerHTML=''; fc.innerHTML='';
+    sortPlaced={};
+    // Shuffle
+    var arr=sortCards.slice().sort(function(){return Math.random()-0.5;});
+    arr.forEach(function(card,si){
+      var origIdx=sortCards.indexOf(card);
+      var div=document.createElement('div'); div.className='sort-card'; div.textContent=card.text;
+      div.draggable=true; div.dataset.idx=origIdx;
+      div.addEventListener('dragstart',function(e){ e.dataTransfer.setData('text/plain',origIdx); });
+      src.appendChild(div);
+    });
+  }
+  pm1BuildSort();
+
+  function pm1Drop(e,pool){
+    e.preventDefault();
+    document.getElementById('mythPool').classList.remove('drag-over');
+    document.getElementById('factPool').classList.remove('drag-over');
+    var idx=parseInt(e.dataTransfer.getData('text/plain'));
+    var card=document.querySelector('.sort-card[data-idx="'+idx+'"]'); if(!card) return;
+    sortPlaced[idx]=pool;
+    card.className='sort-card placed-'+pool;
+    var target=pool==='myth'?document.getElementById('mythCards'):document.getElementById('factCards');
+    target.appendChild(card);
+    document.getElementById('sortFeedback').textContent='';
+  }
+
+  function pm1CheckSort(){
+    var correct=0,total=0;
+    sortCards.forEach(function(card,i){
+      var el=document.querySelector('.sort-card[data-idx="'+i+'"]');
+      if(!el||!sortPlaced[i]) return;
+      total++;
+      if(sortPlaced[i]===card.type){ correct++; el.classList.add('correct'); el.classList.remove('wrong'); }
+      else { el.classList.add('wrong'); el.classList.remove('correct'); }
+    });
+    var fb=document.getElementById('sortFeedback');
+    if(total===0){ fb.textContent='Drag all cards to a column first!'; fb.style.color='var(--text-muted)'; return; }
+    if(correct===total&&total===sortCards.length){ fb.textContent='Perfect score! '+correct+'/'+total+' correct. Excellent mastery!'; fb.style.color='var(--accent)'; }
+    else { fb.textContent=correct+'/'+total+' placed correctly. Review the highlighted cards!'; fb.style.color=correct>=total*0.7?'var(--accent-3)':'#e74c3c'; }
+  }
+  function pm1ResetSort(){ pm1BuildSort(); document.getElementById('sortFeedback').textContent=''; }
+
+  /* ===================================================
+     STEP-THROUGH 2: Five Pillars Cycle
+  =================================================== */
+  var s2idx=0;
+  var s2data=[
+    {label:'1. Niyyah',color:'var(--accent)',desc:'Set a clear, sincere intention before every action. Ask: "Why am I doing this? Is it for Allah?" Without niyyah, work earns no spiritual reward — the action is the same but the soul is empty.',cx:280,cy:55},
+    {label:'2. Planning',color:'var(--accent-3)',desc:'Map out the how and when. The Prophet ﷺ planned meticulously — his military campaigns, speeches, and daily schedule. Planning is not a Western import; it is a sunnah.',cx:455,cy:155},
+    {label:'3. Focus',color:'var(--accent-2)',desc:'Execute with full attention — ihsan (excellence) applied to the task at hand. Do one thing at a time. Multitasking is the enemy of depth and quality.',cx:390,cy:330},
+    {label:'4. Istiqamah',color:'var(--accent)',desc:'Be consistent. The most beloved deeds to Allah are small but steady ones. Sporadic bursts of productivity do not build lasting results or lasting character.',cx:170,cy:330},
+    {label:'5. Muhasabah',color:'var(--accent-3)',desc:'Reflect honestly at day\'s end or week\'s end. What worked? What did not? Adjust the next cycle. Without review, errors compound silently and growth stalls.',cx:105,cy:155}
+  ];
+
+  function pm1RenderStep2(){
+    var container=document.getElementById('step2svg');
+    var ns='http://www.w3.org/2000/svg';
+    var svg=container.querySelector('svg');
+    if(!svg){ svg=document.createElementNS(ns,'svg'); svg.setAttribute('viewBox','0 0 560 390'); svg.setAttribute('width','100%'); svg.setAttribute('height','300'); container.appendChild(svg); }
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+
+    // Draw connecting arcs
+    for(var i=0;i<s2data.length;i++){
+      var a=s2data[i],b=s2data[(i+1)%s2data.length];
+      var line=document.createElementNS(ns,'line');
+      line.setAttribute('x1',a.cx); line.setAttribute('y1',a.cy); line.setAttribute('x2',b.cx); line.setAttribute('y2',b.cy);
+      line.setAttribute('stroke','var(--border)'); line.setAttribute('stroke-width','2.5'); line.setAttribute('stroke-dasharray','6,4');
+      svg.appendChild(line);
+    }
+
+    // Center label
+    var ct=document.createElementNS(ns,'text'); ct.setAttribute('x','280'); ct.setAttribute('y','200'); ct.setAttribute('text-anchor','middle'); ct.setAttribute('font-family','Inter'); ct.setAttribute('font-size','11'); ct.setAttribute('font-weight','700'); ct.setAttribute('fill','var(--text-muted)'); ct.textContent='Productive'; svg.appendChild(ct);
+    var ct2=document.createElementNS(ns,'text'); ct2.setAttribute('x','280'); ct2.setAttribute('y','215'); ct2.setAttribute('text-anchor','middle'); ct2.setAttribute('font-family','Inter'); ct2.setAttribute('font-size','11'); ct2.setAttribute('font-weight','700'); ct2.setAttribute('fill','var(--text-muted)'); ct2.textContent='Muslim Cycle'; svg.appendChild(ct2);
+
+    // Draw nodes
+    for(var j=0;j<s2data.length;j++){
+      var d=s2data[j];
+      var isActive=(s2idx>0&&j<s2idx)||(s2idx===0&&false);
+      var isCurrent=(s2idx>0&&j===s2idx-1);
+      var g=document.createElementNS(ns,'g');
+      var circle=document.createElementNS(ns,'circle');
+      circle.setAttribute('cx',d.cx); circle.setAttribute('cy',d.cy); circle.setAttribute('r','42');
+      circle.setAttribute('fill',isActive?d.color:'var(--surface-2)');
+      circle.setAttribute('stroke',d.color); circle.setAttribute('stroke-width',isCurrent?'3':'1.5');
+      circle.setAttribute('opacity',isActive?'0.9':'0.55');
+      var lines=d.label.split(' ');
+      lines.forEach(function(word,wi){
+        var txt=document.createElementNS(ns,'text');
+        txt.setAttribute('x',d.cx); txt.setAttribute('y',d.cy+(wi-lines.length/2+0.6)*14);
+        txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-family','Inter');
+        txt.setAttribute('font-size','10'); txt.setAttribute('font-weight','700');
+        txt.setAttribute('fill',isActive?'#fff':'var(--text-muted)');
+        txt.textContent=word; g.appendChild(txt);
+      });
+      g.appendChild(circle);
+      lines.forEach(function(word,wi){
+        var txt=document.createElementNS(ns,'text');
+        txt.setAttribute('x',d.cx); txt.setAttribute('y',d.cy+(wi-lines.length/2+0.6)*14);
+        txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-family','Inter');
+        txt.setAttribute('font-size','10'); txt.setAttribute('font-weight','700');
+        txt.setAttribute('fill',isActive?'#fff':'var(--text-muted)');
+        txt.textContent=word; g.appendChild(txt);
+      });
+      svg.appendChild(g);
+    }
+
+    if(s2idx>0) document.getElementById('step2desc').textContent=s2data[s2idx-1].desc;
+    else document.getElementById('step2desc').textContent='Click "Next Step" to walk through each pillar of productive behaviour.';
+    document.getElementById('step2ind').textContent=s2idx+' / '+s2data.length;
+    document.getElementById('step2prev').disabled=(s2idx===0);
+    document.getElementById('step2next').disabled=(s2idx===s2data.length);
+  }
+  function pm1Step2(dir){ s2idx=Math.max(0,Math.min(s2data.length,s2idx+dir)); pm1RenderStep2(); }
+  pm1RenderStep2();
+
+  /* ===================================================
+     MATCH EXERCISE
+  =================================================== */
+  var matchPairs=[
+    {term:'Niyyah',def:'Inner purpose that gives an action its spiritual value'},
+    {term:'Barakah',def:'Divine blessing multiplying benefit beyond raw effort'},
+    {term:'Muhasabah',def:'Periodic honest self-accounting and reflection'},
+    {term:'Istiqamah',def:'Steadfastness and consistency on the right path'},
+    {term:'Amanah',def:'Trust/responsibility — time is this kind of gift from Allah'},
+    {term:'Tawakkul',def:'Complete reliance and trust in Allah after taking all means'}
+  ];
+  var matchSelected=null;
+  var matchMatched={};
+
+  function pm1BuildMatch(){
+    matchSelected=null; matchMatched={};
+    var tDiv=document.getElementById('matchTerms'); tDiv.innerHTML='';
+    var dDiv=document.getElementById('matchDefs'); dDiv.innerHTML='';
+    document.getElementById('matchScore').textContent='';
+    var shuffledDefs=matchPairs.slice().sort(function(){return Math.random()-0.5;});
+    matchPairs.forEach(function(p,i){
+      var t=document.createElement('div'); t.className='match-term'; t.textContent=p.term; t.dataset.idx=i;
+      t.addEventListener('click',function(){
+        if(matchMatched[i]) return;
+        document.querySelectorAll('.match-term').forEach(function(x){x.classList.remove('selected');});
+        matchSelected={type:'term',idx:i};
+        t.classList.add('selected');
+      });
+      tDiv.appendChild(t);
+    });
+    shuffledDefs.forEach(function(p){
+      var origIdx=matchPairs.indexOf(p);
+      var d=document.createElement('div'); d.className='match-def'; d.textContent=p.def; d.dataset.idx=origIdx;
+      d.addEventListener('click',function(){
+        if(matchMatched[origIdx]) return;
+        if(!matchSelected||matchSelected.type!=='term') return;
+        var termIdx=matchSelected.idx;
+        if(termIdx===origIdx){
+          // Correct match
+          matchMatched[termIdx]=true;
+          document.querySelector('.match-term[data-idx="'+termIdx+'"]').classList.add('matched');
+          d.classList.add('matched');
+          matchSelected=null;
+          var done=Object.keys(matchMatched).length;
+          if(done===matchPairs.length) document.getElementById('matchScore').textContent='Perfect! All '+matchPairs.length+' terms matched. Excellent vocabulary mastery!';
+          else document.getElementById('matchScore').textContent=done+' / '+matchPairs.length+' matched!';
+        } else {
+          // Wrong
+          var termEl=document.querySelector('.match-term[data-idx="'+termIdx+'"]');
+          termEl.classList.add('wrong-flash'); d.classList.add('wrong-flash');
+          setTimeout(function(){ termEl.classList.remove('wrong-flash','selected'); d.classList.remove('wrong-flash'); },600);
+          matchSelected=null;
+        }
+      });
+      dDiv.appendChild(d);
+    });
+  }
+  function pm1ResetMatch(){ pm1BuildMatch(); }
+  pm1BuildMatch();
+
+  /* ===================================================
+     PRIORITY RANKER (Exercise 5)
+  =================================================== */
+  var rankDimensions=[
+    {label:'Spiritual Energy',icon:'🕌',key:'spiritual'},
+    {label:'Physical Energy',icon:'🏃',key:'physical'},
+    {label:'Social Energy',icon:'🤝',key:'social'},
+    {label:'Focus',icon:'🎯',key:'focus'},
+    {label:'Time Planning',icon:'📅',key:'time'},
+    {label:'Consistency',icon:'🔁',key:'istiqamah'}
+  ];
+  var rankRatings={};
+  var savedRatings=JSON.parse(localStorage.getItem('vb-pm-ch1-rank')||'null')||{};
+  rankRatings=savedRatings;
+
+  function pm1BuildRank(){
+    var grid=document.getElementById('rankGrid'); grid.innerHTML='';
+    rankDimensions.forEach(function(d){
+      var card=document.createElement('div');
+      card.style.cssText='background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;';
+      var rating=rankRatings[d.key]||0;
+      var stars='';
+      for(var s=1;s<=5;s++) stars+='<span class="rank-star" data-key="'+d.key+'" data-val="'+s+'" style="cursor:pointer;font-size:1.1rem;color:'+(s<=rating?'var(--accent)':'var(--border)')+'">★</span>';
+      card.innerHTML='<div style="font-size:1.3rem;margin-bottom:0.3rem;">'+d.icon+'</div><div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">'+d.label+'</div><div>'+stars+'</div>';
+      card.querySelectorAll('.rank-star').forEach(function(star){
+        star.addEventListener('click',function(){
+          rankRatings[d.key]=parseInt(this.dataset.val);
+          localStorage.setItem('vb-pm-ch1-rank',JSON.stringify(rankRatings));
+          pm1BuildRank(); pm1UpdateRankResult();
+        });
+      });
+      grid.appendChild(card);
+    });
+  }
+  function pm1UpdateRankResult(){
+    var res=document.getElementById('rankResult');
+    var rated=rankDimensions.filter(function(d){return rankRatings[d.key];});
+    if(rated.length===0){ res.textContent='Click the stars above to rate each dimension.'; return; }
+    var sorted=rated.slice().sort(function(a,b){return (rankRatings[a.key]||0)-(rankRatings[b.key]||0);});
+    var weakest=sorted[0];
+    var strongest=sorted[sorted.length-1];
+    res.innerHTML='<strong style="color:var(--accent)">Your priority:</strong> Focus on <strong>'+weakest.icon+' '+weakest.label+'</strong> first (rated '+rankRatings[weakest.key]+'/5). Your strength is <strong>'+strongest.icon+' '+strongest.label+'</strong> (rated '+rankRatings[strongest.key]+'/5). Build on your strength while systematically raising your weakest dimension.';
+  }
+  function pm1ResetRank(){ rankRatings={}; localStorage.removeItem('vb-pm-ch1-rank'); pm1BuildRank(); document.getElementById('rankResult').textContent='Click the stars above to rate each dimension.'; }
+  pm1BuildRank(); pm1UpdateRankResult();
+
+  /* ===================================================
+     NIYYAH BUILDER (Exercise 6)
+  =================================================== */
+  var niyyahFields=[
+    {key:'focus',label:'Focus Intention',placeholder:'e.g. I will protect 2 deep-work blocks each day this week...'},
+    {key:'energy',label:'Energy Intention',placeholder:'e.g. I will pray Fajr on time and take a 20-min Qailula nap...'},
+    {key:'time',label:'Time Intention',placeholder:'e.g. I will plan my top 3 tasks the night before each day...'}
+  ];
+  var savedNiyyah=JSON.parse(localStorage.getItem('vb-pm-ch1-niyyah')||'null')||{};
+  var nb=document.getElementById('niyyahBuilder');
+  niyyahFields.forEach(function(f){
+    var wrap=document.createElement('div');
+    wrap.innerHTML='<label style="font-size:0.82rem;font-weight:700;color:var(--text);display:block;margin-bottom:0.3rem;">'+f.label+'</label><textarea data-key="'+f.key+'" rows="2" placeholder="'+f.placeholder+'" style="width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem 0.7rem;font-size:0.83rem;color:var(--text);font-family:Inter,sans-serif;resize:vertical;transition:border-color 0.2s;">'+( savedNiyyah[f.key]||'')+'</textarea>';
+    wrap.querySelector('textarea').addEventListener('focus',function(){ this.style.borderColor='var(--accent)'; });
+    wrap.querySelector('textarea').addEventListener('blur',function(){ this.style.borderColor='var(--border)'; });
+    nb.appendChild(wrap);
+  });
+  function pm1SaveNiyyah(){
+    var data={};
+    document.querySelectorAll('#niyyahBuilder textarea').forEach(function(ta){ data[ta.dataset.key]=ta.value.trim(); });
+    localStorage.setItem('vb-pm-ch1-niyyah',JSON.stringify(data));
+    var fb=document.getElementById('niyyahFeedback');
+    fb.style.color='var(--accent)';
+    fb.textContent='Intentions saved! Review them daily and refresh each week. Bismillah.';
+    setTimeout(function(){ fb.textContent=''; },4000);
+  }
+  function pm1ClearNiyyah(){
+    document.querySelectorAll('#niyyahBuilder textarea').forEach(function(ta){ ta.value=''; });
+    localStorage.removeItem('vb-pm-ch1-niyyah');
+    document.getElementById('niyyahFeedback').textContent='';
+  }
+
+  /* ===================================================
+     INTERACTIVE MIND MAP (Cards)
+  =================================================== */
+  var mmBranches=[
+    {
+      color:'var(--accent)',
+      title:'Productivity Formula',
+      icon:'fas fa-times',
+      desc:'P = Focus × Energy × Time. A multiplicative formula — any element at zero collapses all output. All three must be managed actively.',
+      children:[
+        {label:'Focus',dot:'var(--accent)',detail:'Directing mental and physical faculties toward one task at a time. Resist distraction. Apply ihsan (excellence) to every task.'},
+        {label:'Energy (3 Dimensions)',dot:'var(--accent-3)',detail:'Spiritual (salah, dhikr, quran), Physical (sleep, nutrition, exercise, qailula), Social (family, community, mentors).'},
+        {label:'Time (Non-renewable)',dot:'var(--accent-2)',detail:'Time is amanah — a divine trust you will be questioned about. Use barakah-rich hours (Fajr, early morning) for your most important work.'}
+      ]
+    },
+    {
+      color:'var(--accent-3)',
+      title:'Barakah',
+      icon:'fas fa-star-and-crescent',
+      desc:'Divine blessing that multiplies benefit beyond raw input. When conditions are met (niyyah, halal, tawakkul, shukr), Allah increases the productivity and impact of effort.',
+      children:[
+        {label:'Niyyah — Pure Intention',dot:'var(--accent)',detail:'The starting condition for Barakah. Purify your intention — the same action done for Allah\'s sake vs. personal gain has entirely different spiritual weight.'},
+        {label:'Halal Means',dot:'var(--accent-3)',detail:'Barakah cannot rest on haram earnings or deceptive methods. Lawful means are the fertile soil for divine blessing.'},
+        {label:'Barakah-Rich Times',dot:'var(--accent-2)',detail:'Fajr hours, Jumu\'ah (Friday), Ramadan, Laylat al-Qadr — these periods carry multiplied reward and increased effectiveness.'}
+      ]
+    },
+    {
+      color:'var(--accent-2)',
+      title:'Four Myths',
+      icon:'fas fa-ban',
+      desc:'Society\'s false beliefs about productivity that keep people stuck in busyness. Dismantling these myths is the prerequisite for building true productive practice.',
+      children:[
+        {label:'Myth 1: More = Better',dot:'#e74c3c',detail:'Doing more things faster is not productive. Doing the RIGHT things with excellence (ihsan) is. Busyness ≠ productivity.'},
+        {label:'Myth 2: Sacrifice Faith/Health',dot:'#e74c3c',detail:'Your spiritual, physical, and social dimensions are the fuel of productivity — not costs to be cut. Neglect them and you burn out.'},
+        {label:'Myth 3: Always "On"',dot:'#e74c3c',detail:'The Prophet ﷺ rested, took qailula, and had dedicated family time. Rest is built into the Islamic productive system.'},
+        {label:'Myth 4: Born Productive',dot:'#e74c3c',detail:'Productivity is a learnable skill. It develops through habits, systems, and intentional practice — not genetics.'}
+      ]
+    },
+    {
+      color:'var(--accent)',
+      title:'5 Pillars of Productive Behaviour',
+      icon:'fas fa-layer-group',
+      desc:'Five character-based behaviours rooted in prophetic example. Not quick hacks but daily practices that form a continuous cycle of growth.',
+      children:[
+        {label:'1. Niyyah (Intention)',dot:'var(--accent)',detail:'Always clarify the why behind an action. Ask: "Is this for Allah?" Niyyah transforms routine tasks into acts of worship.'},
+        {label:'2. Planning',dot:'var(--accent-3)',detail:'Map the how and when meticulously. Planning is a sunnah — the Prophet ﷺ planned every significant action carefully.'},
+        {label:'3. Focus (Ihsan)',dot:'var(--accent-2)',detail:'One task at a time with full attention. Ihsan means doing each thing as if Allah is watching. Multitasking breaks this.'},
+        {label:'4. Istiqamah (Consistency)',dot:'var(--accent)',detail:'Small, consistent daily deeds are more beloved to Allah than sporadic large bursts. Habits compound over time.'},
+        {label:'5. Muhasabah (Reflection)',dot:'var(--accent-3)',detail:'Daily/weekly self-accounting. What worked? What failed? Recalibrate. Without review, errors multiply silently.'}
+      ]
+    },
+    {
+      color:'var(--accent-3)',
+      title:'Akhira as Ultimate Goal',
+      icon:'fas fa-infinity',
+      desc:'The hereafter is the ultimate productivity benchmark — transforming every productive act into potential ibadah with eternal reward.',
+      children:[
+        {label:'Work as Ibadah',dot:'var(--accent)',detail:'Any halal work done with niyyah, excellence, and beneficial purpose becomes an act of worship earning reward from Allah.'},
+        {label:'Sadaqah Jariyah',dot:'var(--accent-3)',detail:'Actions whose benefit continues after death — teaching a skill, building a well, raising righteous children. The ultimate productivity leverage.'},
+        {label:'Akhira Consciousness',dot:'var(--accent-2)',detail:'Keeps your priorities aligned. Asks: "Is this the most beneficial use of this time for this life and the next?" — a wiser filter than any secular framework.'}
+      ]
+    },
+    {
+      color:'var(--accent-2)',
+      title:'Islamic Productivity Definition',
+      icon:'fas fa-bullseye',
+      desc:'Achieving the best (nafi\' — beneficial) results in the least time with the least effort. Three key words: Best (not most), Beneficial (for dunya and akhira), Least effort (optimised).',
+      children:[
+        {label:'Best Results (Not Most)',dot:'var(--accent)',detail:'Quality and meaning over volume. A single deeply beneficial action outweighs hundreds of trivial ones.'},
+        {label:'Beneficial (Nafi\')',dot:'var(--accent-3)',detail:'Results must benefit you and others in this life and the next — not just profitable, not just impressive, but genuinely nafi\'.'},
+        {label:'Least Effort (Optimised)',dot:'var(--accent-2)',detail:'Work smarter through planning, systems, and Barakah-seeking. The Prophet ﷺ always found the most effective and least wasteful path.'}
+      ]
+    }
+  ];
+
+  var mmContainer=document.getElementById('mmCh1Interactive');
+
+  // Center card
+  var center=document.createElement('div'); center.className='mm-center-card';
+  center.innerHTML='<h3><i class="fas fa-seedling" style="margin-right:0.4rem;"></i>What is Productivity?</h3><p>Chapter 1 — The Productive Muslim by Mohammed Faris</p>';
+  mmContainer.appendChild(center);
+
+  mmBranches.forEach(function(branch,bi){
+    var branchEl=document.createElement('div'); branchEl.className='mm-branch';
+    branchEl.style.borderLeftWidth='3px'; branchEl.style.borderLeftColor=branch.color;
+
+    var header=document.createElement('div'); header.className='mm-branch-header';
+    header.innerHTML='<div class="mm-branch-dot" style="background:'+branch.color+'"></div><div class="mm-branch-title"><i class="'+branch.icon+'" style="margin-right:0.4rem;opacity:0.7;font-size:0.85rem;"></i>'+branch.title+'</div><i class="fas fa-chevron-down mm-branch-icon"></i>';
+    header.addEventListener('click',function(){ branchEl.classList.toggle('open'); });
+
+    var body=document.createElement('div'); body.className='mm-branch-body';
+    var desc=document.createElement('div'); desc.className='mm-branch-desc'; desc.textContent=branch.desc;
+    var children=document.createElement('div'); children.className='mm-children';
+
+    branch.children.forEach(function(child,ci){
+      var childEl=document.createElement('div'); childEl.className='mm-child';
+      childEl.innerHTML='<div class="mm-child-dot" style="background:'+child.dot+'"></div><div><strong>'+child.label+'</strong></div>';
+      childEl.addEventListener('click',function(e){
+        e.stopPropagation();
+        var existing=childEl.querySelector('.mm-child-detail');
+        if(existing){ existing.remove(); childEl.classList.remove('open'); return; }
+        childEl.classList.add('open');
+        var detail=document.createElement('div'); detail.className='mm-child-detail'; detail.textContent=child.detail;
+        childEl.appendChild(detail);
+      });
+      children.appendChild(childEl);
+    });
+
+    body.appendChild(desc); body.appendChild(children);
+    branchEl.appendChild(header); branchEl.appendChild(body);
+    mmContainer.appendChild(branchEl);
+  });
+
+  // Auto-open first branch on mind map tab click
+  document.querySelector('[data-tab="tab-mindmap"]').addEventListener('click',function(){
+    setTimeout(function(){
+      var first=document.querySelector('.mm-branch');
+      if(first&&!first.classList.contains('open')) first.classList.add('open');
+    },200);
+  });
+
+  </script>
+</body>
+</html>

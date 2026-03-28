@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 5: Social Productivity — The Productive Muslim Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);--shadow:0 4px 24px rgba(46,204,113,0.10);}
+    [data-theme="dark"]{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);}
+    @keyframes pm5FadeIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+    @keyframes pm5SlideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+    /* Step-through */
+    .step-through-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .step-through-box h4{margin:0 0 1rem;color:var(--accent);font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .step-svg-wrap{background:var(--surface-2);border-radius:var(--radius-sm);min-height:160px;display:flex;align-items:center;justify-content:center;padding:1rem;margin-bottom:1rem;}
+    .step-svg-wrap svg{max-width:100%;}
+    .step-desc{font-size:0.92rem;color:var(--text-muted);line-height:1.6;min-height:3.5rem;text-align:center;margin-bottom:1rem;padding:0 0.5rem;}
+    .step-controls{display:flex;align-items:center;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+    .step-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:0.45rem 1.1rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+    .step-btn:disabled{opacity:0.35;cursor:not-allowed;}
+    .step-indicator{font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+
+    /* Exercise */
+    .exercise-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .exercise-box h4{margin:0 0 0.3rem;color:var(--accent-2);font-size:1rem;}
+    .exercise-box .ex-desc{font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;}
+    .ex-btn-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem;}
+    .ex-btn{padding:0.4rem 1rem;border-radius:var(--radius-sm);border:none;font-size:0.85rem;font-weight:600;cursor:pointer;}
+    .ex-btn-check{background:var(--accent);color:#fff;}
+    .ex-btn-reset{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);}
+    .ex-feedback{font-size:0.85rem;color:var(--accent);font-weight:600;margin-top:0.5rem;min-height:1.4em;}
+
+    /* Drag-sort */
+    .sort-pools{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .sort-pool{background:var(--surface-2);border:2px dashed var(--border);border-radius:var(--radius-sm);padding:0.75rem;min-height:90px;}
+    .sort-pool h5{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.5rem;}
+    .sort-pool.give-pool h5{color:var(--accent);}
+    .sort-pool.take-pool h5{color:#e74c3c;}
+    .sort-source{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;}
+    .sort-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.7rem;font-size:0.8rem;cursor:grab;color:var(--text);user-select:none;}
+    .sort-card:active{cursor:grabbing;}
+    .sort-cards{display:flex;flex-wrap:wrap;gap:0.4rem;}
+    .correct-card{border-color:var(--accent-3);background:rgba(26,188,156,0.1);}
+    .wrong-card{border-color:#e74c3c;background:rgba(231,76,60,0.07);}
+
+    /* Checklist */
+    .checklist-grid{display:flex;flex-direction:column;gap:0.6rem;}
+    .checklist-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.6rem 0.8rem;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid transparent;cursor:pointer;transition:all var(--transition);}
+    .checklist-item.checked{border-color:var(--accent);background:rgba(46,204,113,0.08);}
+    .checklist-item .check-icon{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;}
+    .checklist-item.checked .check-icon{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .checklist-item span{font-size:0.88rem;color:var(--text);line-height:1.4;}
+
+    /* Mind Map */
+    .mindmap-container{width:100%;min-height:420px;position:relative;}
+    .mm-tooltip{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.9rem;font-size:0.8rem;color:var(--text);max-width:220px;box-shadow:var(--shadow);pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:10;}
+    .mm-tooltip.visible{opacity:1;}
+
+    /* Expandable card grid */
+    .mm-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.9rem;margin-top:1.5rem;}
+    .mm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:box-shadow 0.2s,border-color 0.2s;}
+    .mm-card:hover{box-shadow:var(--shadow);border-color:var(--accent);}
+    .mm-card-head{display:flex;align-items:center;gap:0.6rem;padding:0.7rem 0.9rem;background:var(--surface-2);}
+    .mm-card-head .mm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .mm-card-head strong{font-size:0.88rem;color:var(--text);}
+    .mm-card-head .mm-arrow{margin-left:auto;font-size:0.75rem;color:var(--text-muted);transition:transform 0.2s;}
+    .mm-card.open .mm-arrow{transform:rotate(180deg);}
+    .mm-card-body{font-size:0.82rem;color:var(--text-muted);line-height:1.55;padding:0 0.9rem;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.2s;}
+    .mm-card.open .mm-card-body{max-height:200px;padding:0.7rem 0.9rem;}
+
+    /* Relationship audit sliders */
+    .audit-sliders{display:flex;flex-direction:column;gap:1rem;}
+    .audit-row{display:flex;flex-direction:column;gap:0.25rem;}
+    .audit-label{font-size:0.85rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;}
+    .audit-label span.audit-val{color:var(--accent);font-weight:700;}
+    .audit-row input[type=range]{width:100%;accent-color:var(--accent);}
+    .audit-result{margin-top:1.2rem;background:var(--surface-2);border-radius:var(--radius-sm);padding:1rem;text-align:center;}
+    .audit-score{font-size:2rem;font-weight:800;color:var(--accent);}
+    .audit-verdict{font-size:0.84rem;color:var(--text-muted);margin-top:0.3rem;}
+
+    /* Quote callout */
+    .hadith-callout{background:rgba(46,204,113,0.07);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:0.9rem 1.1rem;margin:1.2rem 0;font-size:0.9rem;color:var(--text);font-style:italic;}
+    .hadith-callout cite{display:block;margin-top:0.4rem;font-size:0.8rem;color:var(--accent);font-style:normal;font-weight:600;}
+
+    /* Lesson illustration wrapper */
+    .lesson-illo{margin:1.2rem 0;background:var(--surface-2);border-radius:var(--radius-sm);padding:1rem;display:flex;justify-content:center;}
+    .lesson-illo svg{max-width:100%;}
+
+    /* Comparison table */
+    .compare-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin:1rem 0;}
+    .compare-table th{background:var(--accent);color:#fff;padding:0.5rem 0.75rem;text-align:left;}
+    .compare-table td{padding:0.45rem 0.75rem;border-bottom:1px solid var(--border);color:var(--text);}
+    .compare-table tr:nth-child(even) td{background:var(--surface-2);}
+    .compare-table .pos{color:var(--accent-2);font-weight:600;}
+    .compare-table .neg{color:#e74c3c;font-weight:600;}
+
+    /* Reflection textarea */
+    .rf-textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text);font-family:Inter,sans-serif;font-size:0.85rem;padding:0.5rem 0.7rem;resize:vertical;box-sizing:border-box;transition:border-color 0.15s;}
+    .rf-textarea:focus{outline:none;border-color:var(--accent);}
+    .rf-label{display:block;font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;}
+    .rf-wrap{margin-bottom:1rem;}
+
+    /* Prophet habit cards */
+    .prophet-habits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem;margin:1rem 0;}
+    .prophet-habit-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.8rem;text-align:center;}
+    .prophet-habit-card .ph-num{font-size:1.4rem;font-weight:800;color:var(--accent);line-height:1;}
+    .prophet-habit-card .ph-label{font-size:0.82rem;font-weight:700;color:var(--text);margin-top:0.3rem;}
+    .prophet-habit-card .ph-desc{font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;line-height:1.4;}
+
+    /* Scenario MCQ */
+    .scenario-opts{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;}
+    .scenario-opt{display:flex;align-items:flex-start;gap:0.6rem;padding:0.55rem 0.8rem;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;font-size:0.87rem;color:var(--text);transition:border-color 0.15s;}
+    .scenario-opt:hover{border-color:var(--accent);}
+    .scenario-opt.sel-correct{border-color:var(--accent);background:rgba(46,204,113,0.1);}
+    .scenario-opt.sel-wrong{border-color:#e74c3c;background:rgba(231,76,60,0.07);}
+    .scenario-opt .opt-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;}
+    .scenario-opt.sel-correct .opt-radio{background:var(--accent);border-color:var(--accent);}
+    .scenario-opt.sel-wrong .opt-radio{background:#e74c3c;border-color:#e74c3c;}
+  </style>
+</head>
+<body data-chapter="ch5">
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">The Productive Muslim</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill chapter-progress-fill"></div></div>
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 5</div>
+      <h1>Social Productivity</h1>
+      <p class="ch-meta"><span><i class="fas fa-clock"></i> ~22 min read</span><span><i class="fas fa-users"></i> Social Dimension</span></p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- =================== LESSONS TAB =================== -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <!-- 5.1 -->
+      <div class="lesson-section">
+        <h2>5.1 Why Social Productivity Matters</h2>
+        <p>Islam is fundamentally a communal religion. The five pillars are performed in community: salah is best in congregation, Zakat redistributes wealth across the ummah, fasting is observed together, and Hajj brings the entire Muslim world to one place at one time. The Prophet said: <em>"The believer to another believer is like a building whose different parts enforce each other."</em> Social productivity — the management of your relationships, community roles, and social energy — is therefore not optional; it is integral to the Islamic productive life.</p>
+
+        <div class="hadith-callout">"The believer to another believer is like a building whose different parts enforce each other." — Prophet Muhammad (peace be upon him) <cite>Sahih al-Bukhari &amp; Muslim</cite></div>
+
+        <p>Social energy is both an input and an output. Healthy, meaningful relationships generate psychological safety, motivation, and resilience that feed back into your spiritual and physical productive capacity. Conversely, toxic, exploitative, or deeply neglected relationships drain energy, generate stress hormones, and create the psychological conditions most hostile to focused, creative work.</p>
+        <p>Mohammed Faris structures social productivity around the same three dimensions as spiritual and physical productivity: <strong>social energy</strong> (the quality of your relationships and their net effect on your vitality), <strong>social focus</strong> (directing your social efforts toward the most meaningful roles and relationships), and <strong>social time</strong> (scheduling quality time for key relationships and community duties).</p>
+        <div class="hadith-callout">"The best of you are those who are best to their families, and I am the best of you to my family." — Prophet Muhammad (peace be upon him) <cite>Tirmidhi</cite></div>
+        <p>Each of these three dimensions can be systematically improved. Social energy improves through honest auditing of relationships and environments, cultivating righteous companions, and reducing exposure to chronically draining social contexts. Social focus improves through clarity about your highest-priority roles and protected investment in them. Social time improves through calendar discipline — blocking real time for the people who matter most before the schedule fills with less important demands.</p>
+        <p>Crucially, all three dimensions interact. Poor social energy makes it harder to invest focused time in relationships. Lack of social focus means your time is spread too thin to energise any relationship deeply. Insufficient social time starves even the best relationships of the nourishment they need to stay strong. The productive Muslim works on all three simultaneously, treating social productivity as a system rather than a collection of isolated habits.</p>
+
+        <!-- Illustration: 3 pillars of social productivity -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 540 130" width="100%" height="130">
+            <defs>
+              <linearGradient id="g5a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ecc71"/><stop offset="100%" stop-color="#27ae60"/></linearGradient>
+              <linearGradient id="g5b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1abc9c"/><stop offset="100%" stop-color="#16a085"/></linearGradient>
+              <linearGradient id="g5c" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#27ae60"/><stop offset="100%" stop-color="#1e8449"/></linearGradient>
+            </defs>
+            <rect x="30" y="28" width="140" height="68" rx="12" fill="url(#g5a)"/>
+            <text x="100" y="58" text-anchor="middle" font-family="Inter" font-size="13" font-weight="800" fill="#fff">Social Energy</text>
+            <text x="100" y="76" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Relationship Quality</text>
+            <rect x="200" y="28" width="140" height="68" rx="12" fill="url(#g5b)"/>
+            <text x="270" y="58" text-anchor="middle" font-family="Inter" font-size="13" font-weight="800" fill="#fff">Social Focus</text>
+            <text x="270" y="76" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Priority Roles</text>
+            <rect x="370" y="28" width="140" height="68" rx="12" fill="url(#g5c)"/>
+            <text x="440" y="58" text-anchor="middle" font-family="Inter" font-size="13" font-weight="800" fill="#fff">Social Time</text>
+            <text x="440" y="76" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Scheduled Quality</text>
+            <line x1="170" y1="62" x2="200" y2="62" stroke="rgba(46,204,113,0.4)" stroke-width="2" stroke-dasharray="5,3"/>
+            <line x1="340" y1="62" x2="370" y2="62" stroke="rgba(46,204,113,0.4)" stroke-width="2" stroke-dasharray="5,3"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 5.2 -->
+      <div class="lesson-section">
+        <h2>5.2 Social Energy: The People Who Fuel or Drain You</h2>
+        <p>Not all relationships produce the same effect on your productive capacity. Islam offers a sophisticated understanding of social environments and their spiritual-psychological consequences. The Prophet said: <em>"A person is on the religion of their close friend; so let each one of you consider carefully who they take as a close friend."</em></p>
+
+        <div class="hadith-callout">"A person is on the religion of their close friend; so let each one of you consider carefully who they take as a close friend." <cite>Abu Dawud &amp; Tirmidhi</cite></div>
+
+        <p>Positive social energy comes from relationships characterised by mutual respect, honest advice (nasiha), shared purpose, encouragement toward good, and remembrance of Allah. These are the "as-sahaba" relationships — companions who make you a better Muslim and a more capable productive person simultaneously.</p>
+        <p>Negative social energy comes from relationships characterised by gossip (ghibah), backbiting (namimah), constant complaint, envy (hasad), and dunya obsession. Islam explicitly prohibits all of these — not merely as moral rules but as social hygiene. The productive Muslim audits their social environment regularly and takes deliberate steps to reduce exposure to what drains and increase exposure to what nourishes.</p>
+
+        <!-- Illustration: Energising vs Draining split -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 500 150" width="100%" height="150">
+            <rect x="20" y="20" width="200" height="110" rx="12" fill="rgba(46,204,113,0.08)" stroke="rgba(46,204,113,0.3)" stroke-width="1.5"/>
+            <text x="120" y="44" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#2ecc71">ENERGISING RELATIONSHIPS</text>
+            <text x="120" y="63" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">+ Mutual encouragement</text>
+            <text x="120" y="80" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">+ Honest nasiha</text>
+            <text x="120" y="97" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">+ Shared dhikr and purpose</text>
+            <text x="120" y="114" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">+ Celebrating others' wins</text>
+            <rect x="280" y="20" width="200" height="110" rx="12" fill="rgba(231,76,60,0.06)" stroke="rgba(231,76,60,0.25)" stroke-width="1.5"/>
+            <text x="380" y="44" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#e74c3c">DRAINING RELATIONSHIPS</text>
+            <text x="380" y="63" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">- Gossip and backbiting</text>
+            <text x="380" y="80" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">- Constant complaining</text>
+            <text x="380" y="97" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">- Envy and comparison</text>
+            <text x="380" y="114" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text,#333)">- Dunya obsession</text>
+            <circle cx="250" cy="75" r="18" fill="var(--surface-2,#f5f5f5)" stroke="rgba(46,204,113,0.3)" stroke-width="1.5"/>
+            <text x="250" y="80" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="var(--text,#333)">VS</text>
+          </svg>
+        </div>
+
+        <p>Understanding social energy requires recognising that the impact of your social environment is not merely psychological — it is neurological. Modern research confirms what Islamic scholarship established fourteen centuries ago: the people we spend the most time with literally reshape our brains through mirroring, emotional contagion, and habit formation. The Prophet's warning about taking the wrong close friend was not metaphorical — it was a precise description of how identity and behaviour are sculpted by social exposure.</p>
+        <p>The social energy audit is a practical tool for implementing this insight. Once every three months, the productive Muslim reviews their core social circle: Who energises me? Who drains me? Who brings me closer to Allah? Who pulls me away? This is not an exercise in cold calculation or cutting off people carelessly — Islam strongly prohibits severing ties without compelling reason. It is an exercise in awareness: knowing what your social environment is doing to you so that you can be intentional rather than reactive about your social investments.</p>
+        <p>For unavoidable relationships that drain energy (difficult family members, challenging colleagues), Islam offers a framework of du'a, sabr (patience), and wisdom. You cannot always change who is in your social environment. You can always change the quality of your inner response, the boundaries you set within the relationship, and the spiritual lens through which you interpret the interaction. Even a draining relationship can become a source of ajr (reward) when engaged with sabr and the intention of pleasing Allah.</p>
+
+        <!-- Comparison table -->
+        <table class="compare-table">
+          <thead><tr><th>Behaviour</th><th>Effect on Social Energy</th><th>Islamic Stance</th></tr></thead>
+          <tbody>
+            <tr><td>Honest nasiha</td><td class="pos">Strengthens trust</td><td>Encouraged (Quran 9:71)</td></tr>
+            <tr><td>Ghibah (gossip)</td><td class="neg">Erodes trust and focus</td><td>Prohibited (Quran 49:12)</td></tr>
+            <tr><td>Shared dhikr</td><td class="pos">Amplifies spiritual energy</td><td>Highly recommended</td></tr>
+            <tr><td>Hasad (envy)</td><td class="neg">Destroys the envier's peace</td><td>Prohibited (Hadith)</td></tr>
+            <tr><td>Celebrating others</td><td class="pos">Builds ukhuwwah bonds</td><td>Encouraged (Hadith)</td></tr>
+            <tr><td>Namimah (tale-carrying)</td><td class="neg">Fractures community unity</td><td>Major sin (Hadith)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.3 -->
+      <div class="lesson-section">
+        <h2>5.3 Social Focus: Prioritising Your Relationship Roles</h2>
+        <p>Every Muslim carries multiple social roles simultaneously: child, spouse, parent, colleague, neighbour, community member, citizen. Each role has legitimate claims on your time and energy. Social focus is the art of identifying which roles are your highest priority in a given season of life and investing in them with full intentionality, while maintaining minimum standards of care in all other roles.</p>
+        <p>Islam provides a clear priority framework for social roles. The Prophet's instruction was: <em>"The best of you is the best to their family."</em> Family comes first — your spouse, children, parents, and close relatives have the highest claim on your social energy. This is followed by neighbours, then community, then the wider ummah.</p>
+        <p>Social focus also means protecting your social energy from the tyranny of the urgent. In the digital age, every connection and every platform makes constant demands on attention. The productive Muslim sets boundaries on social media, manages communication channels intentionally, and distinguishes between the vast majority of social noise (news feeds, group chats, social performance) and the small core of real relationships that genuinely matter and deserve real investment.</p>
+
+        <p>Social focus is also seasonal. The demands and opportunities of different life phases shift the relative priority of social roles. A new parent's primary social focus is their infant and spouse — the community role necessarily contracts temporarily. A single professional may have more capacity for community investment. A person going through illness must focus inward. The productive Muslim is not locked into a rigid hierarchy but uses the Prophetic ordering as a compass — a default north that they navigate from, adjusting as their season of life requires without permanently abandoning any of the key circles.</p>
+        <p>One of the most overlooked dimensions of social focus is <strong>quality of presence</strong>. Social focus is not just about choosing the right people — it is about being genuinely present when you are with them. Half-attention is not social investment; it is social debt. When you are physically present but mentally elsewhere (scrolling, planning, worrying), you are withdrawing from the relationship rather than depositing into it. The productive Muslim practises the discipline of full presence: phone away, eyes engaged, mind fully in the conversation. This is perhaps the single greatest social productivity intervention available at zero cost.</p>
+
+        <!-- Illustration: Social Priority Pyramid -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 400 200" width="100%" height="200">
+            <polygon points="200,12 244,64 156,64" fill="#2ecc71" opacity="0.92"/>
+            <text x="200" y="48" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Self</text>
+            <polygon points="200,66 278,120 122,120" fill="#1abc9c" opacity="0.88"/>
+            <text x="200" y="100" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Family</text>
+            <polygon points="200,122 316,178 84,178" fill="#27ae60" opacity="0.85"/>
+            <text x="200" y="158" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Neighbours</text>
+            <rect x="55" y="180" width="290" height="16" rx="4" fill="#2ecc71" opacity="0.5"/>
+            <text x="200" y="192" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Community and Ummah</text>
+          </svg>
+        </div>
+
+        <!-- Drag-sort exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-sort" style="margin-right:0.4rem;"></i> Exercise 1: Categorise Relationship Behaviours</h4>
+          <p class="ex-desc">Drag each behaviour card to the correct pool — does it give energy or take energy?</p>
+          <div class="sort-source" id="sortSource5"></div>
+          <div class="sort-pools">
+            <div class="sort-pool give-pool" ondragover="event.preventDefault()" ondrop="pm5Drop(event,'give')">
+              <h5><i class="fas fa-plus-circle"></i> Gives Energy</h5>
+              <div class="sort-cards" id="giveCards"></div>
+            </div>
+            <div class="sort-pool take-pool" ondragover="event.preventDefault()" ondrop="pm5Drop(event,'take')">
+              <h5><i class="fas fa-minus-circle"></i> Takes Energy</h5>
+              <div class="sort-cards" id="takeCards"></div>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm5CheckSort()">Check Answers</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm5ResetSort()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="sort5fb"></div>
+        </div>
+      </div>
+
+      <!-- 5.4 -->
+      <div class="lesson-section">
+        <h2>5.4 Social Time: Structuring Relationship Investment</h2>
+        <p>In the same way that physical and spiritual productivity require structured time blocks, social productivity requires intentional scheduling of quality time for key relationships. Many Muslims allow their most important relationships to operate on leftover time — whatever is left after work, devices, and the hundred daily demands are met. The result is that the most important people in their lives receive the least intentional attention.</p>
+        <p>Mohammed Faris recommends creating <strong>relationship time blocks</strong>: weekly family dinners without phones, weekly one-on-one time with spouse and/or children, monthly check-ins with parents and close friends, quarterly contributions to community initiatives. These are not romantic ideals — they are practical scheduled investments in the social infrastructure that sustains everything else in your productive life.</p>
+        <p>Islam has built-in social time structures: Friday Jumu'ah is a weekly community gathering; Ramadan is a month of intensified family and community engagement; Eid gatherings reconnect extended family and neighbourhood; the funeral prayer (janazah) and visiting the sick (ziyarat al-maridh) are regular community bonding practices. The productive Muslim participates in these as social investments, not merely as religious obligations.</p>
+
+        <p>Creating relationship time blocks begins with a simple recognition: your schedule is a reflection of your values. If your calendar is full of work commitments, personal development tasks, and social media slots but empty of intentional family time, that calendar is telling you — and your loved ones — what you actually value, regardless of what you say. The productive Muslim audits their calendar through the lens of social priority: do the people at the top of the Islamic social hierarchy receive the most intentional, protected time on the calendar?</p>
+        <p>The phone-free principle deserves special emphasis. When you bring your phone to a family meal, you signal that someone or something in that device might be more important than the people at the table. Children notice this, spouses notice this, and over years it communicates a message about their value to you that no verbal reassurance can fully undo. The single most powerful social time investment for many modern Muslims is not adding more hours — it is making the hours they already have fully present by removing the device that fragments their attention.</p>
+        <p>Islam's built-in social calendar also includes a dimension that modern productivity culture misses entirely: the time invested in social solidarity around loss, grief, and hardship. Attending janazah prayers, visiting the sick, and comforting the bereaved are acts that might appear to "cost" productive time. In reality, they are among the most high-return social investments possible — they demonstrate that your relationship with someone transcends their usefulness to you, and they build the kind of unconditional loyalty that forms the backbone of any truly productive community. The Prophet promised extraordinary rewards for these acts precisely because they are investments in the social fabric at its most vulnerable and most important moments.</p>
+
+        <!-- Illustration: Relationship time calendar grid -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 500 130" width="100%" height="130">
+            <text x="250" y="18" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text,#333)">RELATIONSHIP TIME BLOCKS</text>
+            <rect x="20" y="28" width="100" height="88" rx="8" fill="rgba(46,204,113,0.12)" stroke="#2ecc71" stroke-width="1.5"/>
+            <text x="70" y="48" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#2ecc71">WEEKLY</text>
+            <text x="70" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Family dinner</text>
+            <text x="70" y="80" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Jumu'ah</text>
+            <text x="70" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">1-on-1 spouse</text>
+            <text x="70" y="110" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Phone-free time</text>
+            <rect x="140" y="28" width="100" height="88" rx="8" fill="rgba(26,188,156,0.12)" stroke="#1abc9c" stroke-width="1.5"/>
+            <text x="190" y="48" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#1abc9c">MONTHLY</text>
+            <text x="190" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Parent check-in</text>
+            <text x="190" y="80" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Visit friends</text>
+            <text x="190" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Community event</text>
+            <text x="190" y="110" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Silat al-rahm</text>
+            <rect x="260" y="28" width="100" height="88" rx="8" fill="rgba(39,174,96,0.12)" stroke="#27ae60" stroke-width="1.5"/>
+            <text x="310" y="48" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#27ae60">QUARTERLY</text>
+            <text x="310" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Extended family</text>
+            <text x="310" y="80" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Charity project</text>
+            <text x="310" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Mentorship</text>
+            <text x="310" y="110" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Ummah service</text>
+            <rect x="380" y="28" width="100" height="88" rx="8" fill="rgba(46,204,113,0.08)" stroke="#2ecc71" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="430" y="48" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#2ecc71">ANNUAL</text>
+            <text x="430" y="65" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Eid gatherings</text>
+            <text x="430" y="80" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Ramadan together</text>
+            <text x="430" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Relationship review</text>
+            <text x="430" y="110" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Renewal intentions</text>
+          </svg>
+        </div>
+
+        <!-- Step-through 1: Concentric circles of social priority -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-users" style="margin-right:0.4rem;"></i> Step-Through 1: Concentric Circles of Social Priority</h4>
+          <div class="step-svg-wrap" id="step1svg"></div>
+          <div class="step-desc" id="step1desc">Click "Next" to explore each layer of social priority from innermost to outermost.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step1prev" onclick="pm5Step1(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step1ind">0 / 5</span>
+            <button class="step-btn" id="step1next" onclick="pm5Step1(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.5 -->
+      <div class="lesson-section">
+        <h2>5.5 Building a Productive Community</h2>
+        <p>The Prophet did not just optimise individual productivity — he built a community system designed for collective productivity. The concept of the ummah as a single body (<em>"when one part aches, the whole body responds"</em>) is a vision of collective productivity where every individual's gifts and efforts contribute to a shared mission. The productive Muslim does not just manage their individual output — they invest in building the productive capacity of those around them.</p>
+
+        <div class="hadith-callout">"The Muslims in their mutual love, mercy and compassion are like one body: when one organ aches, the whole body responds with sleeplessness and fever." <cite>Sahih al-Bukhari &amp; Muslim</cite></div>
+
+        <p>This means practising mentorship (the Prophet mentored each companion individually to their unique gifts), giving and receiving nasiha (sincere advice for improvement), supporting others' projects and aspirations, sharing knowledge freely, and building community institutions — mosques, schools, businesses, charities — that multiply productive impact beyond the individual.</p>
+        <p>Building a productive community also requires managing conflict productively. The Prophet was a master mediator — he resolved disputes with wisdom, justice, and mercy, restoring social bonds rather than escalating division. The productive Muslim develops conflict resolution skills and actively works to maintain the social unity (ukhuwwah) of their community, recognising that internal conflict is one of the most destructive forces to collective productive capacity.</p>
+
+        <p>The concept of mentorship in the Islamic tradition differs from the modern professional mentorship model in an important way. Prophetic mentorship was not transactional — it was not "I will share my expertise in exchange for your respect and reputation." It was fundamentally an act of love. The Prophet mentored people because he genuinely wanted what was best for them — their deen, their character, their success in this world and the next. This quality of unconditional investment is what made his mentorship transformative rather than merely informational. Information is cheap; genuine care is rare and powerful.</p>
+        <p>Building community institutions is the highest-leverage act of social productivity available to the Muslim who has already secured their personal and family social foundations. A school educates hundreds of children long after you are gone. A well-run mosque creates a community anchor that serves generations. A Muslim-owned business employing members of the community is a weekly act of social investment in multiple people's livelihoods and dignity. The Prophet did not just teach individuals — he built institutions: the mosque, the brotherhood (muwakhat), the state. Each institution was designed to produce productive Muslims at scale, long after his personal influence could reach.</p>
+
+        <!-- Illustration: Community productivity loop -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 480 130" width="100%" height="130">
+            <defs>
+              <marker id="arr5" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="rgba(46,204,113,0.7)"/>
+              </marker>
+            </defs>
+            <rect x="10"  y="35" width="100" height="50" rx="10" fill="rgba(46,204,113,0.85)"/>
+            <text x="60"  y="58" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Individual</text>
+            <text x="60"  y="74" text-anchor="middle" font-family="Inter" font-size="9"  fill="rgba(255,255,255,0.85)">Growth</text>
+            <rect x="190" y="10"  width="100" height="50" rx="10" fill="rgba(26,188,156,0.85)"/>
+            <text x="240" y="33"  text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Mentorship</text>
+            <text x="240" y="49"  text-anchor="middle" font-family="Inter" font-size="9"  fill="rgba(255,255,255,0.85)">and Nasiha</text>
+            <rect x="370" y="35" width="100" height="50" rx="10" fill="rgba(39,174,96,0.85)"/>
+            <text x="420" y="58" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Community</text>
+            <text x="420" y="74" text-anchor="middle" font-family="Inter" font-size="9"  fill="rgba(255,255,255,0.85)">Output</text>
+            <rect x="190" y="70" width="100" height="50" rx="10" fill="rgba(46,204,113,0.65)"/>
+            <text x="240" y="93" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Ukhuwwah</text>
+            <text x="240" y="109" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">and Institutions</text>
+            <line x1="110" y1="55" x2="188" y2="30" stroke="rgba(46,204,113,0.5)" stroke-width="1.8" marker-end="url(#arr5)"/>
+            <line x1="290" y1="38" x2="368" y2="55" stroke="rgba(46,204,113,0.5)" stroke-width="1.8" marker-end="url(#arr5)"/>
+            <line x1="368" y1="75" x2="292" y2="95" stroke="rgba(46,204,113,0.5)" stroke-width="1.8" marker-end="url(#arr5)"/>
+            <line x1="190" y1="95" x2="112" y2="72" stroke="rgba(46,204,113,0.5)" stroke-width="1.8" marker-end="url(#arr5)"/>
+          </svg>
+        </div>
+
+        <!-- Scenario exercise (Exercise 2) -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-lightbulb" style="margin-right:0.4rem;"></i> Exercise 2: What Would the Prophet Do?</h4>
+          <p class="ex-desc">A community conflict has broken out between two families at your local mosque. As a community leader applying Islamic social productivity, what is your first move?</p>
+          <div class="scenario-opts" id="scenarioOpts">
+            <div class="scenario-opt" data-correct="false" onclick="pm5ScenarioPick(this)"><div class="opt-radio"></div>Post about the conflict on the masjid WhatsApp group to get community input.</div>
+            <div class="scenario-opt" data-correct="false" onclick="pm5ScenarioPick(this)"><div class="opt-radio"></div>Ignore it — family disputes resolve themselves with time.</div>
+            <div class="scenario-opt" data-correct="true" onclick="pm5ScenarioPick(this)"><div class="opt-radio"></div>Mediate privately with both parties separately, seeking reconciliation with wisdom and justice before the conflict spreads.</div>
+            <div class="scenario-opt" data-correct="false" onclick="pm5ScenarioPick(this)"><div class="opt-radio"></div>Side publicly with the family you are closer to, as loyalty strengthens community bonds.</div>
+          </div>
+          <div class="ex-feedback" id="scenario5fb"></div>
+        </div>
+      </div>
+
+      <!-- 5.6 -->
+      <div class="lesson-section">
+        <h2>5.6 Sustaining Social Productivity: Boundaries and Service</h2>
+        <p>Sustainable social productivity requires managing the tension between two complementary Islamic virtues: <strong>generosity</strong> (giving freely of time, wealth, and effort) and <strong>wisdom</strong> (knowing how much to give, when, and to whom). The Prophet himself balanced extraordinary accessibility to his community with the wisdom to manage his time and energy sustainably.</p>
+        <p>The productive Muslim learns to say no — to requests that exceed their genuine capacity, to social obligations that are excessive cultural baggage rather than genuine Islamic duty, and to the false guilt of "I should be doing more for everyone." Saying no to the less important makes you able to say yes to the most important. The Prophet's teaching to <em>"begin with yourself"</em> (ibda' bi nafsik) when giving sadaqah applies also to social energy: you cannot consistently give what you do not have.</p>
+
+        <p>The productive Muslim also needs to distinguish between two very different reasons for saying yes to social demands: genuine service motivated by love, and approval-seeking motivated by fear. Islam is deeply critical of the latter. Pleasing people at the expense of one's genuine capacity, core responsibilities, and wellbeing is not generosity — it is a form of social cowardice. The Arabic concept of "muraqabah" (consciousness of Allah's watchfulness) is relevant here: your social choices should be driven by what is right before Allah, not by what will maintain your social image or prevent people from being displeased with you.</p>
+        <p>Setting social boundaries in practice requires clear communication, not avoidance or excuses. When declining a request, the productive Muslim is honest and specific: "I cannot commit to this right now because of a prior commitment to my family." This models integrity, protects the relationship from the erosion of dishonest excuses, and often models healthy boundaries for others who did not know they were permitted to set them. The Prophet himself was clear and direct in his communication — he did not create social friction through vagueness or enable false expectations through over-commitment.</p>
+
+        <!-- Illustration: Generosity / Wisdom balance scale -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 400 145" width="100%" height="145">
+            <polygon points="200,122 220,142 180,142" fill="rgba(46,204,113,0.6)"/>
+            <line x1="200" y1="122" x2="200" y2="56" stroke="rgba(46,204,113,0.5)" stroke-width="2"/>
+            <rect x="70" y="54" width="260" height="6" rx="3" fill="rgba(46,204,113,0.5)"/>
+            <circle cx="100" cy="54" r="32" fill="rgba(46,204,113,0.12)" stroke="#2ecc71" stroke-width="1.5"/>
+            <text x="100" y="48" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">Generosity</text>
+            <text x="100" y="64" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Give freely</text>
+            <circle cx="300" cy="54" r="32" fill="rgba(26,188,156,0.12)" stroke="#1abc9c" stroke-width="1.5"/>
+            <text x="300" y="48" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#1abc9c">Wisdom</text>
+            <text x="300" y="64" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text,#333)">Know your limits</text>
+            <text x="200" y="28" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="var(--text,#333)">THE SOCIAL PRODUCTIVITY BALANCE</text>
+          </svg>
+        </div>
+
+        <!-- Checklist: Social Productivity Habits -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-clipboard-check" style="margin-right:0.4rem;"></i> Self-Assessment: Social Productivity Habits</h4>
+          <p class="ex-desc">Click each habit you currently practise. Your progress is saved automatically.</p>
+          <div class="checklist-grid" id="pm5checklist"></div>
+          <div id="pm5checkSave" style="margin-top:0.75rem;font-size:0.8rem;color:var(--accent);font-weight:600;"></div>
+        </div>
+
+        <!-- Social Energy Audit Sliders (Exercise 3) -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-chart-bar" style="margin-right:0.4rem;"></i> Exercise 3: Social Energy Audit</h4>
+          <p class="ex-desc">Rate each area of your social life on a scale of 1 (poor) to 10 (excellent). Your overall social energy score is calculated instantly.</p>
+          <div class="audit-sliders" id="auditSliders"></div>
+          <div class="audit-result" id="auditResult">
+            <div class="audit-score" id="auditScore">--</div>
+            <div class="audit-verdict" id="auditVerdict">Move the sliders above to see your score.</div>
+          </div>
+        </div>
+
+        <!-- Step-through 2: Social Productivity Maintenance Cycle -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-sync" style="margin-right:0.4rem;"></i> Step-Through 2: The Social Productivity Maintenance Cycle</h4>
+          <div class="step-svg-wrap" id="step2svg"></div>
+          <div class="step-desc" id="step2desc">Click "Next" to walk through each phase of the sustainable social productivity cycle.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step2prev" onclick="pm5Step2(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step2ind">0 / 4</span>
+            <button class="step-btn" id="step2next" onclick="pm5Step2(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Step-through 3: Digital Boundaries Framework -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-mobile-alt" style="margin-right:0.4rem;"></i> Step-Through 3: The Digital Boundaries Framework</h4>
+          <div class="step-svg-wrap" id="step3svg"></div>
+          <div class="step-desc" id="step3desc">Click "Next" to see how to set intentional digital boundaries for social focus.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step3prev" onclick="pm5Step3(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step3ind">0 / 5</span>
+            <button class="step-btn" id="step3next" onclick="pm5Step3(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.7 -->
+      <div class="lesson-section">
+        <h2>5.7 The Prophet's Social Model: Practical Lessons</h2>
+        <p>The Prophet Muhammad (peace be upon him) is the supreme model of Islamic social productivity. He built the most transformative social movement in human history not through force or political machinery alone, but through the deliberate cultivation of extraordinary relationships. Every companion felt personally valued by him. He remembered names, asked after families, sought out the lonely, sat with the poor, honoured the elderly, and played with children. This was not coincidental charisma — it was intentional social investment at scale.</p>
+        <p>Several Prophetic social habits are especially instructive for the modern productive Muslim:</p>
+        <p><strong>1. Begin with greetings (salam):</strong> The Prophet always initiated the salam, even with children. The greeting of peace is an investment in social warmth — it takes two seconds and builds long-term trust. The productive Muslim adopts this as a habit, not a formality.</p>
+        <p><strong>2. Listen with your whole body:</strong> The Prophet turned his entire body toward whomever he was speaking with, giving complete attention. In an era of half-attention and phone-divided conversations, this single practice transforms relationship quality overnight.</p>
+        <p><strong>3. Remember what matters to people:</strong> He remembered the names, circumstances, and struggles of those around him. In practice this means taking brief notes after meaningful conversations, following up on concerns people shared, and asking "how is your son?" or "did that project work out?" — signals that people are more to you than content to consume.</p>
+        <p><strong>4. Make du'a for people by name:</strong> The Prophet prayed for companions by name. This is simultaneously a spiritual act and a social act — it anchors your concern for others in your most intimate conversation with Allah, ensuring that your care for people permeates your deepest inner life.</p>
+        <p><strong>5. Reconcile proactively:</strong> He never left disputes to fester. He intervened in community tensions quickly, privately, and generously — always seeking restoration over justice, ukhuwwah over vindication. The productive Muslim models this in family, workplace, and community contexts.</p>
+
+        <!-- Illustration: Prophetic social habits visual -->
+        <div class="lesson-illo">
+          <svg viewBox="0 0 520 170" width="100%" height="170">
+            <text x="260" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="var(--text,#333)">THE PROPHET'S FIVE SOCIAL HABITS</text>
+            <!-- Habit 1 -->
+            <rect x="10"  y="32" width="90" height="118" rx="10" fill="rgba(46,204,113,0.12)" stroke="#2ecc71" stroke-width="1.5"/>
+            <text x="55"  y="55"  text-anchor="middle" font-family="Inter" font-size="20" fill="#2ecc71">01</text>
+            <text x="55"  y="74"  text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--text,#333)">Initiate</text>
+            <text x="55"  y="88"  text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">Salam</text>
+            <text x="55"  y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">always</text>
+            <text x="55"  y="116" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted,#666)">first</text>
+            <!-- Habit 2 -->
+            <rect x="112" y="32" width="90" height="118" rx="10" fill="rgba(26,188,156,0.12)" stroke="#1abc9c" stroke-width="1.5"/>
+            <text x="157" y="55"  text-anchor="middle" font-family="Inter" font-size="20" fill="#1abc9c">02</text>
+            <text x="157" y="74"  text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--text,#333)">Full-body</text>
+            <text x="157" y="88"  text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">listening</text>
+            <text x="157" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">no phone</text>
+            <text x="157" y="116" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted,#666)">distractions</text>
+            <!-- Habit 3 -->
+            <rect x="214" y="32" width="90" height="118" rx="10" fill="rgba(39,174,96,0.12)" stroke="#27ae60" stroke-width="1.5"/>
+            <text x="259" y="55"  text-anchor="middle" font-family="Inter" font-size="20" fill="#27ae60">03</text>
+            <text x="259" y="74"  text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--text,#333)">Remember</text>
+            <text x="259" y="88"  text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">names and</text>
+            <text x="259" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">follow up</text>
+            <text x="259" y="116" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted,#666)">on concerns</text>
+            <!-- Habit 4 -->
+            <rect x="316" y="32" width="90" height="118" rx="10" fill="rgba(46,204,113,0.12)" stroke="#2ecc71" stroke-width="1.5"/>
+            <text x="361" y="55"  text-anchor="middle" font-family="Inter" font-size="20" fill="#2ecc71">04</text>
+            <text x="361" y="74"  text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--text,#333)">Du'a for</text>
+            <text x="361" y="88"  text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">people</text>
+            <text x="361" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">by name</text>
+            <text x="361" y="116" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted,#666)">in private</text>
+            <!-- Habit 5 -->
+            <rect x="418" y="32" width="90" height="118" rx="10" fill="rgba(26,188,156,0.12)" stroke="#1abc9c" stroke-width="1.5"/>
+            <text x="463" y="55"  text-anchor="middle" font-family="Inter" font-size="20" fill="#1abc9c">05</text>
+            <text x="463" y="74"  text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--text,#333)">Reconcile</text>
+            <text x="463" y="88"  text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">proactively</text>
+            <text x="463" y="102" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted,#666)">restore</text>
+            <text x="463" y="116" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted,#666)">ukhuwwah</text>
+          </svg>
+        </div>
+
+        <p>These five habits cost nothing. They require no extra time budget — only attention, intention, and practice. Yet their compounded effect on the productive Muslim's social environment is transformative. Consistent practice over months builds the kind of social trust that makes every other productive endeavour easier: collaboration deepens, conflict reduces, support materialises without having to be asked for, and the social infrastructure that sustains focused, creative, purposeful work becomes robust.</p>
+        <p>The salam habit slowly transforms the social temperature of every environment you inhabit. When you consistently lead with peace, people associate you with safety. Over time, they bring their real struggles, their honest feedback, and their genuine collaboration to you — because you have signalled through hundreds of small greetings that you are a person of warmth and welcome.</p>
+        <p>Full-body listening is perhaps the most countercultural act available to the modern productive Muslim. In an environment of chronic distraction, giving someone your complete, undivided physical attention is a radical gift. It communicates: "You matter more to me right now than anything on my phone or in my head." People remember this — often for years. The deepest relationships in your life will be built in the moments of full presence you gave when everything else was demanding your attention.</p>
+        <p>The practice of remembering names and following up requires a simple system: a brief note after any meaningful conversation capturing what the person shared, and a reminder to follow up within a week or two. The technology is irrelevant — what matters is the intention to treat people as ends in themselves, not as means to your own agenda. The Prophet had no notes app, yet he knew everyone's name, family situation, and concern. The system was love — the most reliable information retrieval system ever designed.</p>
+
+        <div class="hadith-callout">"Do not belittle any good deed, even meeting your brother with a cheerful face." — Prophet Muhammad (peace be upon him) <cite>Sahih Muslim</cite></div>
+
+        <p>The five Prophetic habits above can be visualised as an upward spiral. Each successful implementation of one habit creates a small win that makes the next one easier. The person who masters the salam habit becomes easier to approach; being approachable creates more opportunities for full-body listening; deep listening reveals what matters to people; that knowledge informs targeted du'a; du'a creates genuine care; genuine care provides the motivation to reconcile proactively. The habits reinforce each other in a virtuous cycle that gradually transforms your social environment from one of social productivity poverty to social productivity wealth.</p>
+        <p>It is worth noting what makes these habits distinctively Islamic rather than simply smart social skills. The motivation matters. A charismatic person can learn to use body language, remember names, and make people feel valued — all in service of manipulating others for personal gain. The Islamic version of these habits is rooted in an entirely different intention: pleasing Allah by honouring the dignity and rights of His creation. The Prophet's treatment of people was an act of worship, not a strategy. When your social productivity practices are grounded in this intention, they acquire a spiritual dimension that makes them sustainable, consistent, and genuinely transformative — for you and for everyone you touch.</p>
+        <p>The concept of "ihsan" (excellence) is relevant here. Allah says in the Quran: "Indeed, Allah commands justice, and ihsan, and giving to relatives" (16:90). Ihsan in social relationships means going beyond what is merely required — beyond the minimum obligations of politeness, reciprocity, and courtesy — to the level of excellence that reflects Allah's own attribute of Ihsan toward His creation. The productive Muslim aspires not merely to avoid social harm but to be a source of genuine good: the person whose presence makes a room more hopeful, whose relationships make people more capable, whose community is measurably better because they are in it.</p>
+
+        <!-- Step-through 4: The Prophet's Social Investment Moments -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-star-and-crescent" style="margin-right:0.4rem;"></i> Step-Through 4: The Prophet's Social Investment Moments</h4>
+          <div class="step-svg-wrap" id="step4svg"></div>
+          <div class="step-desc" id="step4desc">Click "Next" to explore key moments when the Prophet invested in social relationships.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step4prev" onclick="pm5Step4(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step4ind">0 / 5</span>
+            <button class="step-btn" id="step4next" onclick="pm5Step4(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <p>The Islamic tradition is rich with practical guidance on social conduct. Beyond the five habits above, there are dozens of Prophetic teachings governing how to treat guests, how to visit the sick, how to give gifts, how to receive gifts, how to speak about absent people, how to resolve arguments, how to apologise, and how to forgive. Each of these teachings is a piece of social technology — tested and refined through the lived experience of the best human community ever built. The productive Muslim mines this tradition systematically, treating it not as a collection of obligations to comply with but as a treasure trove of wisdom to implement for a flourishing social life.</p>
+
+        <!-- Reflection journal exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-pen" style="margin-right:0.4rem;"></i> Exercise 4: Social Relationship Reflection Journal</h4>
+          <p class="ex-desc">Complete these reflection prompts. Your responses are saved locally and never shared.</p>
+          <div id="reflectionFields"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm5SaveReflection()">Save Reflections</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm5ClearReflection()">Clear</button>
+          </div>
+          <div class="ex-feedback" id="reflection5fb"></div>
+        </div>
+      </div>
+
+    </div><!-- /tab-lessons -->
+
+    <!-- =================== SUMMARY TAB =================== -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 5 Summary</h3>
+        <ul>
+          <li><strong>Social productivity</strong> has three dimensions: social energy (relationship quality), social focus (priority roles), and social time (scheduled quality investment).</li>
+          <li><strong>Islam is communal:</strong> the ummah-as-one-body framework makes social productivity an integral part of the khalifah mission, not an optional add-on.</li>
+          <li><strong>Social energy</strong> is shaped by relationship quality — righteous companions energise, while gossip/envy/backbiting environments chronically drain.</li>
+          <li><strong>Prophet's friendship principle:</strong> "A person is on the religion of their close friend" — your social environment shapes your habits and outputs profoundly.</li>
+          <li><strong>Social hierarchy:</strong> Family first (spouse, children, parents), then neighbours, community, wider ummah — provides the default ordering for social investment.</li>
+          <li><strong>Digital boundaries:</strong> Social media and group chats are social noise; real relationships deserve real, scheduled, phone-free investment.</li>
+          <li><strong>Built-in social structures:</strong> Jumu'ah, Ramadan, Eid, janazah, visiting the sick — all are social productivity investments built into Islamic practice.</li>
+          <li><strong>Collective productivity:</strong> The Prophet built a community system, not just individual optimization — mentorship, nasiha, community institutions multiply individual impact.</li>
+          <li><strong>Tension to manage:</strong> Generosity (giving freely) vs wisdom (knowing how much to give) — sustainable service requires boundaries.</li>
+          <li><strong>Say no wisely:</strong> Declining the less important enables full commitment to the most important — the Prophet's own practice demonstrated this balance.</li>
+          <li><strong>Ukhuwwah (brotherhood/sisterhood)</strong> is a productive asset — social unity amplifies collective output; internal conflict is one of its most destructive enemies.</li>
+          <li><strong>Social maintenance cycle:</strong> Invest - Nurture - Set Boundaries - Serve community — each phase sustains the next.</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 1rem;font-size:0.88rem;">
+            <dt style="font-weight:700;color:var(--text);">Nasiha</dt><dd style="color:var(--text-muted);margin:0;">Sincere advice — given lovingly for the benefit of the recipient, not to criticise or control.</dd>
+            <dt style="font-weight:700;color:var(--text);">Ghibah</dt><dd style="color:var(--text-muted);margin:0;">Gossip/backbiting — mentioned in the Quran as eating the flesh of a dead brother; chronically draining to social environments.</dd>
+            <dt style="font-weight:700;color:var(--text);">Ukhuwwah</dt><dd style="color:var(--text-muted);margin:0;">Brotherhood/sisterhood — the social bond of the Muslim community; a productive asset that amplifies collective output.</dd>
+            <dt style="font-weight:700;color:var(--text);">Hasad</dt><dd style="color:var(--text-muted);margin:0;">Envy — coveting what others have; destructive to both the envier's focus and the social environment.</dd>
+            <dt style="font-weight:700;color:var(--text);">Silat al-Rahm</dt><dd style="color:var(--text-muted);margin:0;">Maintaining ties of kinship — a major source of Barakah in life and longevity according to the Prophet.</dd>
+            <dt style="font-weight:700;color:var(--text);">Namimah</dt><dd style="color:var(--text-muted);margin:0;">Tale-carrying / sowing discord — spreading information to cause conflict between people; a major social sin.</dd>
+          </dl>
+        </div>
+
+        <!-- Core principle callout -->
+        <div style="margin-top:1.5rem;background:rgba(46,204,113,0.07);border:1px solid rgba(46,204,113,0.2);border-radius:var(--radius-sm);padding:1.1rem 1.3rem;">
+          <h4 style="margin:0 0 0.6rem;color:var(--accent);font-size:0.92rem;"><i class="fas fa-compass" style="margin-right:0.4rem;"></i> The Core Principle</h4>
+          <p style="margin:0;font-size:0.88rem;color:var(--text-muted);line-height:1.65;">Social productivity is not a department of your life separate from your spiritual, physical, and professional dimensions. It is the connective tissue that holds everything else together. The ummah is a living system — your investment in it amplifies every other form of productivity you pursue, and your neglect of it silently drains everything you work to build. The productive Muslim understands that to be an excellent servant of Allah is inseparable from being an excellent member of the community He placed you in. "The best of people are those who are most beneficial to people." — Prophet Muhammad (peace be upon him), Narrated by al-Tabarani.</p>
+        </div>
+
+        <!-- Quick action plan -->
+        <div style="margin-top:2rem;">
+          <h4 style="color:var(--accent);margin-bottom:1rem;"><i class="fas fa-rocket" style="margin-right:0.4rem;"></i> 30-Day Social Productivity Action Plan</h4>
+          <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;">Pick one action from each week. Small, consistent investments compound into transformed social infrastructure.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.9rem;">
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:0.5rem;">Week 1 — Audit</div>
+              <ul style="margin:0;padding-left:1.1rem;font-size:0.84rem;color:var(--text-muted);line-height:1.8;">
+                <li>Map all your key relationships</li>
+                <li>Rate each on energy given/taken</li>
+                <li>List all digital channels you use</li>
+                <li>Identify 1 relationship you've neglected</li>
+              </ul>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-3);margin-bottom:0.5rem;">Week 2 — Invest</div>
+              <ul style="margin:0;padding-left:1.1rem;font-size:0.84rem;color:var(--text-muted);line-height:1.8;">
+                <li>Schedule one phone-free family meal</li>
+                <li>Call or visit parents / extended family</li>
+                <li>Write du'a for 3 people by name</li>
+                <li>Attend Jumu'ah with full presence</li>
+              </ul>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-2);margin-bottom:0.5rem;">Week 3 — Boundaries</div>
+              <ul style="margin:0;padding-left:1.1rem;font-size:0.84rem;color:var(--text-muted);line-height:1.8;">
+                <li>Mute or leave 1 draining group chat</li>
+                <li>Set phone-free hours (e.g. after Isha)</li>
+                <li>Decline 1 social obligation wisely</li>
+                <li>Create a "reply window" rule</li>
+              </ul>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem;">
+              <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:0.5rem;">Week 4 — Serve</div>
+              <ul style="margin:0;padding-left:1.1rem;font-size:0.84rem;color:var(--text-muted);line-height:1.8;">
+                <li>Offer mentorship to 1 person</li>
+                <li>Volunteer at local mosque / community</li>
+                <li>Reconcile with anyone you've avoided</li>
+                <li>Review: what improved? What next?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== QUIZ TAB =================== -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- =================== MIND MAP TAB =================== -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;"><i class="fas fa-info-circle"></i> Click any branch on the map or expand a card below to reveal details.</p>
+        <div class="mindmap-container" id="mmCh5"></div>
+        <div class="mm-tooltip" id="mmTooltip5"></div>
+      </div>
+      <p style="font-size:0.84rem;font-weight:700;color:var(--text);margin:1.5rem 0 0.5rem;"><i class="fas fa-th" style="margin-right:0.4rem;color:var(--accent);"></i> Expandable Card Grid — click any card to expand</p>
+      <div class="mm-card-grid" id="mmCardGrid5"></div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch4.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Ch 4: Physical Productivity</a>
+      <a href="ch6.html" class="btn btn-primary">Ch 6: Goals &amp; Vision <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "The Productive Muslim: Where Faith Meets Productivity" by Mohammed Faris, &copy; 2016 Awakening Publications.</p>
+    <p>Independent educational companion &mdash; not affiliated with Awakening Publications or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+  (function(){
+    /* =========================================================
+       QUIZ
+    ========================================================= */
+    var QUESTIONS=[
+      {question:"What are the three dimensions of social productivity in Chapter 5?",options:["Family, work, community","Social energy, social focus, social time","Giving, receiving, networking","Ukhuwwah, nasiha, sadaqah"],correct:1,explanation:"Social productivity has three dimensions: social energy (relationship quality), social focus (priority roles), and social time (scheduled quality investment)."},
+      {question:"What did the Prophet say about the believer's relationship to another believer?",options:["A shepherd to their flock","Like a building whose different parts enforce each other","A mirror to each other","The best of you is the most generous"],correct:1,explanation:"'The believer to another believer is like a building whose different parts enforce each other' — establishing the communal, mutually supportive nature of the ummah."},
+      {question:"What does 'ghibah' mean and why does it drain social energy?",options:["Charity that purifies wealth","Gossip/backbiting — it creates toxic social environments that chronically drain everyone in them","A form of community service","Nasiha given privately"],correct:1,explanation:"Ghibah is gossip/backbiting — prohibited in Islam as eating the flesh of a dead brother. It creates psychologically toxic environments that drain focus, trust, and motivation from everyone present."},
+      {question:"According to the Islamic social hierarchy, who has the first claim on your social energy?",options:["Community institutions","Your employer","Family (spouse, children, parents)","The wider ummah"],correct:2,explanation:"The Prophet taught 'the best of you is the best to their family' — family has the first claim on social energy, followed by neighbours, then community, then the wider ummah."},
+      {question:"What is 'nasiha'?",options:["A form of public criticism","Sincere advice given lovingly for the benefit of the recipient","Formal religious guidance from a scholar","Social media commentary"],correct:1,explanation:"Nasiha is sincere advice — a core social virtue in Islam. It is given privately and lovingly for the recipient's benefit, not as criticism or social performance."},
+      {question:"How does the chapter recommend managing digital social demands?",options:["Use all platforms equally to maintain all connections","Distinguish social noise from real relationships and set intentional boundaries","Respond to all messages within one hour","Avoid all social media entirely"],correct:1,explanation:"Social media and group chats are largely social noise. Real relationships deserve real, scheduled, phone-free investment. Setting intentional boundaries on digital demands is required for social focus."},
+      {question:"What is 'ukhuwwah' and why does the chapter frame it as a productive asset?",options:["A form of charity","Brotherhood/sisterhood — social unity amplifies collective output and internal conflict is one of its most destructive enemies","A type of prayer","The act of visiting the sick"],correct:1,explanation:"Ukhuwwah (brotherhood/sisterhood) is the social bond of the Muslim community. When strong, it amplifies collective productive capacity; when fractured by conflict, it degrades everyone's output."},
+      {question:"What tension must the productive Muslim manage in social productivity?",options:["Earning money vs spending time with family","Generosity (giving freely) vs wisdom (knowing how much to give and to whom)","Following traditions vs adopting modern practices","Individual goals vs community goals"],correct:1,explanation:"The tension between generosity and wisdom — giving freely while knowing your limits — is the core social productivity challenge. The Prophet himself balanced extraordinary accessibility with sustainable boundaries."},
+      {question:"What built-in Islamic social structures does the chapter identify as social productivity investments?",options:["Daily salah times only","Jumu'ah, Ramadan, Eid, janazah, visiting the sick","Online Islamic communities only","Business networking events"],correct:1,explanation:"Islamic practice includes built-in social time structures: Jumu'ah (weekly community), Ramadan (intensified family/community engagement), Eid, janazah prayers, and visiting the sick — all maintain the social fabric."},
+      {question:"What does 'silat al-rahm' mean?",options:["Following the Prophet's Sunnah","Maintaining ties of kinship — a major source of Barakah in life and longevity","Paying zakat to family members","Performing Friday prayer"],correct:1,explanation:"Silat al-rahm is maintaining ties of kinship. The Prophet promised that it extends one's lifespan and increases Barakah in provision — making family relationship maintenance both a religious duty and a productivity investment."}
+    ];
+    VB.initQuiz('quizContainer',QUESTIONS);
+    VB.initTabs('chapterTabs');
+
+    var ns='http://www.w3.org/2000/svg';
+
+    /* =========================================================
+       EXERCISE 1 — DRAG-SORT
+    ========================================================= */
+    var sortItems=[
+      {text:'Mutual encouragement',type:'give',id:0},
+      {text:'Gossip sessions',type:'take',id:1},
+      {text:'Honest nasiha',type:'give',id:2},
+      {text:'Constant complaining',type:'take',id:3},
+      {text:'Shared dhikr',type:'give',id:4},
+      {text:'Envy and comparison',type:'take',id:5},
+      {text:"Celebrating others' wins",type:'give',id:6},
+      {text:'Backbiting absent people',type:'take',id:7},
+      {text:'Praying for each other',type:'give',id:8},
+      {text:'Namimah (tale-carrying)',type:'take',id:9}
+    ];
+    var sortPlaced={};
+    function pm5BuildSort(){
+      var source=document.getElementById('sortSource5');
+      document.getElementById('giveCards').textContent='';
+      document.getElementById('takeCards').textContent='';
+      source.textContent='';sortPlaced={};
+      var arr=sortItems.slice().sort(function(){return Math.random()-0.5;});
+      arr.forEach(function(item){
+        var card=document.createElement('div');card.className='sort-card';card.textContent=item.text;
+        card.draggable=true;card.dataset.id=item.id;
+        card.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',item.id);});
+        source.appendChild(card);
+      });
+    }
+    pm5BuildSort();
+    window.pm5Drop=function(e,pool){
+      e.preventDefault();
+      var id=parseInt(e.dataTransfer.getData('text/plain'));
+      var card=document.querySelector('.sort-card[data-id="'+id+'"]');
+      if(!card) return;
+      sortPlaced[id]=pool;
+      card.className='sort-card';
+      document.getElementById(pool+'Cards').appendChild(card);
+      document.getElementById('sort5fb').textContent='';
+    };
+    window.pm5CheckSort=function(){
+      var correct=0;
+      sortItems.forEach(function(item){
+        var card=document.querySelector('.sort-card[data-id="'+item.id+'"]');
+        if(!card) return;
+        if(sortPlaced[item.id]===item.type){correct++;card.classList.add('correct-card');}
+        else if(sortPlaced[item.id]){card.classList.add('wrong-card');}
+      });
+      var placed=Object.keys(sortPlaced).length;
+      document.getElementById('sort5fb').textContent=placed===0?'Drag some cards first!':correct+'/'+placed+' placed correctly!';
+    };
+    window.pm5ResetSort=function(){pm5BuildSort();document.getElementById('sort5fb').textContent='';};
+
+    /* =========================================================
+       EXERCISE 2 — SCENARIO MCQ
+    ========================================================= */
+    window.pm5ScenarioPick=function(el){
+      var opts=document.querySelectorAll('#scenarioOpts .scenario-opt');
+      opts.forEach(function(o){o.classList.remove('sel-correct','sel-wrong');});
+      var isCorrect=(el.dataset.correct==='true');
+      el.classList.add(isCorrect?'sel-correct':'sel-wrong');
+      document.getElementById('scenario5fb').textContent=isCorrect
+        ? 'Correct! Private, wise mediation is the Prophetic approach — restoring ukhuwwah before conflict spreads.'
+        : 'Not quite. The Prophet resolved disputes privately with wisdom and justice to protect community unity.';
+    };
+
+    /* =========================================================
+       EXERCISE 3 — SOCIAL ENERGY AUDIT SLIDERS
+    ========================================================= */
+    var auditAreas=[
+      {label:'Family relationships',key:'family'},
+      {label:'Friendship quality',key:'friends'},
+      {label:'Community engagement',key:'community'},
+      {label:'Digital boundaries',key:'digital'},
+      {label:'Giving and receiving nasiha',key:'nasiha'},
+      {label:'Conflict management',key:'conflict'}
+    ];
+    var auditVals={};
+    auditAreas.forEach(function(a){auditVals[a.key]=5;});
+    var auditContainer=document.getElementById('auditSliders');
+    function auditVerdict(score){
+      if(score>=8) return 'Excellent! Your social environment is a strong productivity asset. Keep nurturing and growing it.';
+      if(score>=6) return 'Good foundation. Identify your 1-2 weakest areas and invest there this month.';
+      if(score>=4) return 'Needs attention. Pick one relationship area to improve intentionally this week.';
+      return 'Social productivity is significantly draining your overall capacity. Prioritise family and community investment now.';
+    }
+    function updateAudit(){
+      var sum=0;
+      auditAreas.forEach(function(a){sum+=auditVals[a.key];});
+      var avg=(sum/auditAreas.length).toFixed(1);
+      document.getElementById('auditScore').textContent=avg+'/10';
+      document.getElementById('auditVerdict').textContent=auditVerdict(parseFloat(avg));
+    }
+    auditAreas.forEach(function(a){
+      var row=document.createElement('div');row.className='audit-row';
+      var lbl=document.createElement('label');lbl.className='audit-label';
+      var nameSpan=document.createElement('span');nameSpan.textContent=a.label;
+      var valSpan=document.createElement('span');valSpan.className='audit-val';valSpan.id='auditVal-'+a.key;valSpan.textContent='5';
+      lbl.appendChild(nameSpan);lbl.appendChild(valSpan);
+      var slider=document.createElement('input');
+      slider.type='range';slider.min='1';slider.max='10';slider.value='5';
+      slider.addEventListener('input',function(){
+        auditVals[a.key]=parseInt(this.value);
+        document.getElementById('auditVal-'+a.key).textContent=this.value;
+        updateAudit();
+      });
+      row.appendChild(lbl);row.appendChild(slider);
+      auditContainer.appendChild(row);
+    });
+    updateAudit();
+
+    /* =========================================================
+       CHECKLIST
+    ========================================================= */
+    var checkItems=[
+      "I have weekly quality time with my family (phones away).",
+      "I check in with my parents at least once a week.",
+      "I attend Jumu'ah every Friday.",
+      "I know my neighbours and greet them regularly.",
+      "I give honest nasiha and receive it graciously.",
+      "I limit gossip and redirect conversations when it arises.",
+      "I volunteer in a community initiative at least monthly.",
+      "I make du'a for other Muslims by name.",
+      "I set intentional digital boundaries (screen-free evenings etc).",
+      "I practise silat al-rahm — visiting extended family regularly."
+    ];
+    var checkState=JSON.parse(localStorage.getItem('vb-pm-ch5-checklist')||'[]');
+    if(checkState.length!==checkItems.length) checkState=checkItems.map(function(){return false;});
+    var clGrid=document.getElementById('pm5checklist');
+    checkItems.forEach(function(item,i){
+      var div=document.createElement('div');div.className='checklist-item'+(checkState[i]?' checked':'');div.dataset.idx=i;
+      var icon=document.createElement('div');icon.className='check-icon';
+      if(checkState[i]){var t=document.createElement('i');t.className='fas fa-check';t.style.fontSize='11px';icon.appendChild(t);}
+      var span=document.createElement('span');span.textContent=item;
+      div.appendChild(icon);div.appendChild(span);
+      div.addEventListener('click',function(){
+        var idx=parseInt(this.dataset.idx);checkState[idx]=!checkState[idx];
+        this.classList.toggle('checked',checkState[idx]);
+        var ic=this.querySelector('.check-icon');ic.textContent='';
+        if(checkState[idx]){var t=document.createElement('i');t.className='fas fa-check';t.style.fontSize='11px';ic.appendChild(t);}
+        localStorage.setItem('vb-pm-ch5-checklist',JSON.stringify(checkState));
+        var done=checkState.filter(Boolean).length;
+        document.getElementById('pm5checkSave').textContent=done+'/'+checkItems.length+' habits practised';
+      });
+      clGrid.appendChild(div);
+    });
+    var doneSaved=checkState.filter(Boolean).length;
+    if(doneSaved>0) document.getElementById('pm5checkSave').textContent=doneSaved+'/'+checkItems.length+' habits practised';
+
+    /* =========================================================
+       STEP-THROUGH 1: Concentric Circles of Social Priority
+    ========================================================= */
+    var s1idx=0;
+    var circles=[
+      {label:'Self',color:'#2ecc71',desc:"Your own spiritual, physical, and social wellbeing is the innermost circle. You cannot give from an empty vessel. The Prophet said 'begin with yourself' (ibda' bi nafsik)."},
+      {label:'Family',color:'#1abc9c',desc:"Spouse, children, parents, siblings. 'The best of you is the best to their family.' Family has the highest claim on social energy after your own wellbeing."},
+      {label:'Extended Family',color:'#27ae60',desc:"Aunts, uncles, cousins. Silat al-rahm (maintaining kinship ties) is a major source of Barakah — extending lifespan and increasing provision according to the Prophet."},
+      {label:'Neighbours',color:'#2ecc71',desc:"The Prophet gave such emphasis to neighbours that companions thought they might inherit property. The productive Muslim knows and actively cares for their neighbours."},
+      {label:'Community & Ummah',color:'#1abc9c',desc:"Local mosque, professional network, and the wider Muslim world. Collective productivity of the ummah is the outer purpose of the khalifah mission."}
+    ];
+    function pm5DrawCircles(active){
+      var container=document.getElementById('step1svg');
+      while(container.firstChild) container.removeChild(container.firstChild);
+      var svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 400 260');svg.setAttribute('width','100%');
+      container.appendChild(svg);
+      var radii=[120,96,72,48,24];
+      var cx=200,cy=130;
+      for(var i=circles.length-1;i>=0;i--){
+        var isActive=(i<active);
+        var cir=document.createElementNS(ns,'circle');
+        cir.setAttribute('cx',cx);cir.setAttribute('cy',cy);cir.setAttribute('r',radii[i]);
+        cir.setAttribute('fill',circles[i].color);
+        cir.setAttribute('opacity',isActive?'0.55':'0.10');
+        cir.setAttribute('stroke',circles[i].color);cir.setAttribute('stroke-width','2');
+        if(!isActive) cir.setAttribute('stroke-dasharray','5,4');
+        svg.appendChild(cir);
+        var txt=document.createElementNS(ns,'text');
+        txt.setAttribute('x',cx);txt.setAttribute('y',cy-radii[i]+17);
+        txt.setAttribute('text-anchor','middle');txt.setAttribute('font-family','Inter');
+        txt.setAttribute('font-size','10');txt.setAttribute('font-weight','700');
+        txt.setAttribute('fill',isActive?'#fff':'var(--text-muted)');
+        txt.textContent=circles[i].label;
+        svg.appendChild(txt);
+      }
+    }
+    function pm5RenderStep1(){
+      pm5DrawCircles(s1idx);
+      document.getElementById('step1ind').textContent=s1idx+' / '+circles.length;
+      document.getElementById('step1prev').disabled=(s1idx===0);
+      document.getElementById('step1next').disabled=(s1idx===circles.length);
+      document.getElementById('step1desc').textContent=s1idx>0
+        ? circles[s1idx-1].label+': '+circles[s1idx-1].desc
+        : 'Click Next to explore each layer of social priority from innermost to outermost.';
+    }
+    window.pm5Step1=function(dir){s1idx=Math.max(0,Math.min(circles.length,s1idx+dir));pm5RenderStep1();};
+    pm5RenderStep1();
+
+    /* =========================================================
+       STEP-THROUGH 2: Social Productivity Maintenance Cycle
+    ========================================================= */
+    var s2idx=0;
+    var cycle=[
+      {label:'Invest',color:'#2ecc71',sub:'Schedule it',desc:'Invest quality, scheduled time in your highest-priority relationships. Quality over quantity — one hour of full presence beats ten distracted ones. Block time in your calendar for family and close friends.'},
+      {label:'Nurture',color:'#1abc9c',sub:'Tend it',desc:'Maintain relationships with regular check-ins, appreciation, honest nasiha, and shared experiences. Relationships are like gardens — they require consistent, deliberate tending to flourish.'},
+      {label:'Boundaries',color:'#27ae60',sub:'Protect it',desc:'Decline excessive or low-priority social demands wisely. Protecting your capacity enables you to show up fully for what matters most. Saying no to the less important is part of social productivity, not a failure.'},
+      {label:'Serve',color:'#2ecc71',sub:'Give outward',desc:'Extend your social productivity outward — mentoring, community projects, charity, teaching. Collective impact is the outer expression of Islamic social productivity. The cycle then feeds back to individual investment.'}
+    ];
+    function pm5DrawCycle(active){
+      var container=document.getElementById('step2svg');
+      while(container.firstChild) container.removeChild(container.firstChild);
+      var svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 480 100');svg.setAttribute('width','100%');
+      container.appendChild(svg);
+      cycle.forEach(function(c,i){
+        var x=10+i*118;
+        var g=document.createElementNS(ns,'g');
+        g.setAttribute('opacity',i<active?'1':'0.22');
+        var r=document.createElementNS(ns,'rect');
+        r.setAttribute('x',x);r.setAttribute('y','18');r.setAttribute('width','108');r.setAttribute('height','60');r.setAttribute('rx','10');
+        r.setAttribute('fill',c.color);r.setAttribute('opacity','0.90');
+        var t=document.createElementNS(ns,'text');
+        t.setAttribute('x',x+54);t.setAttribute('y','43');t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','Inter');t.setAttribute('font-size','11');t.setAttribute('font-weight','700');t.setAttribute('fill','#fff');
+        t.textContent=c.label;
+        var sub=document.createElementNS(ns,'text');
+        sub.setAttribute('x',x+54);sub.setAttribute('y','62');sub.setAttribute('text-anchor','middle');
+        sub.setAttribute('font-family','Inter');sub.setAttribute('font-size','9');sub.setAttribute('fill','rgba(255,255,255,0.8)');
+        sub.textContent=c.sub;
+        g.appendChild(r);g.appendChild(t);g.appendChild(sub);svg.appendChild(g);
+        if(i<cycle.length-1){
+          var arr=document.createElementNS(ns,'text');
+          arr.setAttribute('x',x+119);arr.setAttribute('y','52');arr.setAttribute('text-anchor','middle');
+          arr.setAttribute('font-family','Inter');arr.setAttribute('font-size','18');arr.setAttribute('font-weight','700');
+          arr.setAttribute('fill',i<active-1?c.color:'rgba(46,204,113,0.25)');
+          arr.textContent='\u2192';svg.appendChild(arr);
+        }
+      });
+    }
+    function pm5RenderStep2(){
+      pm5DrawCycle(s2idx);
+      document.getElementById('step2ind').textContent=s2idx+' / '+cycle.length;
+      document.getElementById('step2prev').disabled=(s2idx===0);
+      document.getElementById('step2next').disabled=(s2idx===cycle.length);
+      document.getElementById('step2desc').textContent=s2idx>0
+        ? cycle[s2idx-1].label+': '+cycle[s2idx-1].desc
+        : 'Click Next to walk through each phase of the sustainable social productivity cycle.';
+    }
+    window.pm5Step2=function(dir){s2idx=Math.max(0,Math.min(cycle.length,s2idx+dir));pm5RenderStep2();};
+    pm5RenderStep2();
+
+    /* =========================================================
+       STEP-THROUGH 3: Digital Boundaries Framework
+    ========================================================= */
+    var s3idx=0;
+    var digitalSteps=[
+      {label:'Audit',color:'#2ecc71',desc:'List all your digital communication channels: WhatsApp groups, Instagram, Twitter/X, email, LinkedIn, etc. Count how many you check daily and estimate total minutes. This is your baseline.'},
+      {label:'Classify',color:'#1abc9c',desc:'Sort each channel into: Real Relationships (family, close friends, mentors), Useful Information (news, learning), or Social Noise (viral content, group chats, social performance). Most channels fall in the last category.'},
+      {label:'Set Rules',color:'#27ae60',desc:'Create explicit rules: no phone at meal times, social media only after Fajr duties, group notifications muted, reply windows (twice a day, not continuously). Write these down — vague intentions fail.'},
+      {label:'Be Present',color:'#2ecc71',desc:'In real conversations with real people — be fully present. Phone face-down or away. Eye contact. Listen to understand. The quality of your in-person social time is what actually builds ukhuwwah.'},
+      {label:'Review',color:'#1abc9c',desc:'Monthly, check: are your digital rules holding? Have you left channels that were purely social noise? Is your phone-free family time actually happening? Adjust your system. Digital boundaries require maintenance.'}
+    ];
+    function pm5DrawDigital(active){
+      var container=document.getElementById('step3svg');
+      while(container.firstChild) container.removeChild(container.firstChild);
+      var svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 500 100');svg.setAttribute('width','100%');
+      container.appendChild(svg);
+      digitalSteps.forEach(function(s,i){
+        var x=8+i*98;
+        var g=document.createElementNS(ns,'g');
+        g.setAttribute('opacity',i<active?'1':'0.20');
+        var r=document.createElementNS(ns,'rect');
+        r.setAttribute('x',x);r.setAttribute('y','20');r.setAttribute('width','88');r.setAttribute('height','56');r.setAttribute('rx','9');
+        r.setAttribute('fill',s.color);r.setAttribute('opacity','0.88');
+        var num=document.createElementNS(ns,'text');
+        num.setAttribute('x',x+44);num.setAttribute('y','44');num.setAttribute('text-anchor','middle');
+        num.setAttribute('font-family','Inter');num.setAttribute('font-size','18');num.setAttribute('font-weight','800');num.setAttribute('fill','rgba(255,255,255,0.22)');
+        num.textContent=String(i+1);
+        var t=document.createElementNS(ns,'text');
+        t.setAttribute('x',x+44);t.setAttribute('y','55');t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','Inter');t.setAttribute('font-size','10');t.setAttribute('font-weight','700');t.setAttribute('fill','#fff');
+        t.textContent=s.label;
+        g.appendChild(r);g.appendChild(num);g.appendChild(t);svg.appendChild(g);
+        if(i<digitalSteps.length-1){
+          var arr=document.createElementNS(ns,'text');
+          arr.setAttribute('x',x+97);arr.setAttribute('y','52');arr.setAttribute('text-anchor','middle');
+          arr.setAttribute('font-family','Inter');arr.setAttribute('font-size','14');arr.setAttribute('font-weight','700');
+          arr.setAttribute('fill',i<active-1?s.color:'rgba(46,204,113,0.25)');
+          arr.textContent='\u203a';svg.appendChild(arr);
+        }
+      });
+    }
+    function pm5RenderStep3(){
+      pm5DrawDigital(s3idx);
+      document.getElementById('step3ind').textContent=s3idx+' / '+digitalSteps.length;
+      document.getElementById('step3prev').disabled=(s3idx===0);
+      document.getElementById('step3next').disabled=(s3idx===digitalSteps.length);
+      document.getElementById('step3desc').textContent=s3idx>0
+        ? 'Step '+s3idx+' - '+digitalSteps[s3idx-1].label+': '+digitalSteps[s3idx-1].desc
+        : 'Click Next to learn how to set intentional digital boundaries for social focus.';
+    }
+    window.pm5Step3=function(dir){s3idx=Math.max(0,Math.min(digitalSteps.length,s3idx+dir));pm5RenderStep3();};
+    pm5RenderStep3();
+
+    /* =========================================================
+       MIND MAP SVG
+    ========================================================= */
+    (function(){
+      var container=document.getElementById('mmCh5');
+      var tooltip=document.getElementById('mmTooltip5');
+      var W=600,H=420,cx=W/2,cy=H/2;
+      var svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('width','100%');svg.setAttribute('height',H);
+      container.style.position='relative';container.appendChild(svg);
+
+      var branches=[
+        {label:'Social Energy',color:'#2ecc71',angle:280,r:162,desc:'Relationship quality as energy source — righteous companions energise, toxic environments drain.'},
+        {label:'Social Focus',color:'#1abc9c',angle:330,r:162,desc:'Priority roles: family first, then neighbours, community, ummah — default social investment order.'},
+        {label:'Social Time',color:'#27ae60',angle:20,r:162,desc:'Scheduled quality time for key relationships — weekly family dinners, monthly community contributions.'},
+        {label:'Ukhuwwah',color:'#2ecc71',angle:75,r:162,desc:'Brotherhood/sisterhood as productive asset — social unity amplifies collective output.'},
+        {label:'Nasiha',color:'#1abc9c',angle:130,r:162,desc:'Sincere mutual advice — the fuel of individual and community growth within Islamic social bonds.'},
+        {label:'Boundaries',color:'#27ae60',angle:185,r:162,desc:'Saying no wisely — declining excess social demand to protect capacity for what truly matters.'},
+        {label:'Community',color:'#2ecc71',angle:235,r:162,desc:'Mentorship, institutions, collective projects — extending social productivity to ummah level.'}
+      ];
+
+      branches.forEach(function(b){
+        var rad=b.angle*Math.PI/180;
+        var bx=cx+b.r*Math.cos(rad);var by=cy+b.r*Math.sin(rad);
+        var line=document.createElementNS(ns,'line');
+        line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',bx);line.setAttribute('y2',by);
+        line.setAttribute('stroke','rgba(46,204,113,0.25)');line.setAttribute('stroke-width','1.8');
+        svg.appendChild(line);
+      });
+
+      var cEl=document.createElementNS(ns,'ellipse');
+      cEl.setAttribute('cx',cx);cEl.setAttribute('cy',cy);cEl.setAttribute('rx','62');cEl.setAttribute('ry','34');
+      cEl.setAttribute('fill','#2ecc71');cEl.setAttribute('opacity','0.92');
+      var cT=document.createElementNS(ns,'text');
+      cT.setAttribute('x',cx);cT.setAttribute('y',cy-2);cT.setAttribute('text-anchor','middle');
+      cT.setAttribute('font-family','Inter');cT.setAttribute('font-size','12');cT.setAttribute('font-weight','800');cT.setAttribute('fill','#fff');
+      cT.textContent='Social';
+      var cT2=document.createElementNS(ns,'text');
+      cT2.setAttribute('x',cx);cT2.setAttribute('y',cy+14);cT2.setAttribute('text-anchor','middle');
+      cT2.setAttribute('font-family','Inter');cT2.setAttribute('font-size','12');cT2.setAttribute('font-weight','800');cT2.setAttribute('fill','#fff');
+      cT2.textContent='Productivity';
+      svg.appendChild(cEl);svg.appendChild(cT);svg.appendChild(cT2);
+
+      branches.forEach(function(b,i){
+        var rad=b.angle*Math.PI/180;
+        var bx=cx+b.r*Math.cos(rad);var by=cy+b.r*Math.sin(rad);
+        var bg=document.createElementNS(ns,'g');bg.style.cursor='pointer';
+        bg.style.animation='pm5FadeIn 0.4s ease '+(i*0.09+0.1)+'s both';
+        var ell=document.createElementNS(ns,'ellipse');
+        ell.setAttribute('cx',bx);ell.setAttribute('cy',by);ell.setAttribute('rx','52');ell.setAttribute('ry','24');
+        ell.setAttribute('fill',b.color);ell.setAttribute('opacity','0.88');
+        var txt=document.createElementNS(ns,'text');
+        txt.setAttribute('x',bx);txt.setAttribute('y',by+5);txt.setAttribute('text-anchor','middle');
+        txt.setAttribute('font-family','Inter');txt.setAttribute('font-size','10');txt.setAttribute('font-weight','600');txt.setAttribute('fill','#fff');
+        txt.textContent=b.label;
+        bg.appendChild(ell);bg.appendChild(txt);
+        bg.addEventListener('click',function(e){
+          var rect=container.getBoundingClientRect();
+          tooltip.style.left=(e.clientX-rect.left+14)+'px';tooltip.style.top=(e.clientY-rect.top+14)+'px';
+          while(tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+          var strong=document.createElement('strong');strong.textContent=b.label;strong.style.color=b.color;
+          strong.style.display='block';strong.style.marginBottom='0.2rem';strong.style.fontSize='0.82rem';
+          var span=document.createElement('span');span.textContent=b.desc;
+          tooltip.appendChild(strong);tooltip.appendChild(span);
+          tooltip.classList.add('visible');e.stopPropagation();
+        });
+        svg.appendChild(bg);
+      });
+      document.addEventListener('click',function(){tooltip.classList.remove('visible');});
+    })();
+
+    /* =========================================================
+       EXPANDABLE CARD GRID
+    ========================================================= */
+    var cardData=[
+      {label:'Social Energy',color:'#2ecc71',body:"Relationship quality determines whether your social environment is a net energy source or drain. Righteous companions (as-sahaba) energise; ghibah, hasad, and namimah environments drain. Regular social audits are essential."},
+      {label:'Social Focus',color:'#1abc9c',body:"Social focus means prioritising the relationships that matter most (family first, then neighbours, community, ummah) and protecting that priority from digital noise, cultural obligation inflation, and urgent-but-unimportant social demands."},
+      {label:'Social Time',color:'#27ae60',body:"Schedule relationship time blocks: weekly family dinners (phone-free), one-on-one spouse/child time, monthly parent check-ins, quarterly community contributions. Islam's built-in structures (Jumu'ah, Ramadan, Eid) are social productivity infrastructure."},
+      {label:'Ukhuwwah',color:'#2ecc71',body:"Brotherhood/sisterhood (ukhuwwah) is a productive asset. Strong communal bonds amplify collective output — every individual's gift multiplies through the community. Internal conflict and factionalism are among the most destructive forces to collective productivity."},
+      {label:'Nasiha',color:'#1abc9c',body:"Sincere advice (nasiha) is the operating system of the productive Muslim community. It requires courage, trust, and love — given privately, for the recipient's benefit, not as public criticism or social performance. Receiving nasiha graciously is equally important."},
+      {label:'Boundaries',color:'#27ae60',body:"Saying no to excessive cultural obligations, social media demands, and low-priority requests protects capacity for what truly matters. The Prophet balanced extraordinary community accessibility with sustainable personal boundaries. Ibda' bi nafsik — begin with yourself."},
+      {label:'Community Build',color:'#2ecc71',body:"Individual productivity without community investment misses the point of khalifah. Mentorship, community institutions (mosques, schools, businesses, charities), conflict resolution, and shared projects extend social productivity to ummah-level impact."},
+      {label:'Silat al-Rahm',color:'#1abc9c',body:"Maintaining kinship ties (silat al-rahm) is one of the greatest sources of Barakah — the Prophet promised it extends lifespan and increases provision. Regular contact with extended family is both a religious duty and a productivity investment."},
+      {label:'Digital Hygiene',color:'#27ae60',body:"Distinguish real relationships from digital noise: social media feeds, large group chats, and viral content are mostly noise. Set rules: no phone at meals, notification-off policies, reply windows. Protect the quality of in-person presence — full attention builds ukhuwwah."}
+    ];
+    var grid=document.getElementById('mmCardGrid5');
+    cardData.forEach(function(c){
+      var card=document.createElement('div');card.className='mm-card';
+      var head=document.createElement('div');head.className='mm-card-head';
+      var dot=document.createElement('div');dot.className='mm-dot';dot.style.background=c.color;
+      var strong=document.createElement('strong');strong.textContent=c.label;
+      var arrow=document.createElement('span');arrow.className='mm-arrow';arrow.textContent='\u2304';
+      head.appendChild(dot);head.appendChild(strong);head.appendChild(arrow);
+      var body=document.createElement('div');body.className='mm-card-body';body.textContent=c.body;
+      card.appendChild(head);card.appendChild(body);
+      card.addEventListener('click',function(){
+        this.classList.toggle('open');
+      });
+      grid.appendChild(card);
+    });
+
+    /* =========================================================
+       STEP-THROUGH 4: The Prophet's Social Investment Moments
+    ========================================================= */
+    var s4idx=0;
+    var prophetMoments=[
+      {label:'With Khadijah (ra)',color:'#2ecc71',desc:"When Jibril first brought the revelation and the Prophet was shaking with fear, he rushed to Khadijah. She was his first social investment — she believed him before anyone else. Their marriage was a model of mutual support, consultation, and equal dignity in relationship."},
+      {label:'With Abu Bakr (ra)',color:'#1abc9c',desc:"Abu Bakr was the Prophet's closest companion. Their friendship was built on decades of trust, shared purpose, and mutual nasiha. When the Prophet made Hijrah, it was Abu Bakr at his side. Deep, trusting friendship is a strategic social investment, not a luxury."},
+      {label:'With the Ansar',color:'#27ae60',desc:"On arriving in Madinah, the Prophet created the Muwakhat (Brotherhood) — pairing each Muhajir with an Ansari companion. This institutional act of social engineering transformed two communities into one ummah in months. Social productivity scales through deliberate community design."},
+      {label:'With children',color:'#2ecc71',desc:"The Prophet played with children, allowed his grandchildren to climb on him during prayer, and gave them gifts. His investment in the youngest generation was not a distraction from his mission — it was part of it. Children who feel loved become adults who love their community."},
+      {label:'With opponents',color:'#1abc9c',desc:"The Prophet prayed for the guidance of those who opposed him, maintained dignified conduct with critics, and treated enemies with mercy when they were in his power (as at the Conquest of Makkah). His social investments crossed the line of enmity — a model of radical generosity."}
+    ];
+    function pm5DrawProphet(active){
+      var container=document.getElementById('step4svg');
+      while(container.firstChild) container.removeChild(container.firstChild);
+      var svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 480 100');svg.setAttribute('width','100%');
+      container.appendChild(svg);
+      prophetMoments.forEach(function(m,i){
+        var x=10+i*94;
+        var g=document.createElementNS(ns,'g');
+        g.setAttribute('opacity',i<active?'1':'0.20');
+        var r=document.createElementNS(ns,'rect');
+        r.setAttribute('x',x);r.setAttribute('y','18');r.setAttribute('width','84');r.setAttribute('height','60');r.setAttribute('rx','9');
+        r.setAttribute('fill',m.color);r.setAttribute('opacity','0.88');
+        var t=document.createElementNS(ns,'text');
+        t.setAttribute('x',x+42);t.setAttribute('y','48');t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','Inter');t.setAttribute('font-size','9');t.setAttribute('font-weight','700');t.setAttribute('fill','#fff');
+        // split label on space
+        var parts=m.label.split(' ');
+        if(parts.length>=3){
+          var tspan1=document.createElementNS(ns,'tspan');tspan1.setAttribute('x',x+42);tspan1.setAttribute('dy','0');tspan1.textContent=parts[0]+' '+parts[1];
+          var tspan2=document.createElementNS(ns,'tspan');tspan2.setAttribute('x',x+42);tspan2.setAttribute('dy','13');tspan2.textContent=parts.slice(2).join(' ');
+          t.textContent='';t.appendChild(tspan1);t.appendChild(tspan2);
+          t.setAttribute('y','43');
+        } else {
+          t.textContent=m.label;
+        }
+        g.appendChild(r);g.appendChild(t);svg.appendChild(g);
+        if(i<prophetMoments.length-1){
+          var arr=document.createElementNS(ns,'text');
+          arr.setAttribute('x',x+93);arr.setAttribute('y','52');arr.setAttribute('text-anchor','middle');
+          arr.setAttribute('font-family','Inter');arr.setAttribute('font-size','14');arr.setAttribute('font-weight','700');
+          arr.setAttribute('fill',i<active-1?m.color:'rgba(46,204,113,0.25)');
+          arr.textContent='\u203a';svg.appendChild(arr);
+        }
+      });
+    }
+    function pm5RenderStep4(){
+      pm5DrawProphet(s4idx);
+      document.getElementById('step4ind').textContent=s4idx+' / '+prophetMoments.length;
+      document.getElementById('step4prev').disabled=(s4idx===0);
+      document.getElementById('step4next').disabled=(s4idx===prophetMoments.length);
+      document.getElementById('step4desc').textContent=s4idx>0
+        ? prophetMoments[s4idx-1].label+': '+prophetMoments[s4idx-1].desc
+        : "Click Next to explore key moments when the Prophet invested in social relationships.";
+    }
+    window.pm5Step4=function(dir){s4idx=Math.max(0,Math.min(prophetMoments.length,s4idx+dir));pm5RenderStep4();};
+    pm5RenderStep4();
+
+    /* =========================================================
+       EXERCISE 4 — REFLECTION JOURNAL
+    ========================================================= */
+    var reflectionPrompts=[
+      {key:'rfl1',prompt:'Who is the most important person in your life right now who is not receiving your best social energy? What specific step will you take this week?'},
+      {key:'rfl2',prompt:'List 2-3 digital channels that are consuming your social time without producing real relationships. What will you do about them?'},
+      {key:'rfl3',prompt:'Is there an unresolved conflict in your family or community? What would the Prophetic approach to reconciliation look like in that situation?'},
+      {key:'rfl4',prompt:'On a scale of 1-10, how well are you maintaining silat al-rahm (kinship ties)? What one habit would move that number up by 2 points?'}
+    ];
+    var savedReflections=JSON.parse(localStorage.getItem('vb-pm-ch5-reflections')||'{}');
+    var rfContainer=document.getElementById('reflectionFields');
+    reflectionPrompts.forEach(function(p){
+      var wrap=document.createElement('div');wrap.style.cssText='margin-bottom:1rem;';
+      var lbl=document.createElement('label');lbl.style.cssText='display:block;font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;';
+      lbl.textContent=p.prompt;
+      var ta=document.createElement('textarea');ta.id='rf-'+p.key;ta.rows=3;
+      ta.style.cssText='width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text);font-family:Inter,sans-serif;font-size:0.85rem;padding:0.5rem 0.7rem;resize:vertical;box-sizing:border-box;';
+      ta.placeholder='Write your reflection here...';
+      if(savedReflections[p.key]) ta.value=savedReflections[p.key];
+      wrap.appendChild(lbl);wrap.appendChild(ta);
+      rfContainer.appendChild(wrap);
+    });
+    window.pm5SaveReflection=function(){
+      reflectionPrompts.forEach(function(p){
+        var ta=document.getElementById('rf-'+p.key);
+        if(ta) savedReflections[p.key]=ta.value;
+      });
+      localStorage.setItem('vb-pm-ch5-reflections',JSON.stringify(savedReflections));
+      document.getElementById('reflection5fb').textContent='Reflections saved. JazakAllah khayran for taking time to reflect.';
+    };
+    window.pm5ClearReflection=function(){
+      reflectionPrompts.forEach(function(p){
+        var ta=document.getElementById('rf-'+p.key);
+        if(ta) ta.value='';
+      });
+      localStorage.removeItem('vb-pm-ch5-reflections');
+      savedReflections={};
+      document.getElementById('reflection5fb').textContent='Reflections cleared.';
+    };
+
+  })();
+  </script>
+</body>
+</html>

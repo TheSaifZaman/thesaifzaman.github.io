@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 4: Physical Productivity — The Productive Muslim Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --accent:#2ecc71; --accent-2:#27ae60; --accent-3:#1abc9c;
+      --border:rgba(46,204,113,0.18); --shadow:0 4px 24px rgba(46,204,113,0.10);
+      --shadow-lg:0 8px 40px rgba(46,204,113,0.18);
+    }
+    [data-theme="dark"] { --accent:#2ecc71; --accent-2:#27ae60; --accent-3:#1abc9c; --border:rgba(46,204,113,0.18); }
+
+    @keyframes pm4FadeIn { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes pm4Pop    { from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);} }
+
+    /* ── Step-through ── */
+    .step-through-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .step-through-box h4{margin:0 0 1rem;color:var(--accent);font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .step-svg-wrap{background:var(--surface-2);border-radius:var(--radius-sm);min-height:150px;display:flex;align-items:center;justify-content:center;padding:1rem;margin-bottom:1rem;overflow:hidden;}
+    .step-svg-wrap svg{max-width:100%;}
+    .step-desc{font-size:0.92rem;color:var(--text-muted);line-height:1.6;min-height:3.8rem;text-align:center;margin-bottom:1rem;padding:0 0.5rem;}
+    .step-controls{display:flex;align-items:center;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+    .step-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:0.45rem 1.1rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:opacity 0.15s;}
+    .step-btn:disabled{opacity:0.35;cursor:not-allowed;}
+    .step-indicator{font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+
+    /* ── Exercise box ── */
+    .exercise-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .exercise-box h4{margin:0 0 0.3rem;color:var(--accent-2);font-size:1rem;}
+    .exercise-box .ex-desc{font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;}
+    .ex-btn-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem;}
+    .ex-btn{padding:0.4rem 1rem;border-radius:var(--radius-sm);border:none;font-size:0.85rem;font-weight:600;cursor:pointer;}
+    .ex-btn-check{background:var(--accent);color:#fff;}
+    .ex-btn-reset{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);}
+    .ex-feedback{font-size:0.85rem;color:var(--accent);font-weight:600;margin-top:0.5rem;min-height:1.4em;}
+
+    /* ── Sliders ── */
+    .calc-sliders{display:flex;flex-direction:column;gap:1rem;}
+    .calc-row{display:flex;flex-direction:column;gap:0.3rem;}
+    .calc-row label{font-size:0.85rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;}
+    .calc-row label span{color:var(--accent);font-weight:700;}
+    .calc-row input[type=range]{width:100%;accent-color:var(--accent);}
+    .calc-result{margin-top:1.2rem;background:var(--surface-2);border-radius:var(--radius-sm);padding:1rem;text-align:center;}
+    .calc-result .score-val{font-size:2rem;font-weight:800;color:var(--accent);}
+    .calc-result .score-label{font-size:0.82rem;color:var(--text-muted);margin-top:0.2rem;}
+
+    /* ── Checklist ── */
+    .checklist-grid{display:flex;flex-direction:column;gap:0.6rem;}
+    .checklist-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.6rem 0.8rem;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid transparent;cursor:pointer;transition:all var(--transition);}
+    .checklist-item.checked{border-color:var(--accent);background:rgba(46,204,113,0.08);}
+    .checklist-item .check-icon{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;}
+    .checklist-item.checked .check-icon{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .checklist-item span{font-size:0.88rem;color:var(--text);line-height:1.4;}
+
+    /* ── Habit tracker ── */
+    .habit-tracker{display:grid;grid-template-columns:1fr auto;gap:0.5rem 0.75rem;align-items:center;margin-top:0.5rem;}
+    .habit-tracker .h-label{font-size:0.84rem;color:var(--text);}
+    .habit-dots{display:flex;gap:5px;}
+    .h-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:background 0.15s,border-color 0.15s;}
+    .h-dot.filled{background:var(--accent);border-color:var(--accent);}
+
+    /* ── Card grid ── */
+    .mm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-top:1rem;}
+    .mm-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;}
+    .mm-card:hover{border-color:var(--accent);box-shadow:var(--shadow);}
+    .mm-card.active{border-color:var(--accent);box-shadow:var(--shadow-lg);}
+    .mm-card-title{display:flex;align-items:center;gap:0.6rem;font-weight:700;font-size:0.9rem;color:var(--text);}
+    .mm-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .mm-card-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,opacity 0.3s;opacity:0;font-size:0.83rem;color:var(--text-muted);line-height:1.55;padding-top:0;}
+    .mm-card.active .mm-card-body{max-height:220px;opacity:1;padding-top:0.6rem;}
+
+    /* ── Pills ── */
+    .pill-row{display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;}
+    .pill{background:rgba(46,204,113,0.12);color:var(--accent-2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.85rem;font-size:0.78rem;font-weight:600;}
+
+    /* ── Mind-map ── */
+    .mindmap-container{width:100%;min-height:400px;position:relative;}
+    .mm-tooltip{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.65rem 0.95rem;font-size:0.8rem;color:var(--text);max-width:220px;box-shadow:var(--shadow-lg);pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:10;}
+    .mm-tooltip.visible{opacity:1;}
+  </style>
+</head>
+<body data-chapter="ch4">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">The Productive Muslim</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon" title="All Visual Books"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon" title="Book Index"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill chapter-progress-fill"></div></div>
+
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 4</div>
+      <h1>Physical Productivity</h1>
+      <p class="ch-meta">
+        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-dumbbell"></i> Physical Dimension</span>
+      </p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- ════════ TAB: LESSONS ════════ -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <!-- 4.1 Body as Amanah -->
+      <div class="lesson-section">
+        <h2>4.1 The Body as an Amanah</h2>
+        <p>The Prophet (peace be upon him) said: <em>"Your body has a right over you."</em> This is not merely a health tip — it is a theological declaration that the body is a trust (amanah) from Allah, and neglecting it is a form of ingratitude and negligence of one's khalifah mission.</p>
+        <p>Physical productivity is <strong>stewardship</strong>. The three pillars are: <strong>sleep management</strong>, <strong>nutrition management</strong>, and <strong>fitness management</strong>. Each interacts with the others: poor sleep degrades nutrition choices; poor nutrition undermines exercise capacity; insufficient exercise impairs sleep quality. They form a <em>triangle of physical vitality</em>.</p>
+        <p>Islamic tradition provides detailed guidance on all three. The Prophet's practices around food, sleep, and physical activity were intentional models of sustainable physical management that modern science continues to validate.</p>
+
+        <!-- SVG: Vitality Triangle -->
+        <div class="viz-container">
+          <svg viewBox="0 0 440 220" width="100%" height="220" aria-label="Physical Vitality Triangle">
+            <polygon points="220,18 28,198 412,198" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-linejoin="round"/>
+            <polygon points="220,38 60,185 380,185" fill="rgba(46,204,113,0.04)" stroke="rgba(46,204,113,0.12)" stroke-width="1"/>
+            <line x1="220" y1="110" x2="220" y2="38"  stroke="rgba(46,204,113,0.25)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="220" y1="110" x2="60"  y2="185" stroke="rgba(46,204,113,0.25)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="220" y1="110" x2="380" y2="185" stroke="rgba(46,204,113,0.25)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <circle cx="220" cy="110" r="38" fill="var(--accent)" opacity="0.92"/>
+            <text x="220" y="106" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">Physical</text>
+            <text x="220" y="121" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">Vitality</text>
+            <circle cx="220" cy="22" r="34" fill="var(--accent)" opacity="0.9"/>
+            <text x="220" y="18" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Sleep</text>
+            <text x="220" y="31" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Management</text>
+            <circle cx="28" cy="198" r="34" fill="var(--accent-3)" opacity="0.9"/>
+            <text x="28" y="194" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Nutrition</text>
+            <text x="28" y="207" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Management</text>
+            <circle cx="412" cy="198" r="34" fill="var(--accent-2)" opacity="0.9"/>
+            <text x="412" y="194" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Fitness</text>
+            <text x="412" y="207" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.85)">Management</text>
+            <text x="220" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Body = Amanah (Divine Trust)</text>
+          </svg>
+        </div>
+
+        <div class="pill-row">
+          <span class="pill">Amanah</span><span class="pill">Khalifah</span><span class="pill">Three Pillars</span><span class="pill">Stewardship</span>
+        </div>
+      </div>
+
+      <!-- 4.2 Sleep Management -->
+      <div class="lesson-section">
+        <h2>4.2 Sleep Management: The Prophetic Solution</h2>
+        <p>Sleep is the single most impactful variable in physical productivity — yet it is the one most routinely sacrificed in hustle culture. When sleep-deprived, every cognitive function deteriorates: decision-making, creativity, emotional regulation, and memory consolidation all drop significantly.</p>
+        <p>The Prophet's approach was multi-dimensional: he slept after Isha (early to bed), rose for tahajjud in the last third of the night, and took a midday <strong>qailula</strong> — a pattern that maximises both deep sleep and the productive morning window.</p>
+        <p>Mohammed Faris identifies three categories of sleep solutions: <strong>spiritual</strong> (sleeping with wudu, reciting the sleep adhkar, making istighfar), <strong>physical</strong> (consistent schedule, cool dark room, no screens before sleep), and <strong>social</strong> (communicating boundaries to household). This triple-solution approach combines prophetic practice with modern sleep science.</p>
+        <p>The <strong>qailula</strong> deserves special attention. A 10–20 minute nap in the early afternoon significantly restores cognitive alertness and emotional resilience, delivering a measurable second productivity peak that non-nappers cannot access.</p>
+
+        <!-- SVG: Sleep Architecture -->
+        <div class="viz-container">
+          <svg viewBox="0 0 480 160" width="100%" height="160" aria-label="Prophetic Sleep Architecture">
+            <rect x="0" y="0" width="480" height="160" rx="10" fill="var(--surface-2)"/>
+            <rect x="20" y="20" width="180" height="60" rx="8" fill="var(--accent)" opacity="0.88"/>
+            <text x="110" y="45" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">Night Sleep</text>
+            <text x="110" y="62" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">Isha to Fajr</text>
+            <polygon points="210,50 230,44 230,56" fill="var(--border)"/>
+            <line x1="200" y1="50" x2="230" y2="50" stroke="var(--border)" stroke-width="2"/>
+            <rect x="235" y="20" width="100" height="60" rx="8" fill="var(--accent-3)" opacity="0.88"/>
+            <text x="285" y="44" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Tahajjud</text>
+            <text x="285" y="58" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.85)">Last third of night</text>
+            <polygon points="345,50 365,44 365,56" fill="var(--border)"/>
+            <line x1="335" y1="50" x2="365" y2="50" stroke="var(--border)" stroke-width="2"/>
+            <rect x="370" y="20" width="90" height="60" rx="8" fill="var(--accent-2)" opacity="0.88"/>
+            <text x="415" y="44" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Qailula</text>
+            <text x="415" y="58" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.85)">10-20 min nap</text>
+            <rect x="20"  y="100" width="135" height="46" rx="6" fill="rgba(46,204,113,0.12)" stroke="var(--border)" stroke-width="1"/>
+            <text x="87"  y="120" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">Spiritual Layer</text>
+            <text x="87"  y="134" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Wudu, Adhkar, Istighfar</text>
+            <rect x="170" y="100" width="135" height="46" rx="6" fill="rgba(46,204,113,0.12)" stroke="var(--border)" stroke-width="1"/>
+            <text x="237" y="120" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">Physical Layer</text>
+            <text x="237" y="134" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Schedule, Dark room, Screens</text>
+            <rect x="320" y="100" width="140" height="46" rx="6" fill="rgba(46,204,113,0.12)" stroke="var(--border)" stroke-width="1"/>
+            <text x="390" y="120" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">Social Layer</text>
+            <text x="390" y="134" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Household boundaries</text>
+          </svg>
+        </div>
+
+        <!-- Step-through: Sleep layers -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-moon" style="margin-right:0.4rem;"></i> Step-Through: The Three Layers of Sleep Solutions</h4>
+          <div class="step-svg-wrap" id="step3svg"></div>
+          <div class="step-desc" id="step3desc">Click "Next" to explore each layer of the Prophetic sleep solution.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step3prev" onclick="pm4Step3(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step3ind">0 / 3</span>
+            <button class="step-btn" id="step3next" onclick="pm4Step3(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.3 Nutrition -->
+      <div class="lesson-section">
+        <h2>4.3 Nutrition Management: Prophetic Eating Principles</h2>
+        <p>The Prophet's guidance on food is extensive and precise: eat when hungry and stop before full; eat one-third food, one-third water, one-third air; begin with bismillah; eat together rather than alone; avoid excess. These are metabolically sound principles that modern nutritional science confirms.</p>
+        <p>The Muslim's dietary framework (<strong>halal</strong> and <strong>tayyib</strong> — permissible and wholesome) provides an additional filter that secular nutrition lacks. Tayyib foods align with what nutritional science recommends for optimal brain and body performance. Avoiding alcohol, tobacco, and recreational drugs removes substances that directly impair cognitive function.</p>
+        <p>Fasting — both Ramadan and the voluntary <strong>Monday/Thursday sunnah fasts</strong> — has documented benefits for metabolic health, cognitive clarity, and emotional regulation. Intermittent fasting research shows that periods without food increase neuroplasticity, reduce inflammation, and improve insulin sensitivity.</p>
+
+        <!-- SVG: One-Third Plate -->
+        <div class="viz-container">
+          <svg viewBox="0 0 360 185" width="100%" height="185" aria-label="The One-Third Rule plate diagram">
+            <circle cx="120" cy="92" r="78" fill="var(--surface-2)" stroke="var(--border)" stroke-width="2"/>
+            <path d="M120,92 L120,17 A75,75 0 0,1 184.9,129.5 Z" fill="var(--accent)" opacity="0.85"/>
+            <text x="148" y="72" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="#fff">Food</text>
+            <text x="148" y="85" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.9)">1/3</text>
+            <path d="M120,92 L184.9,129.5 A75,75 0 0,1 55.1,129.5 Z" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="120" y="142" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="#fff">Water 1/3</text>
+            <path d="M120,92 L55.1,129.5 A75,75 0 0,1 120,17 Z" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="80"  y="78" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="#fff">Air</text>
+            <text x="80"  y="91" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.9)">1/3</text>
+            <line x1="210" y1="50"  x2="258" y2="50"  stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="210" y1="110" x2="258" y2="110" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="210" y1="162" x2="258" y2="162" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="263" y="54"  font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Food - Nutritious tayyib</text>
+            <text x="263" y="114" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Water - Hydration</text>
+            <text x="263" y="166" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Air - Breathing space</text>
+          </svg>
+        </div>
+
+        <!-- Step-through: Nutrition Principles -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-utensils" style="margin-right:0.4rem;"></i> Step-Through: Prophetic Nutrition Principles</h4>
+          <div class="step-svg-wrap" id="step1svg"></div>
+          <div class="step-desc" id="step1desc">Click "Next" to explore each prophetic nutrition principle.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step1prev" onclick="pm4Step1(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step1ind">0 / 5</span>
+            <button class="step-btn" id="step1next" onclick="pm4Step1(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Exercise: Fasting benefits mini-quiz -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-star-and-crescent" style="margin-right:0.4rem;"></i> Exercise: Fasting Benefits Match</h4>
+          <p class="ex-desc">Select the correct benefit for each fasting effect described. Three questions.</p>
+          <div id="fastingQuizWrap"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm4CheckFasting()">Check Answers</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm4ResetFasting()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="fastingFeedback"></div>
+        </div>
+      </div>
+
+      <!-- 4.4 Fitness -->
+      <div class="lesson-section">
+        <h2>4.4 Fitness Management: Moving Like the Prophet</h2>
+        <p>The Prophet was physically active throughout his life: he walked significant distances daily, participated in races and swimming, engaged in physical labour, and encouraged exercise among his companions. Physical movement was integrated into his spiritual and professional life.</p>
+        <p>Regular aerobic exercise has direct cognitive benefits: it increases <strong>BDNF</strong> (brain-derived neurotrophic factor), promoting neuroplasticity and memory consolidation; it reduces cortisol (the stress hormone) that degrades focus; and it improves sleep quality. A thirty-minute walk delivers more cognitive benefit than an equivalent period of sitting at a desk.</p>
+        <p>The key is <strong>intentionality</strong> — connecting physical activity to niyyah: <em>"I am maintaining Allah's trust in this body so I can serve His creation better."</em> Walking to the masjid counts. Taking stairs counts. Playing with children counts. This niyyah elevates routine physical activity into ibadah.</p>
+
+        <!-- SVG: Exercise benefit cascade -->
+        <div class="viz-container">
+          <svg viewBox="0 0 460 140" width="100%" height="140" aria-label="Exercise Benefit Cascade">
+            <rect x="0" y="0" width="460" height="140" rx="10" fill="var(--surface-2)"/>
+            <rect x="15" y="50" width="80" height="40" rx="8" fill="var(--accent)" opacity="0.9"/>
+            <text x="55" y="67" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Exercise</text>
+            <text x="55" y="80" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.88)">30 min/day</text>
+            <line x1="95"  y1="70" x2="128" y2="70" stroke="var(--border)" stroke-width="1.8"/>
+            <polygon points="126,65 136,70 126,75" fill="var(--accent)" opacity="0.6"/>
+            <rect x="136" y="50" width="80" height="40" rx="8" fill="var(--accent)" opacity="0.75"/>
+            <text x="176" y="67" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Up BDNF</text>
+            <text x="176" y="80" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.88)">Neuroplasticity</text>
+            <line x1="216" y1="70" x2="249" y2="70" stroke="var(--border)" stroke-width="1.8"/>
+            <polygon points="247,65 257,70 247,75" fill="var(--accent)" opacity="0.6"/>
+            <rect x="257" y="50" width="80" height="40" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="297" y="67" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Down Cortisol</text>
+            <text x="297" y="80" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.88)">Stress relief</text>
+            <line x1="337" y1="70" x2="370" y2="70" stroke="var(--border)" stroke-width="1.8"/>
+            <polygon points="368,65 378,70 368,75" fill="var(--accent)" opacity="0.6"/>
+            <rect x="378" y="50" width="75" height="40" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="415" y="67" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Up Sleep</text>
+            <text x="415" y="80" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.88)">Quality</text>
+            <text x="230" y="122" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Each benefit reinforces the others — all feed back into sustained productivity.</text>
+          </svg>
+        </div>
+
+        <!-- Calculator -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-heartbeat" style="margin-right:0.4rem;"></i> Exercise: Your Physical Productivity Score</h4>
+          <p class="ex-desc">Rate your current physical habits. See how they affect your productivity baseline.</p>
+          <div class="calc-sliders">
+            <div class="calc-row">
+              <label>Sleep Quality (consistency and duration) <span id="sleepVal">6</span>/10</label>
+              <input type="range" min="1" max="10" value="6" id="sleepSlider" oninput="pm4Calc()">
+            </div>
+            <div class="calc-row">
+              <label>Nutrition Quality (halal/tayyib, no overeating) <span id="nutrVal">6</span>/10</label>
+              <input type="range" min="1" max="10" value="6" id="nutrSlider" oninput="pm4Calc()">
+            </div>
+            <div class="calc-row">
+              <label>Weekly Exercise (sessions x 10) <span id="fitVal">3</span>/10</label>
+              <input type="range" min="1" max="10" value="3" id="fitSlider" oninput="pm4Calc()">
+            </div>
+          </div>
+          <div class="calc-result">
+            <div class="score-val" id="physScore">108</div>
+            <div class="score-label">Physical Energy Score (max 1000)</div>
+            <div id="physComment" style="font-size:0.82rem;color:var(--text-muted);margin-top:0.4rem;">Identify your weakest lever and focus there first.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.5 Physical Environment -->
+      <div class="lesson-section">
+        <h2>4.5 Physical Focus: The Environment of Productivity</h2>
+        <p>Physical productivity is not only about the body's internal state — it is also about the external environment in which you work. A cluttered, noisy, poorly lit workspace degrades cognitive performance regardless of how well you slept or ate. Organising your workspace is a form of stewarding the amanah of your mental environment.</p>
+        <p>Islam emphasises cleanliness (<strong>taharah</strong>) not just as ritual purity but as a holistic life principle. The Prophet said: <em>"Cleanliness is half of faith."</em> A clean, organised workspace reduces cognitive load, reduces decision fatigue, and signals to the brain that it is time to work.</p>
+        <p>The productive Muslim also manages their <strong>digital environment</strong> with the same intentionality. Notification-generating apps and social media algorithms designed to hijack attention are forms of digital clutter that degrade focus. Managing these is not a luxury — it is a required element of modern physical productivity.</p>
+
+        <!-- SVG: Taharah environment comparison -->
+        <div class="viz-container">
+          <svg viewBox="0 0 460 155" width="100%" height="155" aria-label="Taharah Applied to Environment">
+            <rect x="0" y="0" width="460" height="155" rx="10" fill="var(--surface-2)"/>
+            <rect x="15" y="15" width="195" height="90" rx="8" fill="rgba(231,76,60,0.07)" stroke="rgba(231,76,60,0.3)" stroke-width="1.5"/>
+            <text x="112" y="34" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="#e74c3c">Cluttered Environment</text>
+            <rect x="30"  y="42" width="38" height="10" rx="3" fill="rgba(231,76,60,0.22)"/>
+            <rect x="75"  y="52" width="26" height="10" rx="3" fill="rgba(231,76,60,0.18)"/>
+            <rect x="110" y="44" width="50" height="8"  rx="3" fill="rgba(231,76,60,0.25)"/>
+            <rect x="50"  y="60" width="30" height="10" rx="3" fill="rgba(231,76,60,0.20)"/>
+            <rect x="140" y="58" width="40" height="8"  rx="3" fill="rgba(231,76,60,0.16)"/>
+            <rect x="30"  y="74" width="60" height="8"  rx="3" fill="rgba(231,76,60,0.18)"/>
+            <rect x="100" y="70" width="80" height="8"  rx="3" fill="rgba(231,76,60,0.14)"/>
+            <text x="112" y="118" text-anchor="middle" font-family="Inter" font-size="8.5" fill="#e74c3c">High cognitive load - Decision fatigue</text>
+            <text x="230" y="68" text-anchor="middle" font-family="Inter" font-size="13" font-weight="800" fill="var(--text-muted)">vs</text>
+            <rect x="250" y="15" width="195" height="90" rx="8" fill="rgba(46,204,113,0.06)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="347" y="34" text-anchor="middle" font-family="Inter" font-size="9.5" font-weight="700" fill="var(--accent)">Taharah Environment</text>
+            <rect x="290" y="48" width="110" height="8" rx="4" fill="var(--accent)" opacity="0.25"/>
+            <rect x="290" y="62" width="80"  height="8" rx="4" fill="var(--accent)" opacity="0.18"/>
+            <rect x="290" y="76" width="60"  height="8" rx="4" fill="var(--accent)" opacity="0.14"/>
+            <text x="347" y="118" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--accent)">Low cognitive load - Deep focus</text>
+            <text x="230" y="148" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">"Cleanliness is half of faith" - applies to physical and digital workspace</text>
+          </svg>
+        </div>
+
+        <div class="pill-row">
+          <span class="pill">Taharah</span><span class="pill">Cognitive Load</span><span class="pill">Digital Detox</span><span class="pill">Workspace</span>
+        </div>
+      </div>
+
+      <!-- 4.6 Circadian Alignment -->
+      <div class="lesson-section">
+        <h2>4.6 Physical Time: Circadian Alignment</h2>
+        <p>The final dimension of physical productivity is aligning your work with your body's natural energy cycles — the <strong>circadian rhythm</strong>. The salah schedule aligns almost perfectly with the human body's natural energy peaks and troughs.</p>
+        <p>Fajr coincides with the cortisol peak that naturally wakes and energises the body. Dhuhr coincides with the post-noon alertness dip (the natural time for qailula). Asr coincides with the late-afternoon cognitive peak. Maghrib marks the transition to lower-energy, reflective activity. Isha closes the day, inviting rest and muhasabah.</p>
+        <p>The productive Muslim who structures their most demanding cognitive work in the <strong>Fajr-to-Dhuhr window</strong> is following both the Sunnah and the science of circadian productivity simultaneously. This double validation — prophetic and scientific — gives Muslims enormous confidence that the daily salah structure is the optimal human productivity schedule.</p>
+
+        <!-- SVG: Circadian energy curve -->
+        <div class="viz-container">
+          <svg viewBox="0 0 500 165" width="100%" height="165" aria-label="Circadian Energy Curve aligned to Salah">
+            <rect x="0" y="0" width="500" height="165" rx="10" fill="var(--surface-2)"/>
+            <line x1="40" y1="130" x2="470" y2="130" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="40" y1="20"  x2="40"  y2="130" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="12" y="80" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)" transform="rotate(-90,12,80)">Energy</text>
+            <path d="M40,110 C80,110 100,35 140,30 C175,26 200,70 220,95 C240,118 260,118 280,105 C305,88 320,55 360,50 C395,45 420,90 460,100 L460,130 L40,130 Z" fill="rgba(46,204,113,0.10)" stroke="none"/>
+            <path d="M40,110 C80,110 100,35 140,30 C175,26 200,70 220,95 C240,118 260,118 280,105 C305,88 320,55 360,50 C395,45 420,90 460,100" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="140" y1="30"  x2="140" y2="130" stroke="var(--accent)"   stroke-width="1.2" stroke-dasharray="3,3"/>
+            <text x="140" y="22"   text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent)">Fajr</text>
+            <line x1="220" y1="95"  x2="220" y2="130" stroke="var(--accent-3)" stroke-width="1.2" stroke-dasharray="3,3"/>
+            <text x="220" y="144" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent-3)">Dhuhr</text>
+            <line x1="360" y1="50"  x2="360" y2="130" stroke="var(--accent-2)" stroke-width="1.2" stroke-dasharray="3,3"/>
+            <text x="360" y="22"   text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent-2)">Asr</text>
+            <line x1="420" y1="90"  x2="420" y2="130" stroke="var(--accent)"   stroke-width="1.2" stroke-dasharray="3,3"/>
+            <text x="420" y="144" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent)">Maghrib</text>
+            <line x1="458" y1="100" x2="458" y2="130" stroke="var(--accent-3)" stroke-width="1.2" stroke-dasharray="3,3"/>
+            <text x="458" y="22"   text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="var(--accent-3)">Isha</text>
+            <rect x="43" y="32" width="82" height="16" rx="4" fill="var(--accent)" opacity="0.12"/>
+            <text x="84" y="44" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)" font-weight="600">Peak window</text>
+          </svg>
+        </div>
+
+        <!-- Step-through: Salah circadian -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-sun" style="margin-right:0.4rem;"></i> Step-Through: Salah Schedule as Circadian Productivity Map</h4>
+          <div class="step-svg-wrap" id="step2svg"></div>
+          <div class="step-desc" id="step2desc">Click "Next" to explore how each prayer time aligns with your body's energy cycles.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step2prev" onclick="pm4Step2(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step2ind">0 / 5</span>
+            <button class="step-btn" id="step2next" onclick="pm4Step2(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-clipboard-check" style="margin-right:0.4rem;"></i> Self-Assessment: Physical Productivity Habits</h4>
+          <p class="ex-desc">Tap each habit to toggle. Progress saved automatically.</p>
+          <div class="checklist-grid" id="pm4checklist"></div>
+          <div id="pm4checkSave" style="margin-top:0.75rem;font-size:0.8rem;color:var(--accent);font-weight:600;"></div>
+        </div>
+
+        <!-- 7-day habit tracker -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-calendar-week" style="margin-right:0.4rem;"></i> Exercise: 7-Day Habit Tracker</h4>
+          <p class="ex-desc">Tap dots to mark each habit as done for today and the past 6 days. Saved locally.</p>
+          <div class="habit-tracker" id="pm4habitTracker"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm4ResetHabits()">Reset Week</button>
+          </div>
+          <div class="ex-feedback" id="habitFeedback"></div>
+        </div>
+      </div>
+
+      <!-- 4.7 Sunnah Morning Routine -->
+      <div class="lesson-section">
+        <h2>4.7 The Sunnah Morning Routine: A Physical Productivity Blueprint</h2>
+        <p>One of the most underappreciated aspects of physical productivity in Islamic tradition is the <strong>morning routine</strong> that the Prophet modelled. This is not simply a spiritual sequence — it is a precisely sequenced physical activation protocol that prepares the body and mind for peak performance. Each action in the Sunnah morning routine has a physiological correlate that modern science now understands.</p>
+        <p>The sequence begins with waking for Fajr — timed by design at the cortisol peak. Wudu (ablution) involves cold water contact with the face, forearms, and head, which activates the sympathetic nervous system and promotes alertness — a physiological equivalent to the "cold exposure" protocols now popular in performance science. The act of standing for prayer activates postural muscles and begins circulating blood; the physical movements of ruku and sujood gently engage the core, neck, and lower back.</p>
+        <p>After Fajr, the Prophet often remained in the masjid in dhikr until the sun had fully risen — a practice that coincidentally captures the most potent early-morning sunlight exposure window, which regulates the circadian clock, suppresses residual melatonin, and further boosts cortisol. The productive Muslim who follows this morning sequence is, knowingly or not, executing a scientifically validated physical priming protocol every single day.</p>
+        <p>The Sunnah morning routine also includes miswak (natural tooth-brushing — an oral hygiene practice with documented antimicrobial properties), and the practice of not rushing breakfast but pausing deliberately before eating. These small physical practices compound over time into a body that is consistently well-primed, alert, and ready for sustained cognitive output.</p>
+
+        <!-- SVG: Sunnah morning sequence timeline -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 170" width="100%" height="170" aria-label="Sunnah Morning Sequence">
+            <rect x="0" y="0" width="520" height="170" rx="10" fill="var(--surface-2)"/>
+            <!-- timeline rail -->
+            <line x1="30" y1="85" x2="490" y2="85" stroke="var(--border)" stroke-width="2"/>
+            <!-- step items -->
+            <!-- Fajr wakeup -->
+            <circle cx="55"  cy="85" r="18" fill="var(--accent)"   opacity="0.9"/>
+            <text x="55"  y="89" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">Fajr</text>
+            <text x="55"  y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Cortisol peak</text>
+            <!-- Wudu -->
+            <circle cx="135" cy="85" r="18" fill="var(--accent-3)" opacity="0.9"/>
+            <text x="135" y="89" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">Wudu</text>
+            <text x="135" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Cold activation</text>
+            <!-- Salah -->
+            <circle cx="215" cy="85" r="18" fill="var(--accent-2)" opacity="0.9"/>
+            <text x="215" y="89" text-anchor="middle" font-family="Inter" font-size="8.5" font-weight="700" fill="#fff">Salah</text>
+            <text x="215" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Body activation</text>
+            <!-- Dhikr + Sunlight -->
+            <circle cx="305" cy="85" r="18" fill="var(--accent)"   opacity="0.9"/>
+            <text x="305" y="82" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Dhikr +</text>
+            <text x="305" y="92" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Sunlight</text>
+            <text x="305" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Clock reset</text>
+            <!-- Miswak + Breakfast -->
+            <circle cx="385" cy="85" r="18" fill="var(--accent-3)" opacity="0.9"/>
+            <text x="385" y="82" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Miswak</text>
+            <text x="385" y="92" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Breakfast</text>
+            <text x="385" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Tayyib fuel</text>
+            <!-- Deep Work window -->
+            <circle cx="462" cy="85" r="18" fill="var(--accent-2)" opacity="0.9"/>
+            <text x="462" y="82" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Deep</text>
+            <text x="462" y="92" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#fff">Work</text>
+            <text x="462" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Peak window</text>
+            <!-- top label -->
+            <text x="260" y="22" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Sunnah Morning Sequence — Physical Priming Protocol</text>
+            <!-- bracket -->
+            <line x1="37" y1="140" x2="480" y2="140" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+            <text x="260" y="155" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Each step has a physiological correlate validated by modern science</text>
+          </svg>
+        </div>
+
+        <!-- Step-through: Sunnah morning routine deep dive -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-sunrise" style="margin-right:0.4rem;"></i> Step-Through: Sunnah Morning Routine — Science Behind Each Step</h4>
+          <div class="step-svg-wrap" id="step4svg"></div>
+          <div class="step-desc" id="step4desc">Click "Next" to explore the science behind each step of the Sunnah morning routine.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step4prev" onclick="pm4Step4(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step4ind">0 / 5</span>
+            <button class="step-btn" id="step4next" onclick="pm4Step4(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.8 Building the Physical Productivity System -->
+      <div class="lesson-section">
+        <h2>4.8 Building Your Physical Productivity System</h2>
+        <p>Understanding the principles of physical productivity is one thing; building a <strong>personal physical productivity system</strong> is another. The productive Muslim does not leave physical health to chance or willpower — they design systems that make the right physical behaviours the default, not the exception.</p>
+        <p>The system-building approach means: sleeping and waking at fixed times regardless of the day of the week (not just on work days), preparing tayyib food in advance rather than defaulting to processed options when tired, having an exercise schedule that is non-negotiable in the same way that Salah is non-negotiable, and designing a workspace that is consistently clean and ready for deep work without requiring daily re-organisation.</p>
+        <p>The Islamic concept of <strong>istiqamah</strong> (steadfastness) is directly applicable here. The Prophet said: "The most beloved deeds to Allah are those done consistently, even if small." A ten-minute daily walk done consistently for a year will produce far more physical and cognitive benefit than occasional intense bursts of exercise interspersed with long inactive periods. The productive Muslim physical system is built on consistent, sustainable actions — not heroic but short-lived efforts.</p>
+        <p>The final component is <strong>accountability</strong>. The muhasabah (daily self-review) practice that closes the productive Muslim's day should include a brief physical dimension: Did I sleep enough? Did I eat in moderation? Did I move? Did I take qailula? These simple questions, reviewed nightly, create the feedback loop that sustains physical productivity over the long term. Without muhasabah, good intentions gradually decay into poor habits — with it, they compound into a body that reliably produces its best work.</p>
+
+        <!-- SVG: Istiqamah compound effect -->
+        <div class="viz-container">
+          <svg viewBox="0 0 460 160" width="100%" height="160" aria-label="Istiqamah Compound Effect">
+            <rect x="0" y="0" width="460" height="160" rx="10" fill="var(--surface-2)"/>
+            <!-- axes -->
+            <line x1="40" y1="130" x2="430" y2="130" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="40" y1="20"  x2="40"  y2="130" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="235" y="148" text-anchor="middle" font-family="Inter" font-size="8.5" fill="var(--text-muted)">Time (months)</text>
+            <text x="12" y="78" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)" transform="rotate(-90,12,78)">Benefit</text>
+            <!-- heroic burst curve — rises sharply then crashes -->
+            <path d="M40,128 C80,128 100,50 130,35 C155,22 165,40 190,90 C210,125 240,128 430,128"
+                  fill="none" stroke="rgba(231,76,60,0.6)" stroke-width="2" stroke-dasharray="5,3"/>
+            <!-- consistent small curve — slow compound growth -->
+            <path d="M40,128 C80,125 130,118 180,105 C230,90 290,70 360,45 C400,30 420,22 430,18"
+                  fill="none" stroke="var(--accent)" stroke-width="2.2"/>
+            <!-- fill under consistent -->
+            <path d="M40,128 C80,125 130,118 180,105 C230,90 290,70 360,45 C400,30 420,22 430,18 L430,130 L40,130 Z"
+                  fill="rgba(46,204,113,0.07)" stroke="none"/>
+            <!-- legend -->
+            <line x1="50" y1="22" x2="80" y2="22" stroke="var(--accent)" stroke-width="2"/>
+            <text x="85" y="26" font-family="Inter" font-size="8.5" fill="var(--accent)" font-weight="600">Consistent small habits (istiqamah)</text>
+            <line x1="50" y1="38" x2="80" y2="38" stroke="rgba(231,76,60,0.7)" stroke-width="2" stroke-dasharray="5,3"/>
+            <text x="85" y="42" font-family="Inter" font-size="8.5" fill="rgba(231,76,60,0.8)" font-weight="600">Heroic bursts (unsustainable)</text>
+          </svg>
+        </div>
+
+        <!-- Exercise: Design your physical system -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-cogs" style="margin-right:0.4rem;"></i> Exercise: Design Your Physical System</h4>
+          <p class="ex-desc">For each pillar, set a simple, consistent daily commitment. Write it below — small and sustainable wins over ambitious and abandoned.</p>
+          <div id="physSystemWrap"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm4SaveSystem()">Save Commitments</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm4ClearSystem()">Clear</button>
+          </div>
+          <div class="ex-feedback" id="systemFeedback"></div>
+        </div>
+
+        <div class="pill-row">
+          <span class="pill">Istiqamah</span><span class="pill">Muhasabah</span><span class="pill">System Design</span><span class="pill">Consistency</span>
+        </div>
+
+        <div style="margin:1.25rem 0;background:rgba(46,204,113,0.07);border-left:3px solid var(--accent-2);padding:1rem 1.2rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+          <strong style="color:var(--accent-2);font-size:0.9rem;">Chapter Reflection</strong>
+          <p style="font-size:0.86rem;color:var(--text-muted);margin:0.4rem 0 0;">The Prophet (peace be upon him) said: <em>"The strong believer is better and more beloved to Allah than the weak believer, while there is good in both."</em> Physical strength — built through consistent sleep, nutritious eating, and regular exercise — is not a worldly indulgence. It is a form of strength in service of the Deen. The productive Muslim who tends to their body is not neglecting the hereafter; they are building the capacity to do more for it.</p>
+        </div>
+      </div>
+
+    </div><!-- /tab-lessons -->
+
+    <!-- ════════ TAB: SUMMARY ════════ -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 4 Summary</h3>
+        <ul>
+          <li><strong>Body as Amanah:</strong> "Your body has a right over you" — physical care is stewardship of a divine trust, not vanity.</li>
+          <li><strong>Three pillars:</strong> Sleep management, nutrition management, and fitness management form an interconnected triangle of physical vitality.</li>
+          <li><strong>Sleep solutions</strong> are spiritual (wudu, sleep adhkar), physical (consistent schedule, dark room), and social (protecting boundaries) — a triple-layer approach.</li>
+          <li><strong>Qailula</strong> (10-20 min midday nap) is a Sunnah practice that delivers a measurable second afternoon productivity peak.</li>
+          <li><strong>Prophetic nutrition:</strong> One-third food, one-third water, one-third air; eat when hungry; stop before full; bismillah mindfulness before eating.</li>
+          <li><strong>Tayyib food</strong> (wholesome, natural, minimally processed) aligns with modern nutritional science for optimal brain performance.</li>
+          <li><strong>Sunnah fasting</strong> (Monday/Thursday, Ramadan) delivers metabolic, cognitive, and emotional benefits confirmed by intermittent fasting research.</li>
+          <li><strong>Exercise:</strong> Regular aerobic activity increases brain BDNF, reduces cortisol, improves sleep — all with direct productivity benefits.</li>
+          <li><strong>Physical environment:</strong> Cleanliness and organisation reduce cognitive load — the Prophet's emphasis on taharah extends to workspace management.</li>
+          <li><strong>Circadian alignment:</strong> The salah schedule maps almost perfectly to the human body's natural energy peaks and troughs.</li>
+          <li><strong>Peak cognitive window:</strong> Fajr to Dhuhr is the body's primary high-performance period — protect it for your most demanding work.</li>
+          <li><strong>Intentionality:</strong> Connecting physical habits to niyyah ("maintaining Allah's trust") transforms routine health practices into ibadah.</li>
+          <li><strong>Sunnah morning routine:</strong> Fajr, wudu (cold activation), salah (body priming), sunlight/dhikr (circadian reset), and tayyib breakfast form a complete physiological performance protocol.</li>
+          <li><strong>Istiqamah:</strong> Small, consistent habits compound massively over time. "The most beloved deeds to Allah are those done consistently, even if small."</li>
+          <li><strong>Muhasabah review:</strong> A nightly self-review including a physical dimension (sleep, food, exercise, qailula) creates the feedback loop that sustains physical productivity long-term.</li>
+        </ul>
+
+        <div class="summary-callout" style="margin:1.25rem 0;background:rgba(46,204,113,0.07);border-left:3px solid var(--accent);padding:1rem 1.2rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+          <strong style="color:var(--accent);font-size:0.9rem;">The Core Insight</strong>
+          <p style="font-size:0.87rem;color:var(--text-muted);margin:0.4rem 0 0;">Physical productivity in Islam is not a separate discipline bolted onto spiritual life — it is the physical expression of the same theology. The body is an amanah. Its care is ibadah. Its mismanagement is negligence of a trust. When the productive Muslim sleeps on time, eats in moderation, moves daily, cleans their workspace, and aligns their work with the salah schedule, they are not merely being "healthy" — they are fulfilling their responsibility to Allah for the body He gave them, so they can fulfil their responsibility as His khalifah on earth.</p>
+        </div>
+
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 1rem;font-size:0.88rem;">
+            <dt style="font-weight:700;color:var(--text);">Qailula</dt><dd style="color:var(--text-muted);margin:0;">Midday nap — a Prophetic practice with proven cognitive restoration benefits.</dd>
+            <dt style="font-weight:700;color:var(--text);">Tayyib</dt><dd style="color:var(--text-muted);margin:0;">Wholesome/good — the quality standard for food beyond mere permissibility (halal).</dd>
+            <dt style="font-weight:700;color:var(--text);">Taharah</dt><dd style="color:var(--text-muted);margin:0;">Ritual and physical cleanliness — "half of faith" — applicable to workspace and digital environment.</dd>
+            <dt style="font-weight:700;color:var(--text);">Circadian Rhythm</dt><dd style="color:var(--text-muted);margin:0;">The body's 24-hour energy cycle — the salah schedule aligns with its natural peaks.</dd>
+            <dt style="font-weight:700;color:var(--text);">BDNF</dt><dd style="color:var(--text-muted);margin:0;">Brain-derived neurotrophic factor — increased by exercise, promotes memory and neuroplasticity.</dd>
+            <dt style="font-weight:700;color:var(--text);">Amanah</dt><dd style="color:var(--text-muted);margin:0;">Divine trust — the body is an amanah, requiring intentional stewardship.</dd>
+            <dt style="font-weight:700;color:var(--text);">Istiqamah</dt><dd style="color:var(--text-muted);margin:0;">Steadfastness — consistent small habits compounding over time; the foundation of any lasting physical system.</dd>
+            <dt style="font-weight:700;color:var(--text);">Muhasabah</dt><dd style="color:var(--text-muted);margin:0;">Daily self-review — includes a physical dimension: sleep, food, movement, environment.</dd>
+            <dt style="font-weight:700;color:var(--text);">Niyyah</dt><dd style="color:var(--text-muted);margin:0;">Intention — setting a sincere intention before physical acts transforms them into acts of worship.</dd>
+          </dl>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;color:var(--accent);">Chapter 4 at a Glance</h4>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem;">
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent);margin-bottom:0.3rem;"><i class="fas fa-moon"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Sleep</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">3-layer solution</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent-3);margin-bottom:0.3rem;"><i class="fas fa-utensils"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Nutrition</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">One-third rule + tayyib</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent-2);margin-bottom:0.3rem;"><i class="fas fa-dumbbell"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Fitness</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">BDNF, cortisol, sleep</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent);margin-bottom:0.3rem;"><i class="fas fa-broom"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Environment</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">Taharah reduces load</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent-3);margin-bottom:0.3rem;"><i class="fas fa-sun"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Circadian</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">Salah = energy map</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:0.9rem;text-align:center;">
+              <div style="font-size:1.4rem;color:var(--accent-2);margin-bottom:0.3rem;"><i class="fas fa-redo"></i></div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Istiqamah</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">Consistency compounds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ TAB: QUIZ ════════ -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- ════════ TAB: MIND MAP ════════ -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;text-align:center;"><i class="fas fa-mouse-pointer"></i> Click any branch to reveal its full description. All seven concepts of Physical Productivity are mapped here.</p>
+        <div class="mindmap-container" id="mmCh4"></div>
+        <div class="mm-tooltip" id="mmTooltip4"></div>
+      </div>
+
+      <div style="margin-top:2rem;">
+        <h3 style="font-size:1rem;margin-bottom:0.25rem;">Interactive Concept Cards</h3>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1rem;">Click any card to expand its full explanation.</p>
+        <div class="mm-grid" id="mmCardGrid"></div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch3.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Ch 3: Spiritual Productivity</a>
+      <a href="ch5.html" class="btn btn-primary">Ch 5: Social Productivity <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "The Productive Muslim: Where Faith Meets Productivity" by Mohammed Faris, &copy; 2016 Awakening Publications.</p>
+    <p>Independent educational companion &mdash; not affiliated with Awakening Publications or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+  (function(){
+    var ns = 'http://www.w3.org/2000/svg';
+
+    function makeSVG(containerId, vb, h) {
+      var container = document.getElementById(containerId);
+      var svg = container.querySelector('svg');
+      if (!svg) { svg = document.createElementNS(ns,'svg'); svg.setAttribute('width','100%'); container.appendChild(svg); }
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      svg.setAttribute('viewBox', vb);
+      if (h) svg.setAttribute('height', h);
+      return svg;
+    }
+
+    function svgEl(tag, attrs) {
+      var el = document.createElementNS(ns, tag);
+      Object.keys(attrs).forEach(function(k){ el.setAttribute(k, attrs[k]); });
+      return el;
+    }
+
+    function svgText(svg, x, y, txt, attrs) {
+      var t = document.createElementNS(ns,'text');
+      t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','Inter');
+      Object.keys(attrs).forEach(function(k){ t.setAttribute(k, attrs[k]); });
+      t.textContent = txt;
+      svg.appendChild(t);
+      return t;
+    }
+
+    /* ─────────────────────────────────────────────
+       QUIZ DATA
+    ───────────────────────────────────────────── */
+    var QUESTIONS = [
+      { question:"What does the Prophet's statement 'Your body has a right over you' mean for productivity?", options:["You should prioritise rest over work","The body is an amanah (trust) from Allah requiring proper stewardship","Physical exercise is a religious obligation like prayer","You should avoid all physical exertion"], correct:1, explanation:"The body is an amanah — neglecting it is a form of ingratitude and negligence of one's khalifah responsibilities." },
+      { question:"What are the three pillars of physical productivity?", options:["Prayer, Fasting, Charity","Sleep management, Nutrition management, Fitness management","Focus, Energy, Time","Wudu, Adhkar, Quran recitation"], correct:1, explanation:"Physical productivity rests on three interconnected pillars: sleep management, nutrition management, and fitness management — each affecting the others." },
+      { question:"What is 'qailula'?", options:["A type of prayer","A midday nap recommended by the Prophet","The morning adhkar","A dietary practice"], correct:1, explanation:"Qailula is the Prophetic practice of a short midday nap (10-20 minutes) that restores cognitive alertness and provides a second afternoon productivity peak." },
+      { question:"What did the Prophet say about how much of the stomach to fill?", options:["Eat until satisfied","Fill one half with food","One-third food, one-third water, one-third air","Eat only twice a day"], correct:2, explanation:"The Prophet recommended one-third food, one-third water, one-third air — a prophetic nutrition principle confirmed by modern research on optimal eating for sustained cognitive energy." },
+      { question:"What does 'tayyib' mean in the context of nutrition?", options:["Halal (permissible)","Wholesome/good — the quality standard beyond mere permissibility","Expensive and nutritious","Blessed with du'a before eating"], correct:1, explanation:"Tayyib (wholesome, good) is the quality standard beyond halal (permissible) — it encompasses natural, minimally processed foods that support optimal physical and cognitive performance." },
+      { question:"What cognitive benefit does regular aerobic exercise provide?", options:["It eliminates the need for sleep","It increases BDNF which promotes neuroplasticity, while reducing cortisol","It replaces the need for nutrition management","It has no direct cognitive benefit"], correct:1, explanation:"Exercise increases BDNF (brain-derived neurotrophic factor), promoting neuroplasticity and memory consolidation, while reducing cortisol (stress hormone) that degrades focus." },
+      { question:"How does the Prophet's emphasis on taharah (cleanliness) apply to physical productivity?", options:["Only to ritual purification before prayer","It extends to workspace organisation, reducing cognitive load and signalling readiness to work","It only applies to bodily cleanliness","It has no application outside of worship"], correct:1, explanation:"The Prophet's principle 'cleanliness is half of faith' extends to workspace and digital environment management — organised spaces reduce cognitive load and enable sharper focus." },
+      { question:"Which prayer time aligns with the body's primary cortisol peak?", options:["Dhuhr","Asr","Fajr","Maghrib"], correct:2, explanation:"Fajr coincides with the body's natural morning cortisol peak — making the Fajr-to-Dhuhr window the body's primary high-performance cognitive period." },
+      { question:"What is the three-category approach to sleep solutions?", options:["Medical, herbal, and psychological","Spiritual (wudu, adhkar), physical (schedule, environment), and social (household boundaries)","Early sleep, no screen time, and exercise","Night prayer, morning prayer, and afternoon nap"], correct:1, explanation:"Sleep solutions operate on three levels: spiritual (wudu before sleep, sleep adhkar, istighfar), physical (consistent schedule, dark/cool room), and social (protecting sleep from household and social demands)." },
+      { question:"Why does sunnah fasting (Monday/Thursday) have productivity benefits?", options:["It reduces social eating occasions","Intermittent fasting increases neuroplasticity, reduces inflammation, and improves insulin sensitivity","It reduces the cost of food","It has only spiritual, not physical, benefits"], correct:1, explanation:"The metabolic state of fasting — confirmed by intermittent fasting research — increases neuroplasticity, reduces inflammatory markers, and improves metabolic health, all with direct cognitive productivity benefits." },
+      { question:"What is the physiological benefit of wudu (ablution) performed before Fajr?", options:["It is purely spiritual with no physical effect","Cold water contact activates the sympathetic nervous system, increasing alertness and suppressing sleepiness","It only affects ritual cleanliness","It reduces hunger before breakfast"], correct:1, explanation:"Cold water contact with the face, forearms, and head during wudu activates the sympathetic nervous system — the same effect sought by modern 'cold exposure' protocols. This physiologically primes the body for alertness." },
+      { question:"What does istiqamah mean in the context of building a physical productivity system?", options:["Performing long intense exercise occasionally","Steadfastness — small consistent habits done regularly compound massively over time","Eating a perfect diet without deviation","Following a strict military sleep schedule"], correct:1, explanation:"Istiqamah (steadfastness) means small, consistent habits sustained over time. The Prophet said the most beloved deeds to Allah are those done consistently, even if small — this applies directly to physical productivity systems." }
+    ];
+
+    VB.initQuiz('quizContainer', QUESTIONS);
+    VB.initTabs('chapterTabs');
+
+    /* ─────────────────────────────────────────────
+       STEP 1 — Prophetic Nutrition Principles
+    ───────────────────────────────────────────── */
+    var s1idx = 0;
+    var nutPrinciples = [
+      { label:'One-Third Rule',  color:'var(--accent)',   desc:'One-third food, one-third water, one-third air. A metabolically sound principle: smaller meals prevent energy crashes from overeating and support sustained cognitive focus throughout the day.' },
+      { label:'Eat Mindfully',   color:'var(--accent-3)', desc:'Begin with bismillah, eat slowly, sit while eating, eat with the right hand. These practices introduce mindful eating that prevents overconsumption, improves digestion, and add spiritual intentionality.' },
+      { label:'Tayyib Foods',    color:'var(--accent-2)', desc:'Wholesome, natural, minimally processed foods. The halal-tayyib framework is an Islamic clean-eating protocol that modern nutrition science independently recommends for optimal brain performance.' },
+      { label:'Communal Eating', color:'var(--accent)',   desc:'The Prophet encouraged eating together rather than alone. Social meals improve mood, digestion, and community bonds — all reinforcing the social dimension of comprehensive productivity.' },
+      { label:'Sunnah Fasting',  color:'var(--accent-3)', desc:'Monday/Thursday fasts and Ramadan deliver metabolic and cognitive benefits: increased neuroplasticity, reduced inflammation, improved insulin sensitivity — confirmed by modern intermittent fasting research.' }
+    ];
+
+    function pm4DrawNut(active) {
+      var svg = makeSVG('step1svg', '0 0 560 120', '120');
+      nutPrinciples.forEach(function(p, i) {
+        var x = 10 + i * 110;
+        var g = document.createElementNS(ns,'g');
+        if (i >= active) g.setAttribute('opacity','0.22');
+        var r = svgEl('rect',{x:x,y:10,width:102,height:96,rx:12,fill:p.color,opacity:'0.9'});
+        var t1 = document.createElementNS(ns,'text');
+        t1.setAttribute('x',x+51); t1.setAttribute('y',53); t1.setAttribute('text-anchor','middle');
+        t1.setAttribute('font-family','Inter'); t1.setAttribute('font-size',10); t1.setAttribute('font-weight','700'); t1.setAttribute('fill','#fff');
+        t1.textContent = p.label.split(' ')[0];
+        var t2 = document.createElementNS(ns,'text');
+        t2.setAttribute('x',x+51); t2.setAttribute('y',68); t2.setAttribute('text-anchor','middle');
+        t2.setAttribute('font-family','Inter'); t2.setAttribute('font-size',10); t2.setAttribute('fill','rgba(255,255,255,0.85)');
+        t2.textContent = p.label.split(' ').slice(1).join(' ');
+        var num = document.createElementNS(ns,'text');
+        num.setAttribute('x',x+51); num.setAttribute('y',95); num.setAttribute('text-anchor','middle');
+        num.setAttribute('font-family','Inter'); num.setAttribute('font-size',16); num.setAttribute('font-weight','800'); num.setAttribute('fill','rgba(255,255,255,0.35)');
+        num.textContent = String(i+1);
+        g.appendChild(r); g.appendChild(t1); g.appendChild(t2); g.appendChild(num); svg.appendChild(g);
+      });
+    }
+    function pm4RenderStep1() {
+      pm4DrawNut(s1idx);
+      document.getElementById('step1ind').textContent = s1idx + ' / ' + nutPrinciples.length;
+      document.getElementById('step1prev').disabled = (s1idx === 0);
+      document.getElementById('step1next').disabled = (s1idx === nutPrinciples.length);
+      document.getElementById('step1desc').textContent = s1idx > 0 ? nutPrinciples[s1idx-1].desc : 'Click Next to explore each prophetic nutrition principle.';
+    }
+    window.pm4Step1 = function(dir) { s1idx = Math.max(0, Math.min(nutPrinciples.length, s1idx+dir)); pm4RenderStep1(); };
+    pm4RenderStep1();
+
+    /* ─────────────────────────────────────────────
+       STEP 2 — Circadian / Salah
+    ───────────────────────────────────────────── */
+    var s2idx = 0;
+    var prayerTimes = [
+      { label:'Fajr',    color:'var(--accent)',   ey:28, desc:'Cortisol peak — natural wakeup signal. Post-Fajr window is your primary cognitive peak. Schedule your most demanding deep work here. Protect it fiercely from meetings and social media.' },
+      { label:'Dhuhr',   color:'var(--accent-3)', ey:90, desc:'Post-noon dip — the body\'s natural rest signal. Ideal for qailula (10-20 min nap). After Dhuhr: moderate tasks, meetings, communication — not deep creative work.' },
+      { label:'Asr',     color:'var(--accent-2)', ey:50, desc:'Late-afternoon cognitive recovery peak. Second best window for focused work. Good for complex tasks requiring attention. Physical energy starts declining noticeably after Asr.' },
+      { label:'Maghrib', color:'var(--accent)',   ey:75, desc:'Sunset transition. Natural shift from output mode to reflection, family, and community mode. Light activity only. Avoid heavy cognitive work — the brain needs to begin winding down.' },
+      { label:'Isha',    color:'var(--accent-3)', ey:88, desc:'Night closure. Muhasabah (daily review), light reading, family time. Sleep should follow within 1-2 hours of Isha to protect Fajr wakeup. Protect this window from digital distraction.' }
+    ];
+
+    function pm4DrawPrayer(active) {
+      var svg = makeSVG('step2svg', '0 0 560 110', '110');
+      // timeline base
+      var tl = svgEl('rect',{x:20,y:96,width:520,height:6,rx:3,fill:'var(--border)'});
+      svg.appendChild(tl);
+      if (active > 0) {
+        var prog = svgEl('rect',{x:20,y:96,width:String(Math.round((active/prayerTimes.length)*520)),height:6,rx:3,fill:'var(--accent)',opacity:'0.7'});
+        svg.appendChild(prog);
+      }
+      prayerTimes.forEach(function(pt, i) {
+        var x = 20 + i * 130;
+        var cy2 = pt.ey;
+        var g = document.createElementNS(ns,'g');
+        if (i >= active) g.setAttribute('opacity','0.22');
+        var vl = svgEl('line',{x1:x+5,y1:cy2+16,x2:x+5,y2:96,stroke:pt.color,'stroke-width':'1.2','stroke-dasharray':'3,2'});
+        g.appendChild(vl);
+        var r = svgEl('rect',{x:x-25,y:cy2-14,width:60,height:30,rx:8,fill:pt.color,opacity:'0.92'});
+        var tl2 = document.createElementNS(ns,'text');
+        tl2.setAttribute('x',x+5); tl2.setAttribute('y',cy2+5); tl2.setAttribute('text-anchor','middle');
+        tl2.setAttribute('font-family','Inter'); tl2.setAttribute('font-size',10); tl2.setAttribute('font-weight','700'); tl2.setAttribute('fill','#fff');
+        tl2.textContent = pt.label;
+        g.appendChild(r); g.appendChild(tl2); svg.appendChild(g);
+      });
+    }
+    function pm4RenderStep2() {
+      pm4DrawPrayer(s2idx);
+      document.getElementById('step2ind').textContent = s2idx + ' / ' + prayerTimes.length;
+      document.getElementById('step2prev').disabled = (s2idx === 0);
+      document.getElementById('step2next').disabled = (s2idx === prayerTimes.length);
+      document.getElementById('step2desc').textContent = s2idx > 0 ? prayerTimes[s2idx-1].label + ': ' + prayerTimes[s2idx-1].desc : 'Click Next to explore how each prayer time aligns with your body\'s energy cycles.';
+    }
+    window.pm4Step2 = function(dir) { s2idx = Math.max(0, Math.min(prayerTimes.length, s2idx+dir)); pm4RenderStep2(); };
+    pm4RenderStep2();
+
+    /* ─────────────────────────────────────────────
+       STEP 3 — Sleep Solution Layers
+    ───────────────────────────────────────────── */
+    var s3idx = 0;
+    var sleepLayers = [
+      { label:'Spiritual Layer',  color:'var(--accent)',   w:0.33, desc:'Sleeping with wudu. Reciting the sleep adhkar (supplications before sleep). Making istighfar to clear the heart before rest. These practices create spiritual readiness for sleep, calming the mind and strengthening tawakkul.' },
+      { label:'Physical Layer',   color:'var(--accent-3)', w:0.66, desc:'A consistent sleep-wake schedule (even on weekends). Cool, dark, and quiet room. No screens for 30-60 minutes before sleep. Light meal, not a heavy one. These physical signals train the body to enter sleep efficiently.' },
+      { label:'Social Layer',     color:'var(--accent-2)', w:1.0,  desc:'Communicating sleep boundaries to family and housemates. Managing late-night social obligations that erode sleep. Setting expectations around phone availability after Isha. Social pressure is one of the biggest destroyers of Muslim sleep health.' }
+    ];
+
+    function pm4DrawSleep(active) {
+      var svg = makeSVG('step3svg', '0 0 560 100', '100');
+      var bg = svgEl('rect',{x:20,y:30,width:520,height:40,rx:10,fill:'var(--border)'});
+      svg.appendChild(bg);
+      sleepLayers.forEach(function(layer, i) {
+        if (i >= active) return;
+        var fw = Math.round(layer.w * 520);
+        var r = svgEl('rect',{x:20,y:30,width:fw,height:40,rx:10,fill:layer.color,opacity:String(0.55+i*0.15)});
+        svg.appendChild(r);
+      });
+      sleepLayers.forEach(function(layer, i) {
+        var fx = 20 + Math.round(layer.w * 520 / 2);
+        var g = document.createElementNS(ns,'g');
+        if (i >= active) g.setAttribute('opacity','0.25');
+        var t = document.createElementNS(ns,'text');
+        t.setAttribute('x',String(fx)); t.setAttribute('y','54'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','Inter'); t.setAttribute('font-size','9.5'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff');
+        t.textContent = layer.label;
+        g.appendChild(t); svg.appendChild(g);
+      });
+      var lbl = document.createElementNS(ns,'text');
+      lbl.setAttribute('x','290'); lbl.setAttribute('y','90'); lbl.setAttribute('text-anchor','middle');
+      lbl.setAttribute('font-family','Inter'); lbl.setAttribute('font-size','8.5'); lbl.setAttribute('fill','var(--text-muted)');
+      lbl.textContent = active === 0 ? 'Click Next to reveal each layer' : active + ' / 3 layers revealed';
+      svg.appendChild(lbl);
+    }
+    function pm4RenderStep3() {
+      pm4DrawSleep(s3idx);
+      document.getElementById('step3ind').textContent = s3idx + ' / ' + sleepLayers.length;
+      document.getElementById('step3prev').disabled = (s3idx === 0);
+      document.getElementById('step3next').disabled = (s3idx === sleepLayers.length);
+      document.getElementById('step3desc').textContent = s3idx > 0 ? sleepLayers[s3idx-1].label + ': ' + sleepLayers[s3idx-1].desc : 'The Prophetic sleep framework has three distinct layers. Click Next to reveal each one.';
+    }
+    window.pm4Step3 = function(dir) { s3idx = Math.max(0, Math.min(sleepLayers.length, s3idx+dir)); pm4RenderStep3(); };
+    pm4RenderStep3();
+
+    /* ─────────────────────────────────────────────
+       CALCULATOR
+    ───────────────────────────────────────────── */
+    window.pm4Calc = function pm4Calc() {
+      var s = parseInt(document.getElementById('sleepSlider').value);
+      var n = parseInt(document.getElementById('nutrSlider').value);
+      var f = parseInt(document.getElementById('fitSlider').value);
+      document.getElementById('sleepVal').textContent = s;
+      document.getElementById('nutrVal').textContent  = n;
+      document.getElementById('fitVal').textContent   = f;
+      var score = s * n * f;
+      document.getElementById('physScore').textContent = score;
+      var c;
+      if (score >= 700)      c = 'Excellent physical foundation for high productivity. MashAllah!';
+      else if (score >= 350) c = 'Good baseline. Identify your weakest lever and improve it first.';
+      else if (score >= 150) c = 'Moderate — start with sleep. It has the highest return on every other dimension.';
+      else                   c = 'Focus on one habit at a time. Sleep first, then nutrition, then exercise.';
+      document.getElementById('physComment').textContent = c;
+    }
+
+    /* ─────────────────────────────────────────────
+       CHECKLIST
+    ───────────────────────────────────────────── */
+    var checkItems = [
+      'I sleep 7-8 hours on a consistent schedule.',
+      'I wake for Fajr prayer daily.',
+      'I eat in moderation — no overeating.',
+      'I exercise or walk at least 3x per week.',
+      'I take a brief qailula (10-20 min) after Dhuhr.',
+      'I avoid screens 30 min before sleep.',
+      'I fast on Mondays and/or Thursdays occasionally.',
+      'My workspace is clean and organised.',
+      'I begin meals with bismillah and eat mindfully.',
+      'I schedule deep work in the Fajr-to-Dhuhr window.'
+    ];
+    var checkState = JSON.parse(localStorage.getItem('vb-pm-ch4-checklist') || '[]');
+    if (checkState.length !== checkItems.length) checkState = checkItems.map(function(){ return false; });
+    var clGrid = document.getElementById('pm4checklist');
+    checkItems.forEach(function(item, i) {
+      var div = document.createElement('div');
+      div.className = 'checklist-item' + (checkState[i] ? ' checked' : '');
+      div.dataset.idx = String(i);
+      var icon = document.createElement('div'); icon.className = 'check-icon';
+      if (checkState[i]) { var tick = document.createElement('i'); tick.className = 'fas fa-check'; tick.style.fontSize = '11px'; icon.appendChild(tick); }
+      var span = document.createElement('span'); span.textContent = item;
+      div.appendChild(icon); div.appendChild(span);
+      div.addEventListener('click', function() {
+        var idx = parseInt(this.dataset.idx, 10);
+        checkState[idx] = !checkState[idx];
+        this.classList.toggle('checked', checkState[idx]);
+        var ic = this.querySelector('.check-icon'); ic.textContent = '';
+        if (checkState[idx]) { var t2 = document.createElement('i'); t2.className = 'fas fa-check'; t2.style.fontSize = '11px'; ic.appendChild(t2); }
+        localStorage.setItem('vb-pm-ch4-checklist', JSON.stringify(checkState));
+        document.getElementById('pm4checkSave').textContent = checkState.filter(Boolean).length + '/' + checkItems.length + ' habits checked.';
+      });
+      clGrid.appendChild(div);
+    });
+    if (checkState.filter(Boolean).length > 0) {
+      document.getElementById('pm4checkSave').textContent = checkState.filter(Boolean).length + '/' + checkItems.length + ' habits checked.';
+    }
+
+    /* ─────────────────────────────────────────────
+       7-DAY HABIT TRACKER
+    ───────────────────────────────────────────── */
+    var habitLabels = ['Prayed Fajr','Exercised','Qailula nap','No late screens','Ate mindfully'];
+    var habitKey = 'vb-pm-ch4-habits';
+    var habitData = JSON.parse(localStorage.getItem(habitKey) || 'null');
+    if (!habitData) {
+      habitData = {};
+      habitLabels.forEach(function(h){ habitData[h] = [false,false,false,false,false,false,false]; });
+    }
+    var tracker = document.getElementById('pm4habitTracker');
+    var dayNames = ['6d','5d','4d','3d','2d','1d','Today'];
+    // header
+    var hdr1 = document.createElement('div'); hdr1.className = 'h-label'; hdr1.style.fontWeight = '700'; hdr1.textContent = 'Habit';
+    var hdr2 = document.createElement('div'); hdr2.className = 'habit-dots';
+    dayNames.forEach(function(d) {
+      var s = document.createElement('span');
+      s.style.cssText = 'width:16px;text-align:center;font-size:0.65rem;color:var(--text-muted);font-weight:600;';
+      s.textContent = d; hdr2.appendChild(s);
+    });
+    tracker.appendChild(hdr1); tracker.appendChild(hdr2);
+    // rows
+    habitLabels.forEach(function(h) {
+      var lbl = document.createElement('div'); lbl.className = 'h-label'; lbl.textContent = h;
+      var dots = document.createElement('div'); dots.className = 'habit-dots';
+      for (var d = 0; d < 7; d++) {
+        (function(day) {
+          var dot = document.createElement('div');
+          dot.className = 'h-dot' + (habitData[h][day] ? ' filled' : '');
+          dot.addEventListener('click', function() {
+            habitData[h][day] = !habitData[h][day];
+            dot.classList.toggle('filled', habitData[h][day]);
+            localStorage.setItem(habitKey, JSON.stringify(habitData));
+            var total = 0;
+            habitLabels.forEach(function(hh){ habitData[hh].forEach(function(v){ if(v) total++; }); });
+            document.getElementById('habitFeedback').textContent = total + '/' + (habitLabels.length * 7) + ' habit-days this week.';
+          });
+          dots.appendChild(dot);
+        })(d);
+      }
+      tracker.appendChild(lbl); tracker.appendChild(dots);
+    });
+    // initial count
+    var initTotal = 0;
+    habitLabels.forEach(function(h){ habitData[h].forEach(function(v){ if(v) initTotal++; }); });
+    if (initTotal > 0) document.getElementById('habitFeedback').textContent = initTotal + '/' + (habitLabels.length * 7) + ' habit-days this week.';
+
+    window.pm4ResetHabits = function pm4ResetHabits() {
+      habitLabels.forEach(function(h){ habitData[h] = [false,false,false,false,false,false,false]; });
+      localStorage.setItem(habitKey, JSON.stringify(habitData));
+      document.querySelectorAll('#pm4habitTracker .h-dot').forEach(function(d){ d.classList.remove('filled'); });
+      document.getElementById('habitFeedback').textContent = 'Week reset.';
+    }
+
+    /* ─────────────────────────────────────────────
+       FASTING BENEFITS EXERCISE
+    ───────────────────────────────────────────── */
+    var fastingQs = [
+      { q:'Periods without food increase _____, which promotes new neural connections.', options:['Cortisol','BDNF and neuroplasticity','Insulin','Melatonin'], correct:1 },
+      { q:'Sunnah fasting reduces _____, a marker linked to poor metabolic health.', options:['Creativity','Inflammation','Hydration','Sleep'], correct:1 },
+      { q:'The halal-tayyib framework is closest to which modern concept?', options:['Ketogenic diet','Clean eating / whole foods protocol','Calorie counting','Intermittent fasting'], correct:1 }
+    ];
+    var fastingSelections = [null, null, null];
+    var fWrap = document.getElementById('fastingQuizWrap');
+    fastingQs.forEach(function(fq, qi) {
+      var block = document.createElement('div'); block.style.marginBottom = '1rem';
+      var qlbl = document.createElement('p');
+      qlbl.style.cssText = 'font-size:0.87rem;color:var(--text);margin:0 0 0.5rem;font-weight:600;';
+      qlbl.textContent = (qi+1) + '. ' + fq.q;
+      block.appendChild(qlbl);
+      var row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:0.4rem;';
+      fq.options.forEach(function(opt, oi) {
+        var btn = document.createElement('button');
+        btn.className = 'ex-btn ex-btn-reset';
+        btn.style.transition = 'all 0.15s';
+        btn.textContent = opt;
+        btn.addEventListener('click', function() {
+          fastingSelections[qi] = oi;
+          row.querySelectorAll('button').forEach(function(b){
+            b.style.background = ''; b.style.color = ''; b.style.borderColor = '';
+          });
+          btn.style.background = 'var(--accent)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--accent)';
+        });
+        row.appendChild(btn);
+      });
+      block.appendChild(row); fWrap.appendChild(block);
+    });
+
+    window.pm4CheckFasting = function pm4CheckFasting() {
+      var correct = 0;
+      fastingQs.forEach(function(fq, qi){ if (fastingSelections[qi] === fq.correct) correct++; });
+      var fb = document.getElementById('fastingFeedback');
+      if (correct === fastingQs.length) fb.textContent = 'All correct! MashAllah — excellent understanding.';
+      else fb.textContent = correct + '/' + fastingQs.length + ' correct. Review the Nutrition section and try again.';
+    }
+
+    window.pm4ResetFasting = function pm4ResetFasting() {
+      fastingSelections = [null, null, null];
+      fWrap.querySelectorAll('button').forEach(function(b){ b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+      document.getElementById('fastingFeedback').textContent = '';
+    }
+
+    /* ─────────────────────────────────────────────
+       MIND MAP SVG (radial)
+    ───────────────────────────────────────────── */
+    (function(){
+      var container = document.getElementById('mmCh4');
+      var tooltip   = document.getElementById('mmTooltip4');
+      var W = 580, H = 420, cx = W/2, cy = H/2;
+      var svg = document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('width','100%'); svg.setAttribute('height',H);
+      container.style.position = 'relative'; container.appendChild(svg);
+
+      var branches = [
+        { label:['Sleep','Mgmt'],      color:'var(--accent)',   angle:270, r:158, desc:'Prophetic sleep architecture: early to bed after Isha, tahajjud in the last third, qailula post-Dhuhr. Three-layer solution: spiritual, physical, social.' },
+        { label:['Nutrition','Mgmt'],  color:'var(--accent-3)', angle:342, r:158, desc:'One-third rule, bismillah mindfulness, tayyib foods, communal eating, sunnah fasting. The halal-tayyib framework is an Islamic clean-eating protocol.' },
+        { label:['Fitness','Mgmt'],    color:'var(--accent-2)', angle:54,  r:158, desc:'Regular movement increases BDNF, reduces cortisol, improves sleep quality. Walking, swimming, sport — all part of the Prophetic physical tradition.' },
+        { label:['Body =','Amanah'],   color:'var(--accent)',   angle:126, r:158, desc:'"Your body has a right over you" — physical care is stewardship of a divine trust, not vanity. Connects khalifah mission to bodily health.' },
+        { label:['Circadian','Rhythm'],color:'var(--accent-3)', angle:198, r:158, desc:'The salah schedule maps perfectly to the body\'s natural energy peaks. Fajr-to-Dhuhr is the primary cognitive performance window.' },
+        { label:['Taharah',''],        color:'var(--accent-2)', angle:234, r:140, desc:'"Cleanliness is half of faith" — extends to workspace organisation and digital environment management, reducing cognitive load.' },
+        { label:['Qailula',''],        color:'var(--accent)',   angle:306, r:140, desc:'Prophetic midday nap (10-20 min) delivers a measurable second-peak afternoon productivity boost, confirmed by sleep science.' }
+      ];
+
+      // centre
+      var cEl = svgEl('ellipse',{cx:cx,cy:cy,rx:62,ry:32,fill:'var(--accent)',opacity:'0.93'});
+      var cT1 = document.createElementNS(ns,'text');
+      cT1.setAttribute('x',cx); cT1.setAttribute('y',cy+4); cT1.setAttribute('text-anchor','middle');
+      cT1.setAttribute('font-family','Inter'); cT1.setAttribute('font-size',12); cT1.setAttribute('font-weight','800'); cT1.setAttribute('fill','#fff');
+      cT1.textContent = 'Physical';
+      var cT2 = document.createElementNS(ns,'text');
+      cT2.setAttribute('x',cx); cT2.setAttribute('y',cy+20); cT2.setAttribute('text-anchor','middle');
+      cT2.setAttribute('font-family','Inter'); cT2.setAttribute('font-size',12); cT2.setAttribute('font-weight','800'); cT2.setAttribute('fill','#fff');
+      cT2.textContent = 'Productivity';
+      var cg = document.createElementNS(ns,'g');
+      cg.appendChild(cEl); cg.appendChild(cT1); cg.appendChild(cT2); svg.appendChild(cg);
+
+      branches.forEach(function(b, i) {
+        var rad = b.angle * Math.PI / 180;
+        var bx = cx + b.r * Math.cos(rad);
+        var by = cy + b.r * Math.sin(rad);
+        var line = svgEl('line',{x1:cx,y1:cy,x2:bx,y2:by,stroke:'var(--border)','stroke-width':'1.8'});
+        svg.insertBefore(line, cg);
+        var bg = document.createElementNS(ns,'g'); bg.style.cursor = 'pointer';
+        bg.style.animation = 'pm4FadeIn 0.4s ease '+(i*0.09+0.1)+'s both';
+        var ell = svgEl('ellipse',{cx:bx,cy:by,rx:50,ry:24,fill:b.color,opacity:'0.88'});
+        bg.appendChild(ell);
+        b.label.forEach(function(lt, li) {
+          if (!lt) return;
+          var t = document.createElementNS(ns,'text');
+          var yOff = b.label[1] ? (li===0 ? -2 : 12) : 4;
+          t.setAttribute('x',String(bx)); t.setAttribute('y',String(by+yOff)); t.setAttribute('text-anchor','middle');
+          t.setAttribute('font-family','Inter'); t.setAttribute('font-size','9.5'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff');
+          t.textContent = lt;
+          bg.appendChild(t);
+        });
+        bg.addEventListener('click', function(e) {
+          var rect = container.getBoundingClientRect();
+          tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+          tooltip.style.top  = (e.clientY - rect.top  + 14) + 'px';
+          while (tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+          var strong = document.createElement('strong');
+          strong.textContent = b.label.filter(Boolean).join(' ');
+          strong.style.color = b.color; strong.style.display = 'block';
+          strong.style.marginBottom = '0.3rem'; strong.style.fontSize = '0.83rem';
+          var span = document.createElement('span'); span.textContent = b.desc;
+          tooltip.appendChild(strong); tooltip.appendChild(span);
+          tooltip.classList.add('visible'); e.stopPropagation();
+        });
+        svg.appendChild(bg);
+      });
+      document.addEventListener('click', function(){ tooltip.classList.remove('visible'); });
+    })();
+
+    /* ─────────────────────────────────────────────
+       CARD GRID (expand/collapse)
+    ───────────────────────────────────────────── */
+    var cardData = [
+      { title:'Body as Amanah',    color:'#2ecc71', iconClass:'fas fa-hands-holding', body:'The body is a divine trust (amanah). Neglecting it is a form of ingratitude. Physical care is not vanity — it is stewardship of the most fundamental tool given to carry out one\'s khalifah mission.' },
+      { title:'Sleep Management',  color:'#1abc9c', iconClass:'fas fa-moon',          body:'Three-layer approach: Spiritual (wudu, adhkar, istighfar), Physical (consistent schedule, dark/cool room, no screens), Social (protecting sleep from household and social pressure). Tahajjud in the last third of the night.' },
+      { title:'Qailula',           color:'#27ae60', iconClass:'fas fa-bed',            body:'A 10-20 minute midday nap recommended by the Prophet. Research confirms it restores cognitive alertness and emotional resilience, delivering a measurable second productivity peak in the afternoon.' },
+      { title:'One-Third Rule',    color:'#2ecc71', iconClass:'fas fa-utensils',       body:'One-third food, one-third water, one-third air. Prevents post-meal energy crashes. Sustains cognitive focus. Eat when hungry, stop before full. Begin with bismillah. Eat communally.' },
+      { title:'Tayyib Foods',      color:'#1abc9c', iconClass:'fas fa-leaf',           body:'Wholesome, natural, minimally processed foods. Beyond halal (permissible) — tayyib is the quality standard. Aligns with modern clean-eating science for optimal brain and body performance.' },
+      { title:'Sunnah Fasting',    color:'#27ae60', iconClass:'fas fa-star-and-crescent', body:'Monday/Thursday fasts and Ramadan. Benefits confirmed by intermittent fasting research: increased neuroplasticity, reduced inflammation, improved insulin sensitivity, enhanced cognitive clarity.' },
+      { title:'Fitness and BDNF',  color:'#2ecc71', iconClass:'fas fa-dumbbell',      body:'Regular aerobic exercise increases BDNF (brain-derived neurotrophic factor), promotes neuroplasticity and memory, reduces cortisol, and improves sleep quality. 30 min/day delivers compounding cognitive benefits.' },
+      { title:'Taharah',           color:'#1abc9c', iconClass:'fas fa-broom',          body:'"Cleanliness is half of faith." Extends to workspace and digital environment: organised spaces reduce cognitive load, reduce decision fatigue, and signal work-readiness to the brain.' },
+      { title:'Circadian Rhythm',  color:'#27ae60', iconClass:'fas fa-sun',            body:'The body\'s 24-hour energy cycle. The salah schedule maps almost perfectly: Fajr = cortisol peak (deep work), Dhuhr = dip (qailula), Asr = recovery peak, Maghrib = wind-down, Isha = closure.' }
+    ];
+
+    var grid = document.getElementById('mmCardGrid');
+    cardData.forEach(function(card) {
+      var el = document.createElement('div'); el.className = 'mm-card';
+      // title row
+      var titleRow = document.createElement('div'); titleRow.className = 'mm-card-title';
+      var dot = document.createElement('span'); dot.className = 'mm-card-dot'; dot.style.background = card.color;
+      var ico = document.createElement('i'); ico.className = card.iconClass; ico.style.color = card.color; ico.style.fontSize = '0.9rem';
+      var titleText = document.createElement('span'); titleText.textContent = card.title;
+      titleRow.appendChild(dot); titleRow.appendChild(ico); titleRow.appendChild(titleText);
+      // body
+      var bodyDiv = document.createElement('div'); bodyDiv.className = 'mm-card-body'; bodyDiv.textContent = card.body;
+      el.appendChild(titleRow); el.appendChild(bodyDiv);
+      el.addEventListener('click', function() {
+        var wasActive = el.classList.contains('active');
+        grid.querySelectorAll('.mm-card').forEach(function(c){ c.classList.remove('active'); });
+        if (!wasActive) el.classList.add('active');
+      });
+      grid.appendChild(el);
+    });
+
+    /* ─────────────────────────────────────────────
+       STEP 4 — Sunnah Morning Routine Science
+    ───────────────────────────────────────────── */
+    var s4idx = 0;
+    var morningSteps = [
+      { label:'Fajr Wakeup',      color:'var(--accent)',   cx:55,  desc:'Fajr aligns with the body\'s natural cortisol peak — the hormone that provides morning alertness and motivation. Waking at this time (rather than suppressing the alarm) works with the body\'s biology, not against it. This is why the post-Fajr window feels qualitatively different from other parts of the day.' },
+      { label:'Wudu',             color:'var(--accent-3)', cx:135, desc:'Cold water contact with the face, forearms, and head activates the sympathetic nervous system, increases alertness and heart rate, and suppresses residual sleepiness. Modern "cold exposure" protocols recommend precisely this — the Prophet modelled it 1,400 years ago as a mandatory pre-prayer routine.' },
+      { label:'Salah',            color:'var(--accent-2)', cx:215, desc:'The physical movements of Salah — standing, bowing (ruku), prostration (sujood) — gently activate postural muscles, improve spinal circulation, and begin proprioceptive engagement for the day. The focused attention required by prayer also activates prefrontal executive function, priming the brain for complex work.' },
+      { label:'Sunlight Dhikr',   color:'var(--accent)',   cx:305, desc:'Remaining after Fajr in dhikr until the sun rises captures the most potent early-morning sunlight window. Light exposure to the eyes suppresses melatonin production, anchors the circadian clock, and signals to every cell in the body that the day has begun. This single practice is the most powerful circadian reset available.' },
+      { label:'Miswak & Tayyib',  color:'var(--accent-3)', cx:385, desc:'Miswak (teeth cleaning with the Salvadora persica stick) has documented antimicrobial and anti-inflammatory oral health benefits. Deliberate, unhurried breakfast — tayyib, not processed — provides stable blood sugar for the peak work window ahead. Rushing breakfast (or skipping it) undermines the cortisol-fuelled morning peak.' }
+    ];
+
+    function pm4DrawMorning(active) {
+      var svg = makeSVG('step4svg', '0 0 520 120', '120');
+      var rail = svgEl('line',{x1:30,y1:60,x2:490,y2:60,stroke:'var(--border)','stroke-width':'2'});
+      svg.appendChild(rail);
+      morningSteps.forEach(function(step, i) {
+        var g = document.createElementNS(ns,'g');
+        if (i >= active) g.setAttribute('opacity','0.22');
+        var c = svgEl('circle',{cx:step.cx,cy:60,r:18,fill:step.color,opacity:'0.9'});
+        var t = document.createElementNS(ns,'text');
+        t.setAttribute('x',String(step.cx)); t.setAttribute('y','64'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','Inter'); t.setAttribute('font-size','8'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#fff');
+        t.textContent = i+1 <= active ? step.label.split(' ')[0] : String(i+1);
+        var lbl = document.createElementNS(ns,'text');
+        lbl.setAttribute('x',String(step.cx)); lbl.setAttribute('y','95'); lbl.setAttribute('text-anchor','middle');
+        lbl.setAttribute('font-family','Inter'); lbl.setAttribute('font-size','7.5'); lbl.setAttribute('fill','var(--text-muted)');
+        lbl.textContent = step.label;
+        g.appendChild(c); g.appendChild(t); g.appendChild(lbl); svg.appendChild(g);
+      });
+    }
+    function pm4RenderStep4() {
+      pm4DrawMorning(s4idx);
+      document.getElementById('step4ind').textContent = s4idx + ' / ' + morningSteps.length;
+      document.getElementById('step4prev').disabled = (s4idx === 0);
+      document.getElementById('step4next').disabled = (s4idx === morningSteps.length);
+      document.getElementById('step4desc').textContent = s4idx > 0 ? morningSteps[s4idx-1].label + ': ' + morningSteps[s4idx-1].desc : 'Click Next to explore the science behind each step of the Sunnah morning routine.';
+    }
+    window.pm4Step4 = function(dir) { s4idx = Math.max(0, Math.min(morningSteps.length, s4idx+dir)); pm4RenderStep4(); };
+    pm4RenderStep4();
+
+    /* ─────────────────────────────────────────────
+       PHYSICAL SYSTEM DESIGN EXERCISE
+    ───────────────────────────────────────────── */
+    var systemPillars = [
+      { id:'sys-sleep', label:'Sleep commitment', placeholder:'e.g. In bed by 10:30pm, Fajr alarm at 5:00am daily' },
+      { id:'sys-nutr',  label:'Nutrition commitment', placeholder:'e.g. No overeating at dinner, one tayyib meal prepped each day' },
+      { id:'sys-fit',   label:'Fitness commitment', placeholder:'e.g. 20-minute walk after Asr three times per week' },
+      { id:'sys-env',   label:'Environment commitment', placeholder:'e.g. Desk cleared before leaving work each day' }
+    ];
+    var sysWrap = document.getElementById('physSystemWrap');
+    var sysKey = 'vb-pm-ch4-system';
+    var sysData = JSON.parse(localStorage.getItem(sysKey) || '{}');
+    systemPillars.forEach(function(p) {
+      var row = document.createElement('div'); row.style.marginBottom = '0.8rem';
+      var lbl = document.createElement('label');
+      lbl.style.cssText = 'font-size:0.85rem;font-weight:700;color:var(--text);display:block;margin-bottom:0.3rem;';
+      lbl.textContent = p.label;
+      lbl.setAttribute('for', p.id);
+      var inp = document.createElement('textarea'); inp.id = p.id;
+      inp.style.cssText = 'width:100%;padding:0.5rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-family:Inter,sans-serif;font-size:0.84rem;resize:vertical;min-height:54px;box-sizing:border-box;';
+      inp.placeholder = p.placeholder;
+      if (sysData[p.id]) inp.value = sysData[p.id];
+      row.appendChild(lbl); row.appendChild(inp); sysWrap.appendChild(row);
+    });
+
+    window.pm4SaveSystem = function pm4SaveSystem() {
+      systemPillars.forEach(function(p) {
+        var val = document.getElementById(p.id).value;
+        sysData[p.id] = val;
+      });
+      localStorage.setItem(sysKey, JSON.stringify(sysData));
+      var filled = systemPillars.filter(function(p){ return sysData[p.id] && sysData[p.id].trim(); }).length;
+      document.getElementById('systemFeedback').textContent = filled + '/' + systemPillars.length + ' commitments saved. May Allah grant you istiqamah.';
+    }
+
+    window.pm4ClearSystem = function pm4ClearSystem() {
+      systemPillars.forEach(function(p){ document.getElementById(p.id).value = ''; sysData[p.id] = ''; });
+      localStorage.setItem(sysKey, JSON.stringify(sysData));
+      document.getElementById('systemFeedback').textContent = 'Cleared.';
+    }
+
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 9: Productivity After Death — The Productive Muslim Visual Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);--shadow:0 4px 24px rgba(46,204,113,0.10);}
+    [data-theme="dark"]{--accent:#2ecc71;--accent-2:#27ae60;--accent-3:#1abc9c;--border:rgba(46,204,113,0.18);}
+    @keyframes pm9FadeIn{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
+    @keyframes pm9SlideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+    /* Step-through */
+    .step-through-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .step-through-box h4{margin:0 0 1rem;color:var(--accent);font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .step-svg-wrap{background:var(--surface-2);border-radius:var(--radius-sm);min-height:160px;display:flex;align-items:center;justify-content:center;padding:1rem;margin-bottom:1rem;overflow:hidden;}
+    .step-svg-wrap svg{max-width:100%;}
+    .step-desc{font-size:0.92rem;color:var(--text-muted);line-height:1.6;min-height:3.5rem;text-align:center;margin-bottom:1rem;padding:0 0.5rem;}
+    .step-controls{display:flex;align-items:center;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+    .step-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:0.45rem 1.1rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:opacity 0.15s;}
+    .step-btn:disabled{opacity:0.35;cursor:not-allowed;}
+    .step-indicator{font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+
+    /* Exercise box */
+    .exercise-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;}
+    .exercise-box h4{margin:0 0 0.3rem;color:var(--accent-2);font-size:1rem;}
+    .exercise-box .ex-desc{font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem;}
+    .ex-btn-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem;}
+    .ex-btn{padding:0.4rem 1rem;border-radius:var(--radius-sm);border:none;font-size:0.85rem;font-weight:600;cursor:pointer;}
+    .ex-btn-check{background:var(--accent);color:#fff;}
+    .ex-btn-reset{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);}
+    .ex-feedback{font-size:0.85rem;color:var(--accent);font-weight:600;margin-top:0.5rem;min-height:1.4em;}
+
+    /* Legacy cards */
+    .legacy-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin:1rem 0;}
+    .legacy-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem;cursor:pointer;transition:all var(--transition);}
+    .legacy-card:hover{border-color:rgba(46,204,113,0.35);box-shadow:var(--shadow);}
+    .legacy-card .lc-icon{font-size:1.4rem;margin-bottom:0.4rem;}
+    .legacy-card .lc-title{font-size:0.9rem;font-weight:700;color:var(--accent);margin-bottom:0.25rem;}
+    .legacy-card .lc-desc{font-size:0.8rem;color:var(--text-muted);display:none;}
+    .legacy-card.revealed .lc-desc{display:block;margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.4rem;animation:pm9SlideUp 0.22s ease both;}
+    .legacy-card .lc-click{font-size:0.72rem;color:var(--accent);font-weight:600;}
+    .legacy-card.revealed .lc-click{display:none;}
+
+    /* Match exercise */
+    .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .match-col h5{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin:0 0 0.6rem;}
+    .match-item{padding:0.5rem 0.75rem;border-radius:6px;font-size:0.82rem;margin-bottom:0.45rem;cursor:pointer;border:1.5px solid var(--border);background:var(--surface-2);color:var(--text);transition:all 0.18s;}
+    .match-item.selected{border-color:var(--accent);background:rgba(46,204,113,0.08);}
+    .match-item.matched-correct{border-color:var(--accent-3);background:rgba(26,188,156,0.1);cursor:default;}
+    .match-item.matched-wrong{border-color:#e74c3c;background:rgba(231,76,60,0.07);}
+
+    /* Mind map */
+    .mindmap-container{width:100%;min-height:420px;position:relative;}
+    .mm-tooltip{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.9rem;font-size:0.8rem;color:var(--text);max-width:230px;box-shadow:var(--shadow);pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:10;}
+    .mm-tooltip.visible{opacity:1;}
+
+    /* Card-grid mind map */
+    .mm-center-btn{display:block;margin:0 auto 1.2rem;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:0.7rem 1.8rem;font-size:0.95rem;font-weight:700;cursor:pointer;letter-spacing:0.02em;box-shadow:var(--shadow);}
+    .mm-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:0.75rem;}
+    .mm-node-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;cursor:pointer;transition:all 0.22s;}
+    .mm-node-card:hover{border-color:rgba(46,204,113,0.4);transform:translateY(-2px);box-shadow:var(--shadow);}
+    .mm-node-card .mn-icon{font-size:1.5rem;margin-bottom:0.35rem;}
+    .mm-node-card .mn-label{font-size:0.88rem;font-weight:700;color:var(--accent);margin-bottom:0.2rem;}
+    .mm-node-card .mn-sub{font-size:0.78rem;color:var(--text-muted);display:none;line-height:1.5;}
+    .mm-node-card.expanded .mn-sub{display:block;animation:pm9SlideUp 0.2s ease both;}
+    .mm-node-card .mn-hint{font-size:0.7rem;color:var(--accent);font-weight:600;margin-top:0.3rem;}
+    .mm-node-card.expanded .mn-hint{color:var(--text-muted);}
+
+    /* Slider exercise */
+    .slider-exercise{margin:1rem 0;}
+    .slider-item{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:0.75rem;}
+    .slider-item label{font-size:0.88rem;color:var(--text);display:block;margin-bottom:0.5rem;font-weight:600;}
+    .slider-item input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+    .slider-val{font-size:0.8rem;font-weight:700;color:var(--accent);}
+    .slider-hints{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem;}
+
+    /* Sorting exercise */
+    .sort-list{list-style:none;padding:0;margin:0.75rem 0;}
+    .sort-item{display:flex;align-items:center;gap:0.6rem;background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.75rem;margin-bottom:0.5rem;cursor:grab;font-size:0.86rem;color:var(--text);user-select:none;transition:box-shadow 0.15s,border-color 0.15s;}
+    .sort-item:active{cursor:grabbing;}
+    .sort-item.dragging{opacity:0.45;border-color:var(--accent);}
+    .sort-item.drag-over{border-color:var(--accent-3);box-shadow:0 0 0 2px rgba(26,188,156,0.25);}
+    .sort-handle{color:var(--text-muted);font-size:0.85rem;}
+    .sort-num{font-size:0.78rem;font-weight:700;background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+    /* Self-assessment */
+    .self-assess-grid{display:flex;flex-direction:column;gap:0.75rem;margin:0.75rem 0;}
+    .sa-row{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;}
+    .sa-question{font-size:0.86rem;color:var(--text);flex:1;min-width:200px;}
+    .sa-options{display:flex;gap:0.4rem;flex-shrink:0;}
+    .sa-opt{padding:0.28rem 0.65rem;border-radius:20px;border:1.5px solid var(--border);background:var(--surface-2);font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all 0.15s;}
+    .sa-opt.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .sa-score-bar{height:8px;border-radius:4px;background:var(--surface-2);margin-top:0.75rem;overflow:hidden;}
+    .sa-score-fill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent-3));border-radius:4px;transition:width 0.4s ease;}
+    .sa-score-label{font-size:0.82rem;color:var(--text-muted);margin-top:0.3rem;text-align:right;}
+
+    /* Hadith callout */
+    .hadith-callout{background:var(--surface-2);border-left:4px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:1rem 1.25rem;margin:1.25rem 0;}
+    .hadith-callout p{font-size:0.92rem;color:var(--text);font-style:italic;margin:0 0 0.35rem;}
+    .hadith-callout cite{font-size:0.8rem;color:var(--text-muted);font-style:normal;font-weight:600;}
+
+    /* Stat pills */
+    .stat-row{display:flex;flex-wrap:wrap;gap:0.65rem;margin:1rem 0;}
+    .stat-pill{background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:0.4rem 0.9rem;font-size:0.82rem;font-weight:600;color:var(--text);}
+    .stat-pill span{color:var(--accent);}
+
+    /* Impact timeline */
+    .timeline-wrap{position:relative;padding-left:1.4rem;margin:1.2rem 0;}
+    .timeline-wrap::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent),var(--accent-3));}
+    .tl-item{position:relative;margin-bottom:1.1rem;}
+    .tl-dot{position:absolute;left:-1.1rem;top:3px;width:11px;height:11px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--accent);}
+    .tl-title{font-size:0.88rem;font-weight:700;color:var(--text);margin:0 0 0.2rem;}
+    .tl-desc{font-size:0.82rem;color:var(--text-muted);margin:0;line-height:1.5;}
+  </style>
+</head>
+<body data-chapter="ch9">
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Visual Book</span>
+      <span class="header-title">The Productive Muslim</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="btn btn-icon"><i class="fas fa-th-large"></i></a>
+      <a href="index.html" class="btn btn-icon"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn btn-icon"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill chapter-progress-fill"></div></div>
+    <div class="chapter-hero">
+      <div class="ch-label">Chapter 9</div>
+      <h1>Productivity After Death</h1>
+      <p class="ch-meta"><span><i class="fas fa-clock"></i> ~22 min read</span><span><i class="fas fa-globe"></i> Legacy &amp; Akhira</span></p>
+    </div>
+
+    <div class="tab-bar" id="chapterTabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-lessons" role="tab"><i class="fas fa-book-open"></i> Lessons</button>
+      <button class="tab-btn" data-tab="tab-summary" role="tab"><i class="fas fa-list-ul"></i> Summary</button>
+      <button class="tab-btn" data-tab="tab-quiz" role="tab"><i class="fas fa-question-circle"></i> Quiz</button>
+      <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
+    </div>
+
+    <!-- LESSONS TAB -->
+    <div class="tab-panel active" id="tab-lessons">
+
+      <!-- 9.1 -->
+      <div class="lesson-section">
+        <h2>9.1 The Most Ambitious Productivity Goal of All</h2>
+        <p>Every productivity system has a terminal endpoint — a final goal after which nothing more is required. For secular systems, this might be financial independence, professional achievement, or personal fulfilment. For the Islamic system, the terminal goal is beyond the grave: <strong>continuing to receive rewards and have positive impact even after death.</strong> This is not a metaphor — it is a concrete, operationalisable goal that the Productive Muslim actively works toward throughout their life.</p>
+
+        <div class="hadith-callout">
+          <p>"When a person dies, all their deeds come to an end except three: sadaqah jariyah (ongoing charity), knowledge from which others benefit, and a righteous child who prays for them."</p>
+          <cite>Prophet Muhammad &#xFDFA; (Sahih Muslim)</cite>
+        </div>
+
+        <p>This reframes the entire productivity project. Every chapter in this book — spiritual energy, physical stewardship, social investment, goal-setting, habit formation — has been building toward this: a life of such quality, intention, and beneficial impact that its effects outlast the individual. The most productive Muslim is not the one who accomplished the most impressive resume, but the one whose beneficial impact on the world is still visible, still growing, generations after their death.</p>
+
+        <!-- SVG: Three Pillars -->
+        <div class="viz-container">
+          <svg viewBox="0 0 540 200" width="100%" height="200" aria-label="Three Pillars of Post-Death Productivity">
+            <defs>
+              <linearGradient id="p9g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ecc71"/><stop offset="100%" stop-color="#27ae60"/></linearGradient>
+              <linearGradient id="p9g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1abc9c"/><stop offset="100%" stop-color="#16a085"/></linearGradient>
+              <linearGradient id="p9g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#27ae60"/><stop offset="100%" stop-color="#1e8449"/></linearGradient>
+            </defs>
+            <!-- Foundation bar -->
+            <rect x="30" y="162" width="480" height="14" rx="7" fill="#2ecc71" opacity="0.22"/>
+            <text x="270" y="193" text-anchor="middle" font-family="Inter" font-size="10" fill="#27ae60" font-weight="700">Foundation: Akhira-Oriented Life</text>
+            <!-- Pillar 1 -->
+            <rect x="52" y="62" width="128" height="100" rx="10" fill="url(#p9g1)"/>
+            <text x="116" y="46" text-anchor="middle" font-family="Inter" font-size="22">&#x1F54C;</text>
+            <text x="116" y="100" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Sadaqah</text>
+            <text x="116" y="116" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Jariyah</text>
+            <text x="116" y="133" text-anchor="middle" font-family="Inter" font-size="9.5" fill="rgba(255,255,255,0.85)">Ongoing Charity</text>
+            <!-- Pillar 2 (taller = most scalable) -->
+            <rect x="206" y="42" width="128" height="120" rx="10" fill="url(#p9g2)"/>
+            <text x="270" y="26" text-anchor="middle" font-family="Inter" font-size="22">&#x1F4DA;</text>
+            <text x="270" y="88" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Beneficial</text>
+            <text x="270" y="104" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Knowledge</text>
+            <text x="270" y="121" text-anchor="middle" font-family="Inter" font-size="9.5" fill="rgba(255,255,255,0.85)">&#x2018;Ilm Nafi&#x2019;</text>
+            <!-- Pillar 3 -->
+            <rect x="360" y="62" width="128" height="100" rx="10" fill="url(#p9g3)"/>
+            <text x="424" y="46" text-anchor="middle" font-family="Inter" font-size="22">&#x1F46A;</text>
+            <text x="424" y="100" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Righteous</text>
+            <text x="424" y="116" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#fff">Children</text>
+            <text x="424" y="133" text-anchor="middle" font-family="Inter" font-size="9.5" fill="rgba(255,255,255,0.85)">Who Pray For You</text>
+          </svg>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-pill">Terminal goal: <span>&nbsp;Akhira</span></div>
+          <div class="stat-pill">Pillars: <span>&nbsp;3</span></div>
+          <div class="stat-pill">Duration of reward: <span>&nbsp;Indefinite</span></div>
+          <div class="stat-pill">Source: <span>&nbsp;Sahih Muslim</span></div>
+        </div>
+      </div>
+
+      <!-- 9.2 -->
+      <div class="lesson-section">
+        <h2>9.2 Sadaqah Jariyah: Ongoing Charity That Outlasts You</h2>
+        <p><strong>Sadaqah jariyah</strong> is charity whose benefit continues after the giver has died — a well that continues providing water, a mosque that continues hosting prayer, an endowment that continues funding education, a tree that continues bearing fruit. Every time someone benefits from the sadaqah jariyah, the deceased earns reward, regardless of whether they have been gone for one year or one thousand years.</p>
+        <p>Sadaqah jariyah takes many forms — financial endowments (waqf), building mosques or schools, funding scholarships, planting trees, digging wells. But Faris emphasises that non-financial forms are equally valid and often more accessible to younger Muslims: contributing free expertise to Islamic organisations, developing digital resources, translating Islamic content into under-resourced languages, building community institutions that will outlast you.</p>
+
+        <!-- SVG: Growing reward over time -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 130" width="100%" height="130" aria-label="Sadaqah Jariyah reward grows after death">
+            <defs>
+              <linearGradient id="p9tlg" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#2ecc71"/>
+                <stop offset="100%" stop-color="#1abc9c" stop-opacity="0.3"/>
+              </linearGradient>
+            </defs>
+            <line x1="30" y1="65" x2="500" y2="65" stroke="url(#p9tlg)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="130" cy="65" r="7" fill="#e74c3c"/>
+            <text x="130" y="52" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#e74c3c">Death</text>
+            <circle cx="200" cy="65" r="10" fill="#2ecc71" opacity="0.6"/>
+            <circle cx="270" cy="65" r="15" fill="#2ecc71" opacity="0.55"/>
+            <circle cx="350" cy="65" r="22" fill="#2ecc71" opacity="0.5"/>
+            <circle cx="440" cy="65" r="29" fill="#2ecc71" opacity="0.45"/>
+            <text x="200" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="#2ecc71" font-weight="600">Year 1</text>
+            <text x="270" y="100" text-anchor="middle" font-family="Inter" font-size="9" fill="#2ecc71" font-weight="600">Year 10</text>
+            <text x="350" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="#2ecc71" font-weight="600">Year 50</text>
+            <text x="440" y="114" text-anchor="middle" font-family="Inter" font-size="9" fill="#2ecc71" font-weight="600">Year 100+</text>
+            <text x="30" y="88" font-family="Inter" font-size="9" fill="#888">Life begins</text>
+            <text x="250" y="22" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">Reward keeps growing after death</text>
+          </svg>
+        </div>
+
+        <!-- Impact Timeline -->
+        <div class="timeline-wrap">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-title">Waqf (Islamic Endowment)</p>
+            <p class="tl-desc">Capital is permanently preserved; only the income funds the cause. A school funded by a 12th-century waqf may still operate today.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-title">Funding Clean Water</p>
+            <p class="tl-desc">A village well earning reward from every person who drinks for generations — physical sadaqah jariyah with zero upkeep from the giver after death.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-title">Digital Resources</p>
+            <p class="tl-desc">An app, article, or course teaching Islamic knowledge — zero reproduction cost, can benefit millions over centuries from a single original effort.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-title">Planting Trees</p>
+            <p class="tl-desc">"If a Muslim plants a tree and a person or animal eats from it, it is counted as sadaqah." Environmental stewardship as ongoing charity.</p>
+          </div>
+        </div>
+
+        <!-- Legacy Explorer cards -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-seedling" style="margin-right:0.4rem;"></i> Explore: Six Paths to Sadaqah Jariyah</h4>
+          <p class="ex-desc">Click each card to reveal examples and how to start building this legacy today.</p>
+          <div class="legacy-cards" id="legacyCards9"></div>
+        </div>
+      </div>
+
+      <!-- 9.3 -->
+      <div class="lesson-section">
+        <h2>9.3 Beneficial Knowledge: Teaching That Lives On</h2>
+        <p>The second pillar of post-death productivity is <strong>beneficial knowledge (&#x2018;ilm nafi&#x2019;)</strong> — knowledge you taught that continues benefiting people after you are gone. This covers every form of knowledge transmission: formal teaching, writing, mentorship, parenting, community education, professional training. Every student you taught who goes on to teach others; every book you wrote that guides a reader; every skill you shared that enables someone to build something good — all of these continue earning you reward indefinitely.</p>
+        <p>This makes the accumulation and sharing of beneficial knowledge one of the highest-return investments available to a Muslim. The productive Muslim who writes one genuinely useful book, teaches one genuinely useful course, or mentors one genuinely capable student has potentially seeded a chain of beneficial impact that will outlast them by centuries. The companions preserved and transmitted the Sunnah with extraordinary care because they understood knowledge is the most scalable form of sadaqah jariyah available.</p>
+
+        <!-- SVG: Knowledge chain cascade -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 160" width="100%" height="160" aria-label="Knowledge chain — your teaching multiplies">
+            <defs>
+              <marker id="p9arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#2ecc71"/>
+              </marker>
+            </defs>
+            <!-- Teacher -->
+            <ellipse cx="80" cy="80" rx="55" ry="26" fill="#2ecc71" opacity="0.9"/>
+            <text x="80" y="78" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">You</text>
+            <text x="80" y="93" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.85)">(Teacher)</text>
+            <!-- Arrows to students -->
+            <line x1="137" y1="72" x2="194" y2="52" stroke="#2ecc71" stroke-width="1.8" marker-end="url(#p9arr)"/>
+            <line x1="137" y1="88" x2="194" y2="108" stroke="#2ecc71" stroke-width="1.8" marker-end="url(#p9arr)"/>
+            <!-- Student A -->
+            <ellipse cx="230" cy="46" rx="42" ry="20" fill="#1abc9c" opacity="0.87"/>
+            <text x="230" y="44" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Student A</text>
+            <text x="230" y="58" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.85)">teaches 10 more</text>
+            <!-- Student B -->
+            <ellipse cx="230" cy="114" rx="42" ry="20" fill="#27ae60" opacity="0.87"/>
+            <text x="230" y="112" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Student B</text>
+            <text x="230" y="126" text-anchor="middle" font-family="Inter" font-size="8.5" fill="rgba(255,255,255,0.85)">writes 3 books</text>
+            <!-- Gen 3 dots from A -->
+            <line x1="272" y1="46" x2="340" y2="36" stroke="#1abc9c" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#p9arr)"/>
+            <line x1="272" y1="46" x2="340" y2="56" stroke="#1abc9c" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#p9arr)"/>
+            <!-- Gen 3 dots from B -->
+            <line x1="272" y1="114" x2="340" y2="104" stroke="#27ae60" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#p9arr)"/>
+            <line x1="272" y1="114" x2="340" y2="124" stroke="#27ae60" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#p9arr)"/>
+            <circle cx="356" cy="36" r="12" fill="#2ecc71" opacity="0.55"/><text x="356" y="40" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="#fff">G3</text>
+            <circle cx="356" cy="56" r="12" fill="#2ecc71" opacity="0.55"/><text x="356" y="60" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="#fff">G3</text>
+            <circle cx="356" cy="104" r="12" fill="#1abc9c" opacity="0.55"/><text x="356" y="108" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="#fff">G3</text>
+            <circle cx="356" cy="124" r="12" fill="#1abc9c" opacity="0.55"/><text x="356" y="128" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="#fff">G3</text>
+            <!-- Reward label -->
+            <rect x="394" y="58" width="116" height="44" rx="8" fill="#2ecc71" opacity="0.1" stroke="#2ecc71" stroke-width="1.2"/>
+            <text x="452" y="77" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">All traces</text>
+            <text x="452" y="92" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">back to YOU</text>
+          </svg>
+        </div>
+
+        <!-- Step-through 1: Legacy Portfolio Framework -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-leaf" style="margin-right:0.4rem;"></i> Step-Through: Build Your Post-Death Productivity Portfolio</h4>
+          <div class="step-svg-wrap" id="step1svg"></div>
+          <div class="step-desc" id="step1desc">Click Next to walk through a 4-step framework for designing your personal legacy investment strategy.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step1prev" onclick="pm9Step1(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step1ind">0 / 4</span>
+            <button class="step-btn" id="step1next" onclick="pm9Step1(1)">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9.4 -->
+      <div class="lesson-section">
+        <h2>9.4 Raising Righteous Children: The Living Legacy</h2>
+        <p>In the contemporary world, the tools for broadcasting beneficial knowledge have never been more accessible. A video teaching Islamic ethics watched by millions; an app helping Muslims manage their ibadah; a blog explaining complex Islamic concepts clearly; a podcast discussing Islamic solutions to modern challenges — all are forms of ongoing knowledge benefit. The productive Muslim who intentionally produces beneficial knowledge content — even one high-quality contribution per year — is investing in post-death productivity in a way that was impossible for most of human history. The companion Imam Bukhari compiled one hadith collection and earned reward from every Muslim scholar who read it across fourteen centuries. A single well-written explainer on Islamic finance published online today may still be shaping decisions in the 22nd century.</p>
+        <p>The third pillar of post-death productivity is <strong>righteous children who pray for you</strong>. This extends beyond biological offspring — it encompasses all those you raised, mentored, and nurtured toward righteousness: students, mentees, community youth, younger colleagues. Anyone who was shaped toward goodness through your investment and who carries your du&#x02BC;a and legacy forward is a form of this ongoing sadaqah.</p>
+
+        <div class="hadith-callout">
+          <p>"Every child is born on the fitrah (natural disposition toward good); it is their parents who make them Jewish, Christian, or Zoroastrian."</p>
+          <cite>Prophet Muhammad &#xFDFA; (Sahih Bukhari)</cite>
+        </div>
+
+        <!-- SVG: Fitrah nurturing diagram -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 150" width="100%" height="150" aria-label="Fitrah nurturing produces generational spiritual wealth">
+            <defs>
+              <radialGradient id="p9fg" cx="50%" cy="50%">
+                <stop offset="0%" stop-color="#2ecc71" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#1abc9c" stop-opacity="0.4"/>
+              </radialGradient>
+            </defs>
+            <circle cx="128" cy="75" r="38" fill="url(#p9fg)"/>
+            <text x="128" y="72" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">Child's</text>
+            <text x="128" y="87" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">Fitrah</text>
+            <!-- Inputs -->
+            <line x1="166" y1="57" x2="224" y2="38" stroke="#2ecc71" stroke-width="1.6" stroke-dasharray="5,3"/>
+            <line x1="166" y1="75" x2="224" y2="75" stroke="#1abc9c" stroke-width="1.6" stroke-dasharray="5,3"/>
+            <line x1="166" y1="93" x2="224" y2="112" stroke="#27ae60" stroke-width="1.6" stroke-dasharray="5,3"/>
+            <rect x="224" y="24" width="108" height="28" rx="7" fill="#2ecc71" opacity="0.85"/>
+            <text x="278" y="42" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Islamic Education</text>
+            <rect x="224" y="62" width="108" height="28" rx="7" fill="#1abc9c" opacity="0.85"/>
+            <text x="278" y="80" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Modelled Character</text>
+            <rect x="224" y="100" width="108" height="28" rx="7" fill="#27ae60" opacity="0.85"/>
+            <text x="278" y="118" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#fff">Iman Environment</text>
+            <!-- Outcome -->
+            <line x1="332" y1="75" x2="372" y2="75" stroke="#2ecc71" stroke-width="2" marker-end="url(#p9arr)"/>
+            <rect x="372" y="52" width="122" height="46" rx="9" fill="#2ecc71" opacity="0.12" stroke="#2ecc71" stroke-width="1.4"/>
+            <text x="433" y="73" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">Generational</text>
+            <text x="433" y="88" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#2ecc71">Spiritual Wealth</text>
+          </svg>
+        </div>
+
+        <p>The productive Muslim takes their parenting role as seriously as their professional role — because the products of good parenting are the most lasting. A successful business may generate wealth for one generation; a child raised with strong iman, clear purpose, and the tools of productive Muslim living generates spiritual wealth for generations.</p>
+
+        <!-- Self-Assessment Exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-user-check" style="margin-right:0.4rem;"></i> Self-Assessment: How Strong Is Your Legacy Investment?</h4>
+          <p class="ex-desc">Rate yourself honestly on each dimension. Your score bar updates live.</p>
+          <div class="self-assess-grid" id="selfAssess9"></div>
+          <div class="sa-score-bar"><div class="sa-score-fill" id="saScoreFill9" style="width:0%"></div></div>
+          <div class="sa-score-label" id="saScoreLabel9">Score: 0 / 20</div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm9AssessCheck()">See Feedback</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm9AssessReset()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="saFeedback9"></div>
+        </div>
+      </div>
+
+      <!-- 9.5 -->
+      <div class="lesson-section">
+        <h2>9.5 Remembering Death as a Productive Tool</h2>
+        <p>One of the most powerful productivity tools available to a Muslim is <strong>dhikr al-mawt</strong> — the regular remembrance of death. Far from being morbid, this practice generates extraordinary clarity of priority. When you remember that this life is finite and that you will stand before Allah and account for every hour of your time, the trivial suddenly looks trivial, and the truly important becomes urgent.</p>
+
+        <div class="hadith-callout">
+          <p>"Remember frequently the destroyer of pleasures — death."</p>
+          <cite>Prophet Muhammad &#xFDFA; (Ibn Majah)</cite>
+        </div>
+
+        <!-- SVG: Priority clarity funnel -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 160" width="100%" height="160" aria-label="Dhikr al-mawt filters trivialities from what truly matters">
+            <polygon points="40,20 480,20 370,90 150,90" fill="#2ecc71" opacity="0.1" stroke="#2ecc71" stroke-width="1.5"/>
+            <polygon points="150,90 370,90 310,148 210,148" fill="#2ecc71" opacity="0.2" stroke="#2ecc71" stroke-width="1.5"/>
+            <text x="260" y="54" text-anchor="middle" font-family="Inter" font-size="11" fill="#888">Status games, inbox noise, trivial concerns</text>
+            <text x="260" y="72" text-anchor="middle" font-family="Inter" font-size="10" fill="#aaa">filtered by dhikr al-mawt</text>
+            <text x="260" y="116" text-anchor="middle" font-family="Inter" font-size="12" font-weight="800" fill="#2ecc71">What truly matters</text>
+            <text x="260" y="132" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#888">relationships &#183; legacy &#183; akhira &#183; service</text>
+            <text x="40" y="14" font-family="Inter" font-size="9" fill="#aaa">All life inputs</text>
+            <text x="260" y="158" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#2ecc71">Filtered output</text>
+          </svg>
+        </div>
+
+        <p>Practically, dhikr al-mawt can be a weekly practice: spend five minutes imagining that today is your last day. What would you wish you had done differently? What relationship would you urgently repair? What sadaqah jariyah project would you regret having not started? What apology would you give? Then live the next week according to the clarity this exercise produces. The productive Muslim who makes this a regular practice continuously recalibrates their priorities around what truly matters.</p>
+        <p>People who have near-death experiences consistently report that their sense of priority is transformed: petty conflicts, status games, and materialistic pursuits lose their hold; relationships, meaning, and service to others become paramount. Dhikr al-mawt gives you this transformative clarity without requiring a crisis to prompt it. It is available to you right now, this week, as a free and infinitely renewable clarity tool. The Prophet did not say "remember death sometimes" — he said "remember it frequently," suggesting this is not a one-time exercise but a continuous practice woven into the rhythms of productive Muslim life.</p>
+
+        <!-- Sorting Exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-sort" style="margin-right:0.4rem;"></i> Exercise: Rank These By Islamic Productivity Priority</h4>
+          <p class="ex-desc">Drag items to reorder from most to least important in the Productive Muslim's life, then check your answer.</p>
+          <ul class="sort-list" id="sortList9"></ul>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm9CheckSort()">Check Order</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm9ResetSort()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="sortFeedback9"></div>
+        </div>
+      </div>
+
+      <!-- 9.6 -->
+      <div class="lesson-section">
+        <h2>9.6 The Final Challenge: Integrating Everything</h2>
+        <p>Chapter 9 is the culmination of the entire book. The productive Muslim is not someone who perfects one dimension — they are someone who integrates all dimensions into a coherent, consistent, akhira-oriented life. Spiritual productivity (salah, dhikr, fasting) charges the engine. Physical productivity (sleep, nutrition, exercise) maintains the vehicle. Social productivity (family, community, nasiha) builds the team. Goal-setting and planning direct the journey. Habit formation automates the practices. Ramadan recharges the system annually. And all of it is ultimately in service of building a life whose impact — through sadaqah jariyah, beneficial knowledge, and raised righteous people — extends far beyond the individual lifetime.</p>
+
+        <!-- SVG: Integration wheel -->
+        <div class="viz-container">
+          <svg viewBox="0 0 520 200" width="100%" height="200" aria-label="Integration wheel — six dimensions of productive Muslim life">
+            <defs>
+              <linearGradient id="p9hub" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2ecc71"/><stop offset="100%" stop-color="#1abc9c"/></linearGradient>
+            </defs>
+            <!-- Hub -->
+            <circle cx="260" cy="100" r="36" fill="url(#p9hub)" opacity="0.92"/>
+            <text x="260" y="97" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="#fff">Productive</text>
+            <text x="260" y="112" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="#fff">Muslim Life</text>
+            <!-- 6 spokes + circles -->
+            <line x1="260" y1="64" x2="260" y2="28" stroke="#2ecc71" stroke-width="1.8"/>
+            <circle cx="260" cy="18" r="14" fill="#2ecc71" opacity="0.85"/>
+            <text x="260" y="22" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Spirit</text>
+
+            <line x1="291" y1="72" x2="340" y2="44" stroke="#1abc9c" stroke-width="1.8"/>
+            <circle cx="352" cy="36" r="14" fill="#1abc9c" opacity="0.85"/>
+            <text x="352" y="40" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Body</text>
+
+            <line x1="296" y1="100" x2="352" y2="100" stroke="#27ae60" stroke-width="1.8"/>
+            <circle cx="366" cy="100" r="14" fill="#27ae60" opacity="0.85"/>
+            <text x="366" y="104" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Social</text>
+
+            <line x1="291" y1="128" x2="340" y2="156" stroke="#2ecc71" stroke-width="1.8"/>
+            <circle cx="352" cy="164" r="14" fill="#2ecc71" opacity="0.85"/>
+            <text x="352" y="168" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Goals</text>
+
+            <line x1="229" y1="128" x2="180" y2="156" stroke="#1abc9c" stroke-width="1.8"/>
+            <circle cx="168" cy="164" r="14" fill="#1abc9c" opacity="0.85"/>
+            <text x="168" y="168" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Rmdn</text>
+
+            <line x1="224" y1="100" x2="168" y2="100" stroke="#27ae60" stroke-width="1.8"/>
+            <circle cx="154" cy="100" r="14" fill="#27ae60" opacity="0.85"/>
+            <text x="154" y="104" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#fff">Habits</text>
+
+            <!-- Legacy output (dashed) -->
+            <line x1="229" y1="72" x2="180" y2="44" stroke="#2ecc71" stroke-width="1.8" stroke-dasharray="5,3"/>
+            <circle cx="168" cy="34" r="16" fill="#2ecc71" opacity="0.95"/>
+            <text x="168" y="31" text-anchor="middle" font-family="Inter" font-size="9" font-weight="800" fill="#fff">Legacy</text>
+            <text x="168" y="44" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.9)">Output</text>
+          </svg>
+        </div>
+
+        <p>The measure of a productive Muslim is not their inbox zero, their to-do list completion rate, or their professional achievements — though all of these may be fine. The measure is: <em>Will this life have been worth having lived, in the sight of Allah, on the Day of Judgement?</em> And the extraordinary assurance of Islamic productivity is that a life built on niyyah, ihsan, Barakah-seeking, and legacy-building is precisely the kind of life that will.</p>
+        <p>This is why Chapter 9 is not a conclusion — it is a launchpad. Having read this book, understood these frameworks, and internalised these practices, the Productive Muslim's work is not done; it has just been correctly oriented. Every habit you build, every goal you set, every relationship you invest in, every sadaqah jariyah project you start — all of these are now understood within their true context: they are not tasks to complete, they are contributions to a legacy that Allah, in His mercy, has given you the opportunity to build. The book ends; the mission continues; and the most productive years of your life may well be the ones that begin now.</p>
+
+        <!-- Match Exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-link" style="margin-right:0.4rem;"></i> Exercise: Match Legacy Investments to Their Lasting Impact</h4>
+          <p class="ex-desc">Click an investment on the left, then its lasting impact on the right. Match all five to complete.</p>
+          <div class="match-grid">
+            <div class="match-col"><h5>Legacy Investment</h5><div id="matchLeft9"></div></div>
+            <div class="match-col"><h5>Lasting Impact</h5><div id="matchRight9"></div></div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-reset" onclick="pm9ResetMatch()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="match9fb"></div>
+        </div>
+
+        <!-- Step-through 2: Complete Framework -->
+        <div class="step-through-box">
+          <h4><i class="fas fa-infinity" style="margin-right:0.4rem;"></i> Step-Through: The Complete Productive Muslim Framework</h4>
+          <div class="step-svg-wrap" id="step2svg"></div>
+          <div class="step-desc" id="step2desc">Click Next to see how all six dimensions of productive Muslim living integrate into one coherent whole.</div>
+          <div class="step-controls">
+            <button class="step-btn" id="step2prev" onclick="pm9Step2(-1)" disabled>&#8592; Prev</button>
+            <span class="step-indicator" id="step2ind">0 / 6</span>
+            <button class="step-btn" id="step2next" onclick="pm9Step2(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Slider Exercise -->
+        <div class="exercise-box">
+          <h4><i class="fas fa-sliders-h" style="margin-right:0.4rem;"></i> Exercise: Allocate Your Legacy Energy</h4>
+          <p class="ex-desc">Imagine 100 "legacy energy" units per year. Slide to distribute across four categories, then click Check for personalised reflection.</p>
+          <div class="slider-exercise" id="sliderExercise9"></div>
+          <div class="ex-btn-row">
+            <button class="ex-btn ex-btn-check" onclick="pm9CheckSliders()">Check Allocation</button>
+            <button class="ex-btn ex-btn-reset" onclick="pm9ResetSliders()">Reset</button>
+          </div>
+          <div class="ex-feedback" id="sliderFeedback9"></div>
+        </div>
+      </div>
+
+    </div><!-- /tab-lessons -->
+
+    <!-- SUMMARY TAB -->
+    <div class="tab-panel" id="tab-summary">
+      <div class="summary-box">
+        <h3><i class="fas fa-bookmark"></i> Chapter 9 Summary</h3>
+        <ul>
+          <li><strong>Productivity after death</strong> is Islam's most ambitious goal — continuing to receive rewards and create positive impact long after physical death.</li>
+          <li><strong>Three pillars</strong> from the Prophet's hadith: Sadaqah Jariyah (ongoing charity), Beneficial Knowledge (&#x2018;ilm nafi&#x2019;), and Righteous Children who pray for you.</li>
+          <li><strong>Sadaqah Jariyah</strong> includes mosques, schools, wells, waqf, and non-financial forms: free expertise, digital resources, community institutions, translated Islamic content.</li>
+          <li><strong>Beneficial knowledge</strong> is the most scalable sadaqah jariyah — one genuine book, course, or mentored student can earn reward from chains of benefit spanning centuries.</li>
+          <li><strong>Righteous children/mentees</strong> are the most personal legacy — raising people with strong iman and productive Muslim tools generates spiritual wealth for generations.</li>
+          <li><strong>Scale doesn't matter</strong> for sadaqah jariyah — continuity does. A modest contribution that keeps benefiting thousands earns more reward than a large one-time gift.</li>
+          <li><strong>Dhikr al-mawt</strong> (remembering death) is a powerful productivity tool that generates clarity of priority and eliminates trivialities from the productive Muslim's focus.</li>
+          <li><strong>Weekly death-reflection practice:</strong> "What would I wish I had done differently if today were my last day?" — continuously recalibrates priorities around what truly matters.</li>
+          <li><strong>Integration is the final goal</strong> — not perfecting one dimension, but weaving spiritual, physical, social, goal-oriented, habit-based, Ramadan-recharged productive living into one coherent akhira-oriented life.</li>
+          <li><strong>The ultimate measure:</strong> Not inbox zero or professional achievement, but "Will this life have been worth having lived, in the sight of Allah?"</li>
+        </ul>
+        <div class="key-terms" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:0.75rem;color:var(--accent);">Key Terms</h4>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem 1rem;font-size:0.88rem;">
+            <dt style="font-weight:700;color:var(--text);">Sadaqah Jariyah</dt><dd style="color:var(--text-muted);margin:0;">Ongoing charity whose benefit continues after the giver has died — earning reward indefinitely.</dd>
+            <dt style="font-weight:700;color:var(--text);">&#x2018;Ilm Nafi&#x2019;</dt><dd style="color:var(--text-muted);margin:0;">Beneficial knowledge — taught or shared content that continues helping others after the teacher's death.</dd>
+            <dt style="font-weight:700;color:var(--text);">Dhikr al-Mawt</dt><dd style="color:var(--text-muted);margin:0;">Remembrance of death — regular practice that generates clarity of priority and eliminates trivialities.</dd>
+            <dt style="font-weight:700;color:var(--text);">Waqf</dt><dd style="color:var(--text-muted);margin:0;">Islamic endowment — a permanent sadaqah jariyah instrument that funds ongoing beneficial causes.</dd>
+            <dt style="font-weight:700;color:var(--text);">Fitrah</dt><dd style="color:var(--text-muted);margin:0;">The natural human disposition toward goodness and Allah — what righteous parenting protects and nurtures.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ TAB -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz-box" id="quizContainer"></div>
+    </div>
+
+    <!-- MIND MAP TAB -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="viz-container" style="min-height:440px;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;"><i class="fas fa-info-circle"></i> Click any branch node to reveal its details.</p>
+        <div class="mindmap-container" id="mmCh9"></div>
+        <div class="mm-tooltip" id="mmTooltip9"></div>
+      </div>
+
+      <!-- Interactive expandable card grid -->
+      <div style="margin-top:2rem;">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.5rem;"><i class="fas fa-th" style="margin-right:0.4rem;"></i> Expandable Concept Grid</h3>
+        <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:1rem;">Click the button to reveal all concept cards, then click any card to expand its full explanation.</p>
+        <button class="mm-center-btn" id="mmCenterBtn9" onclick="pm9ToggleMmGrid()">Productivity After Death — Click to Explore All Concepts</button>
+        <div class="mm-cards-grid" id="mmCardGrid9" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch8.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Ch 8: Ramadan &amp; Productivity</a>
+      <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> Book Index</a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="copyright">Content based on "The Productive Muslim: Where Faith Meets Productivity" by Mohammed Faris, &copy; 2016 Awakening Publications.</p>
+    <p>Independent educational companion &mdash; not affiliated with Awakening Publications or the author.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+  /* ========================= QUIZ ========================= */
+  var QUESTIONS=[
+    {question:"What are the three categories of deeds that continue after death according to the Prophet's hadith?",options:["Salah, fasting, hajj","Sadaqah jariyah, beneficial knowledge, righteous children who pray for you","Du'a, dhikr, sadaqah","Niyyah, planning, muhasabah"],correct:1,explanation:"The Prophet said: 'When a person dies, all deeds end except three: sadaqah jariyah, knowledge from which others benefit, and a righteous child who prays for them.'"},
+    {question:"What is 'sadaqah jariyah'?",options:["Charity given during Ramadan only","Ongoing charity whose benefit continues after the giver has died","A large one-time charitable donation","Charity given to one's immediate family"],correct:1,explanation:"Sadaqah jariyah is ongoing charity whose benefit continues after death — earning reward indefinitely with each beneficiary."},
+    {question:"What makes beneficial knowledge the most scalable form of sadaqah jariyah?",options:["Knowledge is free to produce","It can be copied at almost zero cost, creating chains of benefit spanning centuries","Scholars earn more than practitioners","Knowledge is always better than charity"],correct:1,explanation:"One book, course, or mentored student can earn reward from chains of benefit spreading to thousands across centuries."},
+    {question:"Why is continuity more important than scale in sadaqah jariyah?",options:["Scale is the only thing that matters","Large sadaqah cancels small sadaqah","A modest contribution that keeps benefiting thousands continuously earns more reward than a large one-time gift","Islam discourages large-scale charity"],correct:2,explanation:"A modest well benefiting a village for 200 years earns more than a large one-time donation with no ongoing benefit."},
+    {question:"What is 'dhikr al-mawt' and why is it a productive tool?",options:["A special supplication recited at funerals","Regular remembrance of death — generates clarity of priority by making trivial things trivial and truly important things urgent","A meditation technique from Islamic mysticism","A form of grief counselling"],correct:1,explanation:"Dhikr al-mawt clarifies priorities instantly — petty concerns fade and what truly matters becomes urgent."},
+    {question:"What does the 'weekly death-reflection' exercise involve?",options:["Visiting a cemetery once a week","Fasting on the day you imagine as your last","Spending five minutes imagining it is your last day, identifying regrets, then living the next week accordingly","Reading hadiths about death daily"],correct:2,explanation:"Spend 5 minutes imagining today is your last day, then live the next week according to that clarity. Repeated practice continuously recalibrates priorities."},
+    {question:"What is 'fitrah' in the context of raising righteous children?",options:["The Islamic school curriculum","The natural human disposition toward goodness and Allah that parents are responsible for protecting","A child's intelligence level","The age at which Islamic obligations begin"],correct:1,explanation:"Fitrah is the natural disposition toward goodness and Allah. Parents shape whether this fitrah develops or is suppressed."},
+    {question:"What is a 'waqf'?",options:["A type of Ramadan charity","An Islamic endowment — a permanent sadaqah jariyah instrument that funds ongoing beneficial causes indefinitely","A one-time donation to a mosque","A form of voluntary fasting"],correct:1,explanation:"Waqf is an Islamic endowment — the original asset is preserved forever while its income continuously funds the designated cause."},
+    {question:"What is the ultimate measure of the productive Muslim according to Chapter 9?",options:["Professional achievements and financial success","Inbox zero and perfect daily schedule adherence","Whether the life was worth having lived in the sight of Allah on the Day of Judgement","The quantity of sadaqah given during the lifetime"],correct:2,explanation:"The ultimate measure is: 'Will this life have been worth having lived, in the sight of Allah, on the Day of Judgement?'"},
+    {question:"How does Chapter 9 serve as the culmination of the entire Productive Muslim book?",options:["It summarises all previous chapters into one checklist","It explains that all previous chapters are ultimately in service of building a life whose impact extends beyond the individual lifetime","It replaces the need to read the rest of the book","It only applies to elderly Muslims planning their estates"],correct:1,explanation:"All the book's dimensions (spiritual, physical, social, goals, habits, Ramadan) serve one goal: building a life whose impact transcends death."}
+  ];
+  VB.initQuiz('quizContainer',QUESTIONS);
+  VB.initTabs('chapterTabs');
+  var ns='http://www.w3.org/2000/svg';
+
+  /* ========================= LEGACY EXPLORER CARDS ========================= */
+  var legacies=[
+    {icon:'&#x1F54C;',title:'Build / Fund Mosque or School',desc:'Financial endowment (waqf) for a mosque, Islamic school, or community centre. Every prayer and lesson earns you ongoing reward — even a small renovation contribution counts.'},
+    {icon:'&#x1F4D6;',title:'Write Beneficial Content',desc:"A book, article, blog, or video teaching Islamic knowledge clearly. Even one genuinely useful piece can guide thousands over decades — each reader's good deeds earn you reward indefinitely."},
+    {icon:'&#x1F393;',title:'Mentor and Teach',desc:'Formally or informally teaching others — a student, mentee, or apprentice who carries your knowledge forward. Every good deed they do adds to your ongoing account.'},
+    {icon:'&#x1F4A7;',title:'Fund Clean Water or Food',desc:'A well, water installation, or food security project. Every person who drinks, every life sustained, earns continuous sadaqah jariyah regardless of where or when it occurs.'},
+    {icon:'&#x1F333;',title:'Plant Trees and Green Space',desc:"The Prophet said: 'If a Muslim plants a tree and a person or animal eats from it, it is counted as sadaqah jariyah.' Environmental stewardship as ongoing charity."},
+    {icon:'&#x1F476;',title:'Raise Righteous Children / Mentees',desc:'The most personal legacy investment. Children or mentees with strong iman, good character, and productive Muslim tools who pray for you — a living sadaqah jariyah that compounds across generations.'}
+  ];
+  var lcContainer=document.getElementById('legacyCards9');
+  legacies.forEach(function(l){
+    var card=document.createElement('div');card.className='legacy-card';
+    var iconEl=document.createElement('div');iconEl.className='lc-icon';iconEl.textContent=l.icon;
+    var titleEl=document.createElement('div');titleEl.className='lc-title';titleEl.textContent=l.title;
+    var descEl=document.createElement('div');descEl.className='lc-desc';descEl.textContent=l.desc;
+    var clickEl=document.createElement('div');clickEl.className='lc-click';clickEl.textContent='Click to see details & how to start';
+    card.appendChild(iconEl);card.appendChild(titleEl);card.appendChild(descEl);card.appendChild(clickEl);
+    card.addEventListener('click',function(){this.classList.toggle('revealed');});
+    lcContainer.appendChild(card);
+  });
+
+  /* ========================= STEP-THROUGH 1: Legacy Portfolio ========================= */
+  var s1idx=0;
+  var legacySteps=[
+    {label:'Assess Gifts',sub:'Skills & Resources',icon:'&#x1F381;',desc:'What unique gifts, knowledge, skills, and resources has Allah given you? Your legacy investment should leverage these — the teacher builds educational legacy; the entrepreneur builds institutional legacy.'},
+    {label:'Choose Vehicles',sub:'1-2 Sadaqah Paths',icon:'&#x1F680;',desc:'Select 1-2 sadaqah jariyah vehicles that match your gifts and life stage. A young professional might start with beneficial content creation; a more established person might fund an endowment.'},
+    {label:'Start Small Today',sub:'This Week',icon:'&#x1F331;',desc:'Begin with something you can do this week — write one article, mentor one person, make a small waqf contribution. The Prophet said small but consistent deeds are most beloved to Allah.'},
+    {label:'Build & Compound',sub:'Year by Year',icon:'&#x1F4C8;',desc:'Let your legacy compound. Each year, add one more contribution. Review your legacy investments alongside your annual niyyat sanawiyyah. What will your post-death productivity portfolio look like in 20 years?'}
+  ];
+
+  function pm9DrawLegacyStep(active){
+    var container=document.getElementById('step1svg');
+    var svg=container.querySelector('svg');
+    if(!svg){svg=document.createElementNS(ns,'svg');svg.setAttribute('width','100%');container.appendChild(svg);}
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute('viewBox','0 0 520 130');
+    var colors=['#2ecc71','#1abc9c','#27ae60','#2ecc71'];
+    legacySteps.forEach(function(s,i){
+      var x=12+i*128;
+      var g=document.createElementNS(ns,'g');
+      g.setAttribute('opacity',i<active?'1':'0.2');
+      var r=document.createElementNS(ns,'rect');
+      r.setAttribute('x',x);r.setAttribute('y','18');r.setAttribute('width','116');r.setAttribute('height','92');r.setAttribute('rx','10');
+      r.setAttribute('fill',colors[i]);r.setAttribute('opacity','0.88');
+      var ic=document.createElementNS(ns,'text');
+      ic.setAttribute('x',x+58);ic.setAttribute('y','50');ic.setAttribute('text-anchor','middle');
+      ic.setAttribute('font-family','Inter');ic.setAttribute('font-size','22');ic.textContent=s.icon;
+      var t1=document.createElementNS(ns,'text');
+      t1.setAttribute('x',x+58);t1.setAttribute('y','73');t1.setAttribute('text-anchor','middle');
+      t1.setAttribute('font-family','Inter');t1.setAttribute('font-size','11');t1.setAttribute('font-weight','700');t1.setAttribute('fill','#fff');
+      t1.textContent=s.label;
+      var t2=document.createElementNS(ns,'text');
+      t2.setAttribute('x',x+58);t2.setAttribute('y','88');t2.setAttribute('text-anchor','middle');
+      t2.setAttribute('font-family','Inter');t2.setAttribute('font-size','9');t2.setAttribute('fill','rgba(255,255,255,0.85)');
+      t2.textContent=s.sub;
+      g.appendChild(r);g.appendChild(ic);g.appendChild(t1);g.appendChild(t2);svg.appendChild(g);
+      if(i<legacySteps.length-1){
+        var arr=document.createElementNS(ns,'text');
+        arr.setAttribute('x',x+128);arr.setAttribute('y','70');arr.setAttribute('text-anchor','middle');
+        arr.setAttribute('font-family','Inter');arr.setAttribute('font-size','20');arr.setAttribute('font-weight','700');
+        arr.setAttribute('fill',i<active-1?colors[i]:'rgba(180,180,180,0.4)');
+        arr.textContent='\u2192';svg.appendChild(arr);
+      }
+    });
+  }
+  function pm9RenderStep1(){
+    pm9DrawLegacyStep(s1idx);
+    document.getElementById('step1ind').textContent=s1idx+' / '+legacySteps.length;
+    document.getElementById('step1prev').disabled=(s1idx===0);
+    document.getElementById('step1next').disabled=(s1idx===legacySteps.length);
+    document.getElementById('step1desc').textContent=
+      s1idx>0?legacySteps[s1idx-1].label+': '+legacySteps[s1idx-1].desc:'Click Next to walk through a 4-step framework for designing your personal legacy investment strategy.';
+  }
+  function pm9Step1(dir){s1idx=Math.max(0,Math.min(legacySteps.length,s1idx+dir));pm9RenderStep1();}
+  pm9RenderStep1();
+
+  /* ========================= MATCH EXERCISE ========================= */
+  var matchPairs9=[
+    {left:'Funding a village well',right:'Generations drinking safely earn you reward',id:0},
+    {left:'Writing an Islamic guidebook',right:'Every reader guided to good deeds adds to your account',id:1},
+    {left:'Raising a child with strong iman',right:"Their lifetime of worship and du'a continues your legacy",id:2},
+    {left:'Building an Islamic school',right:'Every student educated earns sadaqah jariyah for the founder',id:3},
+    {left:'Teaching a skill pro bono',right:'Every product of that skill benefits others, traced to you',id:4}
+  ];
+  var matchSelected9=null,matchDone9={};
+
+  function pm9BuildMatch(){
+    var leftDiv=document.getElementById('matchLeft9');
+    var rightDiv=document.getElementById('matchRight9');
+    while(leftDiv.firstChild) leftDiv.removeChild(leftDiv.firstChild);
+    while(rightDiv.firstChild) rightDiv.removeChild(rightDiv.firstChild);
+    matchSelected9=null;matchDone9={};
+    var right=matchPairs9.slice().sort(function(){return Math.random()-0.5;});
+    matchPairs9.forEach(function(p){
+      var l=document.createElement('div');l.className='match-item';l.textContent=p.left;l.dataset.side='left';l.dataset.id=String(p.id);
+      l.addEventListener('click',pm9MatchClick);leftDiv.appendChild(l);
+    });
+    right.forEach(function(p){
+      var r=document.createElement('div');r.className='match-item';r.textContent=p.right;r.dataset.side='right';r.dataset.id=String(p.id);
+      r.addEventListener('click',pm9MatchClick);rightDiv.appendChild(r);
+    });
+  }
+  function pm9MatchClick(){
+    if(matchDone9[this.dataset.id]&&this.classList.contains('matched-correct')) return;
+    var side=this.dataset.side,id=parseInt(this.dataset.id);
+    if(!matchSelected9){
+      document.querySelectorAll('#matchLeft9 .match-item,#matchRight9 .match-item').forEach(function(el){el.classList.remove('selected');});
+      this.classList.add('selected');matchSelected9={el:this,side:side,id:id};return;
+    }
+    if(matchSelected9.side===side){
+      matchSelected9.el.classList.remove('selected');matchSelected9=null;
+      this.classList.add('selected');matchSelected9={el:this,side:side,id:id};return;
+    }
+    var otherEl=matchSelected9.el,otherId=matchSelected9.id;matchSelected9=null;
+    if(otherId===id){
+      this.classList.remove('selected');otherEl.classList.remove('selected');
+      this.classList.add('matched-correct');otherEl.classList.add('matched-correct');
+      matchDone9[id]=true;
+      if(Object.keys(matchDone9).length===matchPairs9.length)
+        document.getElementById('match9fb').textContent='All 5 pairs matched correctly! Great understanding of legacy impact.';
+    } else {
+      this.classList.add('matched-wrong');otherEl.classList.add('matched-wrong');
+      var s=this,o=otherEl;setTimeout(function(){s.classList.remove('matched-wrong','selected');o.classList.remove('matched-wrong','selected');},900);
+    }
+  }
+  function pm9ResetMatch(){pm9BuildMatch();document.getElementById('match9fb').textContent='';}
+  pm9BuildMatch();
+
+  /* ========================= STEP-THROUGH 2: Complete Framework ========================= */
+  var s2idx=0;
+  var framework=[
+    {label:'Spiritual',icon:'&#x1F319;',role:'Engine',color:'#2ecc71',desc:'Foundation: salah, dhikr, Quran, fasting. Charges the spiritual energy that motivates and sustains everything else in the framework.'},
+    {label:'Physical',icon:'&#x1F4AA;',role:'Vehicle',color:'#1abc9c',desc:'Vehicle: sleep, nutrition, exercise. Maintains the amanah of the body that carries out the productive Muslim mission.'},
+    {label:'Social',icon:'&#x1F91D;',role:'Team',color:'#27ae60',desc:'Team: family, community, nasiha. Builds the social fabric that supports, challenges, and multiplies individual productive impact.'},
+    {label:'Goals & Habits',icon:'&#x1F3AF;',role:'Direction',color:'#2ecc71',desc:'Direction + Automation: akhira-oriented goals and consistent habits translate intention into daily productive action without constant willpower.'},
+    {label:'Ramadan',icon:'&#x1F31C;',role:'Recharge',color:'#1abc9c',desc:'Annual Recharge: the most concentrated period of spiritual, physical, and social productivity renewal. Resets the system every year.'},
+    {label:'Legacy',icon:'&#x267E;',role:'Output',color:'#27ae60',desc:"Final Output: sadaqah jariyah, beneficial knowledge, righteous mentees. The entire framework's purpose — building productive impact that transcends death."}
+  ];
+  function pm9DrawFramework(active){
+    var container=document.getElementById('step2svg');
+    var svg=container.querySelector('svg');
+    if(!svg){svg=document.createElementNS(ns,'svg');svg.setAttribute('width','100%');container.appendChild(svg);}
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute('viewBox','0 0 580 130');
+    framework.forEach(function(f,i){
+      var x=8+i*96;
+      var g=document.createElementNS(ns,'g');
+      g.setAttribute('opacity',i<active?'1':'0.18');
+      var r=document.createElementNS(ns,'rect');
+      r.setAttribute('x',x);r.setAttribute('y','16');r.setAttribute('width','84');r.setAttribute('height','94');r.setAttribute('rx','10');
+      r.setAttribute('fill',f.color);r.setAttribute('opacity','0.9');
+      var ic=document.createElementNS(ns,'text');
+      ic.setAttribute('x',x+42);ic.setAttribute('y','47');ic.setAttribute('text-anchor','middle');
+      ic.setAttribute('font-family','Inter');ic.setAttribute('font-size','20');ic.textContent=f.icon;
+      var t1=document.createElementNS(ns,'text');
+      t1.setAttribute('x',x+42);t1.setAttribute('y','70');t1.setAttribute('text-anchor','middle');
+      t1.setAttribute('font-family','Inter');t1.setAttribute('font-size','10');t1.setAttribute('font-weight','700');t1.setAttribute('fill','#fff');
+      t1.textContent=f.label;
+      var t2=document.createElementNS(ns,'text');
+      t2.setAttribute('x',x+42);t2.setAttribute('y','85');t2.setAttribute('text-anchor','middle');
+      t2.setAttribute('font-family','Inter');t2.setAttribute('font-size','9');t2.setAttribute('fill','rgba(255,255,255,0.82)');
+      t2.textContent=f.role;
+      g.appendChild(r);g.appendChild(ic);g.appendChild(t1);g.appendChild(t2);svg.appendChild(g);
+      if(i<framework.length-1){
+        var arr=document.createElementNS(ns,'text');
+        arr.setAttribute('x',x+96);arr.setAttribute('y','68');arr.setAttribute('text-anchor','middle');
+        arr.setAttribute('font-family','Inter');arr.setAttribute('font-size','18');
+        arr.setAttribute('fill',i<active-1?f.color:'rgba(180,180,180,0.35)');
+        arr.textContent='\u2192';svg.appendChild(arr);
+      }
+    });
+  }
+  function pm9RenderStep2(){
+    pm9DrawFramework(s2idx);
+    document.getElementById('step2ind').textContent=s2idx+' / '+framework.length;
+    document.getElementById('step2prev').disabled=(s2idx===0);
+    document.getElementById('step2next').disabled=(s2idx===framework.length);
+    document.getElementById('step2desc').textContent=
+      s2idx>0?framework[s2idx-1].label+' ('+framework[s2idx-1].role+'): '+framework[s2idx-1].desc:'Click Next to see how all six dimensions of productive Muslim living integrate into one coherent whole.';
+  }
+  function pm9Step2(dir){s2idx=Math.max(0,Math.min(framework.length,s2idx+dir));pm9RenderStep2();}
+  pm9RenderStep2();
+
+  /* ========================= SELF-ASSESSMENT ========================= */
+  var saData=[
+    {q:'I have started at least one sadaqah jariyah project (however small).',key:'sj'},
+    {q:'I regularly share beneficial knowledge with others (teaching, writing, mentoring).',key:'ilm'},
+    {q:'I intentionally invest in raising or nurturing righteous people around me.',key:'rc'},
+    {q:'I practise dhikr al-mawt (remembering death) to clarify my priorities.',key:'dm'},
+    {q:'My goals are explicitly oriented toward what will matter on the Day of Judgement.',key:'goals'}
+  ];
+  var saAnswers={};
+  var saGrid=document.getElementById('selfAssess9');
+  saData.forEach(function(item){
+    var row=document.createElement('div');row.className='sa-row';
+    var q=document.createElement('span');q.className='sa-question';q.textContent=item.q;
+    var opts=document.createElement('div');opts.className='sa-options';
+    [{val:1,label:'Rarely'},{val:2,label:'Sometimes'},{val:3,label:'Often'},{val:4,label:'Always'}].forEach(function(o){
+      var btn=document.createElement('button');btn.className='sa-opt';btn.textContent=o.label;
+      btn.dataset.key=item.key;btn.dataset.val=String(o.val);
+      btn.addEventListener('click',function(){
+        opts.querySelectorAll('.sa-opt').forEach(function(b){b.classList.remove('active');});
+        this.classList.add('active');
+        saAnswers[this.dataset.key]=parseInt(this.dataset.val);
+        pm9UpdateSaScore();
+      });
+      opts.appendChild(btn);
+    });
+    row.appendChild(q);row.appendChild(opts);saGrid.appendChild(row);
+  });
+  function pm9UpdateSaScore(){
+    var total=0;
+    Object.keys(saAnswers).forEach(function(k){total+=saAnswers[k];});
+    var max=saData.length*4;
+    var pct=Math.round((total/max)*100);
+    document.getElementById('saScoreFill9').style.width=pct+'%';
+    document.getElementById('saScoreLabel9').textContent='Score: '+total+' / '+max+' ('+pct+'%)';
+  }
+  function pm9AssessCheck(){
+    var answered=Object.keys(saAnswers).length;
+    var fb=document.getElementById('saFeedback9');
+    if(answered<saData.length){fb.textContent='Please answer all '+saData.length+' questions first.';return;}
+    var total=0;Object.keys(saAnswers).forEach(function(k){total+=saAnswers[k];});
+    var pct=(total/(saData.length*4))*100;
+    if(pct>=80) fb.textContent='MashaAllah! Strong legacy foundation. Focus on deepening consistency and helping others start their own legacy journey.';
+    else if(pct>=55) fb.textContent='Good start! Identify the 1-2 lowest-scoring areas and set a concrete action for this week.';
+    else fb.textContent='JazakAllah khayran for your honesty. Start with one small sadaqah jariyah action this week — even writing one useful article counts.';
+  }
+  function pm9AssessReset(){
+    saAnswers={};
+    document.querySelectorAll('#selfAssess9 .sa-opt').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('saScoreFill9').style.width='0%';
+    document.getElementById('saScoreLabel9').textContent='Score: 0 / 20';
+    document.getElementById('saFeedback9').textContent='';
+  }
+
+  /* ========================= SORTING EXERCISE ========================= */
+  var sortCorrect=['Akhira (Hereafter) as ultimate measure','Legacy building (sadaqah jariyah etc.)','Spiritual productivity (salah, dhikr)','Social productivity (family, community)','Physical productivity (sleep, nutrition)','Daily workflow & time management'];
+  var sortListEl=document.getElementById('sortList9');
+  var sortDragSrc=null;
+  function pm9Shuffle(a){
+    var b=a.slice();
+    for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}
+    return b;
+  }
+  function pm9BuildSort(){
+    while(sortListEl.firstChild) sortListEl.removeChild(sortListEl.firstChild);
+    document.getElementById('sortFeedback9').textContent='';
+    pm9Shuffle(sortCorrect).forEach(function(text){
+      var li=document.createElement('li');li.className='sort-item';li.draggable=true;li.dataset.text=text;
+      var handle=document.createElement('span');handle.className='sort-handle';handle.textContent='\u2630';
+      var numEl=document.createElement('span');numEl.className='sort-num';numEl.textContent='?';
+      var lbl=document.createElement('span');lbl.textContent=text;
+      li.appendChild(handle);li.appendChild(numEl);li.appendChild(lbl);
+      li.addEventListener('dragstart',function(e){
+        sortDragSrc=this;this.classList.add('dragging');
+        e.dataTransfer.effectAllowed='move';
+      });
+      li.addEventListener('dragend',function(){
+        this.classList.remove('dragging');
+        document.querySelectorAll('.sort-item').forEach(function(el){el.classList.remove('drag-over');});
+        pm9UpdateSortNums();
+      });
+      li.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';this.classList.add('drag-over');return false;});
+      li.addEventListener('dragleave',function(){this.classList.remove('drag-over');});
+      li.addEventListener('drop',function(e){
+        e.stopPropagation();this.classList.remove('drag-over');
+        if(sortDragSrc&&sortDragSrc!==this){
+          var items=Array.from(sortListEl.children);
+          var fromIdx=items.indexOf(sortDragSrc);
+          var toIdx=items.indexOf(this);
+          if(fromIdx<toIdx) sortListEl.insertBefore(sortDragSrc,this.nextSibling);
+          else sortListEl.insertBefore(sortDragSrc,this);
+        }
+        return false;
+      });
+      sortListEl.appendChild(li);
+    });
+    pm9UpdateSortNums();
+  }
+  function pm9UpdateSortNums(){
+    Array.from(sortListEl.children).forEach(function(li,i){
+      var n=li.querySelector('.sort-num');
+      if(n) n.textContent=String(i+1);
+    });
+  }
+  function pm9CheckSort(){
+    var current=Array.from(sortListEl.children).map(function(li){return li.dataset.text;});
+    var correct=0;
+    current.forEach(function(txt,i){if(txt===sortCorrect[i]) correct++;});
+    var fb=document.getElementById('sortFeedback9');
+    if(correct===sortCorrect.length){
+      fb.style.color='var(--accent)';
+      fb.textContent='Perfect order! Akhira first, then legacy, then the means to achieve it.';
+    } else {
+      fb.style.color='#e67e22';
+      fb.textContent=correct+' of '+sortCorrect.length+' in correct position. Tip: start with what matters most eternally, work down to daily tactics.';
+    }
+  }
+  function pm9ResetSort(){pm9BuildSort();}
+  pm9BuildSort();
+
+  /* ========================= SLIDER EXERCISE ========================= */
+  var sliderItems=[
+    {id:'sl_sj',label:'Sadaqah Jariyah (financial/material)'},
+    {id:'sl_ilm',label:'Beneficial Knowledge creation'},
+    {id:'sl_rc',label:'Raising / mentoring righteous people'},
+    {id:'sl_dm',label:'Dhikr al-mawt & priority calibration'}
+  ];
+  var sliderWrap=document.getElementById('sliderExercise9');
+  sliderItems.forEach(function(item){
+    var div=document.createElement('div');div.className='slider-item';
+    var lbl=document.createElement('label');
+    lbl.textContent=item.label+': ';
+    var valSpan=document.createElement('span');valSpan.className='slider-val';valSpan.id=item.id+'_val';valSpan.textContent='25';
+    var pct=document.createElement('span');pct.textContent='%';
+    lbl.appendChild(valSpan);lbl.appendChild(pct);
+    var inp=document.createElement('input');inp.type='range';inp.min='0';inp.max='100';inp.value='25';inp.id=item.id;
+    inp.addEventListener('input',function(){document.getElementById(item.id+'_val').textContent=this.value;});
+    var hints=document.createElement('div');hints.className='slider-hints';
+    var h1=document.createElement('span');h1.textContent='0% — Not investing';
+    var h2=document.createElement('span');h2.textContent='100% — All focus here';
+    hints.appendChild(h1);hints.appendChild(h2);
+    div.appendChild(lbl);div.appendChild(inp);div.appendChild(hints);
+    sliderWrap.appendChild(div);
+  });
+  function pm9CheckSliders(){
+    var total=0;
+    sliderItems.forEach(function(s){total+=parseInt(document.getElementById(s.id).value,10);});
+    var fb=document.getElementById('sliderFeedback9');
+    if(total>100){
+      fb.style.color='#e74c3c';
+      fb.textContent='Your total exceeds 100% ('+total+'%). Energy is finite — adjust to reflect realistic priorities.';
+    } else if(total<40){
+      fb.style.color='#e67e22';
+      fb.textContent='Total allocation: '+total+'%. Consider investing more energy into at least one legacy area this year.';
+    } else {
+      fb.style.color='var(--accent)';
+      var highest=sliderItems.reduce(function(a,b){
+        return parseInt(document.getElementById(a.id).value,10)>=parseInt(document.getElementById(b.id).value,10)?a:b;
+      });
+      fb.textContent='Total: '+total+'%. Primary legacy focus: "'+highest.label+'". Does this align with your unique gifts and life stage?';
+    }
+  }
+  function pm9ResetSliders(){
+    sliderItems.forEach(function(s){
+      document.getElementById(s.id).value='25';
+      document.getElementById(s.id+'_val').textContent='25';
+    });
+    document.getElementById('sliderFeedback9').textContent='';
+  }
+
+  /* ========================= SVG RADIAL MIND MAP ========================= */
+  (function(){
+    var container=document.getElementById('mmCh9');
+    var tooltip=document.getElementById('mmTooltip9');
+    var W=560,H=420,cx=W/2,cy=H/2;
+    var svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('width','100%');svg.setAttribute('height',String(H));
+    container.style.position='relative';
+    container.appendChild(svg);
+    var branches=[
+      {label:'Sadaqah Jariyah',color:'#2ecc71',angle:270,r:165,desc:'Ongoing charity — mosque, school, well, endowment, or digital resource — earning reward long after death.'},
+      {label:"'Ilm Nafi'",color:'#1abc9c',angle:322,r:165,desc:'Beneficial knowledge: writing, teaching, mentoring. The most scalable sadaqah jariyah — chains of benefit spanning centuries.'},
+      {label:'Righteous Children',color:'#27ae60',angle:14,r:165,desc:'Nurturing the fitrah of those you raise — the most personal and compounding form of post-death productivity.'},
+      {label:'Dhikr al-Mawt',color:'#2ecc71',angle:66,r:165,desc:'Regular remembrance of death — generates priority clarity and eliminates trivialities from productive focus.'},
+      {label:'Waqf Endowment',color:'#1abc9c',angle:118,r:165,desc:'Islamic endowment instrument — preserves capital forever while continuously funding beneficial causes.'},
+      {label:'Legacy Integration',color:'#27ae60',angle:170,r:165,desc:'All dimensions (spiritual, physical, social, goals, habits, Ramadan) in service of building transcendent impact.'},
+      {label:'Ultimate Measure',color:'#2ecc71',angle:218,r:165,desc:'Not professional achievement — but "Was this life worth living in the sight of Allah on the Day of Judgement?"'}
+    ];
+    /* Lines first (behind nodes) */
+    branches.forEach(function(b){
+      var rad=b.angle*Math.PI/180;
+      var bx=cx+b.r*Math.cos(rad);var by=cy+b.r*Math.sin(rad);
+      var line=document.createElementNS(ns,'line');
+      line.setAttribute('x1',String(cx));line.setAttribute('y1',String(cy));
+      line.setAttribute('x2',String(bx));line.setAttribute('y2',String(by));
+      line.setAttribute('stroke','rgba(46,204,113,0.18)');line.setAttribute('stroke-width','1.8');
+      svg.appendChild(line);
+    });
+    /* Centre */
+    var cEl=document.createElementNS(ns,'ellipse');
+    cEl.setAttribute('cx',String(cx));cEl.setAttribute('cy',String(cy));
+    cEl.setAttribute('rx','66');cEl.setAttribute('ry','32');
+    cEl.setAttribute('fill','#2ecc71');cEl.setAttribute('opacity','0.92');
+    var cT=document.createElementNS(ns,'text');
+    cT.setAttribute('x',String(cx));cT.setAttribute('y',String(cy+1));
+    cT.setAttribute('text-anchor','middle');cT.setAttribute('font-family','Inter');
+    cT.setAttribute('font-size','12');cT.setAttribute('font-weight','800');cT.setAttribute('fill','#fff');
+    cT.textContent='Productivity';
+    var cT2=document.createElementNS(ns,'text');
+    cT2.setAttribute('x',String(cx));cT2.setAttribute('y',String(cy+17));
+    cT2.setAttribute('text-anchor','middle');cT2.setAttribute('font-family','Inter');
+    cT2.setAttribute('font-size','12');cT2.setAttribute('font-weight','800');cT2.setAttribute('fill','#fff');
+    cT2.textContent='After Death';
+    svg.appendChild(cEl);svg.appendChild(cT);svg.appendChild(cT2);
+    /* Branch nodes */
+    branches.forEach(function(b,i){
+      var rad=b.angle*Math.PI/180;
+      var bx=cx+b.r*Math.cos(rad);var by=cy+b.r*Math.sin(rad);
+      var bg=document.createElementNS(ns,'g');bg.style.cursor='pointer';
+      bg.style.animation='pm9FadeIn 0.38s ease '+(i*0.09+0.1)+'s both';
+      var ell=document.createElementNS(ns,'ellipse');
+      ell.setAttribute('cx',String(bx));ell.setAttribute('cy',String(by));
+      ell.setAttribute('rx','54');ell.setAttribute('ry','23');
+      ell.setAttribute('fill',b.color);ell.setAttribute('opacity','0.87');
+      var txt=document.createElementNS(ns,'text');
+      txt.setAttribute('x',String(bx));txt.setAttribute('y',String(by+5));
+      txt.setAttribute('text-anchor','middle');txt.setAttribute('font-family','Inter');
+      txt.setAttribute('font-size','10');txt.setAttribute('font-weight','600');txt.setAttribute('fill','#fff');
+      txt.textContent=b.label;
+      bg.appendChild(ell);bg.appendChild(txt);
+      (function(branch){
+        bg.addEventListener('click',function(e){
+          var rect=container.getBoundingClientRect();
+          tooltip.style.left=(e.clientX-rect.left+14)+'px';
+          tooltip.style.top=(e.clientY-rect.top+14)+'px';
+          while(tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+          var strong=document.createElement('strong');
+          strong.textContent=branch.label;
+          strong.style.color=branch.color;
+          strong.style.display='block';
+          strong.style.marginBottom='0.2rem';
+          strong.style.fontSize='0.82rem';
+          var span=document.createElement('span');
+          span.textContent=branch.desc;
+          tooltip.appendChild(strong);tooltip.appendChild(span);
+          tooltip.classList.add('visible');
+          e.stopPropagation();
+        });
+      })(b);
+      svg.appendChild(bg);
+    });
+    document.addEventListener('click',function(){tooltip.classList.remove('visible');});
+  })();
+
+  /* ========================= EXPANDABLE CARD GRID MIND MAP ========================= */
+  var mmNodes=[
+    {icon:'&#x1F54C;',label:'Sadaqah Jariyah',sub:'The ongoing charity pillar',detail:'Any act whose benefit continues after your death — mosque, school, well, digital resource, or waqf. Earns reward from every beneficiary, forever, with no upper time limit.'},
+    {icon:'&#x1F4DA;',label:"'Ilm Nafi'",sub:'Beneficial knowledge',detail:'Most scalable legacy: one book, course or mentored student creates chains of benefit spanning centuries — every link in that chain earns you reward.'},
+    {icon:'&#x1F46A;',label:'Righteous Children',sub:'Living legacy via fitrah',detail:"The Prophet said every child is born on fitrah. Intentional Islamic parenting — modelling character, education, iman environment — is the most personal sadaqah jariyah."},
+    {icon:'&#x26B0;',label:'Dhikr al-Mawt',sub:'Death as productivity tool',detail:'Regularly imagining your last day ruthlessly filters trivial priorities. Petty conflicts and status games lose their hold; legacy, service, and akhira become urgent.'},
+    {icon:'&#x1F3E6;',label:'Waqf',sub:'Islamic endowment',detail:'Capital permanently preserved; only the yield funds the cause. A 12th-century waqf school may still be operating. The ultimate time-horizon investment.'},
+    {icon:'&#x2696;',label:'Ultimate Measure',sub:'"Worth living before Allah?"',detail:'Not inbox zero. Not career achievements. On the Day of Judgement: did this life generate beneficial impact that pleased Allah and continues after death?'},
+    {icon:'&#x267E;',label:'Integration',sub:'All chapters unite here',detail:'Spiritual energy, physical stewardship, social investment, goals, habits, Ramadan — all are means to one end: a life whose beneficial impact transcends death.'},
+    {icon:'&#x1F331;',label:'Start Small',sub:'Consistency over scale',detail:'Small but consistent sadaqah jariyah is more beloved to Allah than a large one-time deed. Plant one tree. Write one article. Mentor one person. Start this week.'}
+  ];
+  var mmGridEl=document.getElementById('mmCardGrid9');
+  var mmGridVisible=false;
+
+  function pm9ToggleMmGrid(){
+    mmGridVisible=!mmGridVisible;
+    var btn=document.getElementById('mmCenterBtn9');
+    if(mmGridVisible){
+      mmGridEl.style.display='grid';
+      if(!mmGridEl.children.length){
+        mmNodes.forEach(function(node,i){
+          var card=document.createElement('div');card.className='mm-node-card';
+          card.style.animation='pm9SlideUp 0.25s ease '+(i*0.06)+'s both';
+          var iconEl=document.createElement('div');iconEl.className='mn-icon';iconEl.textContent=node.icon;
+          var lblEl=document.createElement('div');lblEl.className='mn-label';lblEl.textContent=node.label;
+          var subEl=document.createElement('div');subEl.className='mn-sub';subEl.textContent=node.detail;
+          var hintEl=document.createElement('div');hintEl.className='mn-hint';hintEl.textContent='Expand';
+          card.appendChild(iconEl);card.appendChild(lblEl);card.appendChild(subEl);card.appendChild(hintEl);
+          card.addEventListener('click',function(){
+            this.classList.toggle('expanded');
+            hintEl.textContent=this.classList.contains('expanded')?'Collapse':'Expand';
+          });
+          mmGridEl.appendChild(card);
+        });
+      }
+      btn.textContent='Collapse All Concepts';
+    } else {
+      mmGridEl.style.display='none';
+      btn.textContent='Productivity After Death — Click to Explore All Concepts';
+    }
+  }
+  </script>
+</body>
+</html>

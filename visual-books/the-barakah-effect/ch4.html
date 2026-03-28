@@ -15,6 +15,365 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through diagram controls */
+    .step-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .step-controls .btn { min-width: 110px; justify-content: center; }
+    .step-indicator {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.3rem 0.8rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .step-description {
+      margin-top: 0.75rem;
+      padding: 0.85rem 1.1rem;
+      background: linear-gradient(135deg, rgba(212,161,6,0.06), rgba(16,185,129,0.04));
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      color: var(--text);
+      min-height: 3rem;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Interactive exercise styling */
+    .exercise-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .exercise-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-2);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .exercise-instructions {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Drag-and-drop matching */
+    .match-exercise {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem;
+      align-items: start;
+    }
+    @media (max-width: 600px) {
+      .match-exercise { grid-template-columns: 1fr; }
+      .match-arrow-col { display: none; }
+    }
+    .match-col-header {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      text-align: center;
+    }
+    .match-item {
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+      text-align: center;
+      user-select: none;
+      margin-bottom: 0.4rem;
+    }
+    .match-item:hover { border-color: var(--accent); transform: scale(1.02); }
+    .match-item.selected { border-color: var(--accent); background: rgba(212,161,6,0.1); box-shadow: 0 0 0 2px rgba(212,161,6,0.2); }
+    .match-item.correct { border-color: var(--accent-3); background: var(--success-bg); }
+    .match-item.wrong { border-color: var(--accent-danger); background: var(--error-bg); }
+    .match-item.locked { pointer-events: none; }
+    .match-arrow-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; padding-top: 1.6rem; }
+    .match-arrow-col i { color: var(--text-light); font-size: 0.8rem; margin-bottom: 1.85rem; }
+    .match-feedback {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.5rem 0.8rem;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+    .match-feedback.visible { display: block; }
+    .match-feedback.success { color: var(--accent-3); background: var(--success-bg); border: 1px solid var(--success-border); }
+
+    /* Slider exercise */
+    .slider-exercise { display: flex; flex-direction: column; gap: 1rem; }
+    .slider-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 60px;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    @media (max-width: 500px) {
+      .slider-row { grid-template-columns: 1fr; }
+    }
+    .slider-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .slider-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-2);
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .slider-input::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      min-width: 40px;
+    }
+    .slider-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .slider-result strong { color: var(--accent); }
+    .slider-bar-visual {
+      display: flex;
+      gap: 2px;
+      height: 30px;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .slider-bar-segment {
+      transition: flex 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: white;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    /* Interactive mind map */
+    .mindmap-container {
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mm-tooltip {
+      position: absolute;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.9rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      box-shadow: var(--shadow);
+      max-width: 220px;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .mm-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .mm-legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+      justify-content: center;
+    }
+    .mm-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .mm-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mm-click-hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Ritual categoriser exercise */
+    .cat-exercise { display: flex; flex-direction: column; gap: 1rem; }
+    .cat-pool {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0.75rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border);
+    }
+    .cat-chip {
+      padding: 0.45rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: grab;
+      user-select: none;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .cat-chip:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .cat-chip.selected { border-color: var(--accent); background: rgba(212,161,6,0.1); }
+    .cat-chip.placed { opacity: 0.5; pointer-events: none; }
+    .cat-chip.correct-chip { border-color: var(--accent-3); background: var(--success-bg); color: var(--accent-3); }
+    .cat-chip.wrong-chip { border-color: var(--accent-danger); background: var(--error-bg); }
+    .cat-zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    @media (max-width: 600px) {
+      .cat-zones { grid-template-columns: 1fr; }
+    }
+    .cat-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      min-height: 120px;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .cat-zone:hover, .cat-zone.active { border-color: var(--accent); }
+    .cat-zone-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-zone-items {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      min-height: 40px;
+    }
+
+    /* Manifesto commitment builder */
+    .commit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    @media (max-width: 600px) {
+      .commit-grid { grid-template-columns: 1fr; }
+    }
+    .commit-card {
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .commit-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .commit-card.active { border-color: var(--accent-3); background: var(--success-bg); }
+    .commit-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+    .commit-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .commit-card .commit-check {
+      float: right;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      color: transparent;
+      transition: all 0.2s;
+    }
+    .commit-card.active .commit-check {
+      border-color: var(--accent-3);
+      background: var(--accent-3);
+      color: white;
+    }
+    .commit-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body data-chapter="ch4">
@@ -53,6 +412,7 @@
     <!-- TAB: Lessons -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- ===================== LESSON 1 ===================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>The Barakah Culture Framework</h2></div>
         <p>Having established what Barakah is (Chapter 1), how we lost it (Chapter 2), and what Barakah Culture looks like (Chapter 3), the author now presents a structured framework for embedding Barakah into daily life. The framework operates at three levels: Values, Mindsets, and Rituals.</p>
@@ -60,39 +420,397 @@
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-bullseye"></i> Three Levels of Barakah Culture</div>
-          <svg viewBox="0 0 500 400" width="100%" height="400">
+          <svg viewBox="0 0 500 420" width="100%" height="420">
+            <defs>
+              <radialGradient id="ritualGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.05"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.15"/>
+              </radialGradient>
+              <radialGradient id="mindsetGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.2"/>
+              </radialGradient>
+              <radialGradient id="valueGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.3"/>
+              </radialGradient>
+              <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
             <!-- Outermost circle: Rituals -->
-            <circle cx="250" cy="200" r="170" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/>
-            <text x="250" y="52" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="700">RITUALS</text>
-            <text x="250" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Daily practices &amp; habits</text>
+            <circle cx="250" cy="200" r="170" fill="url(#ritualGrad)" stroke="var(--accent-3)" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="250" y="48" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="700">RITUALS</text>
+            <text x="250" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Daily practices &amp; habits</text>
+            <!-- Ritual labels around outer ring with icons -->
+            <circle cx="105" cy="112" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="105" y="116" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter" font-weight="600">Salah</text>
+            <circle cx="395" cy="112" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="395" y="116" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter" font-weight="600">Dhikr</text>
+            <circle cx="105" cy="302" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="105" y="306" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter" font-weight="600">Sadaqah</text>
+            <circle cx="395" cy="302" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="395" y="306" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter" font-weight="600">Tawbah</text>
+            <circle cx="80" cy="200" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="80" y="204" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="Inter" font-weight="600">Du'a</text>
+            <circle cx="420" cy="200" r="14" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="420" y="204" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="Inter" font-weight="600">Ihsan</text>
             <!-- Middle circle: Mindsets -->
-            <circle cx="250" cy="200" r="115" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/>
-            <text x="250" y="108" text-anchor="middle" fill="var(--accent-2)" font-size="13" font-family="Inter" font-weight="700">MINDSETS</text>
-            <text x="250" y="124" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Mental models &amp; perspectives</text>
+            <circle cx="250" cy="200" r="115" fill="url(#mindsetGrad)" stroke="var(--accent-2)" stroke-width="2"/>
+            <text x="250" y="105" text-anchor="middle" fill="var(--accent-2)" font-size="13" font-family="Inter" font-weight="700">MINDSETS</text>
+            <text x="250" y="121" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Mental models &amp; perspectives</text>
             <!-- Innermost circle: Values -->
-            <circle cx="250" cy="200" r="60" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="2"/>
+            <circle cx="250" cy="200" r="60" fill="url(#valueGrad)" stroke="var(--accent)" stroke-width="2.5" filter="url(#glow1)"/>
             <text x="250" y="195" text-anchor="middle" fill="var(--accent)" font-size="14" font-family="Inter" font-weight="700">VALUES</text>
             <text x="250" y="212" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Core beliefs</text>
-            <!-- Arrows from inner to outer -->
-            <text x="250" y="380" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter">Values shape Mindsets, Mindsets drive Rituals</text>
+            <!-- Directional arrows from inside out -->
+            <defs>
+              <marker id="outArr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto" fill="var(--text-light)">
+                <polygon points="0 0, 7 2.5, 0 5"/>
+              </marker>
+            </defs>
+            <line x1="250" y1="262" x2="250" y2="310" stroke="var(--text-light)" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#outArr)"/>
+            <line x1="310" y1="200" x2="360" y2="200" stroke="var(--text-light)" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#outArr)"/>
+            <line x1="190" y1="200" x2="140" y2="200" stroke="var(--text-light)" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#outArr)"/>
+            <!-- Flow label -->
+            <text x="250" y="395" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter">Values shape Mindsets, Mindsets drive Rituals</text>
+            <text x="250" y="412" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter" font-style="italic">The framework flows from inside out</text>
           </svg>
           <p class="viz-caption">Values are the innermost core that shape Mindsets, which in turn drive daily Rituals -- the visible expression of Barakah Culture.</p>
+        </div>
+
+        <!-- SVG: Inside-out flow diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-alt-h"></i> The Inside-Out Flow</div>
+          <svg viewBox="0 0 600 180" width="100%" height="180">
+            <defs>
+              <marker id="flowArr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto" fill="var(--accent)">
+                <polygon points="0 0, 8 3, 0 6"/>
+              </marker>
+              <linearGradient id="flowGrad1" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.05"/>
+              </linearGradient>
+              <linearGradient id="flowGrad2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.05"/>
+              </linearGradient>
+              <linearGradient id="flowGrad3" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.05"/>
+              </linearGradient>
+            </defs>
+            <!-- Values box -->
+            <rect x="20" y="40" width="150" height="90" rx="12" fill="url(#flowGrad1)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="95" y="68" text-anchor="middle" fill="var(--accent)" font-size="13" font-family="Inter" font-weight="700">VALUES</text>
+            <line x1="45" y1="78" x2="145" y2="78" stroke="var(--accent)" stroke-width="0.5" opacity="0.3"/>
+            <text x="95" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"I believe Allah</text>
+            <text x="95" y="107" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">is the centre"</text>
+            <!-- Arrow 1 -->
+            <line x1="175" y1="85" x2="210" y2="85" stroke="var(--accent)" stroke-width="2" marker-end="url(#flowArr)"/>
+            <text x="193" y="77" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">shapes</text>
+            <!-- Mindsets box -->
+            <rect x="215" y="40" width="160" height="90" rx="12" fill="url(#flowGrad2)" stroke="var(--accent-2)" stroke-width="2"/>
+            <text x="295" y="68" text-anchor="middle" fill="var(--accent-2)" font-size="13" font-family="Inter" font-weight="700">MINDSETS</text>
+            <line x1="240" y1="78" x2="350" y2="78" stroke="var(--accent-2)" stroke-width="0.5" opacity="0.3"/>
+            <text x="295" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"I seek excellence</text>
+            <text x="295" y="107" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">because Allah loves it"</text>
+            <!-- Arrow 2 -->
+            <line x1="380" y1="85" x2="415" y2="85" stroke="var(--accent-2)" stroke-width="2" marker-end="url(#flowArr)"/>
+            <text x="398" y="77" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">drives</text>
+            <!-- Rituals box -->
+            <rect x="420" y="40" width="160" height="90" rx="12" fill="url(#flowGrad3)" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="500" y="68" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="700">RITUALS</text>
+            <line x1="445" y1="78" x2="555" y2="78" stroke="var(--accent-3)" stroke-width="0.5" opacity="0.3"/>
+            <text x="500" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"I say Bismillah</text>
+            <text x="500" y="107" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">before every task"</text>
+            <!-- Bottom: feedback loop -->
+            <path d="M500,135 L500,155 Q500,165 490,165 L110,165 Q100,165 100,155 L100,135" fill="none" stroke="var(--text-light)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#outArr)"/>
+            <text x="300" y="176" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter" font-style="italic">Rituals reinforce and deepen Values (virtuous cycle)</text>
+          </svg>
+          <p class="viz-caption">The framework flows from inside out: beliefs ground perspectives, perspectives motivate action -- and sustained action deepens beliefs.</p>
+        </div>
+
+        <!-- SVG: Why Rituals Alone Fail -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> Why Rituals Without Values Collapse</div>
+          <svg viewBox="0 0 600 220" width="100%" height="220">
+            <defs>
+              <marker id="failArr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto" fill="var(--accent-danger, #e74c3c)">
+                <polygon points="0 0, 7 2.5, 0 5"/>
+              </marker>
+              <marker id="okArr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto" fill="var(--accent-3)">
+                <polygon points="0 0, 7 2.5, 0 5"/>
+              </marker>
+            </defs>
+            <!-- Left: Shallow approach -->
+            <text x="155" y="20" text-anchor="middle" fill="var(--accent-danger, #e74c3c)" font-size="11" font-family="Inter" font-weight="700">SHALLOW APPROACH</text>
+            <rect x="35" y="30" width="100" height="40" rx="8" fill="var(--accent-danger, #e74c3c)" opacity="0.1" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="85" y="55" text-anchor="middle" fill="var(--text-light)" font-size="10" font-family="Inter">No Values</text>
+            <rect x="35" y="80" width="100" height="40" rx="8" fill="var(--accent-danger, #e74c3c)" opacity="0.1" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="85" y="105" text-anchor="middle" fill="var(--text-light)" font-size="10" font-family="Inter">No Mindsets</text>
+            <rect x="170" y="55" width="100" height="40" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="220" y="80" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="600">Rituals Only</text>
+            <line x1="140" y1="50" x2="165" y2="65" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <line x1="140" y1="100" x2="165" y2="85" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <line x1="275" y1="75" x2="310" y2="75" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5" marker-end="url(#failArr)"/>
+            <!-- Result: collapse -->
+            <rect x="50" y="140" width="220" height="50" rx="10" fill="var(--accent-danger, #e74c3c)" opacity="0.08" stroke="var(--accent-danger, #e74c3c)" stroke-width="1.5"/>
+            <text x="160" y="162" text-anchor="middle" fill="var(--accent-danger, #e74c3c)" font-size="10" font-family="Inter" font-weight="700">Habits fade within weeks</text>
+            <text x="160" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">No inner anchor = no sustainability</text>
+            <line x1="220" y1="100" x2="200" y2="135" stroke="var(--accent-danger, #e74c3c)" stroke-width="1" stroke-dasharray="3,2"/>
+
+            <!-- Right: Deep approach -->
+            <text x="460" y="20" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">DEEP APPROACH</text>
+            <rect x="350" y="30" width="80" height="40" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="390" y="55" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="600">Values</text>
+            <line x1="435" y1="50" x2="455" y2="65" stroke="var(--accent)" stroke-width="1.5"/>
+            <rect x="350" y="80" width="80" height="40" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="390" y="105" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="600">Mindsets</text>
+            <line x1="435" y1="100" x2="455" y2="85" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <rect x="460" y="55" width="100" height="40" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="510" y="80" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="600">Rituals</text>
+            <!-- Result: sustain -->
+            <rect x="350" y="140" width="220" height="50" rx="10" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="460" y="162" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">Habits become second nature</text>
+            <text x="460" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Deep roots = lasting transformation</text>
+            <line x1="510" y1="100" x2="490" y2="135" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="3,2"/>
+          </svg>
+          <p class="viz-caption">Without values and mindsets as a foundation, rituals collapse. The inside-out approach creates lasting change.</p>
         </div>
 
         <p>The power of this framework is that it works from the inside out. You cannot sustain rituals without the mindsets that give them meaning, and you cannot hold mindsets without the values that ground them. Many people try to adopt Islamic habits (rituals) without first internalising the values and mindsets that make those habits meaningful -- and they wonder why they cannot sustain them.</p>
       </div>
 
+      <!-- ===================== LESSON 2 ===================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Values: The Core Beliefs</h2></div>
         <p>At the heart of Barakah Culture lie three foundational values that are non-negotiable. These are not preferences or opinions -- they are deep convictions about the nature of reality that shape every other aspect of your life.</p>
+
+        <!-- SVG: Three Values Pillars -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Three Foundational Values</div>
+          <svg viewBox="0 0 600 340" width="100%" height="340">
+            <!-- Base platform -->
+            <rect x="30" y="270" width="540" height="35" rx="8" fill="var(--border-2)" stroke="var(--border)" stroke-width="1"/>
+            <text x="300" y="292" text-anchor="middle" fill="var(--text-light)" font-size="10" font-family="Inter" font-weight="600">FOUNDATION OF BARAKAH CULTURE</text>
+
+            <!-- Pillar 1: God-Centric -->
+            <rect x="55" y="60" width="140" height="210" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="2"/>
+            <rect x="55" y="60" width="140" height="40" rx="10" fill="var(--accent)" opacity="0.85"/>
+            <text x="125" y="85" text-anchor="middle" fill="white" font-size="11" font-family="Inter" font-weight="700">God-Centric</text>
+            <!-- Icon: Ka'bah-inspired -->
+            <rect x="110" y="115" width="30" height="30" rx="3" fill="var(--accent)" opacity="0.2"/>
+            <circle cx="125" cy="130" r="6" fill="var(--accent)" opacity="0.4"/>
+            <text x="125" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Allah is the centre</text>
+            <text x="125" y="184" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">of everything.</text>
+            <text x="125" y="198" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">All actions oriented</text>
+            <text x="125" y="212" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">toward Him.</text>
+            <text x="125" y="238" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Inter" font-style="italic">"For Allah's sake"</text>
+
+            <!-- Pillar 2: Stewardship -->
+            <rect x="230" y="60" width="140" height="210" rx="10" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="2"/>
+            <rect x="230" y="60" width="140" height="40" rx="10" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="300" y="85" text-anchor="middle" fill="white" font-size="11" font-family="Inter" font-weight="700">Stewardship</text>
+            <!-- Icon: Open hands -->
+            <path d="M285,125 Q300,110 315,125" fill="none" stroke="var(--accent-2)" stroke-width="2" opacity="0.4"/>
+            <circle cx="300" cy="130" r="6" fill="var(--accent-2)" opacity="0.4"/>
+            <text x="300" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Everything is a</text>
+            <text x="300" y="184" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">trust (amanah).</text>
+            <text x="300" y="198" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">You are a caretaker,</text>
+            <text x="300" y="212" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">not an owner.</text>
+            <text x="300" y="238" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-family="Inter" font-style="italic">"Entrusted to me"</text>
+
+            <!-- Pillar 3: Hereafter Focus -->
+            <rect x="405" y="60" width="140" height="210" rx="10" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/>
+            <rect x="405" y="60" width="140" height="40" rx="10" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="475" y="85" text-anchor="middle" fill="white" font-size="11" font-family="Inter" font-weight="700">Hereafter Focus</text>
+            <!-- Icon: Ascending path -->
+            <line x1="460" y1="135" x2="490" y2="115" stroke="var(--accent-3)" stroke-width="2" opacity="0.4"/>
+            <circle cx="490" cy="115" r="5" fill="var(--accent-3)" opacity="0.4"/>
+            <text x="475" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">This life is temporary.</text>
+            <text x="475" y="184" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Evaluate every</text>
+            <text x="475" y="198" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">action through the</text>
+            <text x="475" y="212" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">lens of akhirah.</text>
+            <text x="475" y="238" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-family="Inter" font-style="italic">"Invest for eternity"</text>
+
+            <!-- Top connector -->
+            <line x1="125" y1="40" x2="300" y2="20" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="300" y1="20" x2="475" y2="40" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="300" y="15" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">NON-NEGOTIABLE VALUES</text>
+          </svg>
+          <p class="viz-caption">Three pillars that form the unshakeable foundation -- without any one of them, the structure cannot stand.</p>
+        </div>
+
+        <!-- SVG: Values as a Compass -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-compass"></i> Values as Your Inner Compass</div>
+          <svg viewBox="0 0 500 320" width="100%" height="320">
+            <!-- Compass circle -->
+            <circle cx="250" cy="160" r="120" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <circle cx="250" cy="160" r="80" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+            <circle cx="250" cy="160" r="20" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="2"/>
+            <!-- Center label -->
+            <text x="250" y="164" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">ALLAH</text>
+            <!-- North: God-Centric -->
+            <line x1="250" y1="140" x2="250" y2="55" stroke="var(--accent)" stroke-width="2"/>
+            <polygon points="250,40 243,55 257,55" fill="var(--accent)"/>
+            <rect x="195" y="10" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="250" y="29" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">God-Centric</text>
+            <!-- SE: Stewardship -->
+            <line x1="264" y1="174" x2="340" y2="250" stroke="var(--accent-2)" stroke-width="2"/>
+            <circle cx="348" cy="258" r="5" fill="var(--accent-2)"/>
+            <rect x="310" y="268" width="110" height="28" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="365" y="287" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="700">Stewardship</text>
+            <!-- SW: Hereafter -->
+            <line x1="236" y1="174" x2="160" y2="250" stroke="var(--accent-3)" stroke-width="2"/>
+            <circle cx="152" cy="258" r="5" fill="var(--accent-3)"/>
+            <rect x="85" y="268" width="120" height="28" rx="6" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="145" y="287" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">Hereafter Focus</text>
+            <!-- Decision examples around the compass -->
+            <text x="390" y="100" fill="var(--text-light)" font-size="8" font-family="Inter" font-style="italic">"Is this for Allah?"</text>
+            <text x="390" y="180" fill="var(--text-light)" font-size="8" font-family="Inter" font-style="italic">"Am I a good trustee?"</text>
+            <text x="50" y="180" fill="var(--text-light)" font-size="8" font-family="Inter" font-style="italic">"Will this benefit</text>
+            <text x="50" y="192" fill="var(--text-light)" font-size="8" font-family="Inter" font-style="italic"> me in the akhirah?"</text>
+          </svg>
+          <p class="viz-caption">The three values act as a compass -- every decision, big or small, can be checked against these three questions.</p>
+        </div>
+
         <p><strong>God-Centric Living:</strong> The belief that Allah is the centre of everything. All actions, decisions, and goals are oriented toward Him. This is not merely a theological statement -- it is a lived reality that transforms how you wake up, how you work, how you eat, and how you sleep.</p>
         <p><strong>Stewardship:</strong> The belief that nothing you have truly belongs to you. Your time, wealth, talents, relationships, and even your body are trusts (amanah) from Allah. You will be asked about how you used each one. This value liberates you from the anxiety of ownership and replaces it with the responsibility of care.</p>
         <p><strong>Hereafter Focus:</strong> The belief that this life is temporary and the real life is the one to come. This does not mean neglecting the dunya -- it means keeping it in perspective. Every worldly action is evaluated through the lens of "will this benefit me in the akhirah?"</p>
       </div>
 
+      <!-- ===================== LESSON 3 ===================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Mindsets: How We Think</h2></div>
         <p>Values produce mindsets -- the mental models that shape how we interpret and respond to the world. The author identifies eight key mindsets that characterise someone living in Barakah Culture:</p>
+
+        <!-- SVG: Eight Mindsets Wheel -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-brain"></i> Eight Barakah Mindsets</div>
+          <svg viewBox="0 0 500 500" width="100%" height="500">
+            <defs>
+              <radialGradient id="wheelCenter" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.05"/>
+              </radialGradient>
+            </defs>
+            <!-- Outer ring -->
+            <circle cx="250" cy="250" r="190" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <!-- Center -->
+            <circle cx="250" cy="250" r="55" fill="url(#wheelCenter)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="250" y="245" text-anchor="middle" fill="var(--accent)" font-size="12" font-family="Inter" font-weight="700">BARAKAH</text>
+            <text x="250" y="260" text-anchor="middle" fill="var(--accent)" font-size="12" font-family="Inter" font-weight="700">MINDSETS</text>
+
+            <!-- 1: Purpose-Driven (top) -->
+            <line x1="250" y1="195" x2="250" y2="85" stroke="var(--accent)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="185" y="30" width="130" height="50" rx="10" fill="var(--accent)" opacity="0.13" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="250" y="52" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Inter" font-weight="700">Purpose-Driven</text>
+            <text x="250" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Every action has niyyah</text>
+
+            <!-- 2: Barakah-Seeking (top-right) -->
+            <line x1="288" y1="212" x2="380" y2="120" stroke="var(--accent-2)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="340" y="75" width="130" height="50" rx="10" fill="var(--accent-2)" opacity="0.13" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="405" y="97" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Barakah-Seeking</text>
+            <text x="405" y="113" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Choose blessed paths</text>
+
+            <!-- 3: Generous (right) -->
+            <line x1="305" y1="250" x2="400" y2="250" stroke="var(--accent-3)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="370" y="220" width="120" height="50" rx="10" fill="var(--accent-3)" opacity="0.13" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="430" y="242" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">Generous</text>
+            <text x="430" y="258" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Give freely, trust Allah</text>
+
+            <!-- 4: Community-Oriented (bottom-right) -->
+            <line x1="288" y1="288" x2="380" y2="380" stroke="var(--accent)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="340" y="360" width="140" height="50" rx="10" fill="var(--accent)" opacity="0.13" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="410" y="382" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">Community-Oriented</text>
+            <text x="410" y="398" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Ummah over self</text>
+
+            <!-- 5: Excellence (bottom) -->
+            <line x1="250" y1="305" x2="250" y2="410" stroke="var(--accent-2)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="185" y="415" width="130" height="50" rx="10" fill="var(--accent-2)" opacity="0.13" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="250" y="437" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Excellence (Ihsan)</text>
+            <text x="250" y="453" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Highest quality for Allah</text>
+
+            <!-- 6: Gentle Growth (bottom-left) -->
+            <line x1="212" y1="288" x2="120" y2="380" stroke="var(--accent-3)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="25" y="360" width="130" height="50" rx="10" fill="var(--accent-3)" opacity="0.13" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="90" y="382" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">Gentle Growth</text>
+            <text x="90" y="398" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Trust Allah's timeline</text>
+
+            <!-- 7: Legacy-Focused (left) -->
+            <line x1="195" y1="250" x2="100" y2="250" stroke="var(--accent)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="10" y="220" width="130" height="50" rx="10" fill="var(--accent)" opacity="0.13" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="75" y="242" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Inter" font-weight="700">Legacy-Focused</text>
+            <text x="75" y="258" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Beyond your lifespan</text>
+
+            <!-- 8: Grateful (top-left) -->
+            <line x1="212" y1="212" x2="120" y2="120" stroke="var(--accent-2)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="30" y="75" width="130" height="50" rx="10" fill="var(--accent-2)" opacity="0.13" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="95" y="97" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Grateful (Shukr)</text>
+            <text x="95" y="113" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Default to gratitude</text>
+          </svg>
+          <p class="viz-caption">Eight interconnected mindsets radiating from the core, each shaped by the foundational values.</p>
+        </div>
+
+        <!-- SVG: Value-to-Mindset Mapping -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sitemap"></i> Which Values Produce Which Mindsets</div>
+          <svg viewBox="0 0 620 300" width="100%" height="300">
+            <defs>
+              <marker id="mapArr" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto" fill="var(--text-light)">
+                <polygon points="0 0, 6 2, 0 4"/>
+              </marker>
+            </defs>
+            <!-- Values column -->
+            <text x="70" y="20" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter" font-weight="700">VALUES</text>
+            <rect x="15" y="35" width="110" height="40" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="70" y="60" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">God-Centric</text>
+            <rect x="15" y="95" width="110" height="40" rx="8" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="70" y="120" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="700">Stewardship</text>
+            <rect x="15" y="155" width="110" height="40" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="70" y="180" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">Hereafter</text>
+            <rect x="15" y="225" width="110" height="40" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="70" y="250" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="600">All Three</text>
+
+            <!-- Mindsets column -->
+            <text x="480" y="20" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter" font-weight="700">MINDSETS</text>
+            <!-- God-Centric mindsets -->
+            <rect x="380" y="25" width="120" height="30" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="440" y="45" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="600">Purpose-Driven</text>
+            <rect x="510" y="25" width="105" height="30" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="562" y="45" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Inter" font-weight="600">Barakah-Seeking</text>
+            <!-- Stewardship mindsets -->
+            <rect x="380" y="85" width="100" height="30" rx="6" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="430" y="105" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-family="Inter" font-weight="600">Generous</text>
+            <rect x="490" y="85" width="125" height="30" rx="6" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="552" y="105" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-family="Inter" font-weight="600">Community-Oriented</text>
+            <!-- Hereafter mindsets -->
+            <rect x="380" y="145" width="120" height="30" rx="6" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="440" y="165" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="600">Legacy-Focused</text>
+            <rect x="510" y="145" width="105" height="30" rx="6" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="562" y="165" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="600">Gentle Growth</text>
+            <!-- All Three mindsets -->
+            <rect x="380" y="218" width="120" height="30" rx="6" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="440" y="238" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="600">Excellence (Ihsan)</text>
+            <rect x="510" y="218" width="105" height="30" rx="6" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="562" y="238" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="600">Grateful (Shukr)</text>
+
+            <!-- Arrows -->
+            <line x1="130" y1="50" x2="375" y2="38" stroke="var(--accent)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="58" x2="505" y2="38" stroke="var(--accent)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="112" x2="375" y2="98" stroke="var(--accent-2)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="118" x2="485" y2="98" stroke="var(--accent-2)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="172" x2="375" y2="158" stroke="var(--accent-3)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="178" x2="505" y2="158" stroke="var(--accent-3)" stroke-width="1" opacity="0.5" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="242" x2="375" y2="232" stroke="var(--text-light)" stroke-width="1" opacity="0.4" stroke-dasharray="3,2" marker-end="url(#mapArr)"/>
+            <line x1="130" y1="248" x2="505" y2="232" stroke="var(--text-light)" stroke-width="1" opacity="0.4" stroke-dasharray="3,2" marker-end="url(#mapArr)"/>
+          </svg>
+          <p class="viz-caption">Each value produces specific mindsets. Excellence and Gratitude require the combined strength of all three values.</p>
+        </div>
+
         <p><strong>Purpose-Driven:</strong> Every action has an intention (niyyah) connected to a higher purpose. You do not just go to work -- you serve Allah through your profession.</p>
         <p><strong>Barakah-Seeking:</strong> You actively seek Allah's Barakah in everything you do, choosing paths that attract divine blessing even when they are not the most "efficient" by worldly standards.</p>
         <p><strong>Generous:</strong> You give freely of your time, money, knowledge, and attention -- trusting that Allah will replace what you give with something better.</p>
@@ -101,8 +819,55 @@
         <p><strong>Gentle Growth:</strong> You are patient with your progress, trusting Allah's timeline rather than forcing artificial deadlines.</p>
         <p><strong>Legacy-Focused:</strong> You think beyond your lifespan, investing in actions whose benefits continue after your death -- sadaqah jariyah, beneficial knowledge, and righteous children.</p>
         <p><strong>Grateful:</strong> You default to gratitude (shukr) rather than complaint, recognising that even hardships contain hidden blessings.</p>
+
+        <!-- STEP-THROUGH DIAGRAM 1: Building Mindsets from Values -->
+        <div class="viz-container" id="stepMindsets">
+          <div class="viz-title"><i class="fas fa-layer-group"></i> Step-Through: How Values Build Mindsets</div>
+          <svg id="stepMindsetsSvg" viewBox="0 0 600 200" width="100%" height="200">
+            <text x="300" y="110" text-anchor="middle" fill="var(--text-light)" font-size="13" font-family="Inter">Click Next Step to begin...</text>
+          </svg>
+          <div class="step-description" id="stepMindsetsDesc">Click "Next Step" to see how each core value generates specific mindsets.</div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="stepMindsetsPrevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepMindsetsIndicator">Step 0 / 4</span>
+            <button class="btn btn-primary btn-sm" id="stepMindsetsNextBtn">Next Step <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 1: Match Values to Mindsets -->
+        <div class="exercise-box" id="matchExercise">
+          <div class="exercise-title"><i class="fas fa-puzzle-piece"></i> Interactive Exercise: Match Values to Mindsets</div>
+          <p class="exercise-instructions">Click a value on the left, then click the mindset it most directly produces on the right. Match all 4 pairs correctly.</p>
+          <div class="match-exercise" id="matchGrid">
+            <div>
+              <div class="match-col-header">Value / Source</div>
+              <div class="match-item" data-side="left" data-id="god">God-Centric Living</div>
+              <div class="match-item" data-side="left" data-id="steward">Stewardship (Amanah)</div>
+              <div class="match-item" data-side="left" data-id="hereafter">Hereafter Focus</div>
+              <div class="match-item" data-side="left" data-id="all">All Three Values</div>
+            </div>
+            <div class="match-arrow-col">
+              <i class="fas fa-long-arrow-alt-right"></i>
+              <i class="fas fa-long-arrow-alt-right"></i>
+              <i class="fas fa-long-arrow-alt-right"></i>
+              <i class="fas fa-long-arrow-alt-right"></i>
+            </div>
+            <div>
+              <div class="match-col-header">Mindset</div>
+              <div class="match-item" data-side="right" data-id="generous">Generous</div>
+              <div class="match-item" data-side="right" data-id="legacy">Legacy-Focused</div>
+              <div class="match-item" data-side="right" data-id="purpose">Purpose-Driven</div>
+              <div class="match-item" data-side="right" data-id="excellence">Excellence (Ihsan)</div>
+            </div>
+          </div>
+          <div class="match-feedback" id="matchFeedback"></div>
+          <div style="margin-top:0.75rem;">
+            <button class="btn btn-ghost btn-sm" id="matchResetBtn"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+        </div>
       </div>
 
+      <!-- ===================== LESSON 4 ===================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>Rituals: The Barakah Culture Manifesto</h2></div>
         <p>The outermost layer of the framework is where theory becomes practice. The author introduces the Barakah Culture Manifesto -- ten practical ritual elements that, when practised daily, embed Barakah Culture into the fabric of your life. Each manifesto element will become the focus of one chapter in Part 2 of the book (Chapters 5-14).</p>
@@ -110,7 +875,6 @@
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-scroll"></i> The Barakah Culture Manifesto: 10 Elements</div>
           <svg viewBox="0 0 620 380" width="100%" height="380">
-            <!-- Two columns of 5 -->
             <rect x="30" y="10" width="260" height="52" rx="10" fill="var(--accent)" opacity="0.85"/>
             <text x="40" y="32" fill="white" font-size="12" font-family="Inter" font-weight="700">1.</text>
             <text x="60" y="32" fill="white" font-size="11" font-family="Inter" font-weight="600">Bismillah</text>
@@ -166,17 +930,282 @@
           <p class="viz-caption">The 10 manifesto elements are daily rituals that translate Barakah Culture values and mindsets into concrete, actionable habits.</p>
         </div>
 
+        <!-- SVG: Manifesto Categories -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-th-large"></i> Manifesto Elements by Category</div>
+          <svg viewBox="0 0 600 260" width="100%" height="260">
+            <!-- Category 1: Connection with Allah -->
+            <rect x="15" y="10" width="180" height="240" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="105" y="35" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">CONNECTION WITH ALLAH</text>
+            <rect x="30" y="50" width="150" height="30" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="105" y="70" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="600">Bismillah</text>
+            <rect x="30" y="90" width="150" height="30" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="105" y="110" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="600">Salah</text>
+            <rect x="30" y="130" width="150" height="30" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="105" y="150" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="600">Dhikr</text>
+            <rect x="30" y="170" width="150" height="30" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="105" y="190" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="600">Du'a</text>
+
+            <!-- Category 2: Inner Transformation -->
+            <rect x="210" y="10" width="180" height="240" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="300" y="35" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="700">INNER TRANSFORMATION</text>
+            <rect x="225" y="50" width="150" height="30" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="300" y="70" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="600">Alhamdulillah</text>
+            <rect x="225" y="90" width="150" height="30" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="300" y="110" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="600">Tawakkul</text>
+            <rect x="225" y="130" width="150" height="30" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="300" y="150" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="600">Tawbah</text>
+
+            <!-- Category 3: Outward Impact -->
+            <rect x="405" y="10" width="180" height="240" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="495" y="35" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">OUTWARD IMPACT</text>
+            <rect x="420" y="50" width="150" height="30" rx="6" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="495" y="70" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="600">Ihsan</text>
+            <rect x="420" y="90" width="150" height="30" rx="6" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="495" y="110" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="600">Sadaqah</text>
+            <rect x="420" y="130" width="150" height="30" rx="6" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="495" y="150" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="600">Salawat</text>
+          </svg>
+          <p class="viz-caption">The 10 elements can be grouped into three categories: direct connection with Allah, inner spiritual transformation, and outward impact on the world.</p>
+        </div>
+
+        <!-- SVG: Manifesto as a Daily Cycle -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sync-alt"></i> The Manifesto as a Daily Cycle</div>
+          <svg viewBox="0 0 500 420" width="100%" height="420">
+            <defs>
+              <marker id="cycleArr" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto" fill="var(--accent)">
+                <polygon points="0 0, 6 2, 0 4"/>
+              </marker>
+            </defs>
+            <!-- Central cycle -->
+            <circle cx="250" cy="210" r="150" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <circle cx="250" cy="210" r="40" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="2"/>
+            <text x="250" y="207" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">YOUR</text>
+            <text x="250" y="220" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">DAY</text>
+            <!-- 10 elements around the circle -->
+            <circle cx="250" cy="55" r="22" fill="var(--accent)" opacity="0.8"/>
+            <text x="250" y="59" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Bismillah</text>
+            <circle cx="343" cy="80" r="22" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="343" y="82" text-anchor="middle" fill="white" font-size="7" font-family="Inter" font-weight="700">Alhamdulillah</text>
+            <circle cx="400" cy="155" r="22" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="400" y="159" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Tawakkul</text>
+            <circle cx="400" cy="265" r="22" fill="var(--accent)" opacity="0.8"/>
+            <text x="400" y="269" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Ihsan</text>
+            <circle cx="343" cy="340" r="22" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="343" y="344" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Salah</text>
+            <circle cx="250" cy="365" r="22" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="250" y="369" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Du'a</text>
+            <circle cx="157" cy="340" r="22" fill="var(--accent)" opacity="0.8"/>
+            <text x="157" y="344" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Sadaqah</text>
+            <circle cx="100" cy="265" r="22" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="100" y="269" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Dhikr</text>
+            <circle cx="100" cy="155" r="22" fill="var(--accent-3)" opacity="0.8"/>
+            <text x="100" y="159" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Tawbah</text>
+            <circle cx="157" cy="80" r="22" fill="var(--accent)" opacity="0.8"/>
+            <text x="157" y="84" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">Salawat</text>
+            <!-- Direction arc -->
+            <path d="M270,58 A155,155 0 1,1 235,58" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#cycleArr)" opacity="0.4"/>
+            <text x="250" y="410" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter" font-style="italic">A continuous cycle -- each element flows into the next throughout your day</text>
+          </svg>
+          <p class="viz-caption">The 10 manifesto elements are not isolated tasks but form a continuous cycle woven through every day.</p>
+        </div>
+
         <p>These ten elements are not arbitrary; they are drawn directly from the Quran and Sunnah. Each one is a time-tested practice that the Prophet (peace be upon him) and the early Muslims used to attract and sustain Barakah in their lives. The brilliance of the manifesto is its simplicity -- these are not complex theological theories but everyday actions that anyone can begin practising immediately.</p>
+
+        <!-- STEP-THROUGH DIAGRAM 2: Building Your Manifesto Day -->
+        <div class="viz-container" id="stepDay">
+          <div class="viz-title"><i class="fas fa-sun"></i> Step-Through: A Barakah-Filled Day</div>
+          <svg id="stepDaySvg" viewBox="0 0 600 220" width="100%" height="220">
+            <line x1="30" y1="110" x2="570" y2="110" stroke="var(--border)" stroke-width="2"/>
+            <circle cx="30" cy="110" r="4" fill="var(--accent)"/>
+            <circle cx="570" cy="110" r="4" fill="var(--accent)"/>
+            <text x="30" y="140" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter">Fajr</text>
+            <text x="300" y="140" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter">Midday</text>
+            <text x="570" y="140" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter">Isha</text>
+            <text x="300" y="90" text-anchor="middle" fill="var(--text-light)" font-size="12" font-family="Inter">Click Next Step to begin...</text>
+          </svg>
+          <div class="step-description" id="stepDayDesc">Click "Next Step" to see how the 10 manifesto elements map onto a single day.</div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="stepDayPrevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepDayIndicator">Step 0 / 6</span>
+            <button class="btn btn-primary btn-sm" id="stepDayNextBtn">Next Step <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 2: Categorise the Manifesto Elements -->
+        <div class="exercise-box" id="catExercise">
+          <div class="exercise-title"><i class="fas fa-th-large"></i> Interactive Exercise: Categorise the Manifesto</div>
+          <p class="exercise-instructions">Select an element from the pool below, then click the correct category to place it. Sort all 10 elements into their three categories.</p>
+          <div class="cat-exercise">
+            <div class="cat-pool" id="catPool"></div>
+            <div class="cat-zones" id="catZones">
+              <div class="cat-zone" data-zone="connection" style="border-color: var(--accent);">
+                <div class="cat-zone-title" style="color: var(--accent);">Connection with Allah</div>
+                <div class="cat-zone-items" id="catZoneConnection"></div>
+              </div>
+              <div class="cat-zone" data-zone="inner" style="border-color: var(--accent-2);">
+                <div class="cat-zone-title" style="color: var(--accent-2);">Inner Transformation</div>
+                <div class="cat-zone-items" id="catZoneInner"></div>
+              </div>
+              <div class="cat-zone" data-zone="outward" style="border-color: var(--accent-3);">
+                <div class="cat-zone-title" style="color: var(--accent-3);">Outward Impact</div>
+                <div class="cat-zone-items" id="catZoneOutward"></div>
+              </div>
+            </div>
+            <div class="match-feedback" id="catFeedback"></div>
+            <div style="margin-top:0.5rem;">
+              <button class="btn btn-ghost btn-sm" id="catResetBtn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- ===================== LESSON 5 ===================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Connecting Parts 1 and 2</h2></div>
         <p>Chapter 4 serves as the bridge between the theoretical foundation (Part 1) and the practical implementation (Part 2) of the book. Part 1 (Chapters 1-4) answered the "what" and "why" of Barakah: what it is, how we lost it, what Barakah Culture looks like, and what framework supports it.</p>
         <p>Part 2 (Chapters 5-14) will answer the "how" -- dedicating one chapter to each of the ten manifesto elements. Each chapter will explore the element's theological roots, its practical applications, and specific strategies for embedding it into daily routines.</p>
+
+        <!-- SVG: Journey Map -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-route"></i> The Book Journey: Part 1 to Part 2</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs>
+              <marker id="journeyArr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto" fill="var(--accent)">
+                <polygon points="0 0, 8 3, 0 6"/>
+              </marker>
+            </defs>
+            <!-- Part 1 block -->
+            <rect x="15" y="20" width="260" height="160" rx="14" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="2"/>
+            <text x="145" y="45" text-anchor="middle" fill="var(--accent)" font-size="12" font-family="Inter" font-weight="800">PART 1: THE WHAT &amp; WHY</text>
+            <rect x="30" y="58" width="110" height="32" rx="6" fill="var(--accent)" opacity="0.15"/>
+            <text x="85" y="79" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="600">Ch1: Concept</text>
+            <rect x="150" y="58" width="110" height="32" rx="6" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="205" y="79" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-family="Inter" font-weight="600">Ch2: Diagnosis</text>
+            <rect x="30" y="100" width="110" height="32" rx="6" fill="var(--accent-3)" opacity="0.15"/>
+            <text x="85" y="121" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="600">Ch3: Vision</text>
+            <rect x="150" y="100" width="110" height="32" rx="6" fill="var(--accent)" opacity="0.25" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="205" y="121" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">Ch4: Framework</text>
+            <text x="145" y="155" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter">Theory &amp; Foundation</text>
+
+            <!-- Bridge arrow -->
+            <line x1="280" y1="100" x2="340" y2="100" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#journeyArr)"/>
+            <text x="310" y="88" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">BRIDGE</text>
+
+            <!-- Part 2 block -->
+            <rect x="345" y="20" width="260" height="160" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="475" y="45" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="800">PART 2: THE HOW</text>
+            <text x="475" y="75" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Ch5: Bismillah</text>
+            <text x="475" y="90" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Ch6: Alhamdulillah</text>
+            <text x="475" y="105" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Ch7: Tawakkul ... Ch14: Salawat</text>
+            <text x="475" y="130" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">(One chapter per manifesto element)</text>
+            <text x="475" y="155" text-anchor="middle" fill="var(--text-light)" font-size="9" font-family="Inter">Practice &amp; Implementation</text>
+          </svg>
+          <p class="viz-caption">Chapter 4 bridges theoretical foundation (Part 1) with practical implementation (Part 2).</p>
+        </div>
+
+        <!-- SVG: The Complete Journey Staircase -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-stairs"></i> The Staircase of Transformation</div>
+          <svg viewBox="0 0 600 280" width="100%" height="280">
+            <!-- Steps ascending left to right -->
+            <rect x="20" y="220" width="120" height="40" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="80" y="237" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">Ch1: What is</text>
+            <text x="80" y="250" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">Barakah?</text>
+
+            <rect x="150" y="180" width="120" height="40" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="210" y="197" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-family="Inter" font-weight="700">Ch2: How We</text>
+            <text x="210" y="210" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-family="Inter" font-weight="700">Lost It</text>
+
+            <rect x="280" y="140" width="120" height="40" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="340" y="157" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="700">Ch3: Barakah</text>
+            <text x="340" y="170" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="700">Culture</text>
+
+            <rect x="410" y="100" width="120" height="40" rx="8" fill="var(--accent)" opacity="0.25" stroke="var(--accent)" stroke-width="2"/>
+            <text x="470" y="117" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="800">Ch4: Framework</text>
+            <text x="470" y="130" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Inter">(YOU ARE HERE)</text>
+
+            <!-- Arrow to Part 2 -->
+            <line x1="535" y1="120" x2="565" y2="80" stroke="var(--accent)" stroke-width="2" marker-end="url(#journeyArr)"/>
+            <rect x="500" y="40" width="90" height="35" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="545" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="700">Part 2</text>
+            <text x="545" y="67" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-family="Inter">Ch5-14</text>
+
+            <!-- Connecting lines (staircase) -->
+            <line x1="140" y1="235" x2="150" y2="210" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="270" y1="195" x2="280" y2="170" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="400" y1="155" x2="410" y2="130" stroke="var(--border)" stroke-width="1.5"/>
+
+            <!-- Labels -->
+            <text x="60" y="272" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Concept</text>
+            <text x="200" y="272" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Diagnosis</text>
+            <text x="340" y="272" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Vision</text>
+            <text x="470" y="272" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Framework</text>
+            <text x="545" y="272" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Practice</text>
+          </svg>
+          <p class="viz-caption">Each chapter builds on the previous one, ascending from understanding to action. Chapter 4 is the final step before Part 2 begins.</p>
+        </div>
+
         <div class="insight-box">
           <strong>The Journey So Far:</strong> Chapter 1 gave us the <em>concept</em> (Barakah defined). Chapter 2 gave us the <em>diagnosis</em> (how hustle culture stole our Barakah). Chapter 3 gave us the <em>vision</em> (Barakah Culture as the alternative). Chapter 4 gives us the <em>framework</em> (Values, Mindsets, Rituals) and the <em>roadmap</em> (the 10-element Manifesto). From Chapter 5 onward, we begin the practical work.
         </div>
         <p>The author emphasises that understanding the framework intellectually is not enough. Barakah Culture must be lived, not just studied. Part 2 is where the reader rolls up their sleeves and begins the daily work of transformation -- starting with the simplest yet most profound act: saying Bismillah.</p>
+
+        <!-- STEP-THROUGH DIAGRAM 3: Framework Integration -->
+        <div class="viz-container" id="stepIntegration">
+          <div class="viz-title"><i class="fas fa-cogs"></i> Step-Through: Framework Integration in Action</div>
+          <svg id="stepIntegrationSvg" viewBox="0 0 600 240" width="100%" height="240">
+            <text x="300" y="120" text-anchor="middle" fill="var(--text-light)" font-size="13" font-family="Inter">Click Next Step to begin...</text>
+          </svg>
+          <div class="step-description" id="stepIntegrationDesc">Click "Next Step" to see a real-life example of the framework in action -- from value to mindset to ritual.</div>
+          <div class="step-controls">
+            <button class="btn btn-ghost btn-sm" id="stepIntegrationPrevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepIntegrationIndicator">Step 0 / 5</span>
+            <button class="btn btn-primary btn-sm" id="stepIntegrationNextBtn">Next Step <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 3: Barakah Balance Self-Assessment -->
+        <div class="exercise-box" id="sliderExercise">
+          <div class="exercise-title"><i class="fas fa-sliders-h"></i> Interactive Exercise: Barakah Balance Self-Assessment</div>
+          <p class="exercise-instructions">Rate yourself honestly on each of the three framework levels (1 = very weak, 10 = very strong). The visualization will show where you might need to focus your growth.</p>
+          <div class="slider-exercise">
+            <div class="slider-row">
+              <span class="slider-label">Values</span>
+              <input type="range" class="slider-input" id="sliderValues" min="1" max="10" value="5">
+              <span class="slider-value" id="sliderValuesVal">5</span>
+            </div>
+            <div class="slider-row">
+              <span class="slider-label">Mindsets</span>
+              <input type="range" class="slider-input" id="sliderMindsets" min="1" max="10" value="5">
+              <span class="slider-value" id="sliderMindsetsVal">5</span>
+            </div>
+            <div class="slider-row">
+              <span class="slider-label">Rituals</span>
+              <input type="range" class="slider-input" id="sliderRituals" min="1" max="10" value="5">
+              <span class="slider-value" id="sliderRitualsVal">5</span>
+            </div>
+            <div class="slider-bar-visual" id="sliderBarVisual">
+              <div class="slider-bar-segment" style="flex:5; background: var(--accent);">Values</div>
+              <div class="slider-bar-segment" style="flex:5; background: var(--accent-2);">Mindsets</div>
+              <div class="slider-bar-segment" style="flex:5; background: var(--accent-3);">Rituals</div>
+            </div>
+            <div class="slider-result" id="sliderResult">
+              Adjust the sliders to see your personalised Barakah balance analysis.
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 4: Manifesto Commitment Builder -->
+        <div class="exercise-box" id="commitExercise">
+          <div class="exercise-title"><i class="fas fa-check-double"></i> Interactive Exercise: My Manifesto Commitment</div>
+          <p class="exercise-instructions">Select the manifesto elements you will commit to practising this week. Start with 3-5 elements and build gradually. Click to toggle your commitment.</p>
+          <div class="commit-grid" id="commitGrid"></div>
+          <div class="commit-result" id="commitResult">
+            Select elements above to build your personal Barakah commitment for the week.
+          </div>
+        </div>
       </div>
 
     </div>
@@ -211,60 +1240,21 @@
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- TAB: Mind Map (Interactive) -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh4" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
-          <style>
-            #mmCh4 .mm-node { animation: mmFadeInCH4 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH4 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh4 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh4 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh4 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh4 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
-          </style>
-          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="50"/>
-          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="100" y2="240"/>
-          <line class="mm-branch" x1="350" y1="210" x2="600" y2="240"/>
-          <line class="mm-branch" x1="350" y1="210" x2="170" y2="370"/>
-          <line class="mm-branch" x1="350" y1="210" x2="530" y2="370"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="78" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="207" text-anchor="middle">Framework for</text>
-            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Barakah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="130" cy="70" rx="56" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="130" y="74" text-anchor="middle">Values (Core)</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="50" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="54" text-anchor="middle">Mindsets (Middle)</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="570" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="570" y="74" text-anchor="middle">Rituals (Outer)</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="100" cy="240" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="100" y="244" text-anchor="middle">God-Centric</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="600" cy="240" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="600" y="244" text-anchor="middle">10 Manifesto</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="170" cy="370" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="170" y="374" text-anchor="middle">Stewardship</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="530" cy="370" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="530" y="374" text-anchor="middle">Part 1 to Part 2</text>
-          </g>
-        </svg>
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Interactive Mind Map -- Click nodes to expand/collapse</div>
+        <div class="mindmap-container" id="mindmapContainer">
+          <svg id="mmCh4" viewBox="0 0 800 560" width="100%" height="560" style="max-width:800px;">
+          </svg>
+          <div class="mm-tooltip" id="mmTooltip"></div>
+        </div>
+        <div class="mm-click-hint">Click any branch node to expand or collapse its children. Hover for descriptions.</div>
+        <div class="mm-legend">
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent);"></div> Values</div>
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent-2);"></div> Mindsets</div>
+          <div class="mm-legend-item"><div class="mm-legend-dot" style="background:var(--accent-3);"></div> Rituals</div>
+        </div>
       </div>
     </div>
 
@@ -281,7 +1271,855 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    /* ================================================================
+       Chapter 4 Enhanced Interactivity
+       All content is hardcoded -- no user input is rendered as HTML.
+       ================================================================ */
+
+    // ----------------------------------------------------------------
+    // Utility: safely rebuild SVG content using DOM methods
+    // ----------------------------------------------------------------
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+
+    function clearSvg(svgEl) {
+      while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+    }
+
+    function svgEl(tag, attrs, textContent) {
+      var el = document.createElementNS(SVG_NS, tag);
+      if (attrs) {
+        Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+      }
+      if (textContent !== undefined) el.textContent = textContent;
+      return el;
+    }
+
+    // ----------------------------------------------------------------
+    // STEP-THROUGH 1: How Values Build Mindsets
+    // ----------------------------------------------------------------
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 4;
+      var svg = document.getElementById('stepMindsetsSvg');
+      var desc = document.getElementById('stepMindsetsDesc');
+      var indicator = document.getElementById('stepMindsetsIndicator');
+
+      var descriptions = [
+        'Click "Next Step" to see how each core value generates specific mindsets.',
+        'God-Centric Living produces the Purpose-Driven and Barakah-Seeking mindsets. When Allah is your centre, every action gains intention and you naturally seek His blessing.',
+        'Stewardship (Amanah) produces the Generous and Community-Oriented mindsets. When you see everything as a trust, you naturally share and serve others.',
+        'Hereafter Focus produces the Legacy-Focused and Gentle Growth mindsets. When you see beyond this life, you invest for eternity and trust Allah\'s timeline.',
+        'All three values together produce Excellence (Ihsan) and Gratitude (Shukr) -- these mindsets require the full foundation to sustain.'
+      ];
+
+      function renderStep0() {
+        clearSvg(svg);
+        svg.appendChild(svgEl('text', {x:'300',y:'110','text-anchor':'middle',fill:'var(--text-light)','font-size':'13','font-family':'Inter'}, 'Click Next Step to begin...'));
+      }
+
+      function drawValueToMindsets(valueName, valueSub, color, mindset1, mindset2) {
+        clearSvg(svg);
+        // Value box
+        svg.appendChild(svgEl('rect', {x:'20',y:'60',width:'160',height:'80',rx:'12',fill:color,opacity:'0.18',stroke:color,'stroke-width':'2'}));
+        svg.appendChild(svgEl('text', {x:'100',y:'95','text-anchor':'middle',fill:color,'font-size':'12','font-family':'Inter','font-weight':'700'}, valueName));
+        svg.appendChild(svgEl('text', {x:'100',y:'112','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, valueSub));
+        // Lines
+        svg.appendChild(svgEl('line', {x1:'185',y1:'90',x2:'260',y2:'75',stroke:color,'stroke-width':'1.5','stroke-dasharray':'4,3'}));
+        svg.appendChild(svgEl('line', {x1:'185',y1:'110',x2:'260',y2:'125',stroke:color,'stroke-width':'1.5','stroke-dasharray':'4,3'}));
+        // Mindset boxes
+        svg.appendChild(svgEl('rect', {x:'265',y:'50',width:'170',height:'40',rx:'8',fill:color,opacity:'0.12',stroke:color,'stroke-width':'1.5'}));
+        svg.appendChild(svgEl('text', {x:'350',y:'75','text-anchor':'middle',fill:color,'font-size':'11','font-family':'Inter','font-weight':'600'}, mindset1));
+        svg.appendChild(svgEl('rect', {x:'265',y:'105',width:'170',height:'40',rx:'8',fill:color,opacity:'0.12',stroke:color,'stroke-width':'1.5'}));
+        svg.appendChild(svgEl('text', {x:'350',y:'130','text-anchor':'middle',fill:color,'font-size':'11','font-family':'Inter','font-weight':'600'}, mindset2));
+        // Arrow indicator
+        var defs = svgEl('defs', {});
+        var marker = svgEl('marker', {id:'stepArr',markerWidth:'7',markerHeight:'5',refX:'7',refY:'2.5',orient:'auto',fill:color});
+        marker.appendChild(svgEl('polygon', {points:'0 0, 7 2.5, 0 5'}));
+        defs.appendChild(marker);
+        svg.insertBefore(defs, svg.firstChild);
+      }
+
+      function renderStep4() {
+        clearSvg(svg);
+        // Three small value boxes
+        var vals = [
+          {name:'God-Centric', sub:'Living', color:'var(--accent)', y:'30'},
+          {name:'Stewardship', sub:'(Amanah)', color:'var(--accent-2)', y:'90'},
+          {name:'Hereafter Focus', sub:'', color:'var(--accent-3)', y:'150'}
+        ];
+        vals.forEach(function(v) {
+          svg.appendChild(svgEl('rect', {x:'10',y:v.y,width:'100',height:'50',rx:'8',fill:v.color,opacity:'0.15',stroke:v.color,'stroke-width':'1.5'}));
+          svg.appendChild(svgEl('text', {x:'60',y:String(parseInt(v.y)+25),'text-anchor':'middle',fill:v.color,'font-size':'9','font-family':'Inter','font-weight':'600'}, v.name));
+          if (v.sub) svg.appendChild(svgEl('text', {x:'60',y:String(parseInt(v.y)+38),'text-anchor':'middle',fill:'var(--text-muted)','font-size':'8','font-family':'Inter'}, v.sub));
+        });
+        // Lines to combined box
+        svg.appendChild(svgEl('line', {x1:'115',y1:'55',x2:'200',y2:'80',stroke:'var(--accent)','stroke-width':'1','stroke-dasharray':'4,3'}));
+        svg.appendChild(svgEl('line', {x1:'115',y1:'115',x2:'200',y2:'100',stroke:'var(--accent-2)','stroke-width':'1','stroke-dasharray':'4,3'}));
+        svg.appendChild(svgEl('line', {x1:'115',y1:'175',x2:'200',y2:'120',stroke:'var(--accent-3)','stroke-width':'1','stroke-dasharray':'4,3'}));
+        // Combined box
+        svg.appendChild(svgEl('rect', {x:'205',y:'70',width:'140',height:'65',rx:'10',fill:'var(--accent)',opacity:'0.08',stroke:'var(--accent)','stroke-width':'2','stroke-dasharray':'6,3'}));
+        svg.appendChild(svgEl('text', {x:'275',y:'95','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'All Three'));
+        svg.appendChild(svgEl('text', {x:'275',y:'110','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'Combined'));
+        // Lines to result
+        svg.appendChild(svgEl('line', {x1:'350',y1:'90',x2:'410',y2:'75',stroke:'var(--accent)','stroke-width':'1.5','stroke-dasharray':'4,3'}));
+        svg.appendChild(svgEl('line', {x1:'350',y1:'115',x2:'410',y2:'130',stroke:'var(--accent)','stroke-width':'1.5','stroke-dasharray':'4,3'}));
+        // Result boxes
+        svg.appendChild(svgEl('rect', {x:'415',y:'50',width:'170',height:'40',rx:'8',fill:'var(--accent)',opacity:'0.12',stroke:'var(--accent)','stroke-width':'1.5'}));
+        svg.appendChild(svgEl('text', {x:'500',y:'75','text-anchor':'middle',fill:'var(--accent)','font-size':'11','font-family':'Inter','font-weight':'600'}, 'Excellence (Ihsan)'));
+        svg.appendChild(svgEl('rect', {x:'415',y:'110',width:'170',height:'40',rx:'8',fill:'var(--accent-2)',opacity:'0.12',stroke:'var(--accent-2)','stroke-width':'1.5'}));
+        svg.appendChild(svgEl('text', {x:'500',y:'135','text-anchor':'middle',fill:'var(--accent-2)','font-size':'11','font-family':'Inter','font-weight':'600'}, 'Grateful (Shukr)'));
+      }
+
+      function render() {
+        if (currentStep === 0) renderStep0();
+        else if (currentStep === 1) drawValueToMindsets('God-Centric', 'Living', 'var(--accent)', 'Purpose-Driven', 'Barakah-Seeking');
+        else if (currentStep === 2) drawValueToMindsets('Stewardship', '(Amanah)', 'var(--accent-2)', 'Generous', 'Community-Oriented');
+        else if (currentStep === 3) drawValueToMindsets('Hereafter', 'Focus', 'var(--accent-3)', 'Legacy-Focused', 'Gentle Growth');
+        else if (currentStep === 4) renderStep4();
+
+        desc.textContent = descriptions[currentStep];
+        indicator.textContent = 'Step ' + currentStep + ' / ' + totalSteps;
+      }
+
+      document.getElementById('stepMindsetsNextBtn').addEventListener('click', function() {
+        if (currentStep < totalSteps) { currentStep++; render(); }
+      });
+      document.getElementById('stepMindsetsPrevBtn').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; render(); }
+      });
+
+      render();
+    })();
+
+    // ----------------------------------------------------------------
+    // STEP-THROUGH 2: A Barakah-Filled Day
+    // ----------------------------------------------------------------
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 6;
+      var svg = document.getElementById('stepDaySvg');
+      var desc = document.getElementById('stepDayDesc');
+      var indicator = document.getElementById('stepDayIndicator');
+
+      var descriptions = [
+        'Click "Next Step" to see how the 10 manifesto elements map onto a single day.',
+        'Dawn: Begin your day with Bismillah as you wake, followed by Fajr Salah. These two acts anchor the entire day in Allah\'s name and presence.',
+        'Morning: Start your work day with Dhikr (morning adhkar) and Du\'a for Barakah in your endeavours. Set your intentions consciously.',
+        'Midday: Practise Ihsan (excellence) in your work. Give Sadaqah -- even a smile or a kind word counts. Pray Dhuhr with presence.',
+        'Afternoon: Say Alhamdulillah consciously for blessings you notice. Practise Tawakkul when facing uncertainty -- do your best, leave results to Allah.',
+        'Evening: End your day with Tawbah (repentance for shortcomings) and Salawat upon the Prophet. The day comes full circle -- anchored in remembrance of Allah from dawn to dusk.',
+        'The complete Barakah-filled day: all 10 manifesto elements woven naturally into your daily rhythm, from Fajr to Isha.'
+      ];
+
+      var markers = [
+        [],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false}],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false},{x:190,label:'Dhikr',sub:'Morning adhkar',color:'var(--accent-3)',above:true},{x:250,label:"Du'a",sub:'Ask for Barakah',color:'var(--accent)',above:false}],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false},{x:190,label:'Dhikr',sub:'Morning adhkar',color:'var(--accent-3)',above:true},{x:250,label:"Du'a",sub:'Ask for Barakah',color:'var(--accent)',above:false},{x:320,label:'Ihsan',sub:'Excel at work',color:'var(--accent-2)',above:true},{x:380,label:'Sadaqah',sub:'Give generously',color:'var(--accent-3)',above:false}],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false},{x:190,label:'Dhikr',sub:'Morning adhkar',color:'var(--accent-3)',above:true},{x:250,label:"Du'a",sub:'Ask for Barakah',color:'var(--accent)',above:false},{x:320,label:'Ihsan',sub:'Excel at work',color:'var(--accent-2)',above:true},{x:380,label:'Sadaqah',sub:'Give generously',color:'var(--accent-3)',above:false},{x:430,label:'Alhamdulillah',sub:'Count blessings',color:'var(--accent)',above:true},{x:480,label:'Tawakkul',sub:'Trust Allah',color:'var(--accent-2)',above:false}],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false},{x:190,label:'Dhikr',sub:'Morning adhkar',color:'var(--accent-3)',above:true},{x:250,label:"Du'a",sub:'Ask for Barakah',color:'var(--accent)',above:false},{x:320,label:'Ihsan',sub:'Excel at work',color:'var(--accent-2)',above:true},{x:380,label:'Sadaqah',sub:'Give generously',color:'var(--accent-3)',above:false},{x:430,label:'Alhamdulillah',sub:'Count blessings',color:'var(--accent)',above:true},{x:480,label:'Tawakkul',sub:'Trust Allah',color:'var(--accent-2)',above:false},{x:525,label:'Tawbah',sub:'Repent sincerely',color:'var(--accent-3)',above:true},{x:560,label:'Salawat',sub:'Bless the Prophet',color:'var(--accent)',above:false}],
+        [{x:60,label:'Bismillah',sub:'Upon waking',color:'var(--accent)',above:true},{x:120,label:'Salah',sub:'Fajr prayer',color:'var(--accent-2)',above:false},{x:190,label:'Dhikr',sub:'Morning adhkar',color:'var(--accent-3)',above:true},{x:250,label:"Du'a",sub:'Ask for Barakah',color:'var(--accent)',above:false},{x:320,label:'Ihsan',sub:'Excel at work',color:'var(--accent-2)',above:true},{x:380,label:'Sadaqah',sub:'Give generously',color:'var(--accent-3)',above:false},{x:430,label:'Alhamdulillah',sub:'Count blessings',color:'var(--accent)',above:true},{x:480,label:'Tawakkul',sub:'Trust Allah',color:'var(--accent-2)',above:false},{x:525,label:'Tawbah',sub:'Repent sincerely',color:'var(--accent-3)',above:true},{x:560,label:'Salawat',sub:'Bless the Prophet',color:'var(--accent)',above:false}]
+      ];
+
+      function drawTimeline() {
+        svg.appendChild(svgEl('line', {x1:'30',y1:'110',x2:'570',y2:'110',stroke:'var(--border)','stroke-width':'2'}));
+        svg.appendChild(svgEl('circle', {cx:'30',cy:'110',r:'4',fill:'var(--accent)'}));
+        svg.appendChild(svgEl('circle', {cx:'570',cy:'110',r:'4',fill:'var(--accent)'}));
+        svg.appendChild(svgEl('text', {x:'30',y:'140','text-anchor':'middle',fill:'var(--text-light)','font-size':'9','font-family':'Inter'}, 'Fajr'));
+        svg.appendChild(svgEl('text', {x:'300',y:'140','text-anchor':'middle',fill:'var(--text-light)','font-size':'9','font-family':'Inter'}, 'Midday'));
+        svg.appendChild(svgEl('text', {x:'570',y:'140','text-anchor':'middle',fill:'var(--text-light)','font-size':'9','font-family':'Inter'}, 'Isha'));
+      }
+
+      function drawMarker(m) {
+        var lineY = m.above ? 85 : 150;
+        svg.appendChild(svgEl('line', {x1:String(m.x),y1:'110',x2:String(m.x),y2:String(lineY),stroke:m.color,'stroke-width':'1.5','stroke-dasharray':'3,2'}));
+        svg.appendChild(svgEl('circle', {cx:String(m.x),cy:'110',r:'6',fill:m.color,opacity:'0.9'}));
+        var boxY = m.above ? 35 : 153;
+        svg.appendChild(svgEl('rect', {x:String(m.x-50),y:String(boxY),width:'100',height:'36',rx:'6',fill:m.color,opacity:'0.12',stroke:m.color,'stroke-width':'1'}));
+        svg.appendChild(svgEl('text', {x:String(m.x),y:String(boxY+17),'text-anchor':'middle',fill:m.color,'font-size':'10','font-family':'Inter','font-weight':'700'}, m.label));
+        svg.appendChild(svgEl('text', {x:String(m.x),y:String(boxY+30),'text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, m.sub));
+      }
+
+      function render() {
+        clearSvg(svg);
+        drawTimeline();
+        if (currentStep === 0) {
+          svg.appendChild(svgEl('text', {x:'300',y:'90','text-anchor':'middle',fill:'var(--text-light)','font-size':'12','font-family':'Inter'}, 'Click Next Step to begin...'));
+        } else {
+          markers[currentStep].forEach(drawMarker);
+        }
+        desc.textContent = descriptions[currentStep];
+        indicator.textContent = 'Step ' + currentStep + ' / ' + totalSteps;
+      }
+
+      document.getElementById('stepDayNextBtn').addEventListener('click', function() {
+        if (currentStep < totalSteps) { currentStep++; render(); }
+      });
+      document.getElementById('stepDayPrevBtn').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; render(); }
+      });
+
+      render();
+    })();
+
+    // ----------------------------------------------------------------
+    // STEP-THROUGH 3: Framework Integration in Action
+    // ----------------------------------------------------------------
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 5;
+      var svg = document.getElementById('stepIntegrationSvg');
+      var desc = document.getElementById('stepIntegrationDesc');
+      var indicator = document.getElementById('stepIntegrationIndicator');
+
+      var descriptions = [
+        'Click "Next Step" to see a real-life example of the framework in action -- from value to mindset to ritual.',
+        'Scenario: You receive your monthly salary. The framework begins with your VALUE -- the belief that this money is a trust (amanah) from Allah, not truly yours.',
+        'This value activates your MINDSET of generosity. You think: "I am a steward of this wealth. How can I use it in a way that pleases Allah and benefits others?"',
+        'The mindset drives your RITUAL: you set aside a portion for Sadaqah before spending on anything else. You say Bismillah and make du\'a for Barakah in your provision.',
+        'The RESULT: Barakah enters your wealth. You find that despite giving away a portion, your money stretches further. Others benefit. Your heart is at peace.',
+        'This is the full cycle: Value (stewardship) produces Mindset (generosity) produces Ritual (sadaqah + bismillah) produces Result (Barakah). This same pattern applies to every area of life.'
+      ];
+
+      function render() {
+        clearSvg(svg);
+
+        if (currentStep === 0) {
+          svg.appendChild(svgEl('text', {x:'300',y:'120','text-anchor':'middle',fill:'var(--text-light)','font-size':'13','font-family':'Inter'}, 'Click Next Step to begin...'));
+        } else if (currentStep === 1) {
+          // Value highlighted
+          svg.appendChild(svgEl('rect', {x:'30',y:'60',width:'160',height:'120',rx:'14',fill:'var(--accent)',opacity:'0.18',stroke:'var(--accent)','stroke-width':'2.5'}));
+          svg.appendChild(svgEl('text', {x:'110',y:'90','text-anchor':'middle',fill:'var(--accent)','font-size':'12','font-family':'Inter','font-weight':'700'}, 'VALUE'));
+          svg.appendChild(svgEl('text', {x:'110',y:'112','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, '"This salary is'));
+          svg.appendChild(svgEl('text', {x:'110',y:'126','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, 'a trust from Allah"'));
+          svg.appendChild(svgEl('text', {x:'110',y:'155','text-anchor':'middle',fill:'var(--accent)','font-size':'8','font-family':'Inter','font-weight':'600'}, 'Stewardship'));
+          // Greyed-out boxes
+          svg.appendChild(svgEl('rect', {x:'230',y:'80',width:'140',height:'80',rx:'12',fill:'var(--surface-2)',stroke:'var(--border)','stroke-width':'1','stroke-dasharray':'4,3'}));
+          svg.appendChild(svgEl('text', {x:'300',y:'125','text-anchor':'middle',fill:'var(--text-light)','font-size':'10','font-family':'Inter'}, 'Mindset'));
+          svg.appendChild(svgEl('rect', {x:'410',y:'80',width:'140',height:'80',rx:'12',fill:'var(--surface-2)',stroke:'var(--border)','stroke-width':'1','stroke-dasharray':'4,3'}));
+          svg.appendChild(svgEl('text', {x:'480',y:'125','text-anchor':'middle',fill:'var(--text-light)','font-size':'10','font-family':'Inter'}, 'Ritual'));
+        } else if (currentStep === 2) {
+          // Value box
+          svg.appendChild(svgEl('rect', {x:'30',y:'70',width:'140',height:'100',rx:'12',fill:'var(--accent)',opacity:'0.12',stroke:'var(--accent)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('text', {x:'100',y:'100','text-anchor':'middle',fill:'var(--accent)','font-size':'10','font-family':'Inter','font-weight':'700'}, 'Stewardship'));
+          svg.appendChild(svgEl('text', {x:'100',y:'118','text-anchor':'middle',fill:'var(--text-muted)','font-size':'8','font-family':'Inter'}, '"Money is a trust"'));
+          // Arrow
+          svg.appendChild(svgEl('line', {x1:'175',y1:'120',x2:'215',y2:'120',stroke:'var(--accent)','stroke-width':'2'}));
+          svg.appendChild(svgEl('polygon', {points:'215,116 225,120 215,124',fill:'var(--accent)'}));
+          svg.appendChild(svgEl('text', {x:'198',y:'112','text-anchor':'middle',fill:'var(--text-light)','font-size':'7','font-family':'Inter'}, 'activates'));
+          // Mindset box highlighted
+          svg.appendChild(svgEl('rect', {x:'230',y:'60',width:'160',height:'120',rx:'14',fill:'var(--accent-2)',opacity:'0.18',stroke:'var(--accent-2)','stroke-width':'2.5'}));
+          svg.appendChild(svgEl('text', {x:'310',y:'90','text-anchor':'middle',fill:'var(--accent-2)','font-size':'12','font-family':'Inter','font-weight':'700'}, 'MINDSET'));
+          svg.appendChild(svgEl('text', {x:'310',y:'112','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, '"How can I use this'));
+          svg.appendChild(svgEl('text', {x:'310',y:'126','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, 'to please Allah?"'));
+          svg.appendChild(svgEl('text', {x:'310',y:'155','text-anchor':'middle',fill:'var(--accent-2)','font-size':'8','font-family':'Inter','font-weight':'600'}, 'Generosity'));
+          // Greyed ritual
+          svg.appendChild(svgEl('rect', {x:'430',y:'80',width:'140',height:'80',rx:'12',fill:'var(--surface-2)',stroke:'var(--border)','stroke-width':'1','stroke-dasharray':'4,3'}));
+          svg.appendChild(svgEl('text', {x:'500',y:'125','text-anchor':'middle',fill:'var(--text-light)','font-size':'10','font-family':'Inter'}, 'Ritual'));
+        } else if (currentStep === 3) {
+          // Value box
+          svg.appendChild(svgEl('rect', {x:'15',y:'80',width:'110',height:'80',rx:'10',fill:'var(--accent)',opacity:'0.12',stroke:'var(--accent)','stroke-width':'1'}));
+          svg.appendChild(svgEl('text', {x:'70',y:'108','text-anchor':'middle',fill:'var(--accent)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'Stewardship'));
+          svg.appendChild(svgEl('text', {x:'70',y:'125','text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, '"Trust from Allah"'));
+          // Arrow 1
+          svg.appendChild(svgEl('line', {x1:'130',y1:'120',x2:'165',y2:'120',stroke:'var(--accent)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('polygon', {points:'165,117 172,120 165,123',fill:'var(--accent)'}));
+          // Mindset box
+          svg.appendChild(svgEl('rect', {x:'175',y:'80',width:'110',height:'80',rx:'10',fill:'var(--accent-2)',opacity:'0.12',stroke:'var(--accent-2)','stroke-width':'1'}));
+          svg.appendChild(svgEl('text', {x:'230',y:'108','text-anchor':'middle',fill:'var(--accent-2)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'Generosity'));
+          svg.appendChild(svgEl('text', {x:'230',y:'125','text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, '"Share with others"'));
+          // Arrow 2
+          svg.appendChild(svgEl('line', {x1:'290',y1:'120',x2:'325',y2:'120',stroke:'var(--accent-2)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('polygon', {points:'325,117 332,120 325,123',fill:'var(--accent-2)'}));
+          // Ritual box highlighted
+          svg.appendChild(svgEl('rect', {x:'335',y:'55',width:'240',height:'130',rx:'14',fill:'var(--accent-3)',opacity:'0.15',stroke:'var(--accent-3)','stroke-width':'2.5'}));
+          svg.appendChild(svgEl('text', {x:'455',y:'80','text-anchor':'middle',fill:'var(--accent-3)','font-size':'12','font-family':'Inter','font-weight':'700'}, 'RITUALS'));
+          svg.appendChild(svgEl('rect', {x:'350',y:'92',width:'100',height:'28',rx:'6',fill:'var(--accent-3)',opacity:'0.15'}));
+          svg.appendChild(svgEl('text', {x:'400',y:'111','text-anchor':'middle',fill:'var(--accent-3)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'Sadaqah'));
+          svg.appendChild(svgEl('rect', {x:'460',y:'92',width:'100',height:'28',rx:'6',fill:'var(--accent)',opacity:'0.15'}));
+          svg.appendChild(svgEl('text', {x:'510',y:'111','text-anchor':'middle',fill:'var(--accent)','font-size':'9','font-family':'Inter','font-weight':'600'}, 'Bismillah'));
+          svg.appendChild(svgEl('rect', {x:'400',y:'130',width:'100',height:'28',rx:'6',fill:'var(--accent-2)',opacity:'0.15'}));
+          svg.appendChild(svgEl('text', {x:'450',y:'149','text-anchor':'middle',fill:'var(--accent-2)','font-size':'9','font-family':'Inter','font-weight':'600'}, "Du'a"));
+        } else if (currentStep === 4) {
+          // Full chain with result
+          // Value
+          svg.appendChild(svgEl('rect', {x:'10',y:'90',width:'90',height:'60',rx:'8',fill:'var(--accent)',opacity:'0.15',stroke:'var(--accent)','stroke-width':'1'}));
+          svg.appendChild(svgEl('text', {x:'55',y:'118','text-anchor':'middle',fill:'var(--accent)','font-size':'8','font-family':'Inter','font-weight':'600'}, 'Stewardship'));
+          svg.appendChild(svgEl('text', {x:'55',y:'132','text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, 'VALUE'));
+          svg.appendChild(svgEl('line', {x1:'105',y1:'120',x2:'130',y2:'120',stroke:'var(--accent)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('polygon', {points:'130,117 137,120 130,123',fill:'var(--accent)'}));
+          // Mindset
+          svg.appendChild(svgEl('rect', {x:'140',y:'90',width:'90',height:'60',rx:'8',fill:'var(--accent-2)',opacity:'0.15',stroke:'var(--accent-2)','stroke-width':'1'}));
+          svg.appendChild(svgEl('text', {x:'185',y:'118','text-anchor':'middle',fill:'var(--accent-2)','font-size':'8','font-family':'Inter','font-weight':'600'}, 'Generosity'));
+          svg.appendChild(svgEl('text', {x:'185',y:'132','text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, 'MINDSET'));
+          svg.appendChild(svgEl('line', {x1:'235',y1:'120',x2:'260',y2:'120',stroke:'var(--accent-2)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('polygon', {points:'260,117 267,120 260,123',fill:'var(--accent-2)'}));
+          // Ritual
+          svg.appendChild(svgEl('rect', {x:'270',y:'90',width:'90',height:'60',rx:'8',fill:'var(--accent-3)',opacity:'0.15',stroke:'var(--accent-3)','stroke-width':'1'}));
+          svg.appendChild(svgEl('text', {x:'315',y:'118','text-anchor':'middle',fill:'var(--accent-3)','font-size':'8','font-family':'Inter','font-weight':'600'}, 'Sadaqah'));
+          svg.appendChild(svgEl('text', {x:'315',y:'132','text-anchor':'middle',fill:'var(--text-muted)','font-size':'7','font-family':'Inter'}, 'RITUAL'));
+          svg.appendChild(svgEl('line', {x1:'365',y1:'120',x2:'390',y2:'120',stroke:'var(--accent-3)','stroke-width':'1.5'}));
+          svg.appendChild(svgEl('polygon', {points:'390,117 397,120 390,123',fill:'var(--accent-3)'}));
+          // Result - highlighted with glow
+          svg.appendChild(svgEl('rect', {x:'400',y:'75',width:'180',height:'90',rx:'14',fill:'var(--accent)',opacity:'0.08',stroke:'var(--accent)','stroke-width':'2.5'}));
+          svg.appendChild(svgEl('text', {x:'490',y:'105','text-anchor':'middle',fill:'var(--accent)','font-size':'14','font-family':'Inter','font-weight':'800'}, 'BARAKAH'));
+          svg.appendChild(svgEl('text', {x:'490',y:'125','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, 'Money stretches further'));
+          svg.appendChild(svgEl('text', {x:'490',y:'140','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, 'Others benefit. Peace of heart.'));
+          // Feedback loop
+          svg.appendChild(svgEl('path', {d:'M490,170 L490,200 Q490,210 480,210 L65,210 Q55,210 55,200 L55,155',fill:'none',stroke:'var(--text-light)','stroke-width':'1','stroke-dasharray':'4,3'}));
+          svg.appendChild(svgEl('polygon', {points:'52,155 55,145 58,155',fill:'var(--text-light)'}));
+          svg.appendChild(svgEl('text', {x:'280',y:'225','text-anchor':'middle',fill:'var(--text-light)','font-size':'8','font-family':'Inter','font-style':'italic'}, 'Experiencing Barakah strengthens your values (virtuous cycle)'));
+        } else if (currentStep === 5) {
+          // Summary: generic version
+          svg.appendChild(svgEl('rect', {x:'30',y:'50',width:'120',height:'55',rx:'10',fill:'var(--accent)',opacity:'0.2',stroke:'var(--accent)','stroke-width':'2'}));
+          svg.appendChild(svgEl('text', {x:'90',y:'75','text-anchor':'middle',fill:'var(--accent)','font-size':'11','font-family':'Inter','font-weight':'700'}, 'ANY VALUE'));
+          svg.appendChild(svgEl('text', {x:'90',y:'92','text-anchor':'middle',fill:'var(--text-muted)','font-size':'8','font-family':'Inter'}, 'Core belief'));
+          svg.appendChild(svgEl('line', {x1:'155',y1:'78',x2:'185',y2:'78',stroke:'var(--accent)','stroke-width':'2'}));
+          svg.appendChild(svgEl('polygon', {points:'185,75 192,78 185,81',fill:'var(--accent)'}));
+
+          svg.appendChild(svgEl('rect', {x:'195',y:'50',width:'140',height:'55',rx:'10',fill:'var(--accent-2)',opacity:'0.2',stroke:'var(--accent-2)','stroke-width':'2'}));
+          svg.appendChild(svgEl('text', {x:'265',y:'75','text-anchor':'middle',fill:'var(--accent-2)','font-size':'11','font-family':'Inter','font-weight':'700'}, 'ANY MINDSET'));
+          svg.appendChild(svgEl('text', {x:'265',y:'92','text-anchor':'middle',fill:'var(--text-muted)','font-size':'8','font-family':'Inter'}, 'Mental model'));
+          svg.appendChild(svgEl('line', {x1:'340',y1:'78',x2:'370',y2:'78',stroke:'var(--accent-2)','stroke-width':'2'}));
+          svg.appendChild(svgEl('polygon', {points:'370,75 377,78 370,81',fill:'var(--accent-2)'}));
+
+          svg.appendChild(svgEl('rect', {x:'380',y:'50',width:'120',height:'55',rx:'10',fill:'var(--accent-3)',opacity:'0.2',stroke:'var(--accent-3)','stroke-width':'2'}));
+          svg.appendChild(svgEl('text', {x:'440',y:'75','text-anchor':'middle',fill:'var(--accent-3)','font-size':'11','font-family':'Inter','font-weight':'700'}, 'ANY RITUAL'));
+          svg.appendChild(svgEl('text', {x:'440',y:'92','text-anchor':'middle',fill:'var(--text-muted)','font-size':'8','font-family':'Inter'}, 'Daily practice'));
+
+          // Big result
+          svg.appendChild(svgEl('line', {x1:'300',y1:'110',x2:'300',y2:'140',stroke:'var(--accent)','stroke-width':'2'}));
+          svg.appendChild(svgEl('polygon', {points:'297,140 300,150 303,140',fill:'var(--accent)'}));
+          svg.appendChild(svgEl('rect', {x:'180',y:'155',width:'240',height:'60',rx:'14',fill:'var(--accent)',opacity:'0.1',stroke:'var(--accent)','stroke-width':'2'}));
+          svg.appendChild(svgEl('text', {x:'300',y:'182','text-anchor':'middle',fill:'var(--accent)','font-size':'16','font-family':'Inter','font-weight':'800'}, 'BARAKAH'));
+          svg.appendChild(svgEl('text', {x:'300',y:'202','text-anchor':'middle',fill:'var(--text-muted)','font-size':'9','font-family':'Inter'}, 'This pattern works for every area of life'));
+        }
+
+        desc.textContent = descriptions[currentStep];
+        indicator.textContent = 'Step ' + currentStep + ' / ' + totalSteps;
+      }
+
+      document.getElementById('stepIntegrationNextBtn').addEventListener('click', function() {
+        if (currentStep < totalSteps) { currentStep++; render(); }
+      });
+      document.getElementById('stepIntegrationPrevBtn').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; render(); }
+      });
+
+      render();
+    })();
+
+    // ----------------------------------------------------------------
+    // INTERACTIVE EXERCISE 1: Match Values to Mindsets
+    // ----------------------------------------------------------------
+    (function() {
+      var correctPairs = {
+        'god': 'purpose',
+        'steward': 'generous',
+        'hereafter': 'legacy',
+        'all': 'excellence'
+      };
+      var selectedLeft = null;
+      var matched = {};
+      var matchCount = 0;
+
+      var leftItems = document.querySelectorAll('#matchGrid .match-item[data-side="left"]');
+      var rightItems = document.querySelectorAll('#matchGrid .match-item[data-side="right"]');
+      var feedback = document.getElementById('matchFeedback');
+
+      function clearSelection() {
+        leftItems.forEach(function(el) { el.classList.remove('selected'); });
+        rightItems.forEach(function(el) { el.classList.remove('selected'); });
+      }
+
+      leftItems.forEach(function(el) {
+        el.addEventListener('click', function() {
+          if (el.classList.contains('locked')) return;
+          clearSelection();
+          selectedLeft = el.dataset.id;
+          el.classList.add('selected');
+        });
+      });
+
+      rightItems.forEach(function(el) {
+        el.addEventListener('click', function() {
+          if (el.classList.contains('locked') || !selectedLeft) return;
+          var leftId = selectedLeft;
+          var rightId = el.dataset.id;
+
+          if (correctPairs[leftId] === rightId) {
+            var leftEl = document.querySelector('#matchGrid .match-item[data-side="left"][data-id="' + leftId + '"]');
+            leftEl.classList.remove('selected');
+            leftEl.classList.add('correct', 'locked');
+            el.classList.add('correct', 'locked');
+            matched[leftId] = rightId;
+            matchCount++;
+            selectedLeft = null;
+
+            if (matchCount === 4) {
+              feedback.textContent = 'Excellent! All 4 pairs matched correctly. You understand how values produce mindsets.';
+              feedback.className = 'match-feedback visible success';
+            }
+          } else {
+            el.classList.add('wrong');
+            var leftEl2 = document.querySelector('#matchGrid .match-item[data-side="left"][data-id="' + leftId + '"]');
+            leftEl2.classList.add('wrong');
+            setTimeout(function() {
+              el.classList.remove('wrong');
+              leftEl2.classList.remove('wrong', 'selected');
+              selectedLeft = null;
+            }, 800);
+          }
+        });
+      });
+
+      document.getElementById('matchResetBtn').addEventListener('click', function() {
+        selectedLeft = null;
+        matched = {};
+        matchCount = 0;
+        leftItems.forEach(function(el) { el.className = 'match-item'; });
+        rightItems.forEach(function(el) { el.className = 'match-item'; });
+        feedback.className = 'match-feedback';
+        feedback.textContent = '';
+      });
+    })();
+
+    // ----------------------------------------------------------------
+    // INTERACTIVE EXERCISE 2: Categorise Manifesto Elements
+    // ----------------------------------------------------------------
+    (function() {
+      var elements = [
+        {id:'bismillah', label:'Bismillah', zone:'connection'},
+        {id:'alhamdulillah', label:'Alhamdulillah', zone:'inner'},
+        {id:'tawakkul', label:'Tawakkul', zone:'inner'},
+        {id:'ihsan', label:'Ihsan', zone:'outward'},
+        {id:'salah', label:'Salah', zone:'connection'},
+        {id:'dua', label:"Du'a", zone:'connection'},
+        {id:'sadaqah', label:'Sadaqah', zone:'outward'},
+        {id:'dhikr', label:'Dhikr', zone:'connection'},
+        {id:'tawbah', label:'Tawbah', zone:'inner'},
+        {id:'salawat', label:'Salawat', zone:'outward'}
+      ];
+
+      var selectedChip = null;
+      var correctCount = 0;
+      var pool = document.getElementById('catPool');
+      var feedback = document.getElementById('catFeedback');
+      var zones = document.querySelectorAll('.cat-zone');
+
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+
+      function buildPool() {
+        pool.innerHTML = '';
+        var shuffled = shuffle(elements);
+        shuffled.forEach(function(el) {
+          var chip = document.createElement('span');
+          chip.className = 'cat-chip';
+          chip.dataset.id = el.id;
+          chip.dataset.zone = el.zone;
+          chip.textContent = el.label;
+          chip.addEventListener('click', function() {
+            if (chip.classList.contains('placed')) return;
+            document.querySelectorAll('.cat-chip').forEach(function(c) { c.classList.remove('selected'); });
+            chip.classList.add('selected');
+            selectedChip = chip;
+          });
+          pool.appendChild(chip);
+        });
+      }
+
+      zones.forEach(function(zone) {
+        zone.addEventListener('click', function() {
+          if (!selectedChip) return;
+          var chipZone = selectedChip.dataset.zone;
+          var targetZone = zone.dataset.zone;
+          var itemsContainer = zone.querySelector('.cat-zone-items');
+
+          if (chipZone === targetZone) {
+            selectedChip.classList.remove('selected');
+            selectedChip.classList.add('placed', 'correct-chip');
+            var placed = selectedChip.cloneNode(true);
+            placed.className = 'cat-chip correct-chip';
+            itemsContainer.appendChild(placed);
+            selectedChip.style.display = 'none';
+            correctCount++;
+            selectedChip = null;
+
+            if (correctCount === 10) {
+              feedback.textContent = 'MashaAllah! All 10 elements correctly categorised. You understand how the manifesto is structured.';
+              feedback.className = 'match-feedback visible success';
+            }
+          } else {
+            selectedChip.classList.add('wrong-chip');
+            var chipRef = selectedChip;
+            setTimeout(function() {
+              chipRef.classList.remove('wrong-chip', 'selected');
+              selectedChip = null;
+            }, 800);
+          }
+        });
+      });
+
+      document.getElementById('catResetBtn').addEventListener('click', function() {
+        selectedChip = null;
+        correctCount = 0;
+        feedback.className = 'match-feedback';
+        feedback.textContent = '';
+        document.querySelectorAll('.cat-zone-items').forEach(function(z) { z.innerHTML = ''; });
+        buildPool();
+      });
+
+      buildPool();
+    })();
+
+    // ----------------------------------------------------------------
+    // INTERACTIVE EXERCISE 3: Barakah Balance Sliders
+    // ----------------------------------------------------------------
+    (function() {
+      function updateSliders() {
+        var v = parseInt(document.getElementById('sliderValues').value);
+        var m = parseInt(document.getElementById('sliderMindsets').value);
+        var r = parseInt(document.getElementById('sliderRituals').value);
+
+        document.getElementById('sliderValuesVal').textContent = v;
+        document.getElementById('sliderMindsetsVal').textContent = m;
+        document.getElementById('sliderRitualsVal').textContent = r;
+
+        var bar = document.getElementById('sliderBarVisual');
+        var segs = bar.children;
+        segs[0].style.flex = v;
+        segs[0].textContent = v > 2 ? 'Values ' + v : '';
+        segs[1].style.flex = m;
+        segs[1].textContent = m > 2 ? 'Mindsets ' + m : '';
+        segs[2].style.flex = r;
+        segs[2].textContent = r > 2 ? 'Rituals ' + r : '';
+
+        var result = document.getElementById('sliderResult');
+        var avg = ((v + m + r) / 3).toFixed(1);
+        var analysis = '';
+
+        if (r > v + 2) {
+          analysis = 'Your rituals are stronger than your values. This is a common pattern -- you may find it hard to sustain habits because the inner foundation is not yet firm. Focus on deepening your core beliefs first.';
+        } else if (v > r + 2) {
+          analysis = 'Your values are strong but your rituals lag behind. You have the inner conviction but need to translate it into consistent daily practice. Start with just one or two manifesto elements.';
+        } else if (m < v && m < r) {
+          analysis = 'Your mindsets are the weakest link. You have beliefs and some practices, but the mental models connecting them may need attention. Reflect on the eight mindsets and identify which ones feel weakest.';
+        } else if (v >= 7 && m >= 7 && r >= 7) {
+          analysis = 'MashaAllah! You have a strong and balanced framework. Continue nurturing all three levels and help others build theirs.';
+        } else if (v <= 3 && m <= 3 && r <= 3) {
+          analysis = 'You are at the beginning of the journey, and that is perfectly fine. Start with one value (God-Centric Living), let it develop one mindset, and practise one ritual (Bismillah). Small, consistent steps.';
+        } else {
+          analysis = 'Your framework is reasonably balanced. Keep strengthening whichever area scores lowest -- remember, the framework works inside-out, so values support everything above them.';
+        }
+
+        // Build result safely
+        while (result.firstChild) result.removeChild(result.firstChild);
+        var strong = document.createElement('strong');
+        strong.textContent = 'Overall Barakah Score: ' + avg + ' / 10';
+        result.appendChild(strong);
+        result.appendChild(document.createElement('br'));
+        result.appendChild(document.createTextNode(analysis));
+      }
+
+      document.getElementById('sliderValues').addEventListener('input', updateSliders);
+      document.getElementById('sliderMindsets').addEventListener('input', updateSliders);
+      document.getElementById('sliderRituals').addEventListener('input', updateSliders);
+    })();
+
+    // ----------------------------------------------------------------
+    // INTERACTIVE EXERCISE 4: Manifesto Commitment Builder
+    // ----------------------------------------------------------------
+    (function() {
+      var manifestoItems = [
+        {id:'bismillah', title:'Bismillah', desc:'Begin every action in Allah\'s name. A simple word that transforms ordinary acts into worship.'},
+        {id:'alhamdulillah', title:'Alhamdulillah', desc:'Practise conscious gratitude. Notice blessings and thank Allah for them throughout the day.'},
+        {id:'tawakkul', title:'Tawakkul', desc:'Trust Allah\'s plan. Do your best effort, then leave the results entirely to Him.'},
+        {id:'ihsan', title:'Ihsan', desc:'Pursue excellence in everything you do, knowing Allah sees and loves quality.'},
+        {id:'salah', title:'Salah', desc:'Structure your entire day around the five prayers. Let them be anchors, not interruptions.'},
+        {id:'dua', title:"Du'a", desc:'Ask Allah directly for Barakah in your time, wealth, relationships, and work.'},
+        {id:'sadaqah', title:'Sadaqah', desc:'Give generously every day -- money, time, a smile, kind words, or helpful deeds.'},
+        {id:'dhikr', title:'Dhikr', desc:'Remember Allah throughout your day with morning/evening adhkar and spontaneous remembrance.'},
+        {id:'tawbah', title:'Tawbah', desc:'Repent sincerely each evening. Return to Allah after every shortcoming without delay.'},
+        {id:'salawat', title:'Salawat', desc:'Send blessings upon the Prophet (peace be upon him) frequently throughout the day.'}
+      ];
+
+      var grid = document.getElementById('commitGrid');
+      var result = document.getElementById('commitResult');
+      var activeIds = {};
+
+      manifestoItems.forEach(function(item) {
+        var card = document.createElement('div');
+        card.className = 'commit-card';
+        card.dataset.id = item.id;
+
+        var check = document.createElement('span');
+        check.className = 'commit-check';
+        check.innerHTML = '<i class="fas fa-check"></i>';
+        card.appendChild(check);
+
+        var title = document.createElement('div');
+        title.className = 'commit-card-title';
+        title.textContent = item.title;
+        card.appendChild(title);
+
+        var descEl = document.createElement('div');
+        descEl.className = 'commit-card-desc';
+        descEl.textContent = item.desc;
+        card.appendChild(descEl);
+
+        card.addEventListener('click', function() {
+          if (activeIds[item.id]) {
+            delete activeIds[item.id];
+            card.classList.remove('active');
+          } else {
+            activeIds[item.id] = true;
+            card.classList.add('active');
+          }
+          updateCommitResult();
+        });
+
+        grid.appendChild(card);
+      });
+
+      function updateCommitResult() {
+        var count = Object.keys(activeIds).length;
+        while (result.firstChild) result.removeChild(result.firstChild);
+
+        if (count === 0) {
+          result.appendChild(document.createTextNode('Select elements above to build your personal Barakah commitment for the week.'));
+          return;
+        }
+
+        var names = [];
+        manifestoItems.forEach(function(item) {
+          if (activeIds[item.id]) names.push(item.title);
+        });
+
+        var strong = document.createElement('strong');
+        strong.style.color = 'var(--accent)';
+        if (count <= 2) {
+          strong.textContent = 'Starting Small (' + count + ' element' + (count > 1 ? 's' : '') + ')';
+        } else if (count <= 5) {
+          strong.textContent = 'Building Momentum (' + count + ' elements)';
+        } else if (count <= 8) {
+          strong.textContent = 'Strong Commitment (' + count + ' elements)';
+        } else {
+          strong.textContent = 'Full Manifesto (' + count + ' elements)';
+        }
+        result.appendChild(strong);
+        result.appendChild(document.createElement('br'));
+
+        var text = 'Your commitment: ' + names.join(', ') + '.';
+        result.appendChild(document.createTextNode(text));
+        result.appendChild(document.createElement('br'));
+
+        var advice = '';
+        if (count <= 2) {
+          advice = 'A wise start. The Prophet (peace be upon him) said the most beloved deeds to Allah are the most consistent, even if small. Master these before adding more.';
+        } else if (count <= 5) {
+          advice = 'A solid foundation. Focus on consistency over perfection. If you practise these faithfully for one week, you will feel the difference inshaAllah.';
+        } else if (count <= 8) {
+          advice = 'An ambitious commitment. Make sure you have the time and energy to sustain all of these. It is better to do fewer with excellence than many with mediocrity.';
+        } else {
+          advice = 'The complete manifesto! This is the ultimate goal, but remember: it is a journey, not a sprint. Be gentle with yourself and trust Allah\'s timeline.';
+        }
+        var adviceEl = document.createElement('span');
+        adviceEl.style.color = 'var(--text-muted)';
+        adviceEl.textContent = advice;
+        result.appendChild(adviceEl);
+      }
+    })();
+
+    // ----------------------------------------------------------------
+    // INTERACTIVE MIND MAP
+    // ----------------------------------------------------------------
+    (function() {
+      var svg = document.getElementById('mmCh4');
+      var tooltip = document.getElementById('mmTooltip');
+      var container = document.getElementById('mindmapContainer');
+
+      var tree = {
+        id: 'root', label: 'Framework for\nBarakah', x: 400, y: 280, rx: 80, ry: 34, color: 'var(--accent)',
+        desc: 'The three-level framework for embedding Barakah into daily life.',
+        children: [
+          {
+            id: 'values', label: 'Values', x: 130, y: 120, rx: 55, ry: 24, color: 'var(--accent)',
+            desc: 'The innermost core -- deep beliefs about God, purpose, and the hereafter.',
+            expanded: false,
+            children: [
+              { id: 'v1', label: 'God-Centric', x: 55, y: 30, rx: 48, ry: 18, color: 'var(--accent)', desc: 'Allah is the centre of all actions, decisions, and goals.' },
+              { id: 'v2', label: 'Stewardship', x: 180, y: 30, rx: 48, ry: 18, color: 'var(--accent)', desc: 'Everything is a trust (amanah) from Allah -- you are a caretaker, not an owner.' },
+              { id: 'v3', label: 'Hereafter', x: 115, y: 195, rx: 45, ry: 18, color: 'var(--accent)', desc: 'This life is temporary; evaluate actions through the lens of akhirah.' }
+            ]
+          },
+          {
+            id: 'mindsets', label: 'Mindsets', x: 400, y: 80, rx: 55, ry: 24, color: 'var(--accent-2)',
+            desc: 'Mental models shaped by values that determine how you interpret and respond to the world.',
+            expanded: false,
+            children: [
+              { id: 'm1', label: 'Purpose', x: 310, y: 20, rx: 38, ry: 16, color: 'var(--accent-2)', desc: 'Every action has an intention (niyyah) connected to a higher purpose.' },
+              { id: 'm2', label: 'Generous', x: 380, y: 10, rx: 40, ry: 16, color: 'var(--accent-2)', desc: 'Give freely of time, money, and knowledge, trusting Allah will replace it.' },
+              { id: 'm3', label: 'Ihsan', x: 450, y: 20, rx: 30, ry: 16, color: 'var(--accent-2)', desc: 'Strive for the highest quality because Allah loves excellence.' },
+              { id: 'm4', label: 'Grateful', x: 510, y: 40, rx: 38, ry: 16, color: 'var(--accent-2)', desc: 'Default to gratitude (shukr) rather than complaint.' }
+            ]
+          },
+          {
+            id: 'rituals', label: 'Rituals', x: 670, y: 120, rx: 55, ry: 24, color: 'var(--accent-3)',
+            desc: 'The 10 daily practices that translate values and mindsets into concrete action.',
+            expanded: false,
+            children: [
+              { id: 'r1', label: 'Bismillah', x: 620, y: 30, rx: 42, ry: 16, color: 'var(--accent-3)', desc: 'Begin every action in Allah\'s name (Chapter 5).' },
+              { id: 'r2', label: 'Salah', x: 710, y: 30, rx: 30, ry: 16, color: 'var(--accent-3)', desc: 'Structure your life around the five daily prayers (Chapter 9).' },
+              { id: 'r3', label: 'Dhikr', x: 760, y: 80, rx: 30, ry: 16, color: 'var(--accent-3)', desc: 'Remember Allah throughout the day (Chapter 12).' },
+              { id: 'r4', label: 'Sadaqah', x: 750, y: 170, rx: 40, ry: 16, color: 'var(--accent-3)', desc: 'Give generously to attract Barakah (Chapter 11).' }
+            ]
+          },
+          {
+            id: 'manifesto', label: '10 Manifesto', x: 620, y: 440, rx: 60, ry: 24, color: 'var(--accent-3)',
+            desc: 'The complete Barakah Culture Manifesto -- 10 practical ritual elements forming the basis of Part 2.',
+            expanded: false,
+            children: [
+              { id: 'man1', label: 'Ch5-9', x: 530, y: 510, rx: 35, ry: 16, color: 'var(--accent-3)', desc: 'Bismillah, Alhamdulillah, Tawakkul, Ihsan, Salah' },
+              { id: 'man2', label: 'Ch10-14', x: 700, y: 510, rx: 38, ry: 16, color: 'var(--accent-3)', desc: "Du'a, Sadaqah, Dhikr, Tawbah, Salawat" }
+            ]
+          },
+          {
+            id: 'bridge', label: 'Part 1 \u2192 Part 2', x: 180, y: 440, rx: 65, ry: 24, color: 'var(--accent-2)',
+            desc: 'Chapter 4 bridges the theoretical foundation (Part 1) with practical implementation (Part 2).',
+            expanded: false,
+            children: [
+              { id: 'b1', label: 'Ch1-4: Theory', x: 90, y: 510, rx: 50, ry: 16, color: 'var(--accent-2)', desc: 'What & Why: Concept, Diagnosis, Vision, Framework' },
+              { id: 'b2', label: 'Ch5-14: Practice', x: 270, y: 510, rx: 55, ry: 16, color: 'var(--accent-2)', desc: 'How: One manifesto element per chapter' }
+            ]
+          }
+        ]
+      };
+
+      function drawMindMap() {
+        clearSvg(svg);
+
+        // Draw branches from root to each child
+        tree.children.forEach(function(child) {
+          svg.appendChild(svgEl('line', {
+            x1: String(tree.x), y1: String(tree.y),
+            x2: String(child.x), y2: String(child.y),
+            stroke: child.color, 'stroke-width': '2', opacity: '0.35'
+          }));
+
+          if (child.expanded && child.children) {
+            child.children.forEach(function(sub) {
+              svg.appendChild(svgEl('line', {
+                x1: String(child.x), y1: String(child.y),
+                x2: String(sub.x), y2: String(sub.y),
+                stroke: sub.color, 'stroke-width': '1.5', opacity: '0.3'
+              }));
+            });
+          }
+        });
+
+        // Draw root node
+        drawNode(tree, true, null, false);
+
+        // Draw child nodes
+        tree.children.forEach(function(child) {
+          drawNode(child, false, function() {
+            child.expanded = !child.expanded;
+            drawMindMap();
+          }, false);
+
+          if (child.expanded && child.children) {
+            child.children.forEach(function(sub) {
+              drawNode(sub, false, null, true);
+            });
+          }
+        });
+      }
+
+      function drawNode(node, isRoot, onClick, isLeaf) {
+        var g = document.createElementNS(SVG_NS, 'g');
+        g.setAttribute('class', 'mm-node');
+        g.style.cursor = 'pointer';
+
+        var ellipse = document.createElementNS(SVG_NS, 'ellipse');
+        ellipse.setAttribute('cx', String(node.x));
+        ellipse.setAttribute('cy', String(node.y));
+        ellipse.setAttribute('rx', String(node.rx));
+        ellipse.setAttribute('ry', String(node.ry));
+        ellipse.setAttribute('fill', node.color);
+        ellipse.setAttribute('opacity', isRoot ? '0.9' : (isLeaf ? '0.7' : '0.8'));
+        g.appendChild(ellipse);
+
+        var lines = node.label.split('\n');
+        var startY = node.y - (lines.length - 1) * 6 + 4;
+        lines.forEach(function(line, i) {
+          var text = document.createElementNS(SVG_NS, 'text');
+          text.setAttribute('x', String(node.x));
+          text.setAttribute('y', String(startY + i * 13));
+          text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('fill', 'white');
+          text.setAttribute('font-size', isRoot ? '12' : (isLeaf ? '9' : '11'));
+          text.setAttribute('font-family', 'Inter');
+          text.setAttribute('font-weight', isRoot ? '700' : '600');
+          text.setAttribute('pointer-events', 'none');
+          text.textContent = line;
+          g.appendChild(text);
+        });
+
+        // Expand/collapse indicator
+        if (!isRoot && !isLeaf && node.children && node.children.length > 0) {
+          var ind = document.createElementNS(SVG_NS, 'text');
+          ind.setAttribute('x', String(node.x + node.rx - 8));
+          ind.setAttribute('y', String(node.y - node.ry + 10));
+          ind.setAttribute('text-anchor', 'middle');
+          ind.setAttribute('fill', 'white');
+          ind.setAttribute('font-size', '10');
+          ind.setAttribute('font-family', 'Inter');
+          ind.setAttribute('font-weight', '700');
+          ind.setAttribute('pointer-events', 'none');
+          ind.textContent = node.expanded ? '\u2212' : '+';
+          g.appendChild(ind);
+        }
+
+        if (onClick) {
+          g.addEventListener('click', function(e) {
+            e.stopPropagation();
+            onClick();
+          });
+        }
+
+        g.addEventListener('mouseenter', function() {
+          tooltip.textContent = node.desc;
+          tooltip.classList.add('visible');
+          var rect = container.getBoundingClientRect();
+          var svgRect = svg.getBoundingClientRect();
+          var scaleX = svgRect.width / 800;
+          var scaleY = svgRect.height / 560;
+          var tipX = node.x * scaleX + svgRect.left - rect.left;
+          var tipY = (node.y + node.ry + 5) * scaleY + svgRect.top - rect.top;
+          tooltip.style.left = Math.min(tipX, rect.width - 230) + 'px';
+          tooltip.style.top = tipY + 'px';
+        });
+        g.addEventListener('mouseleave', function() {
+          tooltip.classList.remove('visible');
+        });
+
+        svg.appendChild(g);
+      }
+
+      drawMindMap();
+    })();
+
+    // ----------------------------------------------------------------
+    // Quiz & Tabs (standard)
+    // ----------------------------------------------------------------
+    var QUESTIONS = [
       { question: "What are the three levels of the Barakah Culture Framework?", options: ["Quran, Sunnah, Ijma", "Values, Mindsets, and Rituals", "Body, Mind, and Soul", "Prayer, Fasting, and Charity"], correct: 1, explanation: "The framework has three concentric levels: Values (innermost), Mindsets (middle), and Rituals (outermost)." },
       { question: "Which level sits at the innermost core of the framework?", options: ["Rituals", "Mindsets", "Values", "Habits"], correct: 2, explanation: "Values are the deep core beliefs about God, purpose, and the hereafter that anchor everything else." },
       { question: "Which of these is NOT one of the three core values?", options: ["God-centric living", "Stewardship", "Hereafter focus", "Material success"], correct: 3, explanation: "The three core values are God-centric living, stewardship (amanah), and hereafter focus. Material success is a hustle culture value." },

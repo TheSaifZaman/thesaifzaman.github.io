@@ -10,187 +10,55 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Chapter-local extras ── */
-    .chapter-hero {
-      padding: 2.5rem 0 1.5rem;
-    }
-    .chapter-hero .ch-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-    .chapter-hero h1 {
-      margin-bottom: 0.6rem;
-    }
-    .chapter-hero .ch-meta {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .chapter-hero .ch-meta span {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
+    /* -- Chapter-local extras -- */
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
 
-    /* ── One-hot vs Dense table ── */
-    .encoding-compare {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
+    /* -- One-hot vs Dense table -- */
+    .encoding-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
     @media (max-width: 600px) { .encoding-compare { grid-template-columns: 1fr; } }
-    .encoding-card {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .encoding-card-header {
-      padding: 0.55rem 0.85rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
+    .encoding-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .encoding-card-header { padding: 0.55rem 0.85rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
     .encoding-card-header.onehot { background: rgba(239,68,68,0.12); color: #ef4444; }
     .encoding-card-header.dense  { background: rgba(16,185,129,0.12); color: var(--accent-3); }
-    .encoding-card-body {
-      padding: 0.6rem 0.85rem;
-    }
-    .encoding-vec {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 3px;
-      margin: 0.4rem 0;
-    }
-    .encoding-cell {
-      width: 22px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.62rem;
-      font-family: 'JetBrains Mono', monospace;
-      border-radius: 3px;
-      font-weight: 600;
-    }
+    .encoding-card-body { padding: 0.6rem 0.85rem; }
+    .encoding-vec { display: flex; flex-wrap: wrap; gap: 3px; margin: 0.4rem 0; }
+    .encoding-cell { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-family: 'JetBrains Mono', monospace; border-radius: 3px; font-weight: 600; }
     .encoding-cell.zero { background: var(--border-2); color: var(--text-light); }
     .encoding-cell.one  { background: rgba(239,68,68,0.25); color: #ef4444; }
     .encoding-cell.float { background: rgba(16,185,129,0.18); color: var(--accent-3); font-size: 0.55rem; }
-    .encoding-label {
-      font-size: 0.77rem;
-      color: var(--text-muted);
-      margin-top: 0.3rem;
-    }
-    .encoding-dims {
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: 0.4rem;
-      padding: 0.25rem 0.5rem;
-      background: var(--surface-2);
-      border-radius: 4px;
-      color: var(--text-muted);
-    }
+    .encoding-label { font-size: 0.77rem; color: var(--text-muted); margin-top: 0.3rem; }
+    .encoding-dims { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; margin-top: 0.4rem; padding: 0.25rem 0.5rem; background: var(--surface-2); border-radius: 4px; color: var(--text-muted); }
 
-    /* ── Token badges ── */
-    .token-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      padding: 0.75rem 0;
-      align-items: center;
-    }
-    .viz-token {
-      padding: 0.3rem 0.65rem;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      border: 1.5px solid transparent;
-      transition: all 0.25s;
-    }
+    /* -- Token badges -- */
+    .token-strip { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.75rem 0; align-items: center; }
+    .viz-token { padding: 0.3rem 0.65rem; border-radius: 20px; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; border: 1.5px solid transparent; transition: all 0.25s; }
     .viz-token.t-word  { background: rgba(79,110,247,0.12); border-color: rgba(79,110,247,0.35); color: var(--accent); }
     .viz-token.t-punct { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4);  color: var(--accent-2); }
     .viz-token.t-space { background: rgba(107,114,128,0.1); border-color: var(--border); color: var(--text-muted); font-style: italic; }
     .viz-token.t-special { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); color: #ef4444; }
     .viz-token.t-sub   { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: var(--accent-3); }
 
-    /* ── Tokenizer step demo ── */
-    .tokenizer-step {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-    .tokenizer-step.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .step-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 0.35rem;
-    }
+    /* -- Tokenizer step demo -- */
+    .tokenizer-step { opacity: 0; transform: translateY(8px); transition: opacity 0.35s ease, transform 0.35s ease; }
+    .tokenizer-step.show { opacity: 1; transform: translateY(0); }
+    .step-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.35rem; }
 
-    /* ── Vocab lookup table ── */
-    .vocab-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      font-family: 'JetBrains Mono', monospace;
-      margin: 0.75rem 0;
-    }
-    .vocab-table th {
-      padding: 0.5rem 0.75rem;
-      background: rgba(79,110,247,0.08);
-      color: var(--accent);
-      font-weight: 700;
-      text-align: left;
-      border-bottom: 2px solid var(--border);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .vocab-table td {
-      padding: 0.4rem 0.75rem;
-      border-bottom: 1px solid var(--border-2);
-      color: var(--text-muted);
-    }
-    .vocab-table tr.highlight td {
-      background: rgba(79,110,247,0.1);
-      color: var(--accent);
-      font-weight: 700;
-    }
+    /* -- Vocab lookup table -- */
+    .vocab-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin: 0.75rem 0; }
+    .vocab-table th { padding: 0.5rem 0.75rem; background: rgba(79,110,247,0.08); color: var(--accent); font-weight: 700; text-align: left; border-bottom: 2px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .vocab-table td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-2); color: var(--text-muted); }
+    .vocab-table tr.highlight td { background: rgba(79,110,247,0.1); color: var(--accent); font-weight: 700; }
     .vocab-table tr:last-child td { border-bottom: none; }
 
-    /* ── Special token cards ── */
-    .special-token-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.8rem;
-      margin: 1rem 0;
-    }
-    .special-token-card {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.9rem 1rem;
-      transition: all var(--transition);
-    }
+    /* -- Special token cards -- */
+    .special-token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+    .special-token-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 0.9rem 1rem; transition: all var(--transition); }
     .special-token-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
-    .st-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-size: 0.88rem;
-      margin-bottom: 0.25rem;
-    }
+    .st-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.88rem; margin-bottom: 0.25rem; }
     .st-id   { font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.4rem; }
     .st-desc { font-size: 0.79rem; color: var(--text-muted); line-height: 1.45; }
     .st-name.bos { color: #4f6ef7; }
@@ -199,203 +67,98 @@
     .st-name.unk { color: var(--accent-3); }
     .st-name.eot { color: #a855f7; }
 
-    /* ── BPE merge visualization ── */
-    .bpe-step {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin: 0.4rem 0;
-      padding: 0.45rem 0.75rem;
-      border-radius: var(--radius-sm);
-      background: var(--surface-2);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-    }
-    .bpe-pair {
-      padding: 0.2rem 0.5rem;
-      background: rgba(239,68,68,0.15);
-      border: 1px solid rgba(239,68,68,0.4);
-      border-radius: 4px;
-      color: #ef4444;
-      font-weight: 700;
-    }
-    .bpe-merged {
-      padding: 0.2rem 0.5rem;
-      background: rgba(16,185,129,0.15);
-      border: 1px solid rgba(16,185,129,0.4);
-      border-radius: 4px;
-      color: var(--accent-3);
-      font-weight: 700;
-    }
-    .bpe-arrow {
-      color: var(--text-light);
-      font-size: 1rem;
-    }
-    .bpe-count {
-      font-size: 0.72rem;
-      color: var(--text-light);
-    }
+    /* -- BPE merge visualization -- */
+    .bpe-step { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0; padding: 0.45rem 0.75rem; border-radius: var(--radius-sm); background: var(--surface-2); font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+    .bpe-pair { padding: 0.2rem 0.5rem; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 4px; color: #ef4444; font-weight: 700; }
+    .bpe-merged { padding: 0.2rem 0.5rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); border-radius: 4px; color: var(--accent-3); font-weight: 700; }
+    .bpe-arrow { color: var(--text-light); font-size: 1rem; }
+    .bpe-count { font-size: 0.72rem; color: var(--text-light); }
 
-    /* ── Sliding window visualization ── */
-    .sliding-window-wrap {
-      margin: 1rem 0;
-    }
-    .sw-tokens {
-      display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-      padding: 0.5rem 0;
-    }
-    .sw-token {
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      border: 2px solid var(--border);
-      background: var(--surface-2);
-      color: var(--text-muted);
-      transition: all 0.3s ease;
-    }
+    /* -- Sliding window visualization -- */
+    .sliding-window-wrap { margin: 1rem 0; }
+    .sw-tokens { display: flex; gap: 0.35rem; flex-wrap: wrap; padding: 0.5rem 0; }
+    .sw-token { padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; border: 2px solid var(--border); background: var(--surface-2); color: var(--text-muted); transition: all 0.3s ease; }
     .sw-token.sw-input  { border-color: rgba(79,110,247,0.6); background: rgba(79,110,247,0.12); color: var(--accent); }
     .sw-token.sw-target { border-color: rgba(16,185,129,0.6); background: rgba(16,185,129,0.12); color: var(--accent-3); }
-    .sw-legend {
-      display: flex;
-      gap: 1.25rem;
-      margin: 0.5rem 0;
-      font-size: 0.79rem;
-    }
-    .sw-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .sw-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-    }
+    .sw-legend { display: flex; gap: 1.25rem; margin: 0.5rem 0; font-size: 0.79rem; }
+    .sw-legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .sw-dot { width: 12px; height: 12px; border-radius: 3px; }
     .sw-dot.input  { background: rgba(79,110,247,0.4); border: 1.5px solid var(--accent); }
     .sw-dot.target { background: rgba(16,185,129,0.4); border: 1.5px solid var(--accent-3); }
-    .sw-pairs {
-      margin: 0.75rem 0;
-      font-size: 0.83rem;
-    }
-    .sw-pair-row {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      padding: 0.3rem 0;
-      border-bottom: 1px solid var(--border-2);
-    }
-    .sw-pair-row:last-child { border-bottom: none; }
-    .sw-pair-label { color: var(--text-muted); font-size: 0.75rem; min-width: 50px; }
-    .sw-pair-tokens {
-      display: flex;
-      gap: 0.25rem;
-      flex-wrap: wrap;
-    }
-    .sw-slider-wrap {
-      margin: 1rem 0 0.5rem;
-    }
-    .sw-slider-wrap label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      display: block;
-      margin-bottom: 0.4rem;
-    }
+    .sw-slider-wrap { margin: 1rem 0 0.5rem; }
+    .sw-slider-wrap label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.4rem; }
     #swSlider { width: 100%; accent-color: var(--accent); }
-    .sw-info {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-    }
+    .sw-info { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
     .sw-info strong { color: var(--text); }
 
-    /* ── Positional embedding diagram ── */
-    .pos-diagram {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin: 1rem 0;
-    }
-    .pos-row {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .pos-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      min-width: 160px;
-      color: var(--text-muted);
-    }
-    .pos-vec {
-      display: flex;
-      gap: 3px;
-    }
-    .pos-cell {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.62rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      border-radius: 4px;
-    }
+    /* -- Positional embedding diagram -- */
+    .pos-diagram { display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; }
+    .pos-row { display: flex; align-items: center; gap: 0.6rem; }
+    .pos-label { font-size: 0.78rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-width: 160px; color: var(--text-muted); }
+    .pos-vec { display: flex; gap: 3px; }
+    .pos-cell { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 4px; }
     .pos-cell.tok   { background: rgba(79,110,247,0.2); color: var(--accent); border: 1px solid rgba(79,110,247,0.4); }
     .pos-cell.pos   { background: rgba(245,158,11,0.2); color: var(--accent-2); border: 1px solid rgba(245,158,11,0.4); }
     .pos-cell.comb  { background: rgba(16,185,129,0.2); color: var(--accent-3); border: 1px solid rgba(16,185,129,0.4); }
-    .pos-op {
-      font-size: 1.2rem;
-      color: var(--text-light);
-      font-weight: 700;
-    }
-    .pos-dims {
-      font-size: 0.72rem;
-      color: var(--text-light);
-      font-family: 'JetBrains Mono', monospace;
-    }
+    .pos-op { font-size: 1.2rem; color: var(--text-light); font-weight: 700; }
+    .pos-dims { font-size: 0.72rem; color: var(--text-light); font-family: 'JetBrains Mono', monospace; }
 
-    /* ── Compare table (encoding comparison) ── */
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.87rem;
-      margin: 1rem 0;
-    }
-    .compare-table th {
-      padding: 0.7rem 1rem;
-      text-align: left;
-      background: rgba(79,110,247,0.08);
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border-bottom: 2px solid var(--border);
-    }
-    .compare-table td {
-      padding: 0.65rem 1rem;
-      border-bottom: 1px solid var(--border-2);
-      color: var(--text-muted);
-      vertical-align: top;
-    }
+    /* -- Compare table -- */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin: 1rem 0; }
+    .compare-table th { padding: 0.7rem 1rem; text-align: left; background: rgba(79,110,247,0.08); color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid var(--border); }
+    .compare-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border-2); color: var(--text-muted); vertical-align: top; }
     .compare-table tr:last-child td { border-bottom: none; }
     .compare-table td:first-child { font-weight: 600; color: var(--text); width: 28%; }
     .compare-table tr:hover td { background: rgba(79,110,247,0.03); }
+
+    /* -- Step-through diagrams -- */
+    .step-diagram { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 1rem 0; }
+    .step-diagram-header { padding: 0.6rem 1rem; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .step-diagram-header .step-counter { font-size: 0.78rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+    .step-diagram-nav { display: flex; gap: 0.4rem; }
+    .step-diagram-nav button { padding: 0.3rem 0.7rem; border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text-muted); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all var(--transition); }
+    .step-diagram-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: rgba(79,110,247,0.08); }
+    .step-diagram-nav button:disabled { opacity: 0.35; cursor: not-allowed; }
+    .step-diagram-body { padding: 1rem; min-height: 200px; }
+    .step-diagram-body .step-frame { display: none; }
+    .step-diagram-body .step-frame.active { display: block; animation: fadeInStep 0.35s ease; }
+    @keyframes fadeInStep { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .step-description { font-size: 0.84rem; color: var(--text-muted); padding: 0.5rem 1rem 0.75rem; border-top: 1px solid var(--border-2); background: var(--surface-2); line-height: 1.55; }
+
+    /* -- Interactive exercises -- */
+    .exercise-box { border: 2px solid rgba(79,110,247,0.25); border-radius: var(--radius); padding: 1.25rem; margin: 1.5rem 0; background: var(--surface); }
+    .exercise-box h4 { color: var(--accent); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+    .exercise-input-row { display: flex; gap: 0.5rem; margin: 0.75rem 0; flex-wrap: wrap; align-items: center; }
+    .exercise-input-row input[type="text"] { flex: 1; min-width: 200px; padding: 0.5rem 0.75rem; border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface-2); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; outline: none; transition: border-color var(--transition); }
+    .exercise-input-row input[type="text"]:focus { border-color: var(--accent); }
+    .exercise-result { margin-top: 0.75rem; font-size: 0.84rem; color: var(--text-muted); }
+    .exercise-result .token-strip { padding: 0.5rem 0; }
+    .exercise-feedback { margin-top: 0.75rem; padding: 0.6rem 0.85rem; border-radius: 6px; font-size: 0.84rem; display: none; }
+    .exercise-feedback.correct { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .exercise-feedback.wrong { display: block; background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+
+    /* -- SVG illustrations -- */
+    .lesson-svg { width: 100%; max-width: 700px; margin: 1rem auto; display: block; }
+    .lesson-svg text { font-family: 'Inter', sans-serif; }
+
+    /* -- Mind map interactive -- */
+    .mindmap-info-panel { margin-top: 1rem; padding: 1rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); min-height: 60px; transition: all 0.3s ease; }
+    .mindmap-info-panel h4 { font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--accent); text-transform: none; letter-spacing: 0; }
+    .mindmap-info-panel p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .mindmap-info-panel .mm-link { font-size: 0.78rem; color: var(--accent); cursor: pointer; }
+    .mindmap-info-panel .mm-link:hover { text-decoration: underline; }
+
+    /* -- Drag/drop exercise -- */
+    .drag-zone { min-height: 48px; border: 2px dashed var(--border); border-radius: 8px; padding: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; transition: border-color 0.2s; }
+    .drag-zone.over { border-color: var(--accent); background: rgba(79,110,247,0.04); }
+    .drag-item { padding: 0.3rem 0.65rem; border-radius: 20px; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; cursor: grab; user-select: none; transition: transform 0.15s, box-shadow 0.15s; }
+    .drag-item:active { cursor: grabbing; transform: scale(1.08); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .drag-item.placed { opacity: 0.5; pointer-events: none; }
   </style>
 </head>
 <body data-chapter="ch2">
 
-  <!-- ══════════════════════════════════════════
-       STICKY HEADER
-  ══════════════════════════════════════════ -->
+  <!-- STICKY HEADER -->
   <header class="site-header">
     <div class="header-left">
       <span class="book-tag">Visual Book</span>
@@ -411,15 +174,13 @@
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT -->
   <main class="page-wrapper">
 
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
-      <span class="sep">›</span>
+      <span class="sep">></span>
       <span class="current">Chapter 2</span>
     </nav>
 
@@ -440,9 +201,7 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TAB BAR
-    ══════════════════════════════════════════ -->
+    <!-- TAB BAR -->
     <div class="tab-bar" id="chapterTabs">
       <button class="tab-btn active" data-tab="tab-lessons">
         <i class="fas fa-book-reader"></i> Lessons
@@ -458,16 +217,12 @@
       </button>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TAB: LESSONS
-    ══════════════════════════════════════════ -->
+    <!-- TAB: LESSONS -->
     <div class="tab-panel active" id="tab-lessons">
 
       <p>Before a neural network can understand or generate text, that text must be transformed into numbers. This chapter walks through every step of that pipeline — from raw characters all the way to the combined token-plus-position embedding vectors that feed into a transformer's first layer. You will build an intuition for why each step exists, how different design choices (vocabulary size, window stride, positional encoding scheme) affect model behavior, and how GPT-2 specifically implements each of these components.</p>
 
-      <!-- ══════════════════
-           LESSON 2.1
-      ══════════════════ -->
+      <!-- LESSON 2.1 -->
       <section class="lesson" id="lesson-2-1">
         <div class="lesson-header">
           <span class="lesson-number">2.1</span>
@@ -478,12 +233,60 @@
 
         <p>The naive answer is <strong>one-hot encoding</strong>: assign each word in your vocabulary an integer index, then represent that word as a vector of all zeros with a single 1 at the word's index. A vocabulary of 10,000 words would give each word a 10,000-dimensional vector that is 99.99% zeros. This approach has two fatal weaknesses. First, it is catastrophically memory-inefficient — GPT-2's vocabulary of 50,257 tokens would require a 50,257-dimensional sparse vector per token. Second, and more importantly, one-hot vectors carry <em>zero semantic information</em>: the vectors for "cat" and "kitten" are just as far apart as the vectors for "cat" and "universe". The model has no way to leverage the fact that synonyms, related words, or grammatically similar words should behave similarly.</p>
 
-        <p><strong>Dense embeddings</strong> solve both problems. Instead of a sparse binary vector of length V (vocabulary size), each word is mapped to a compact, real-valued vector of length d (the embedding dimension, often 128–1024). These vectors are <em>learned</em>: during training, the model adjusts them so that words appearing in similar contexts end up with similar vectors. In the resulting embedding space, "cat" and "kitten" are geometrically nearby, arithmetic relationships like <em>king − man + woman ≈ queen</em> emerge naturally, and the model can generalise: if it learns something about "cats", some of that knowledge transfers to "kittens".</p>
+        <p><strong>Dense embeddings</strong> solve both problems. Instead of a sparse binary vector of length V (vocabulary size), each word is mapped to a compact, real-valued vector of length d (the embedding dimension, often 128-1024). These vectors are <em>learned</em>: during training, the model adjusts them so that words appearing in similar contexts end up with similar vectors. In the resulting embedding space, "cat" and "kitten" are geometrically nearby, arithmetic relationships like <em>king - man + woman = queen</em> emerge naturally, and the model can generalise: if it learns something about "cats", some of that knowledge transfers to "kittens".</p>
 
         <p>Classical embedding methods like <strong>Word2Vec</strong> (Mikolov et al., 2013) and <strong>GloVe</strong> (Pennington et al., 2014) produced standalone, context-independent embedding tables trained on unlabeled corpora. Modern LLMs go further: they learn their own embedding tables <em>end-to-end</em> as part of training. Every weight update that improves next-token prediction also refines the embeddings. The result is context-aware representations — the same token "bank" gets a different effective representation depending on whether the surrounding context is about rivers or finance, because the attention mechanism modulates the embedding before it reaches the output layer.</p>
 
         <div class="insight-box">
           <strong>Key Insight:</strong> The embedding layer is the bridge between the discrete world of tokens (integers) and the continuous world of neural network mathematics (real-valued vectors). Everything downstream — attention, feed-forward layers, layer normalisation — operates on these vectors.
+        </div>
+
+        <!-- SVG: Embedding Space illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-vector-square"></i> Embedding Space — Semantic Proximity</div>
+          <svg class="lesson-svg" viewBox="0 0 600 300" aria-label="Embedding space showing semantic clusters">
+            <!-- Background grid -->
+            <defs>
+              <pattern id="grid1" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="var(--border, rgba(79,110,247,0.1))" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="600" height="300" fill="url(#grid1)" rx="8"/>
+            <!-- Animals cluster -->
+            <circle cx="140" cy="120" r="60" fill="rgba(79,110,247,0.06)" stroke="rgba(79,110,247,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="140" y="70" text-anchor="middle" font-size="9" fill="var(--accent, #4f6ef7)" font-weight="700" opacity="0.6">ANIMALS</text>
+            <circle cx="120" cy="110" r="5" fill="var(--accent, #4f6ef7)"/>
+            <text x="120" y="102" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">cat</text>
+            <circle cx="155" cy="125" r="5" fill="var(--accent, #4f6ef7)"/>
+            <text x="155" y="117" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">kitten</text>
+            <circle cx="130" cy="148" r="5" fill="var(--accent, #4f6ef7)"/>
+            <text x="130" y="163" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">dog</text>
+            <circle cx="165" cy="150" r="5" fill="var(--accent, #4f6ef7)"/>
+            <text x="165" y="165" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">puppy</text>
+            <!-- Royalty cluster -->
+            <circle cx="400" cy="110" r="65" fill="rgba(168,85,247,0.06)" stroke="rgba(168,85,247,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="400" y="58" text-anchor="middle" font-size="9" fill="#a855f7" font-weight="700" opacity="0.6">ROYALTY</text>
+            <circle cx="380" cy="95" r="5" fill="#a855f7"/>
+            <text x="380" y="87" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">king</text>
+            <circle cx="420" cy="100" r="5" fill="#a855f7"/>
+            <text x="420" y="92" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">queen</text>
+            <circle cx="390" cy="130" r="5" fill="#a855f7"/>
+            <text x="390" y="145" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">prince</text>
+            <circle cx="425" cy="135" r="5" fill="#a855f7"/>
+            <text x="425" y="150" text-anchor="middle" font-size="10" fill="var(--text, #1a1f36)" font-weight="600">princess</text>
+            <!-- Analogy arrow -->
+            <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent-danger, #ef4444)" opacity="0.7"/></marker></defs>
+            <line x1="380" y1="95" x2="420" y2="100" stroke="var(--accent-danger, #ef4444)" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrowhead)" opacity="0.5"/>
+            <text x="400" y="85" text-anchor="middle" font-size="8" fill="var(--accent-danger, #ef4444)" font-style="italic" opacity="0.7">king-man+woman</text>
+            <!-- Far away word -->
+            <circle cx="480" cy="240" r="5" fill="var(--text-light, #8892b0)"/>
+            <text x="480" y="258" text-anchor="middle" font-size="10" fill="var(--text-light, #8892b0)" font-weight="600">universe</text>
+            <text x="480" y="270" text-anchor="middle" font-size="8" fill="var(--text-light, #8892b0)" font-style="italic">(far from "cat")</text>
+            <!-- Axis labels -->
+            <text x="300" y="295" text-anchor="middle" font-size="9" fill="var(--text-light, #8892b0)">Embedding Dimension 1</text>
+            <text x="15" y="150" text-anchor="middle" font-size="9" fill="var(--text-light, #8892b0)" transform="rotate(-90, 15, 150)">Embedding Dimension 2</text>
+          </svg>
+          <div class="viz-caption">In a trained embedding space, semantically related words cluster together. The classic analogy "king - man + woman = queen" emerges from the geometric structure of learned embeddings.</div>
         </div>
 
         <!-- Visualization: one-hot vs dense -->
@@ -508,7 +311,7 @@
             <div class="encoding-card">
               <div class="encoding-card-header dense">Dense Embedding (Learned)</div>
               <div class="encoding-card-body">
-                <div class="step-label">Word: "cat" → 768-dim vector</div>
+                <div class="step-label">Word: "cat" -> 768-dim vector</div>
                 <div class="encoding-vec">
                   <div class="encoding-cell float">.32</div><div class="encoding-cell float">-.17</div>
                   <div class="encoding-cell float">.81</div><div class="encoding-cell float">.04</div>
@@ -541,25 +344,60 @@ vector   = embedding_layer(token_id)   <span class="cmt"># shape: [1, 768]</span
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.2
-      ══════════════════ -->
+      <!-- LESSON 2.2 -->
       <section class="lesson" id="lesson-2-2">
         <div class="lesson-header">
           <span class="lesson-number">2.2</span>
           <h2>Tokenizing Text</h2>
         </div>
 
-        <p>Before we can assign integer IDs to words, we must first decide what counts as a "word" — the process of <strong>tokenization</strong>. At first glance, splitting by whitespace seems obvious: "The cat sat" → ["The", "cat", "sat"]. But real text is messier. Punctuation needs to be separated ("Hello," → ["Hello", ","]), contractions behave differently across languages ("don't" → ["don", "'", "t"] or ["don't"]?), and some languages like Chinese have no whitespace between words at all. The tokenizer's job is to convert a raw Unicode string into a clean, well-defined sequence of string tokens.</p>
+        <p>Before we can assign integer IDs to words, we must first decide what counts as a "word" — the process of <strong>tokenization</strong>. At first glance, splitting by whitespace seems obvious: "The cat sat" -> ["The", "cat", "sat"]. But real text is messier. Punctuation needs to be separated ("Hello," -> ["Hello", ","]), contractions behave differently across languages ("don't" -> ["don", "'", "t"] or ["don't"]?), and some languages like Chinese have no whitespace between words at all. The tokenizer's job is to convert a raw Unicode string into a clean, well-defined sequence of string tokens.</p>
 
         <p>A simple rule-based tokenizer might split on whitespace <em>and</em> on punctuation, handling edge cases with regular expressions. For example, the sentence "Hello, world!" could be split by scanning character-by-character: accumulate alphabetic characters into a word token, then emit any punctuation as its own token. This produces ["Hello", ",", " world", "!"] — five distinct tokens that together faithfully reconstruct the original string when concatenated.</p>
 
-        <p>Building a <strong>vocabulary</strong> then means scanning a large corpus, collecting every unique token encountered, and assigning each a consecutive integer ID. The result is two dictionaries: <code>word_to_id</code> (encode: string → int) and <code>id_to_word</code> (decode: int → string). Encoding turns text into a list of integers; decoding turns a list of integers back into text. The vocabulary must be fixed before training — tokens not seen in the training corpus would be "out-of-vocabulary" (OOV).</p>
+        <p>Building a <strong>vocabulary</strong> then means scanning a large corpus, collecting every unique token encountered, and assigning each a consecutive integer ID. The result is two dictionaries: <code>word_to_id</code> (encode: string -> int) and <code>id_to_word</code> (decode: int -> string). Encoding turns text into a list of integers; decoding turns a list of integers back into text. The vocabulary must be fixed before training — tokens not seen in the training corpus would be "out-of-vocabulary" (OOV).</p>
 
         <p>Simple word-level tokenizers have a fundamental weakness: <em>out-of-vocabulary words</em>. If the vocabulary was built from the training corpus and a test sentence contains a proper noun, a brand name, or a misspelling not seen during training, the tokenizer has no token for it. One workaround is a special <code>[UNK]</code> token, but this loses all information about the unknown word. Sub-word tokenization methods — the most important being <strong>Byte-Pair Encoding (BPE)</strong>, covered in Lesson 2.5 — solve this problem by decomposing unknown words into smaller known pieces.</p>
 
         <div class="insight-box">
-          <strong>Rule of Thumb:</strong> In the GPT-2 tokenizer, a token is roughly 4 characters on average. A 1,000-word essay is approximately 750–800 tokens. LLM context windows and pricing are measured in tokens, not words, so understanding tokenization is practically important.
+          <strong>Rule of Thumb:</strong> In the GPT-2 tokenizer, a token is roughly 4 characters on average. A 1,000-word essay is approximately 750-800 tokens. LLM context windows and pricing are measured in tokens, not words, so understanding tokenization is practically important.
+        </div>
+
+        <!-- SVG: Tokenization Pipeline -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-stream"></i> Tokenization Pipeline Overview</div>
+          <svg class="lesson-svg" viewBox="0 0 650 160" aria-label="Tokenization pipeline from raw text to token IDs">
+            <!-- Step boxes -->
+            <rect x="10" y="50" width="130" height="60" rx="8" fill="var(--surface, #fff)" stroke="var(--accent, #4f6ef7)" stroke-width="2" opacity="0.9"/>
+            <text x="75" y="73" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">RAW TEXT</text>
+            <text x="75" y="92" text-anchor="middle" font-size="11" fill="var(--text, #1a1f36)" font-weight="600" font-family="JetBrains Mono, monospace">"Hello, world!"</text>
+            <!-- Arrow 1 -->
+            <line x1="145" y1="80" x2="175" y2="80" stroke="var(--text-light, #8892b0)" stroke-width="2" marker-end="url(#arrowG)"/>
+            <defs><marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--text-light, #8892b0)"/></marker></defs>
+            <text x="160" y="70" text-anchor="middle" font-size="8" fill="var(--text-light, #8892b0)">split</text>
+            <!-- Step 2 -->
+            <rect x="180" y="40" width="150" height="80" rx="8" fill="var(--surface, #fff)" stroke="var(--accent-2, #f59e0b)" stroke-width="2" opacity="0.9"/>
+            <text x="255" y="60" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">TOKENS</text>
+            <text x="255" y="80" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-family="JetBrains Mono, monospace">["Hello", ",",</text>
+            <text x="255" y="95" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-family="JetBrains Mono, monospace">" world", "!"]</text>
+            <!-- Arrow 2 -->
+            <line x1="335" y1="80" x2="365" y2="80" stroke="var(--text-light, #8892b0)" stroke-width="2" marker-end="url(#arrowG)"/>
+            <text x="350" y="70" text-anchor="middle" font-size="8" fill="var(--text-light, #8892b0)">lookup</text>
+            <!-- Step 3 -->
+            <rect x="370" y="50" width="130" height="60" rx="8" fill="var(--surface, #fff)" stroke="var(--accent-3, #10b981)" stroke-width="2" opacity="0.9"/>
+            <text x="435" y="73" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">TOKEN IDs</text>
+            <text x="435" y="92" text-anchor="middle" font-size="11" fill="var(--accent-3, #10b981)" font-weight="600" font-family="JetBrains Mono, monospace">[15496, 11, 995, 0]</text>
+            <!-- Arrow 3 -->
+            <line x1="505" y1="80" x2="535" y2="80" stroke="var(--text-light, #8892b0)" stroke-width="2" marker-end="url(#arrowG)"/>
+            <text x="520" y="70" text-anchor="middle" font-size="8" fill="var(--text-light, #8892b0)">embed</text>
+            <!-- Step 4 -->
+            <rect x="540" y="40" width="100" height="80" rx="8" fill="var(--surface, #fff)" stroke="#a855f7" stroke-width="2" opacity="0.9"/>
+            <text x="590" y="60" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">VECTORS</text>
+            <text x="590" y="80" text-anchor="middle" font-size="9" fill="#a855f7" font-family="JetBrains Mono, monospace">[4, 768]</text>
+            <text x="590" y="95" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)">dense floats</text>
+            <!-- Bottom label -->
+            <text x="325" y="150" text-anchor="middle" font-size="9" fill="var(--text-light, #8892b0)" font-style="italic">Raw text -> tokens -> integer IDs -> dense embedding vectors</text>
+          </svg>
         </div>
 
         <!-- Visualization: step-by-step tokenizer -->
@@ -597,13 +435,13 @@ vector   = embedding_layer(token_id)   <span class="cmt"># shape: [1, 768]</span
             <div class="tokenizer-step" id="step3">
               <div class="step-label">Step 3 — Assign integer IDs from vocabulary</div>
               <div class="token-strip">
-                <span class="viz-token t-word">The <small style="opacity:.65">→ 0</small></span>
-                <span class="viz-token t-word">cat <small style="opacity:.65">→ 1</small></span>
-                <span class="viz-token t-word">sat <small style="opacity:.65">→ 2</small></span>
-                <span class="viz-token t-word">on <small style="opacity:.65">→ 3</small></span>
-                <span class="viz-token t-word">the <small style="opacity:.65">→ 4</small></span>
-                <span class="viz-token t-word">mat <small style="opacity:.65">→ 5</small></span>
-                <span class="viz-token t-punct">. <small style="opacity:.65">→ 6</small></span>
+                <span class="viz-token t-word">The <small style="opacity:.65">-> 0</small></span>
+                <span class="viz-token t-word">cat <small style="opacity:.65">-> 1</small></span>
+                <span class="viz-token t-word">sat <small style="opacity:.65">-> 2</small></span>
+                <span class="viz-token t-word">on <small style="opacity:.65">-> 3</small></span>
+                <span class="viz-token t-word">the <small style="opacity:.65">-> 4</small></span>
+                <span class="viz-token t-word">mat <small style="opacity:.65">-> 5</small></span>
+                <span class="viz-token t-punct">. <small style="opacity:.65">-> 6</small></span>
               </div>
               <div style="font-family:'JetBrains Mono',monospace; font-size:0.83rem; margin-top:0.5rem; color:var(--text-muted);">Output: [0, 1, 2, 3, 4, 5, 6]</div>
             </div>
@@ -636,11 +474,20 @@ vector   = embedding_layer(token_id)   <span class="cmt"># shape: [1, 768]</span
 
           <div class="viz-caption">Click "Next Step" to walk through how a simple tokenizer decomposes a sentence into tokens, separates punctuation, and maps each token to an integer ID.</div>
         </div>
+
+        <!-- Interactive Exercise 1: Build Your Own Tokenizer -->
+        <div class="exercise-box" id="exercise-tokenizer">
+          <h4><i class="fas fa-flask"></i> Interactive Exercise: Tokenize Your Own Text</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.5rem;">Type any sentence below and see how a simple whitespace+punctuation tokenizer splits it. Compare the token count to a rough estimate of GPT-2 BPE tokens (~1 token per 4 characters).</p>
+          <div class="exercise-input-row">
+            <input type="text" id="exerciseTokenInput" placeholder="Type a sentence here..." value="The quick brown fox jumped over the lazy dog!" />
+            <button class="btn btn-primary btn-sm" id="exerciseTokenBtn"><i class="fas fa-scissors"></i> Tokenize</button>
+          </div>
+          <div class="exercise-result" id="exerciseTokenResult"></div>
+        </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.3
-      ══════════════════ -->
+      <!-- LESSON 2.3 -->
       <section class="lesson" id="lesson-2-3">
         <div class="lesson-header">
           <span class="lesson-number">2.3</span>
@@ -653,10 +500,52 @@ vector   = embedding_layer(token_id)   <span class="cmt"># shape: [1, 768]</span
 
         <p>The vocabulary acts as a two-way lookup table. Building it efficiently requires sorting all unique tokens from the training corpus and assigning IDs in a deterministic order (often alphabetical or by frequency). During inference, the model produces a probability distribution over all 50,257 token IDs, then samples or argmax-selects the next token ID, which is decoded to produce the next character of output text.</p>
 
-        <p>One important subtlety: whitespace handling. Some tokenizers strip all whitespace and add it back on decode. Others — like GPT-2's tiktoken — include leading spaces as part of tokens (e.g., "Ġcat" where Ġ represents a leading space). This means the same word encoded at the start of a sentence may have a different token ID than the same word in the middle of a sentence. This is not a bug; it is a deliberate design choice that makes decoding perfectly lossless — the tokenized form can always be decoded back to the exact original string.</p>
+        <p>One important subtlety: whitespace handling. Some tokenizers strip all whitespace and add it back on decode. Others — like GPT-2's tiktoken — include leading spaces as part of tokens (e.g., "Gcat" where G represents a leading space). This means the same word encoded at the start of a sentence may have a different token ID than the same word in the middle of a sentence. This is not a bug; it is a deliberate design choice that makes decoding perfectly lossless — the tokenized form can always be decoded back to the exact original string.</p>
 
         <div class="insight-box">
-          <strong>Actual GPT-2 IDs:</strong> You can verify token IDs with <code>tiktoken</code>. "Hello" → 15496, " world" → 995, "." → 13, " the" → 262, " cat" → 3797. Notice " the" and " cat" have leading spaces embedded in the token — GPT-2 BPE includes spacing as part of the token representation.
+          <strong>Actual GPT-2 IDs:</strong> You can verify token IDs with <code>tiktoken</code>. "Hello" -> 15496, " world" -> 995, "." -> 13, " the" -> 262, " cat" -> 3797. Notice " the" and " cat" have leading spaces embedded in the token — GPT-2 BPE includes spacing as part of the token representation.
+        </div>
+
+        <!-- SVG: Encode/Decode Round-trip -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-rotate"></i> Encode / Decode Round-Trip</div>
+          <svg class="lesson-svg" viewBox="0 0 600 180" aria-label="Encode decode round trip diagram">
+            <!-- Encode path -->
+            <rect x="30" y="30" width="160" height="45" rx="8" fill="rgba(79,110,247,0.1)" stroke="var(--accent, #4f6ef7)" stroke-width="1.5"/>
+            <text x="110" y="48" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">TEXT STRING</text>
+            <text x="110" y="65" text-anchor="middle" font-size="11" fill="var(--accent, #4f6ef7)" font-weight="600" font-family="JetBrains Mono, monospace">"Hello world"</text>
+            <!-- Arrow right -->
+            <path d="M195,52 L250,52" stroke="var(--accent, #4f6ef7)" stroke-width="2" fill="none" marker-end="url(#arrBlue)"/>
+            <defs><marker id="arrBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent, #4f6ef7)"/></marker></defs>
+            <text x="222" y="45" text-anchor="middle" font-size="9" fill="var(--accent, #4f6ef7)" font-weight="700">encode()</text>
+            <!-- IDs box -->
+            <rect x="255" y="30" width="140" height="45" rx="8" fill="rgba(16,185,129,0.1)" stroke="var(--accent-3, #10b981)" stroke-width="1.5"/>
+            <text x="325" y="48" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">TOKEN IDs</text>
+            <text x="325" y="65" text-anchor="middle" font-size="11" fill="var(--accent-3, #10b981)" font-weight="600" font-family="JetBrains Mono, monospace">[15496, 995]</text>
+            <!-- Arrow right to NN -->
+            <path d="M400,52 L440,52" stroke="var(--accent-3, #10b981)" stroke-width="2" fill="none" marker-end="url(#arrGreen)"/>
+            <defs><marker id="arrGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent-3, #10b981)"/></marker></defs>
+            <!-- NN box -->
+            <rect x="445" y="20" width="130" height="65" rx="10" fill="rgba(168,85,247,0.1)" stroke="#a855f7" stroke-width="1.5"/>
+            <text x="510" y="42" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">NEURAL NETWORK</text>
+            <text x="510" y="58" text-anchor="middle" font-size="9" fill="#a855f7" font-family="JetBrains Mono, monospace">embed -> attn</text>
+            <text x="510" y="72" text-anchor="middle" font-size="9" fill="#a855f7" font-family="JetBrains Mono, monospace">-> ffn -> logits</text>
+            <!-- Decode path (bottom) -->
+            <rect x="255" y="110" width="140" height="45" rx="8" fill="rgba(245,158,11,0.1)" stroke="var(--accent-2, #f59e0b)" stroke-width="1.5"/>
+            <text x="325" y="128" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">OUTPUT IDs</text>
+            <text x="325" y="145" text-anchor="middle" font-size="11" fill="var(--accent-2, #f59e0b)" font-weight="600" font-family="JetBrains Mono, monospace">[15496, 995]</text>
+            <!-- Arrow from NN down -->
+            <path d="M510,88 L510,132 L400,132" stroke="var(--accent-2, #f59e0b)" stroke-width="2" fill="none" marker-end="url(#arrOrange)"/>
+            <defs><marker id="arrOrange" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto-start-reverse"><path d="M0,0 L8,3 L0,6" fill="var(--accent-2, #f59e0b)"/></marker></defs>
+            <!-- Arrow left to decoded text -->
+            <path d="M250,132 L195,132" stroke="var(--accent-2, #f59e0b)" stroke-width="2" fill="none" marker-end="url(#arrOrange2)"/>
+            <defs><marker id="arrOrange2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto-start-reverse"><path d="M8,0 L0,3 L8,6" fill="var(--accent-2, #f59e0b)"/></marker></defs>
+            <text x="222" y="125" text-anchor="middle" font-size="9" fill="var(--accent-2, #f59e0b)" font-weight="700">decode()</text>
+            <rect x="30" y="110" width="160" height="45" rx="8" fill="rgba(245,158,11,0.1)" stroke="var(--accent-2, #f59e0b)" stroke-width="1.5"/>
+            <text x="110" y="128" text-anchor="middle" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">DECODED TEXT</text>
+            <text x="110" y="145" text-anchor="middle" font-size="11" fill="var(--accent-2, #f59e0b)" font-weight="600" font-family="JetBrains Mono, monospace">"Hello world"</text>
+          </svg>
+          <div class="viz-caption">Encoding maps strings to integers; decoding maps integers back to strings. The round-trip is lossless: decode(encode(text)) == text, always.</div>
         </div>
 
         <!-- Visualization: vocab lookup table -->
@@ -699,9 +588,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.4
-      ══════════════════ -->
+      <!-- LESSON 2.4 -->
       <section class="lesson" id="lesson-2-4">
         <div class="lesson-header">
           <span class="lesson-number">2.4</span>
@@ -718,6 +605,49 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
 
         <div class="insight-box">
           <strong>GPT-2 Simplicity:</strong> GPT-2's vocabulary has exactly one special token — <code>&lt;|endoftext|&gt;</code> with ID 50256. It appears between documents in the pretraining corpus (e.g. "...end of article. &lt;|endoftext|&gt; Next article begins...") and signals document boundaries. No [PAD], no [UNK], no [CLS] — BPE eliminates the need for most special tokens.
+        </div>
+
+        <!-- SVG: Special Tokens in a Sequence -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-brackets-curly"></i> Special Tokens in a Training Sequence</div>
+          <svg class="lesson-svg" viewBox="0 0 650 130" aria-label="Special tokens placed in a sequence">
+            <!-- Sequence boxes -->
+            <rect x="10" y="40" width="70" height="40" rx="6" fill="rgba(79,110,247,0.15)" stroke="var(--accent, #4f6ef7)" stroke-width="1.5"/>
+            <text x="45" y="55" text-anchor="middle" font-size="8" fill="var(--accent, #4f6ef7)" font-weight="700">[BOS]</text>
+            <text x="45" y="70" text-anchor="middle" font-size="7" fill="var(--text-muted, #5a6282)">ID: 0</text>
+
+            <rect x="90" y="40" width="60" height="40" rx="6" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="1"/>
+            <text x="120" y="63" text-anchor="middle" font-size="9" fill="var(--text, #1a1f36)" font-weight="600">The</text>
+
+            <rect x="160" y="40" width="60" height="40" rx="6" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="1"/>
+            <text x="190" y="63" text-anchor="middle" font-size="9" fill="var(--text, #1a1f36)" font-weight="600">cat</text>
+
+            <rect x="230" y="40" width="60" height="40" rx="6" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="1"/>
+            <text x="260" y="63" text-anchor="middle" font-size="9" fill="var(--text, #1a1f36)" font-weight="600">sat</text>
+
+            <rect x="300" y="40" width="70" height="40" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="335" y="55" text-anchor="middle" font-size="8" fill="#ef4444" font-weight="700">[EOS]</text>
+            <text x="335" y="70" text-anchor="middle" font-size="7" fill="var(--text-muted, #5a6282)">ID: 50256</text>
+
+            <rect x="380" y="40" width="70" height="40" rx="6" fill="rgba(245,158,11,0.15)" stroke="var(--accent-2, #f59e0b)" stroke-width="1.5"/>
+            <text x="415" y="55" text-anchor="middle" font-size="8" fill="var(--accent-2, #f59e0b)" font-weight="700">[PAD]</text>
+            <text x="415" y="70" text-anchor="middle" font-size="7" fill="var(--text-muted, #5a6282)">ignored</text>
+
+            <rect x="460" y="40" width="70" height="40" rx="6" fill="rgba(245,158,11,0.15)" stroke="var(--accent-2, #f59e0b)" stroke-width="1.5"/>
+            <text x="495" y="55" text-anchor="middle" font-size="8" fill="var(--accent-2, #f59e0b)" font-weight="700">[PAD]</text>
+            <text x="495" y="70" text-anchor="middle" font-size="7" fill="var(--text-muted, #5a6282)">ignored</text>
+
+            <!-- Attention mask -->
+            <text x="10" y="105" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">Attention Mask:</text>
+            <text x="45" y="118" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">1</text>
+            <text x="120" y="118" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">1</text>
+            <text x="190" y="118" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">1</text>
+            <text x="260" y="118" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">1</text>
+            <text x="335" y="118" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">1</text>
+            <text x="415" y="118" text-anchor="middle" font-size="10" fill="var(--accent-danger, #ef4444)" font-weight="700" font-family="JetBrains Mono, monospace">0</text>
+            <text x="495" y="118" text-anchor="middle" font-size="10" fill="var(--accent-danger, #ef4444)" font-weight="700" font-family="JetBrains Mono, monospace">0</text>
+          </svg>
+          <div class="viz-caption">[BOS] marks start, [EOS] marks end, [PAD] fills the batch to uniform length. The attention mask (1=attend, 0=ignore) ensures padding does not affect computation.</div>
         </div>
 
         <!-- Visualization: special token cards -->
@@ -753,9 +683,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.5
-      ══════════════════ -->
+      <!-- LESSON 2.5 -->
       <section class="lesson" id="lesson-2-5">
         <div class="lesson-header">
           <span class="lesson-number">2.5</span>
@@ -766,7 +694,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
 
         <p>The BPE algorithm starts from a character-level vocabulary (every individual character in the training corpus gets its own token) and iteratively merges the most frequently co-occurring adjacent pair of tokens into a single new token. For example, if "e" and "s" appear next to each other 10,000 times in the corpus — far more than any other pair — BPE creates a new token "es" and replaces all occurrences of the pair "e s" with the single token "es". This merge step is repeated thousands of times until the vocabulary reaches the desired size.</p>
 
-        <p>Consider a toy corpus containing the words "low", "lower", "newest", and "widest". Starting from characters: l, o, w, e, r, n, s, t, i, d. BPE might first merge "e"+"s" → "es" (because "newest", "widest" both contain "-est"), then "es"+"t" → "est", then "l"+"o" → "lo", and so on. After enough merges, common words like "the" or "ing" become single tokens; rare or new words get split into their component morphemes. The vocabulary size is a hyperparameter — GPT-2 uses 50,000 merge rules, yielding a final vocabulary of 50,257 tokens (50,000 merges + 256 base byte tokens + 1 special token).</p>
+        <p>Consider a toy corpus containing the words "low", "lower", "newest", and "widest". Starting from characters: l, o, w, e, r, n, s, t, i, d. BPE might first merge "e"+"s" -> "es" (because "newest", "widest" both contain "-est"), then "es"+"t" -> "est", then "l"+"o" -> "lo", and so on. After enough merges, common words like "the" or "ing" become single tokens; rare or new words get split into their component morphemes. The vocabulary size is a hyperparameter — GPT-2 uses 50,000 merge rules, yielding a final vocabulary of 50,257 tokens (50,000 merges + 256 base byte tokens + 1 special token).</p>
 
         <p>Why does this design work so well? Because natural language is highly morphological — words share prefixes ("un-", "pre-"), suffixes ("-ing", "-tion", "-est"), and roots. BPE automatically discovers these units from the data. A word like "uncharacteristically" might be tokenized as ["un", "char", "acter", "ist", "ically"] — each piece is a common sub-word that appears in many other words, allowing the model to generalise across them. GPT-2 uses the <code>tiktoken</code> library for fast BPE encoding at inference time.</p>
 
@@ -774,15 +702,33 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
           <strong>BPE in Practice:</strong> The same word can tokenize differently depending on context (leading space) and model. GPT-2 typically encodes " cat" (with a space) as a single token 3797, but "cat" at the start of a sentence is token 9246. Always use the model's own tokenizer — never a different model's tokenizer — to ensure consistency.
         </div>
 
-        <!-- Visualization: BPE merges -->
+        <!-- Step-through Animated Diagram 1: BPE Merge Process -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-code-merge"></i> Animated: BPE Merge Process Step-by-Step</div>
+          <div class="step-diagram" id="bpeDiagram">
+            <div class="step-diagram-header">
+              <span class="step-counter" id="bpeCounter">Step 1 / 5</span>
+              <div class="step-diagram-nav">
+                <button id="bpePrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                <button id="bpeNext">Next <i class="fas fa-chevron-right"></i></button>
+              </div>
+            </div>
+            <div class="step-diagram-body" id="bpeBody">
+              <!-- Step frames injected by JS -->
+            </div>
+            <div class="step-description" id="bpeDesc"></div>
+          </div>
+        </div>
+
+        <!-- Static BPE merges for reference -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-code-merge"></i> BPE Merge Steps — Toy Example</div>
-          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.75rem;">Starting corpus: "low", "lower", "newest", "widest". Characters split: l·o·w, l·o·w·e·r, n·e·w·e·s·t, w·i·d·e·s·t</p>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.75rem;">Starting corpus: "low", "lower", "newest", "widest". Characters split: l, o, w, l, o, w, e, r, n, e, w, e, s, t, w, i, d, e, s, t</p>
 
           <div class="bpe-step">
             <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #1</span>
             <span class="bpe-pair">e + s</span>
-            <span class="bpe-arrow">→</span>
+            <span class="bpe-arrow">-></span>
             <span class="bpe-merged">es</span>
             <span class="bpe-count">(freq: 2 — "new<strong>es</strong>t", "wid<strong>es</strong>t")</span>
           </div>
@@ -790,7 +736,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
           <div class="bpe-step">
             <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #2</span>
             <span class="bpe-pair">es + t</span>
-            <span class="bpe-arrow">→</span>
+            <span class="bpe-arrow">-></span>
             <span class="bpe-merged">est</span>
             <span class="bpe-count">(freq: 2 — "new<strong>est</strong>", "wid<strong>est</strong>")</span>
           </div>
@@ -798,7 +744,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
           <div class="bpe-step">
             <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #3</span>
             <span class="bpe-pair">l + o</span>
-            <span class="bpe-arrow">→</span>
+            <span class="bpe-arrow">-></span>
             <span class="bpe-merged">lo</span>
             <span class="bpe-count">(freq: 2 — "<strong>lo</strong>w", "<strong>lo</strong>wer")</span>
           </div>
@@ -806,7 +752,7 @@ text = <span class="str">' '</span>.<span class="fn">join</span>(id_to_token[i] 
           <div class="bpe-step">
             <span style="font-size:0.75rem; color:var(--text-muted); min-width:60px;">Merge #4</span>
             <span class="bpe-pair">lo + w</span>
-            <span class="bpe-arrow">→</span>
+            <span class="bpe-arrow">-></span>
             <span class="bpe-merged">low</span>
             <span class="bpe-count">(freq: 2 — "<strong>low</strong>", "<strong>low</strong>er")</span>
           </div>
@@ -827,20 +773,18 @@ tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</s
 <span class="cmt"># Inspect individual pieces</span>
 <span class="kw">for</span> tid <span class="kw">in</span> tokens:
     piece = enc.<span class="fn">decode</span>([tid])
-    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{tid:6d}  →  {piece!r}"</span>)
-<span class="cmt"># 15496  →  'Hello'</span>
-<span class="cmt">#    11  →  ','</span>
-<span class="cmt">#   995  →  ' world'</span>
-<span class="cmt">#     0  →  '!'</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{tid:6d}  ->  {piece!r}"</span>)
+<span class="cmt"># 15496  ->  'Hello'</span>
+<span class="cmt">#    11  ->  ','</span>
+<span class="cmt">#   995  ->  ' world'</span>
+<span class="cmt">#     0  ->  '!'</span>
 </code></pre>
 
           <div class="viz-caption">BPE builds a vocabulary bottom-up by merging the most frequent character pairs. The final vocabulary contains whole words (for common terms) and sub-word pieces (for rare or compound words), enabling lossless encoding of any text.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.6
-      ══════════════════ -->
+      <!-- LESSON 2.6 -->
       <section class="lesson" id="lesson-2-6">
         <div class="lesson-header">
           <span class="lesson-number">2.6</span>
@@ -851,12 +795,30 @@ tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</s
 
         <p>Concretely, if the context window size (also called <em>block size</em> or <em>max_seq_len</em>) is 4 and the token sequence is ["The", "cat", "sat", "on", "the", "mat"], then the first window produces: input = ["The", "cat", "sat", "on"], target = ["cat", "sat", "on", "the"]. Slide the window by 1 (stride = 1) and the second sample is: input = ["cat", "sat", "on", "the"], target = ["sat", "on", "the", "mat"]. Each (input, target) pair actually encodes <em>4 individual next-token prediction tasks</em> simultaneously — one per position — because the loss is computed at every output position.</p>
 
-        <p>The <strong>stride</strong> parameter controls how much the window moves between consecutive samples. A stride of 1 maximises data diversity (consecutive samples overlap by <em>context_size − 1</em> tokens) but consumes a lot of memory to store all the samples. A stride equal to <em>context_size</em> produces non-overlapping samples, which is more memory-efficient but may miss important context boundaries. GPT-2 was pretrained with a stride equal to the full context size (1024 tokens) for efficiency.</p>
+        <p>The <strong>stride</strong> parameter controls how much the window moves between consecutive samples. A stride of 1 maximises data diversity (consecutive samples overlap by <em>context_size - 1</em> tokens) but consumes a lot of memory to store all the samples. A stride equal to <em>context_size</em> produces non-overlapping samples, which is more memory-efficient but may miss important context boundaries. GPT-2 was pretrained with a stride equal to the full context size (1024 tokens) for efficiency.</p>
 
-        <p>During training, many windows are batched together. If batch size is 4 and context size is 1024, the model processes a tensor of shape [4, 1024] as input and [4, 1024] as target simultaneously, computing loss across 4 × 1024 = 4,096 individual next-token prediction tasks in a single forward pass. This parallelism — training on every position in every sequence simultaneously — is one of the key efficiency advantages of the transformer over recurrent architectures, which had to process positions sequentially.</p>
+        <p>During training, many windows are batched together. If batch size is 4 and context size is 1024, the model processes a tensor of shape [4, 1024] as input and [4, 1024] as target simultaneously, computing loss across 4 x 1024 = 4,096 individual next-token prediction tasks in a single forward pass. This parallelism — training on every position in every sequence simultaneously — is one of the key efficiency advantages of the transformer over recurrent architectures, which had to process positions sequentially.</p>
 
         <div class="insight-box">
-          <strong>Data Efficiency:</strong> A single sliding window of context_size C produces C individual training signals (one per position). A batch of B windows produces B × C signals. For GPT-2 with C=1024 and B=512, that is 524,288 next-token predictions per training step — from a single forward + backward pass.
+          <strong>Data Efficiency:</strong> A single sliding window of context_size C produces C individual training signals (one per position). A batch of B windows produces B x C signals. For GPT-2 with C=1024 and B=512, that is 524,288 next-token predictions per training step — from a single forward + backward pass.
+        </div>
+
+        <!-- Step-through Animated Diagram 2: Sliding Window -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-window-restore"></i> Animated: Sliding Window Step-by-Step</div>
+          <div class="step-diagram" id="swDiagram">
+            <div class="step-diagram-header">
+              <span class="step-counter" id="swDiagCounter">Step 1 / 4</span>
+              <div class="step-diagram-nav">
+                <button id="swDiagPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                <button id="swDiagNext">Next <i class="fas fa-chevron-right"></i></button>
+              </div>
+            </div>
+            <div class="step-diagram-body" id="swDiagBody">
+              <!-- Step frames injected by JS -->
+            </div>
+            <div class="step-description" id="swDiagDesc"></div>
+          </div>
         </div>
 
         <!-- Interactive sliding window -->
@@ -882,18 +844,16 @@ tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</s
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.7
-      ══════════════════ -->
+      <!-- LESSON 2.7 -->
       <section class="lesson" id="lesson-2-7">
         <div class="lesson-header">
           <span class="lesson-number">2.7</span>
           <h2>Token Embeddings</h2>
         </div>
 
-        <p>After tokenization and ID assignment, the embedding layer performs the critical transformation: it maps each integer token ID into a dense real-valued vector. Mechanically, this is just a lookup table (also called a weight matrix) of shape [vocab_size, d_model]. Given a token ID, the embedding layer returns the corresponding row of this matrix. For a sequence of N token IDs, the output is an N × d_model matrix — one vector per token position.</p>
+        <p>After tokenization and ID assignment, the embedding layer performs the critical transformation: it maps each integer token ID into a dense real-valued vector. Mechanically, this is just a lookup table (also called a weight matrix) of shape [vocab_size, d_model]. Given a token ID, the embedding layer returns the corresponding row of this matrix. For a sequence of N token IDs, the output is an N x d_model matrix — one vector per token position.</p>
 
-        <p>For GPT-2 Small, vocab_size = 50,257 and d_model = 768. The embedding matrix therefore contains 50,257 × 768 = <strong>38,597,376 parameters</strong> — roughly 38.6 million learnable floats just in the embedding layer. This is actually the single largest weight matrix in GPT-2 Small, containing more parameters than any individual transformer block. At 4 bytes per float32 parameter, this matrix occupies about 147 MB of memory. In practice, the output projection (the final linear layer that produces logits) often <em>shares weights</em> with the embedding matrix (called weight tying), cutting the parameter count significantly.</p>
+        <p>For GPT-2 Small, vocab_size = 50,257 and d_model = 768. The embedding matrix therefore contains 50,257 x 768 = <strong>38,597,376 parameters</strong> — roughly 38.6 million learnable floats just in the embedding layer. This is actually the single largest weight matrix in GPT-2 Small, containing more parameters than any individual transformer block. At 4 bytes per float32 parameter, this matrix occupies about 147 MB of memory. In practice, the output projection (the final linear layer that produces logits) often <em>shares weights</em> with the embedding matrix (called weight tying), cutting the parameter count significantly.</p>
 
         <p>The embedding vectors are initialised randomly (typically from a normal distribution with small standard deviation) and then updated through backpropagation just like any other weight matrix. Over training, tokens that appear in similar contexts — and therefore produce similar losses when their embeddings are swapped — converge to similar vector locations. This is the mechanism by which the model implicitly learns semantic relationships: "Paris" and "London" end up nearby in embedding space not because someone told the model they are both capitals, but because sentences containing "Paris" and sentences containing "London" are statistically similar.</p>
 
@@ -901,6 +861,54 @@ tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</s
 
         <div class="insight-box">
           <strong>Weight Tying:</strong> Many LLMs including GPT-2 "tie" the input embedding matrix and the output projection matrix — they are literally the same tensor. This halves the parameter count for these layers and often improves performance, since the model must produce embeddings in a space that is also good for predicting which tokens come next.
+        </div>
+
+        <!-- SVG: Embedding Lookup Illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-th"></i> Embedding Matrix Lookup</div>
+          <svg class="lesson-svg" viewBox="0 0 600 250" aria-label="Embedding matrix lookup showing rows being selected by token IDs">
+            <!-- Matrix grid -->
+            <text x="30" y="20" font-size="10" fill="var(--text-muted, #5a6282)" font-weight="700">Embedding Matrix [50257 x 768]</text>
+            <!-- Row labels -->
+            <text x="15" y="52" font-size="8" fill="var(--text-light, #8892b0)" text-anchor="end" font-family="JetBrains Mono, monospace">0</text>
+            <text x="15" y="72" font-size="8" fill="var(--text-light, #8892b0)" text-anchor="end" font-family="JetBrains Mono, monospace">1</text>
+            <text x="15" y="92" font-size="8" fill="var(--accent, #4f6ef7)" text-anchor="end" font-family="JetBrains Mono, monospace" font-weight="700">995</text>
+            <text x="15" y="112" font-size="8" fill="var(--text-light, #8892b0)" text-anchor="end" font-family="JetBrains Mono, monospace">...</text>
+            <text x="15" y="132" font-size="8" fill="var(--accent-3, #10b981)" text-anchor="end" font-family="JetBrains Mono, monospace" font-weight="700">15496</text>
+            <text x="15" y="152" font-size="8" fill="var(--text-light, #8892b0)" text-anchor="end" font-family="JetBrains Mono, monospace">...</text>
+            <text x="15" y="172" font-size="8" fill="var(--text-light, #8892b0)" text-anchor="end" font-family="JetBrains Mono, monospace">50256</text>
+            <!-- Grid rows -->
+            <rect x="20" y="40" width="260" height="18" rx="2" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="0.5"/>
+            <rect x="20" y="60" width="260" height="18" rx="2" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="0.5"/>
+            <rect x="20" y="80" width="260" height="18" rx="2" fill="rgba(79,110,247,0.15)" stroke="var(--accent, #4f6ef7)" stroke-width="1.5"/>
+            <rect x="20" y="100" width="260" height="18" rx="2" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="0.5"/>
+            <rect x="20" y="120" width="260" height="18" rx="2" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3, #10b981)" stroke-width="1.5"/>
+            <rect x="20" y="140" width="260" height="18" rx="2" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="0.5"/>
+            <rect x="20" y="160" width="260" height="18" rx="2" fill="var(--surface-2, #f5f5f5)" stroke="var(--border, #ddd)" stroke-width="0.5"/>
+            <!-- Cell values for highlighted row 995 -->
+            <text x="35" y="93" font-size="7" fill="var(--accent, #4f6ef7)" font-family="JetBrains Mono, monospace">.12 -.34 .78 .05 -.61 .29 ... .44</text>
+            <!-- Cell values for highlighted row 15496 -->
+            <text x="35" y="133" font-size="7" fill="var(--accent-3, #10b981)" font-family="JetBrains Mono, monospace">.32 -.17 .81 .04 -.55 .29 ... .63</text>
+            <!-- Arrows from token IDs -->
+            <text x="380" y="55" font-size="10" fill="var(--text, #1a1f36)" font-weight="700">Token IDs:</text>
+            <rect x="380" y="70" width="70" height="28" rx="6" fill="rgba(16,185,129,0.12)" stroke="var(--accent-3, #10b981)" stroke-width="1.5"/>
+            <text x="415" y="88" text-anchor="middle" font-size="10" fill="var(--accent-3, #10b981)" font-weight="700" font-family="JetBrains Mono, monospace">15496</text>
+            <rect x="460" y="70" width="60" height="28" rx="6" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1.5"/>
+            <text x="490" y="88" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="700" font-family="JetBrains Mono, monospace">995</text>
+            <!-- Arrow from 15496 to row -->
+            <path d="M380,84 L285,129" stroke="var(--accent-3, #10b981)" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrGreenS)"/>
+            <defs><marker id="arrGreenS" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="var(--accent-3, #10b981)"/></marker></defs>
+            <!-- Arrow from 995 to row -->
+            <path d="M460,84 L285,89" stroke="var(--accent, #4f6ef7)" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrBlueS)"/>
+            <defs><marker id="arrBlueS" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="var(--accent, #4f6ef7)"/></marker></defs>
+            <!-- Output label -->
+            <text x="380" y="130" font-size="10" fill="var(--text, #1a1f36)" font-weight="700">Output: [2, 768]</text>
+            <text x="380" y="148" font-size="8.5" fill="var(--text-muted, #5a6282)">Each token ID selects its row</text>
+            <text x="380" y="162" font-size="8.5" fill="var(--text-muted, #5a6282)">from the embedding matrix.</text>
+            <!-- Dimensions -->
+            <text x="150" y="200" text-anchor="middle" font-size="9" fill="var(--text-light, #8892b0)" font-family="JetBrains Mono, monospace">768 dimensions ---></text>
+            <text x="5" y="115" font-size="8" fill="var(--text-light, #8892b0)" transform="rotate(-90,5,115)" font-family="JetBrains Mono, monospace">50,257 rows</text>
+          </svg>
         </div>
 
         <!-- Code + shape diagram -->
@@ -912,10 +920,10 @@ tokens = enc.<span class="fn">encode</span>(<span class="str">"Hello, world!"</s
               <tr><th>Component</th><th>Shape</th><th>Parameters</th></tr>
             </thead>
             <tbody>
-              <tr class="highlight"><td>Embedding matrix</td><td>[50,257 × 768]</td><td>38,597,376</td></tr>
-              <tr><td>Input: token IDs</td><td>[batch, seq_len]</td><td>—</td></tr>
-              <tr><td>Output: embeddings</td><td>[batch, seq_len, 768]</td><td>—</td></tr>
-              <tr><td>Single token vector</td><td>[768]</td><td>768 floats ≈ 3 KB</td></tr>
+              <tr class="highlight"><td>Embedding matrix</td><td>[50,257 x 768]</td><td>38,597,376</td></tr>
+              <tr><td>Input: token IDs</td><td>[batch, seq_len]</td><td>--</td></tr>
+              <tr><td>Output: embeddings</td><td>[batch, seq_len, 768]</td><td>--</td></tr>
+              <tr><td>Single token vector</td><td>[768]</td><td>768 floats ~ 3 KB</td></tr>
             </tbody>
           </table>
 
@@ -937,9 +945,7 @@ model.lm_head.weight = model.transformer.wte.weight
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 2.8
-      ══════════════════ -->
+      <!-- LESSON 2.8 -->
       <section class="lesson" id="lesson-2-8">
         <div class="lesson-header">
           <span class="lesson-number">2.8</span>
@@ -950,12 +956,47 @@ model.lm_head.weight = model.transformer.wte.weight
 
         <p>The solution is <strong>positional embeddings</strong>: a second set of learned (or computed) vectors — one per position in the sequence — that are <em>added element-wise</em> to the token embeddings before the first transformer block. The combined vector at position i is: <code>input[i] = token_embedding[token_id[i]] + positional_embedding[i]</code>. Both are [d_model]-dimensional vectors, so addition is straightforward. The result carries both semantic information (what word it is) and positional information (where in the sequence it sits).</p>
 
-        <p>GPT-2 uses <strong>learned absolute positional embeddings</strong>: a trainable weight matrix of shape [max_seq_len, d_model] = [1024, 768]. Each row is a learned vector for one absolute position (position 0, 1, 2, …, 1023). These vectors are initialised randomly and updated by backpropagation, just like the token embeddings. The downside of absolute positional embeddings is that the model cannot generalise beyond its training context length — position 1025 was never seen during training. More modern approaches like <strong>RoPE</strong> (Rotary Position Embeddings, used in LLaMA) and <strong>ALiBi</strong> address this by using relative position representations that can extrapolate beyond training length.</p>
+        <p>GPT-2 uses <strong>learned absolute positional embeddings</strong>: a trainable weight matrix of shape [max_seq_len, d_model] = [1024, 768]. Each row is a learned vector for one absolute position (position 0, 1, 2, ..., 1023). These vectors are initialised randomly and updated by backpropagation, just like the token embeddings. The downside of absolute positional embeddings is that the model cannot generalise beyond its training context length — position 1025 was never seen during training. More modern approaches like <strong>RoPE</strong> (Rotary Position Embeddings, used in LLaMA) and <strong>ALiBi</strong> address this by using relative position representations that can extrapolate beyond training length.</p>
 
         <p>The original "Attention Is All You Need" paper proposed <strong>sinusoidal positional encodings</strong> — fixed mathematical functions (sine and cosine at different frequencies) rather than learned vectors. The intuition is that each position gets a unique "fingerprint" of sine/cosine values across dimensions, with lower dimensions corresponding to lower frequencies (global position information) and higher dimensions to higher frequencies (local position information). While sinusoidal encodings work well and require no additional parameters, GPT-2's learned positional embeddings tend to perform slightly better in practice because they can adapt to the specific patterns in the training data.</p>
 
         <div class="insight-box">
           <strong>Modern Alternative — RoPE:</strong> LLaMA, Mistral, and most post-2022 LLMs use Rotary Position Embeddings (RoPE), which encode relative position by rotating the query and key vectors before the dot-product attention. RoPE extrapolates better to long sequences and is now the dominant approach in frontier models.
+        </div>
+
+        <!-- SVG: Why position matters -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sort-numeric-down"></i> Why Position Matters</div>
+          <svg class="lesson-svg" viewBox="0 0 600 160" aria-label="Two sentences with same words but different meaning due to order">
+            <!-- Sentence 1 -->
+            <text x="20" y="25" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">Sentence A:</text>
+            <rect x="20" y="35" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="45" y="54" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">the</text>
+            <rect x="78" y="35" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="103" y="54" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">dog</text>
+            <rect x="136" y="35" width="50" height="30" rx="5" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="161" y="54" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">bit</text>
+            <rect x="194" y="35" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="219" y="54" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">the</text>
+            <rect x="252" y="35" width="55" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="280" y="54" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">man</text>
+            <text x="340" y="54" font-size="9" fill="var(--text-muted, #5a6282)" font-style="italic">Dog is biting</text>
+            <!-- Sentence 2 -->
+            <text x="20" y="95" font-size="9" fill="var(--text-muted, #5a6282)" font-weight="700">Sentence B:</text>
+            <rect x="20" y="105" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="45" y="124" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">the</text>
+            <rect x="78" y="105" width="55" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="106" y="124" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">man</text>
+            <rect x="141" y="105" width="50" height="30" rx="5" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="166" y="124" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">bit</text>
+            <rect x="199" y="105" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="224" y="124" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">the</text>
+            <rect x="257" y="105" width="50" height="30" rx="5" fill="rgba(79,110,247,0.12)" stroke="var(--accent, #4f6ef7)" stroke-width="1"/>
+            <text x="282" y="124" text-anchor="middle" font-size="10" fill="var(--accent, #4f6ef7)" font-weight="600">dog</text>
+            <text x="340" y="124" font-size="9" fill="var(--text-muted, #5a6282)" font-style="italic">Man is biting</text>
+            <!-- Note -->
+            <text x="300" y="155" text-anchor="middle" font-size="9" fill="var(--accent-danger, #ef4444)" font-weight="600">Same words, different order = completely different meaning!</text>
+          </svg>
         </div>
 
         <!-- Visualization: positional embedding diagram -->
@@ -970,7 +1011,7 @@ model.lm_head.weight = model.transformer.wte.weight
                 <div class="pos-cell tok">-.17</div>
                 <div class="pos-cell tok">.81</div>
                 <div class="pos-cell tok">.04</div>
-                <div class="pos-cell tok">…</div>
+                <div class="pos-cell tok">...</div>
               </div>
               <div class="pos-dims">[768]</div>
             </div>
@@ -987,7 +1028,7 @@ model.lm_head.weight = model.transformer.wte.weight
                 <div class="pos-cell pos">.55</div>
                 <div class="pos-cell pos">-.22</div>
                 <div class="pos-cell pos">.71</div>
-                <div class="pos-cell pos">…</div>
+                <div class="pos-cell pos">...</div>
               </div>
               <div class="pos-dims">[768]</div>
             </div>
@@ -1004,7 +1045,7 @@ model.lm_head.weight = model.transformer.wte.weight
                 <div class="pos-cell comb">.38</div>
                 <div class="pos-cell comb">.59</div>
                 <div class="pos-cell comb">.75</div>
-                <div class="pos-cell comb">…</div>
+                <div class="pos-cell comb">...</div>
               </div>
               <div class="pos-dims">[768]</div>
             </div>
@@ -1037,13 +1078,42 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
 
           <div class="viz-caption">Token and positional embeddings are both [d_model]-dimensional vectors. Adding them element-wise creates a combined representation that encodes both <em>what</em> the token is (semantic content) and <em>where</em> it is in the sequence (positional context).</div>
         </div>
+
+        <!-- Interactive Exercise 2: Embedding Dimension Calculator -->
+        <div class="exercise-box" id="exercise-embedding">
+          <h4><i class="fas fa-calculator"></i> Interactive Exercise: Embedding Parameter Calculator</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.75rem;">Configure your own embedding layer and see how many parameters it requires. Compare to GPT-2's 38.6M embedding parameters.</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:0.3rem;">Vocabulary Size</label>
+              <input type="number" id="exVocabSize" value="50257" min="100" max="500000" style="width:100%; padding:0.5rem; border:1.5px solid var(--border); border-radius:6px; background:var(--surface-2); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.85rem;" />
+            </div>
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:0.3rem;">Embedding Dimension</label>
+              <input type="number" id="exEmbDim" value="768" min="32" max="16384" style="width:100%; padding:0.5rem; border:1.5px solid var(--border); border-radius:6px; background:var(--surface-2); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.85rem;" />
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:0.3rem;">Max Sequence Length (for positional emb)</label>
+              <input type="number" id="exSeqLen" value="1024" min="32" max="131072" style="width:100%; padding:0.5rem; border:1.5px solid var(--border); border-radius:6px; background:var(--surface-2); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.85rem;" />
+            </div>
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:0.3rem;">Weight Tying?</label>
+              <select id="exWeightTying" style="width:100%; padding:0.5rem; border:1.5px solid var(--border); border-radius:6px; background:var(--surface-2); color:var(--text); font-size:0.85rem;">
+                <option value="yes">Yes (shared output projection)</option>
+                <option value="no">No (separate output projection)</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="exCalcBtn"><i class="fas fa-calculator"></i> Calculate</button>
+          <div class="exercise-result" id="exCalcResult" style="margin-top:0.75rem;"></div>
+        </div>
       </section>
 
     </div><!-- /#tab-lessons -->
 
-    <!-- ══════════════════════════════════════════
-         TAB: SUMMARY
-    ══════════════════════════════════════════ -->
+    <!-- TAB: SUMMARY -->
     <div class="tab-panel" id="tab-summary">
 
       <div class="summary-box glass">
@@ -1058,11 +1128,51 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
         </ul>
       </div>
 
+      <!-- Full Pipeline SVG Summary -->
+      <div class="viz-container">
+        <div class="viz-title"><i class="fas fa-route"></i> Complete Text-to-Vector Pipeline</div>
+        <svg class="lesson-svg" viewBox="0 0 700 220" aria-label="Complete pipeline from raw text to transformer input">
+          <!-- Step 1 -->
+          <rect x="10" y="80" width="95" height="55" rx="8" fill="rgba(79,110,247,0.1)" stroke="var(--accent, #4f6ef7)" stroke-width="1.5"/>
+          <text x="57" y="100" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">1. RAW TEXT</text>
+          <text x="57" y="118" text-anchor="middle" font-size="9" fill="var(--accent, #4f6ef7)" font-family="JetBrains Mono, monospace">"Hello world"</text>
+          <!-- Arrow -->
+          <line x1="110" y1="107" x2="130" y2="107" stroke="var(--text-light, #8892b0)" stroke-width="1.5" marker-end="url(#arrG2)"/>
+          <defs><marker id="arrG2" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="var(--text-light, #8892b0)"/></marker></defs>
+          <!-- Step 2 -->
+          <rect x="135" y="80" width="100" height="55" rx="8" fill="rgba(245,158,11,0.1)" stroke="var(--accent-2, #f59e0b)" stroke-width="1.5"/>
+          <text x="185" y="100" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">2. TOKENIZE</text>
+          <text x="185" y="118" text-anchor="middle" font-size="9" fill="var(--accent-2, #f59e0b)" font-family="JetBrains Mono, monospace">BPE split</text>
+          <line x1="240" y1="107" x2="260" y2="107" stroke="var(--text-light, #8892b0)" stroke-width="1.5" marker-end="url(#arrG2)"/>
+          <!-- Step 3 -->
+          <rect x="265" y="80" width="95" height="55" rx="8" fill="rgba(16,185,129,0.1)" stroke="var(--accent-3, #10b981)" stroke-width="1.5"/>
+          <text x="312" y="100" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">3. TOKEN IDs</text>
+          <text x="312" y="118" text-anchor="middle" font-size="9" fill="var(--accent-3, #10b981)" font-family="JetBrains Mono, monospace">[15496, 995]</text>
+          <line x1="365" y1="107" x2="385" y2="107" stroke="var(--text-light, #8892b0)" stroke-width="1.5" marker-end="url(#arrG2)"/>
+          <!-- Step 4 -->
+          <rect x="390" y="70" width="105" height="75" rx="8" fill="rgba(168,85,247,0.1)" stroke="#a855f7" stroke-width="1.5"/>
+          <text x="442" y="90" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">4. EMBED</text>
+          <text x="442" y="107" text-anchor="middle" font-size="8" fill="#a855f7" font-family="JetBrains Mono, monospace">tok_emb[768]</text>
+          <text x="442" y="120" text-anchor="middle" font-size="8" fill="#a855f7" font-weight="600">+ pos_emb[768]</text>
+          <text x="442" y="138" text-anchor="middle" font-size="8" fill="#a855f7" font-family="JetBrains Mono, monospace">= input[768]</text>
+          <line x1="500" y1="107" x2="520" y2="107" stroke="var(--text-light, #8892b0)" stroke-width="1.5" marker-end="url(#arrG2)"/>
+          <!-- Step 5 -->
+          <rect x="525" y="75" width="160" height="65" rx="10" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="605" y="98" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)" font-weight="700">5. TRANSFORMER</text>
+          <text x="605" y="116" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="600">Self-Attention + FFN</text>
+          <text x="605" y="131" text-anchor="middle" font-size="8" fill="var(--text-muted, #5a6282)">x 12 layers (GPT-2)</text>
+          <!-- Top labels -->
+          <text x="350" y="30" text-anchor="middle" font-size="11" fill="var(--text, #1a1f36)" font-weight="700">Text Data Pipeline (Chapter 2 Focus)</text>
+          <line x1="10" y1="42" x2="500" y2="42" stroke="var(--accent, #4f6ef7)" stroke-width="2" opacity="0.3"/>
+          <line x1="500" y1="42" x2="690" y2="42" stroke="#ef4444" stroke-width="2" opacity="0.2" stroke-dasharray="4,3"/>
+          <text x="250" y="55" text-anchor="middle" font-size="8" fill="var(--accent, #4f6ef7)" font-weight="600">Covered in this chapter</text>
+          <text x="600" y="55" text-anchor="middle" font-size="8" fill="#ef4444" font-weight="600">Chapter 3+</text>
+        </svg>
+      </div>
+
     </div><!-- /#tab-summary -->
 
-    <!-- ══════════════════════════════════════════
-         TAB: QUIZ
-    ══════════════════════════════════════════ -->
+    <!-- TAB: QUIZ -->
     <div class="tab-panel" id="tab-quiz">
 
       <div class="quiz-box glass">
@@ -1073,134 +1183,20 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
 
     </div><!-- /#tab-quiz -->
 
-    <!-- Tab: Mind Map -->
+    <!-- Tab: Mind Map (Interactive) -->
     <div class="tab-panel" id="tab-mindmap">
       <div class="viz-container">
-        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 2 Mind Map — Text Data Pipeline</div>
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Interactive Mind Map — Click any branch to explore</div>
         <svg id="mindmap-ch2" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 2: Working with Text Data"></svg>
+        <div class="mindmap-info-panel" id="mmInfoPanel">
+          <h4 id="mmInfoTitle">Click any branch to see details</h4>
+          <p id="mmInfoDesc">This interactive mind map shows the complete text data pipeline covered in Chapter 2. Click on any topic node to see a summary and a link to jump to the relevant lesson.</p>
+          <span class="mm-link" id="mmInfoLink" style="display:none;"></span>
+        </div>
       </div>
-      <script>
-      (function() {
-        var svg = document.getElementById('mindmap-ch2');
-        var NS = 'http://www.w3.org/2000/svg';
-
-        var cx = 400, cy = 300;
-        var branches = [
-          { label: 'Word Embeddings',     angle: -90, color: '#4f6ef7', subs: ['Dense Vectors', 'Word2Vec', 'Semantic Similarity'] },
-          { label: 'Tokenization',         angle: -30, color: '#f59e0b', subs: ['Split by Space/Punct', 'Vocabulary', 'Token IDs'] },
-          { label: 'Special Tokens',       angle:  30, color: '#10b981', subs: ['BOS/EOS', 'PAD', 'endoftext'] },
-          { label: 'BPE',                  angle:  90, color: '#8b5cf6', subs: ['Subword Units', 'Merge Rules', 'OOV-free'] },
-          { label: 'Sliding Window',       angle: 150, color: '#ef4444', subs: ['Context Window', 'Stride', 'Input-Target Pairs'] },
-          { label: 'Positional Embeddings',angle: 210, color: '#06b6d4', subs: ['Absolute', 'Rotary (RoPE)', 'Learned'] }
-        ];
-
-        var branchR = 150, subR = 90;
-
-        function toRad(deg) { return deg * Math.PI / 180; }
-
-        function makeSVGEl(tag, attrs) {
-          var el = document.createElementNS(NS, tag);
-          for (var k in attrs) el.setAttribute(k, attrs[k]);
-          return el;
-        }
-
-        function addText(parent, x, y, text, fontSize, fill, bold) {
-          var words = text.split(' ');
-          var lineH = fontSize * 1.25;
-          var lines = [];
-          var cur = '';
-          words.forEach(function(w) {
-            var test = cur ? cur + ' ' + w : w;
-            if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
-            else { cur = test; }
-          });
-          if (cur) lines.push(cur);
-          var startY = y - (lines.length - 1) * lineH / 2;
-          lines.forEach(function(line, i) {
-            var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
-            t.textContent = line;
-            parent.appendChild(t);
-          });
-        }
-
-        var allBranchGroups = [];
-
-        var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
-        var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
-        centerG.appendChild(centerCircle);
-        addText(centerG, cx, cy - 8, 'Text Data', 11, '#fff', true);
-        addText(centerG, cx, cy + 8, 'Pipeline', 11, '#fff', true);
-        svg.appendChild(centerG);
-
-        branches.forEach(function(b, bi) {
-          var rad = toRad(b.angle);
-          var bx = cx + branchR * Math.cos(rad);
-          var by = cy + branchR * Math.sin(rad);
-
-          var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
-
-          var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
-          g.appendChild(line);
-
-          var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
-          g.appendChild(bc);
-          addText(g, bx, by, b.label, 9.5, '#fff', true);
-
-          var subCount = b.subs.length;
-          b.subs.forEach(function(sub, si) {
-            var spread = 50;
-            var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
-            var srad = toRad(baseAngle);
-            var sx = bx + subR * Math.cos(srad);
-            var sy = by + subR * Math.sin(srad);
-
-            var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
-            g.appendChild(sl);
-
-            var sw = 68, sh = 26;
-            var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
-            g.appendChild(sr);
-            addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
-          });
-
-          svg.insertBefore(g, centerG);
-          allBranchGroups.push(g);
-        });
-
-        var allNodes = svg.querySelectorAll('circle, rect');
-        allNodes.forEach(function(n, i) {
-          setTimeout(function() {
-            n.style.transition = 'opacity 0.4s ease';
-            n.setAttribute('opacity', '1');
-          }, i * 60);
-        });
-
-        allBranchGroups.forEach(function(g, gi) {
-          g.addEventListener('click', function(e) {
-            e.stopPropagation();
-            allBranchGroups.forEach(function(og, oi) {
-              var opacity = (oi === gi) ? '1' : '0.25';
-              og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', opacity); });
-              og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', opacity); });
-              og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', oi === gi ? '0.8' : '0.15'); });
-            });
-          });
-        });
-
-        centerG.addEventListener('click', function() {
-          allBranchGroups.forEach(function(g) {
-            g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
-            g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
-            g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
-          });
-        });
-      })();
-      </script>
     </div><!-- /#tab-mindmap -->
 
-    <!-- ══════════════════════════════════════════
-         CHAPTER NAV (outside tabs)
-    ══════════════════════════════════════════ -->
+    <!-- CHAPTER NAV -->
     <nav class="chapter-nav" aria-label="Chapter navigation">
       <a href="ch1.html" class="nav-prev" aria-label="Previous chapter">
         <i class="fas fa-arrow-left"></i> Ch1: Understanding LLMs
@@ -1212,23 +1208,19 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
 
   </main><!-- /.page-wrapper -->
 
-  <!-- ══════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════ -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
     <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
     <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
   </footer>
 
-  <!-- ══════════════════════════════════════════
-       SCRIPTS
-  ══════════════════════════════════════════ -->
+  <!-- SCRIPTS -->
   <script src="app.js"></script>
   <script>
-    /* ─────────────────────────────────────────
+    /* ============================================================
        Quiz questions
-    ───────────────────────────────────────── */
+    ============================================================ */
     const QUESTIONS = [
       {
         question: "Why can't we feed raw text directly into a neural network?",
@@ -1288,10 +1280,10 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
       {
         question: "What is the shape of the token embedding matrix in GPT-2 Small?",
         options: [
-          "768 × 768",
-          "50,257 × 768",
-          "1024 × 768",
-          "50,257 × 50,257"
+          "768 x 768",
+          "50,257 x 768",
+          "1024 x 768",
+          "50,257 x 50,257"
         ],
         correct: 1,
         explanation: "GPT-2 Small has vocab_size=50,257 and d_model=768. The embedding matrix shape is [vocab_size, d_model] = [50,257, 768], containing ~38.6M learnable parameters."
@@ -1310,17 +1302,16 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
     ];
 
     VB.initQuiz('quizContainer', QUESTIONS);
-
     VB.initTabs('chapterTabs');
 
-    /* ─────────────────────────────────────────
+    /* ============================================================
        Tokenizer step demo (Lesson 2.2)
-    ───────────────────────────────────────── */
+    ============================================================ */
     (function() {
-      const steps = ['step2', 'step3'];
-      let current = 0;
-      const nextBtn  = document.getElementById('tokNextBtn');
-      const resetBtn = document.getElementById('tokResetBtn');
+      var steps = ['step2', 'step3'];
+      var current = 0;
+      var nextBtn  = document.getElementById('tokNextBtn');
+      var resetBtn = document.getElementById('tokResetBtn');
 
       function updateButtons() {
         nextBtn.disabled = (current >= steps.length);
@@ -1333,7 +1324,7 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
 
       nextBtn.addEventListener('click', function() {
         if (current < steps.length) {
-          const el = document.getElementById(steps[current]);
+          var el = document.getElementById(steps[current]);
           if (el) el.classList.add('show');
           current++;
         }
@@ -1341,8 +1332,8 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
       });
 
       resetBtn.addEventListener('click', function() {
-        steps.forEach(id => {
-          const el = document.getElementById(id);
+        steps.forEach(function(id) {
+          var el = document.getElementById(id);
           if (el) el.classList.remove('show');
         });
         current = 0;
@@ -1352,48 +1343,43 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
       updateButtons();
     })();
 
-    /* ─────────────────────────────────────────
+    /* ============================================================
        Sliding window visualization (Lesson 2.6)
-    ───────────────────────────────────────── */
+    ============================================================ */
     (function() {
-      const TOKENS   = ['The', 'cat', 'sat', 'on', 'the', 'mat', '.'];
-      const WIN_SIZE = 4;
-      const MAX_POS  = TOKENS.length - WIN_SIZE - 1; // 0..2
+      var TOKENS   = ['The', 'cat', 'sat', 'on', 'the', 'mat', '.'];
+      var WIN_SIZE = 4;
+      var MAX_POS  = TOKENS.length - WIN_SIZE - 1;
 
-      const row      = document.getElementById('swTokenRow');
-      const slider   = document.getElementById('swSlider');
-      const sliderVal= document.getElementById('swSliderVal');
-      const infoEl   = document.getElementById('swInfo');
+      var row      = document.getElementById('swTokenRow');
+      var slider   = document.getElementById('swSlider');
+      var sliderVal= document.getElementById('swSliderVal');
+      var infoEl   = document.getElementById('swInfo');
 
       slider.max = MAX_POS;
 
       function render(pos) {
         row.innerHTML = '';
         TOKENS.forEach(function(tok, i) {
-          const span = document.createElement('span');
+          var span = document.createElement('span');
           span.className = 'sw-token';
           span.textContent = tok;
           if (i >= pos && i < pos + WIN_SIZE) {
             span.classList.add('sw-input');
-          } else if (i >= pos + 1 && i < pos + WIN_SIZE + 1) {
-            // target overlaps with input shifted by 1
           }
-          // target: positions pos+1 .. pos+WIN_SIZE
           if (i > pos && i <= pos + WIN_SIZE) {
             span.classList.remove('sw-input');
             span.classList.add('sw-target');
           }
-          // input takes priority for positions pos..pos+WIN_SIZE-1
           if (i >= pos && i < pos + WIN_SIZE) {
             span.classList.remove('sw-target');
             span.classList.add('sw-input');
           }
-          // The overlap (pos+1..pos+WIN_SIZE-1) becomes input colour
           row.appendChild(span);
         });
 
-        const inputToks  = TOKENS.slice(pos, pos + WIN_SIZE);
-        const targetToks = TOKENS.slice(pos + 1, pos + WIN_SIZE + 1);
+        var inputToks  = TOKENS.slice(pos, pos + WIN_SIZE);
+        var targetToks = TOKENS.slice(pos + 1, pos + WIN_SIZE + 1);
 
         infoEl.innerHTML =
           '<strong>Input:</strong> [' + inputToks.map(function(t){ return '"' + t + '"'; }).join(', ') + ']<br>' +
@@ -1407,6 +1393,390 @@ x = token_embeddings + pos_embeddings  <span class="cmt"># [batch, seq_len, 768]
       });
 
       render(0);
+    })();
+
+    /* ============================================================
+       Interactive Exercise 1: Tokenize Your Own Text
+    ============================================================ */
+    (function() {
+      var input = document.getElementById('exerciseTokenInput');
+      var btn   = document.getElementById('exerciseTokenBtn');
+      var result = document.getElementById('exerciseTokenResult');
+
+      function tokenize(text) {
+        var tokens = text.match(/\b\w+\b|[^\s\w]/g) || [];
+        return tokens;
+      }
+
+      function render() {
+        var text = input.value.trim();
+        if (!text) { result.innerHTML = '<em style="color:var(--text-light);">Enter some text above.</em>'; return; }
+        var tokens = tokenize(text);
+        var bpeEstimate = Math.round(text.length / 4);
+        var colors = ['t-word', 't-punct', 't-sub', 't-special'];
+
+        var html = '<div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.4rem;"><strong>Simple tokenizer:</strong> ' + tokens.length + ' tokens | <strong>Estimated BPE tokens:</strong> ~' + bpeEstimate + '</div>';
+        html += '<div class="token-strip">';
+        tokens.forEach(function(tok, i) {
+          var cls = /^\w+$/.test(tok) ? 't-word' : 't-punct';
+          html += '<span class="viz-token ' + cls + '">' + tok.replace(/</g, '&lt;').replace(/>/g, '&gt;') + ' <small style="opacity:.6">' + i + '</small></span>';
+        });
+        html += '</div>';
+        html += '<div style="font-size:0.78rem; color:var(--text-light); margin-top:0.3rem;">Token IDs: [' + tokens.map(function(_, i){ return i; }).join(', ') + ']</div>';
+        result.innerHTML = html;
+      }
+
+      btn.addEventListener('click', render);
+      input.addEventListener('keydown', function(e) { if (e.key === 'Enter') render(); });
+      render();
+    })();
+
+    /* ============================================================
+       Interactive Exercise 2: Embedding Parameter Calculator
+    ============================================================ */
+    (function() {
+      var btn = document.getElementById('exCalcBtn');
+      var result = document.getElementById('exCalcResult');
+
+      function calculate() {
+        var vocab = parseInt(document.getElementById('exVocabSize').value) || 50257;
+        var dim   = parseInt(document.getElementById('exEmbDim').value) || 768;
+        var seqLen = parseInt(document.getElementById('exSeqLen').value) || 1024;
+        var tying  = document.getElementById('exWeightTying').value === 'yes';
+
+        var tokEmbParams = vocab * dim;
+        var posEmbParams = seqLen * dim;
+        var outputProjParams = tying ? 0 : vocab * dim;
+        var total = tokEmbParams + posEmbParams + outputProjParams;
+        var memoryMB = (total * 4 / (1024 * 1024)).toFixed(1);
+
+        var gpt2Total = 50257 * 768 + 1024 * 768;
+        var ratio = (total / gpt2Total * 100).toFixed(1);
+
+        var html = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.83rem;">';
+        html += '<div style="padding:0.5rem; background:rgba(79,110,247,0.08); border-radius:6px;"><strong style="color:var(--accent);">Token Embeddings</strong><br><span style="font-family:JetBrains Mono,monospace;">' + tokEmbParams.toLocaleString() + '</span> params<br>[' + vocab.toLocaleString() + ' x ' + dim + ']</div>';
+        html += '<div style="padding:0.5rem; background:rgba(245,158,11,0.08); border-radius:6px;"><strong style="color:var(--accent-2);">Positional Embeddings</strong><br><span style="font-family:JetBrains Mono,monospace;">' + posEmbParams.toLocaleString() + '</span> params<br>[' + seqLen.toLocaleString() + ' x ' + dim + ']</div>';
+        if (!tying) {
+          html += '<div style="padding:0.5rem; background:rgba(168,85,247,0.08); border-radius:6px;"><strong style="color:#a855f7;">Output Projection</strong><br><span style="font-family:JetBrains Mono,monospace;">' + outputProjParams.toLocaleString() + '</span> params<br>[' + vocab.toLocaleString() + ' x ' + dim + ']</div>';
+        } else {
+          html += '<div style="padding:0.5rem; background:rgba(16,185,129,0.08); border-radius:6px;"><strong style="color:var(--accent-3);">Output Projection</strong><br><span style="font-family:JetBrains Mono,monospace;">0</span> (weight-tied)<br>Shares token embedding weights</div>';
+        }
+        html += '<div style="padding:0.5rem; background:var(--surface-2); border-radius:6px;"><strong>Total</strong><br><span style="font-family:JetBrains Mono,monospace; font-size:0.95rem; color:var(--text);">' + total.toLocaleString() + '</span> params<br>' + memoryMB + ' MB (float32)</div>';
+        html += '</div>';
+        html += '<div style="margin-top:0.6rem; font-size:0.8rem; color:var(--text-muted);"><strong>Comparison to GPT-2 Small:</strong> ' + ratio + '% of GPT-2\'s embedding layer size (' + gpt2Total.toLocaleString() + ' params).</div>';
+        result.innerHTML = html;
+      }
+
+      btn.addEventListener('click', calculate);
+      calculate();
+    })();
+
+    /* ============================================================
+       Step-Through Diagram 1: BPE Merge Process
+    ============================================================ */
+    (function() {
+      var steps = [
+        {
+          title: 'Initial State: Character-Level Vocabulary',
+          desc: 'BPE starts by splitting every word in the corpus into individual characters. Each unique character becomes a token in the initial vocabulary. We count all adjacent character pairs to find the most frequent one.',
+          html: '<div style="margin-bottom:0.75rem;"><div class="step-label">Corpus words split into characters:</div>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:0.5rem 0;">' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">low:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">lower:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span><span class="viz-token t-word">e</span><span class="viz-token t-word">r</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">newest:</span> <div class="token-strip"><span class="viz-token t-word">n</span><span class="viz-token t-word">e</span><span class="viz-token t-word">w</span><span class="viz-token t-word">e</span><span class="viz-token t-word">s</span><span class="viz-token t-word">t</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">widest:</span> <div class="token-strip"><span class="viz-token t-word">w</span><span class="viz-token t-word">i</span><span class="viz-token t-word">d</span><span class="viz-token t-word">e</span><span class="viz-token t-word">s</span><span class="viz-token t-word">t</span></div></div>' +
+            '</div></div>' +
+            '<div style="font-size:0.82rem; color:var(--text-muted);"><strong>Vocab:</strong> {d, e, i, l, n, o, r, s, t, w} — <strong>10 tokens</strong></div>' +
+            '<div style="font-size:0.82rem; color:var(--accent); margin-top:0.3rem;"><strong>Most frequent pair:</strong> "e" + "s" (appears 2 times)</div>'
+        },
+        {
+          title: 'Merge #1: e + s -> es',
+          desc: 'The pair ("e", "s") appears 2 times (in "newest" and "widest"). We merge it into a new token "es" and update all words in the corpus.',
+          html: '<div style="margin-bottom:0.5rem;"><div class="bpe-step" style="background:rgba(239,68,68,0.08);"><span class="bpe-pair">e + s</span><span class="bpe-arrow" style="margin:0 0.5rem;">-></span><span class="bpe-merged">es</span><span class="bpe-count" style="margin-left:0.5rem;">freq: 2</span></div></div>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:0.5rem 0;">' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">low:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">lower:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span><span class="viz-token t-word">e</span><span class="viz-token t-word">r</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">newest:</span> <div class="token-strip"><span class="viz-token t-word">n</span><span class="viz-token t-word">e</span><span class="viz-token t-word">w</span><span class="viz-token t-sub">es</span><span class="viz-token t-word">t</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">widest:</span> <div class="token-strip"><span class="viz-token t-word">w</span><span class="viz-token t-word">i</span><span class="viz-token t-word">d</span><span class="viz-token t-sub">es</span><span class="viz-token t-word">t</span></div></div>' +
+            '</div>' +
+            '<div style="font-size:0.82rem; color:var(--text-muted);"><strong>Vocab:</strong> {d, e, <span style="color:var(--accent-3); font-weight:700;">es</span>, i, l, n, o, r, s, t, w} — <strong>11 tokens</strong></div>'
+        },
+        {
+          title: 'Merge #2: es + t -> est',
+          desc: 'Now "es" and "t" appear adjacent 2 times (in "newest" and "widest"). Merging them creates the morpheme "-est".',
+          html: '<div style="margin-bottom:0.5rem;"><div class="bpe-step" style="background:rgba(239,68,68,0.08);"><span class="bpe-pair">es + t</span><span class="bpe-arrow" style="margin:0 0.5rem;">-></span><span class="bpe-merged">est</span><span class="bpe-count" style="margin-left:0.5rem;">freq: 2</span></div></div>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:0.5rem 0;">' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">low:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">lower:</span> <div class="token-strip"><span class="viz-token t-word">l</span><span class="viz-token t-word">o</span><span class="viz-token t-word">w</span><span class="viz-token t-word">e</span><span class="viz-token t-word">r</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">newest:</span> <div class="token-strip"><span class="viz-token t-word">n</span><span class="viz-token t-word">e</span><span class="viz-token t-word">w</span><span class="viz-token t-sub">est</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">widest:</span> <div class="token-strip"><span class="viz-token t-word">w</span><span class="viz-token t-word">i</span><span class="viz-token t-word">d</span><span class="viz-token t-sub">est</span></div></div>' +
+            '</div>' +
+            '<div style="font-size:0.82rem; color:var(--text-muted);"><strong>Vocab:</strong> {d, e, es, <span style="color:var(--accent-3); font-weight:700;">est</span>, i, l, n, o, r, s, t, w} — <strong>12 tokens</strong></div>'
+        },
+        {
+          title: 'Merge #3: l + o -> lo',
+          desc: 'The pair ("l", "o") appears 2 times (in "low" and "lower"). Merging creates "lo".',
+          html: '<div style="margin-bottom:0.5rem;"><div class="bpe-step" style="background:rgba(239,68,68,0.08);"><span class="bpe-pair">l + o</span><span class="bpe-arrow" style="margin:0 0.5rem;">-></span><span class="bpe-merged">lo</span><span class="bpe-count" style="margin-left:0.5rem;">freq: 2</span></div></div>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:0.5rem 0;">' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">low:</span> <div class="token-strip"><span class="viz-token t-sub">lo</span><span class="viz-token t-word">w</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">lower:</span> <div class="token-strip"><span class="viz-token t-sub">lo</span><span class="viz-token t-word">w</span><span class="viz-token t-word">e</span><span class="viz-token t-word">r</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">newest:</span> <div class="token-strip"><span class="viz-token t-word">n</span><span class="viz-token t-word">e</span><span class="viz-token t-word">w</span><span class="viz-token t-sub">est</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--text-muted);">widest:</span> <div class="token-strip"><span class="viz-token t-word">w</span><span class="viz-token t-word">i</span><span class="viz-token t-word">d</span><span class="viz-token t-sub">est</span></div></div>' +
+            '</div>' +
+            '<div style="font-size:0.82rem; color:var(--text-muted);"><strong>Vocab:</strong> {d, e, es, est, i, l, <span style="color:var(--accent-3); font-weight:700;">lo</span>, n, o, r, s, t, w} — <strong>13 tokens</strong></div>'
+        },
+        {
+          title: 'Merge #4: lo + w -> low (Final State)',
+          desc: 'The pair ("lo", "w") appears 2 times. After this merge, "low" becomes a single token. The common word "low" is now represented as one token, while rare words are composed of sub-word pieces.',
+          html: '<div style="margin-bottom:0.5rem;"><div class="bpe-step" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3);"><span class="bpe-pair">lo + w</span><span class="bpe-arrow" style="margin:0 0.5rem;">-></span><span class="bpe-merged">low</span><span class="bpe-count" style="margin-left:0.5rem;">freq: 2</span></div></div>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:0.5rem 0;">' +
+            '<div><span style="font-size:0.78rem; color:var(--accent-3); font-weight:700;">low:</span> <div class="token-strip"><span class="viz-token t-sub">low</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--accent-3); font-weight:700;">lower:</span> <div class="token-strip"><span class="viz-token t-sub">low</span><span class="viz-token t-word">e</span><span class="viz-token t-word">r</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--accent-3); font-weight:700;">newest:</span> <div class="token-strip"><span class="viz-token t-word">n</span><span class="viz-token t-word">e</span><span class="viz-token t-word">w</span><span class="viz-token t-sub">est</span></div></div>' +
+            '<div><span style="font-size:0.78rem; color:var(--accent-3); font-weight:700;">widest:</span> <div class="token-strip"><span class="viz-token t-word">w</span><span class="viz-token t-word">i</span><span class="viz-token t-word">d</span><span class="viz-token t-sub">est</span></div></div>' +
+            '</div>' +
+            '<div style="font-size:0.82rem; padding:0.5rem; background:rgba(16,185,129,0.06); border-radius:6px; border:1px solid rgba(16,185,129,0.2); color:var(--text-muted);"><strong style="color:var(--accent-3);">Final Vocab (14 tokens):</strong> {d, e, er, es, est, i, l, lo, <strong>low</strong>, n, o, r, s, t, w}<br><span style="font-size:0.78rem;">Common morphemes like "est" and "low" emerged automatically from frequency-based merging.</span></div>'
+        }
+      ];
+
+      var current = 0;
+      var body = document.getElementById('bpeBody');
+      var counter = document.getElementById('bpeCounter');
+      var desc = document.getElementById('bpeDesc');
+      var prevBtn = document.getElementById('bpePrev');
+      var nextBtn = document.getElementById('bpeNext');
+
+      function render() {
+        body.innerHTML = '<div class="step-frame active"><div class="step-label" style="font-size:0.85rem; color:var(--text); font-weight:700; margin-bottom:0.5rem;">' + steps[current].title + '</div>' + steps[current].html + '</div>';
+        counter.textContent = 'Step ' + (current + 1) + ' / ' + steps.length;
+        desc.textContent = steps[current].desc;
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === steps.length - 1;
+      }
+
+      prevBtn.addEventListener('click', function() { if (current > 0) { current--; render(); } });
+      nextBtn.addEventListener('click', function() { if (current < steps.length - 1) { current++; render(); } });
+      render();
+    })();
+
+    /* ============================================================
+       Step-Through Diagram 2: Sliding Window
+    ============================================================ */
+    (function() {
+      var TOKENS = ['The', 'cat', 'sat', 'on', 'the', 'mat', '.'];
+      var WIN = 4;
+
+      var steps = [
+        { pos: 0, desc: 'The window starts at position 0. The input is the first 4 tokens, and the target is the next 4 tokens (shifted right by 1). This single window produces 4 next-token prediction tasks: predict "cat" from "The", predict "sat" from "The cat", predict "on" from "The cat sat", predict "the" from "The cat sat on".' },
+        { pos: 1, desc: 'The window slides right by 1 (stride=1). Now the input starts at position 1. There is significant overlap with the previous sample — 3 out of 4 tokens are shared. This overlap maximizes training signal diversity.' },
+        { pos: 2, desc: 'Another slide right. The input window now covers positions 2-5. Notice we are approaching the end of the sequence. The model learns to predict from different starting contexts.' },
+        { pos: 0, stride: 4, desc: 'Alternative: with stride equal to context_size (stride=4), windows do not overlap. This is more memory-efficient since there are fewer total samples, but it may miss patterns that span window boundaries. GPT-2 used this approach during pretraining with context_size=1024.' }
+      ];
+
+      function buildTokenHTML(pos, winSize, tokens, stride) {
+        var html = '<div style="display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.5rem 0;">';
+        tokens.forEach(function(tok, i) {
+          var cls = 'sw-token';
+          if (i >= pos && i < pos + winSize) cls += ' sw-input';
+          if (i >= pos + 1 && i <= pos + winSize) {
+            if (!(i >= pos && i < pos + winSize)) cls += ' sw-target';
+          }
+          html += '<span class="' + cls + '">' + tok + '</span>';
+        });
+        html += '</div>';
+        var inputToks = tokens.slice(pos, pos + winSize);
+        var targetToks = tokens.slice(pos + 1, pos + winSize + 1);
+        html += '<div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.5rem;"><strong style="color:var(--accent);">Input:</strong> [' + inputToks.map(function(t){return '"'+t+'"';}).join(', ') + ']</div>';
+        html += '<div style="font-size:0.82rem; color:var(--text-muted);"><strong style="color:var(--accent-3);">Target:</strong> [' + targetToks.map(function(t){return '"'+t+'"';}).join(', ') + ']</div>';
+        if (stride) {
+          html += '<div style="font-size:0.78rem; color:var(--accent-2); margin-top:0.4rem;"><strong>Stride = ' + stride + '</strong> (non-overlapping windows)</div>';
+        }
+        return html;
+      }
+
+      var current = 0;
+      var body = document.getElementById('swDiagBody');
+      var counter = document.getElementById('swDiagCounter');
+      var desc = document.getElementById('swDiagDesc');
+      var prevBtn = document.getElementById('swDiagPrev');
+      var nextBtn = document.getElementById('swDiagNext');
+
+      function render() {
+        var s = steps[current];
+        var title = current < 3 ? 'Window Position ' + s.pos + ' (stride=1)' : 'Non-overlapping Windows (stride=4)';
+        body.innerHTML = '<div class="step-frame active"><div class="step-label" style="font-size:0.85rem; color:var(--text); font-weight:700; margin-bottom:0.5rem;">' + title + '</div>' + buildTokenHTML(s.pos, WIN, TOKENS, s.stride) + '</div>';
+        counter.textContent = 'Step ' + (current + 1) + ' / ' + steps.length;
+        desc.textContent = s.desc;
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === steps.length - 1;
+      }
+
+      prevBtn.addEventListener('click', function() { if (current > 0) { current--; render(); } });
+      nextBtn.addEventListener('click', function() { if (current < steps.length - 1) { current++; render(); } });
+      render();
+    })();
+
+    /* ============================================================
+       Interactive Mind Map
+    ============================================================ */
+    (function() {
+      var svg = document.getElementById('mindmap-ch2');
+      var NS = 'http://www.w3.org/2000/svg';
+
+      var cx = 400, cy = 300;
+      var branches = [
+        { label: 'Word\nEmbeddings', angle: -90, color: '#4f6ef7', lesson: '2.1',
+          subs: ['Dense Vectors', 'Word2Vec/GloVe', 'Semantic Space'],
+          info: 'Word embeddings convert discrete tokens into continuous vectors. Dense embeddings capture semantic similarity -- words used in similar contexts end up close together in embedding space.',
+          lessonId: 'lesson-2-1' },
+        { label: 'Tokenization', angle: -30, color: '#f59e0b', lesson: '2.2',
+          subs: ['Split Rules', 'Build Vocab', 'Encode/Decode'],
+          info: 'Tokenization splits raw text into a sequence of discrete tokens. A vocabulary maps each unique token to an integer ID, enabling the encode (text->IDs) and decode (IDs->text) operations.',
+          lessonId: 'lesson-2-2' },
+        { label: 'Special\nTokens', angle: 30, color: '#10b981', lesson: '2.4',
+          subs: ['BOS / EOS', 'PAD / UNK', 'endoftext'],
+          info: 'Special tokens serve structural purposes: [BOS] marks sequence start, [EOS] marks end, [PAD] enables batching. GPT-2 uses only <|endoftext|> since BPE eliminates the need for [UNK].',
+          lessonId: 'lesson-2-4' },
+        { label: 'BPE', angle: 90, color: '#8b5cf6', lesson: '2.5',
+          subs: ['Subword Units', 'Merge Rules', 'No OOV'],
+          info: 'Byte-Pair Encoding iteratively merges the most frequent character pairs, building a vocabulary of sub-word pieces. This eliminates out-of-vocabulary problems and enables efficient tokenization of any text.',
+          lessonId: 'lesson-2-5' },
+        { label: 'Sliding\nWindow', angle: 150, color: '#ef4444', lesson: '2.6',
+          subs: ['Context Size', 'Stride', 'Input/Target'],
+          info: 'Training examples are created by sliding a fixed-size window along the token sequence. Each window produces an (input, target) pair where the target is the input shifted right by 1 position.',
+          lessonId: 'lesson-2-6' },
+        { label: 'Positional\nEmbeddings', angle: 210, color: '#06b6d4', lesson: '2.8',
+          subs: ['Absolute/Learned', 'RoPE', 'Why Order Matters'],
+          info: 'Positional embeddings inject order information into a permutation-equivariant transformer. GPT-2 uses learned absolute positional embeddings; modern models use RoPE for better length extrapolation.',
+          lessonId: 'lesson-2-8' }
+      ];
+
+      var branchR = 155, subR = 92;
+
+      function toRad(deg) { return deg * Math.PI / 180; }
+
+      function makeSVGEl(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function addText(parent, x, y, text, fontSize, fill, bold) {
+        var lines = text.split('\n');
+        var lineH = fontSize * 1.3;
+        var startY = y - (lines.length - 1) * lineH / 2;
+        lines.forEach(function(line, i) {
+          var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
+          t.textContent = line;
+          parent.appendChild(t);
+        });
+      }
+
+      // Info panel elements
+      var infoTitle = document.getElementById('mmInfoTitle');
+      var infoDesc = document.getElementById('mmInfoDesc');
+      var infoLink = document.getElementById('mmInfoLink');
+
+      function showInfo(branch) {
+        infoTitle.textContent = branch.label.replace('\n', ' ') + ' (Lesson ' + branch.lesson + ')';
+        infoDesc.textContent = branch.info;
+        infoLink.textContent = 'Jump to Lesson ' + branch.lesson;
+        infoLink.style.display = 'inline';
+        infoLink.onclick = function() {
+          // Switch to lessons tab and scroll
+          document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+          document.querySelector('[data-tab="tab-lessons"]').classList.add('active');
+          document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+          document.getElementById('tab-lessons').classList.add('active');
+          var target = document.getElementById(branch.lessonId);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+      }
+
+      function resetInfo() {
+        infoTitle.textContent = 'Click any branch to see details';
+        infoDesc.textContent = 'This interactive mind map shows the complete text data pipeline covered in Chapter 2. Click on any topic node to see a summary and a link to jump to the relevant lesson.';
+        infoLink.style.display = 'none';
+      }
+
+      var allBranchGroups = [];
+
+      // Center node
+      var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
+      var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 58, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
+      centerG.appendChild(centerCircle);
+      addText(centerG, cx, cy - 8, 'Text Data', 12, '#fff', true);
+      addText(centerG, cx, cy + 10, 'Pipeline', 12, '#fff', true);
+      svg.appendChild(centerG);
+
+      branches.forEach(function(b, bi) {
+        var rad = toRad(b.angle);
+        var bx = cx + branchR * Math.cos(rad);
+        var by = cy + branchR * Math.sin(rad);
+
+        var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
+
+        var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
+        g.appendChild(line);
+
+        var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 40, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
+        g.appendChild(bc);
+        addText(g, bx, by, b.label, 9.5, '#fff', true);
+
+        var subCount = b.subs.length;
+        b.subs.forEach(function(sub, si) {
+          var spread = 48;
+          var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
+          var srad = toRad(baseAngle);
+          var sx = bx + subR * Math.cos(srad);
+          var sy = by + subR * Math.sin(srad);
+
+          var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
+          g.appendChild(sl);
+
+          var sw = 75, sh = 28;
+          var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
+          g.appendChild(sr);
+          addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
+        });
+
+        svg.insertBefore(g, centerG);
+        allBranchGroups.push(g);
+      });
+
+      // Animate in
+      var allNodes = svg.querySelectorAll('circle, rect');
+      allNodes.forEach(function(n, i) {
+        setTimeout(function() {
+          n.style.transition = 'opacity 0.4s ease';
+          n.setAttribute('opacity', '1');
+        }, i * 50);
+      });
+
+      // Click handlers
+      allBranchGroups.forEach(function(g, gi) {
+        g.addEventListener('click', function(e) {
+          e.stopPropagation();
+          allBranchGroups.forEach(function(og, oi) {
+            var isActive = (oi === gi);
+            og.querySelectorAll('circle').forEach(function(c) { c.style.transition = 'opacity 0.3s'; c.setAttribute('opacity', isActive ? '1' : '0.2'); });
+            og.querySelectorAll('rect').forEach(function(r) { r.style.transition = 'opacity 0.3s'; r.setAttribute('opacity', isActive ? '1' : '0.2'); });
+            og.querySelectorAll('line').forEach(function(l) { l.style.transition = 'opacity 0.3s'; l.setAttribute('opacity', isActive ? '0.8' : '0.1'); });
+            og.querySelectorAll('text').forEach(function(t) { t.style.transition = 'opacity 0.3s'; t.setAttribute('opacity', isActive ? '1' : '0.25'); });
+          });
+          showInfo(branches[gi]);
+        });
+      });
+
+      centerG.addEventListener('click', function() {
+        allBranchGroups.forEach(function(g) {
+          g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
+          g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
+          g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
+          g.querySelectorAll('text').forEach(function(t) { t.setAttribute('opacity', '1'); });
+        });
+        resetInfo();
+      });
     })();
   </script>
 </body>

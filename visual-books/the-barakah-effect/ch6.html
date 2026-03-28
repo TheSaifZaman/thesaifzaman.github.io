@@ -15,6 +15,166 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animated diagrams */
+    .step-diagram { position: relative; }
+    .step-diagram .step-controls {
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      margin-top: 1rem; flex-wrap: wrap;
+    }
+    .step-controls .btn-step {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .step-controls .btn-step:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--accent); color: var(--accent); }
+    .step-controls .btn-step:disabled { opacity: 0.4; cursor: not-allowed; }
+    .step-controls .step-indicator {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent); min-width: 70px; text-align: center;
+    }
+    .step-narrative {
+      margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(212,161,6,0.08), rgba(194,113,12,0.04));
+      border: 1px solid rgba(212,161,6,0.15);
+      font-size: 0.88rem; color: var(--text); min-height: 2.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Interactive exercise styles */
+    .exercise-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; margin: 1.5rem 0; position: relative;
+    }
+    .exercise-box .exercise-title {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .exercise-box h4 { text-transform: none; letter-spacing: 0; color: var(--text); font-size: 1rem; margin-bottom: 0.5rem; }
+    .exercise-box p { font-size: 0.9rem; }
+
+    /* Drag-drop exercise */
+    .dd-zone {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 52px;
+      padding: 0.75rem; border-radius: var(--radius-sm);
+      border: 2px dashed var(--border); transition: border-color 0.2s;
+    }
+    .dd-zone.dragover { border-color: var(--accent); background: rgba(212,161,6,0.05); }
+    .dd-zone-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.35rem;
+    }
+    .dd-item {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: grab; user-select: none; transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+    .dd-item:active { cursor: grabbing; }
+    .dd-item.sincere { background: rgba(16,185,129,0.12); color: var(--accent-3); border-color: rgba(16,185,129,0.3); }
+    .dd-item.corrupt { background: rgba(239,68,68,0.1); color: var(--accent-danger); border-color: rgba(239,68,68,0.3); }
+    .dd-item.neutral { background: var(--surface-2); color: var(--text-muted); }
+    .dd-feedback {
+      margin-top: 0.75rem; padding: 0.6rem 1rem; border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 600; display: none;
+    }
+    .dd-feedback.show { display: block; }
+    .dd-feedback.correct { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .dd-feedback.incorrect { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+
+    /* Slider exercise */
+    .slider-row {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .slider-row label { flex: 0 0 160px; font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .slider-row input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--accent); }
+    .slider-row .slider-val {
+      flex: 0 0 40px; text-align: center; font-size: 0.82rem; font-weight: 700;
+      color: var(--accent); background: rgba(212,161,6,0.1); border-radius: 20px; padding: 0.2rem 0.5rem;
+    }
+    .barakah-meter {
+      margin-top: 1rem; padding: 1rem; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(212,161,6,0.06), rgba(16,185,129,0.04));
+      border: 1px solid var(--border); text-align: center;
+    }
+    .barakah-meter .meter-bar {
+      height: 12px; background: var(--border-2); border-radius: 6px; overflow: hidden; margin: 0.5rem 0;
+    }
+    .barakah-meter .meter-fill {
+      height: 100%; border-radius: 6px; transition: width 0.4s ease, background 0.4s ease;
+      background: linear-gradient(90deg, var(--accent-danger), var(--accent), var(--accent-3));
+    }
+    .barakah-meter .meter-label {
+      font-size: 0.82rem; font-weight: 700; color: var(--accent);
+    }
+    .barakah-meter .meter-tip {
+      font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;
+    }
+
+    /* Interactive mind map */
+    #mmCh6 .mm-node { cursor: pointer; transition: transform 0.2s; }
+    #mmCh6 .mm-node:hover { filter: brightness(1.1); }
+    #mmCh6 .mm-child { transition: opacity 0.35s ease, transform 0.35s ease; }
+    #mmCh6 .mm-child.collapsed { opacity: 0; pointer-events: none; transform: scale(0.5); transform-origin: center; }
+    #mmCh6 .mm-branch-child { transition: opacity 0.35s ease; }
+    #mmCh6 .mm-branch-child.collapsed { opacity: 0; }
+    .mm-hint { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-top: 0.5rem; }
+
+    /* Scenario builder exercise */
+    .scenario-card {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 1rem; margin-bottom: 0.75rem; transition: all 0.2s;
+    }
+    .scenario-card .scenario-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .scenario-card textarea {
+      width: 100%; min-height: 60px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.5rem; font-size: 0.85rem;
+      font-family: Inter, sans-serif; background: var(--surface); color: var(--text);
+      resize: vertical;
+    }
+    .scenario-card textarea:focus { border-color: var(--accent); outline: none; }
+    .scenario-result {
+      padding: 1rem; border-radius: var(--radius-sm); margin-top: 0.75rem;
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(212,161,6,0.06));
+      border: 1px solid rgba(16,185,129,0.2); display: none;
+    }
+    .scenario-result.show { display: block; }
+    .scenario-result h5 { font-size: 0.85rem; font-weight: 700; color: var(--accent-3); margin-bottom: 0.4rem; }
+    .scenario-result p { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+
+    /* Riya self-check exercise */
+    .selfcheck-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.75rem; border-radius: var(--radius-sm);
+      background: var(--surface-2); margin-bottom: 0.5rem;
+      transition: background 0.2s;
+    }
+    .selfcheck-item:hover { background: var(--surface-hover); }
+    .selfcheck-item input[type="checkbox"] {
+      accent-color: var(--accent); width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0;
+    }
+    .selfcheck-item label { font-size: 0.88rem; color: var(--text); cursor: pointer; flex: 1; }
+    .selfcheck-result {
+      margin-top: 1rem; padding: 1rem; border-radius: var(--radius-sm);
+      text-align: center; display: none;
+    }
+    .selfcheck-result.show { display: block; }
+    .selfcheck-result .score-circle {
+      width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 800; color: white;
+    }
+    .selfcheck-result p { font-size: 0.85rem; color: var(--text-muted); }
+
+    @media (max-width: 600px) {
+      .slider-row label { flex: 0 0 100%; }
+      .slider-row input[type="range"] { min-width: 100px; }
+    }
   </style>
 </head>
 <body data-chapter="ch6">
@@ -38,8 +198,9 @@
       <div class="ch-label">Chapter 6</div>
       <h1>Start Every Action with Sincere Intention and Ask Allah for Help</h1>
       <p class="ch-meta">
-        <span><i class="fas fa-clock"></i> ~25 min read</span>
+        <span><i class="fas fa-clock"></i> ~30 min read</span>
         <span><i class="fas fa-scroll"></i> Manifesto Element</span>
+        <span><i class="fas fa-pencil-alt"></i> 4 Interactive Exercises</span>
       </p>
     </div>
 
@@ -53,16 +214,129 @@
     <!-- TAB: Lessons -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- ===== LESSON 1 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>The Power of Niyyah (Intention)</h2></div>
         <p>The Prophet Muhammad (peace be upon him) said in the famous hadith narrated by Umar ibn Al-Khattab: "Actions are but by intentions, and every person will have only what they intended" (Bukhari and Muslim). This is considered one of the most foundational hadiths in Islam, and scholars have placed it at the very beginning of their hadith collections because of its paramount importance.</p>
+
+        <!-- SVG: The Niyyah Transformation Engine -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-cogs"></i> The Niyyah Transformation Engine</div>
+          <svg viewBox="0 0 640 280" width="100%" height="280">
+            <defs>
+              <marker id="arrNiy" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+              <linearGradient id="gNiy1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--text-muted)" stop-opacity="0.15"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.15"/></linearGradient>
+            </defs>
+            <!-- Left: Mundane actions -->
+            <rect x="20" y="30" width="160" height="220" rx="14" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1"/>
+            <text x="100" y="55" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-weight="700" font-family="Inter">MUNDANE ACTIONS</text>
+            <g transform="translate(100,90)">
+              <circle r="18" fill="var(--border)" opacity="0.5"/><text text-anchor="middle" y="5" font-size="16" font-family="Inter">Eat</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="Inter">Eating</text>
+            </g>
+            <g transform="translate(60,170)">
+              <circle r="18" fill="var(--border)" opacity="0.5"/><text text-anchor="middle" y="5" font-size="16" font-family="Inter">Rest</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="Inter">Sleeping</text>
+            </g>
+            <g transform="translate(140,170)">
+              <circle r="18" fill="var(--border)" opacity="0.5"/><text text-anchor="middle" y="5" font-size="16" font-family="Inter">Work</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="Inter">Working</text>
+            </g>
+            <!-- Centre: Niyyah engine -->
+            <rect x="230" y="70" width="180" height="140" rx="16" fill="url(#gNiy1)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="320" y="105" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="800" font-family="Inter">NIYYAH</text>
+            <text x="320" y="122" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"For the sake of Allah"</text>
+            <!-- gear icon -->
+            <circle cx="320" cy="160" r="26" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="320" y="167" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">ENGINE</text>
+            <!-- Arrows in -->
+            <line x1="180" y1="100" x2="228" y2="130" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrNiy)" opacity="0.5"/>
+            <line x1="180" y1="170" x2="228" y2="150" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrNiy)" opacity="0.5"/>
+            <!-- Right: Ibadah -->
+            <rect x="460" y="30" width="160" height="220" rx="14" fill="rgba(16,185,129,0.08)" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="540" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">ACTS OF WORSHIP</text>
+            <g transform="translate(540,90)">
+              <circle r="18" fill="rgba(16,185,129,0.15)"/><text text-anchor="middle" y="5" font-size="10" font-weight="700" fill="var(--accent-3)" font-family="Inter">Ibadah</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="Inter" font-weight="600">Rewarded Eating</text>
+            </g>
+            <g transform="translate(500,170)">
+              <circle r="18" fill="rgba(16,185,129,0.15)"/><text text-anchor="middle" y="5" font-size="10" font-weight="700" fill="var(--accent-3)" font-family="Inter">Ibadah</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="Inter" font-weight="600">Rewarded Rest</text>
+            </g>
+            <g transform="translate(580,170)">
+              <circle r="18" fill="rgba(16,185,129,0.15)"/><text text-anchor="middle" y="5" font-size="10" font-weight="700" fill="var(--accent-3)" font-family="Inter">Ibadah</text>
+              <text y="32" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="Inter" font-weight="600">Rewarded Work</text>
+            </g>
+            <!-- Arrows out -->
+            <line x1="412" y1="130" x2="458" y2="100" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrNiy)"/>
+            <line x1="412" y1="150" x2="458" y2="170" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrNiy)"/>
+          </svg>
+          <p class="viz-caption">Niyyah is the invisible engine that transforms ordinary actions into continuous worship and reward.</p>
+        </div>
+
         <p>Niyyah -- sincere intention -- is the invisible engine that transforms the mundane into the sacred. A person who eats to gain strength for prayer is rewarded for eating. A person who sleeps with the intention of resting their body so they can wake for Fajr is rewarded for sleeping. The same physical action -- eating, sleeping, working -- with different intentions yields completely different spiritual outcomes.</p>
+
+        <!-- SVG: The Spiritual Outcome Spectrum -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> Same Action, Different Outcomes</div>
+          <svg viewBox="0 0 640 320" width="100%" height="320">
+            <defs>
+              <marker id="arrSpect" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="var(--text-muted)"/></marker>
+              <linearGradient id="gSpect" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-danger)" stop-opacity="0.12"/>
+                <stop offset="50%" stop-color="var(--accent)" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.12"/>
+              </linearGradient>
+            </defs>
+            <!-- Central action -->
+            <rect x="245" y="20" width="150" height="50" rx="12" fill="var(--accent)" opacity="0.9"/>
+            <text x="320" y="42" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Inter">THE SAME ACTION</text>
+            <text x="320" y="58" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.85">(e.g., Eating a meal)</text>
+            <!-- Three paths diverging -->
+            <line x1="270" y1="72" x2="110" y2="120" stroke="var(--accent-danger)" stroke-width="1.5" marker-end="url(#arrSpect)"/>
+            <line x1="320" y1="72" x2="320" y2="120" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrSpect)"/>
+            <line x1="370" y1="72" x2="530" y2="120" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrSpect)"/>
+            <!-- Path 1: No intention -->
+            <rect x="20" y="122" width="180" height="170" rx="12" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="110" y="148" text-anchor="middle" fill="var(--accent-danger)" font-size="11" font-weight="700" font-family="Inter">NO INTENTION</text>
+            <text x="110" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Eating out of habit</text>
+            <text x="110" y="186" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">or mere desire</text>
+            <line x1="50" y1="200" x2="170" y2="200" stroke="var(--border)" stroke-width="0.5"/>
+            <text x="110" y="220" text-anchor="middle" fill="var(--accent-danger)" font-size="10" font-weight="700" font-family="Inter">Result:</text>
+            <text x="110" y="238" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">No spiritual reward</text>
+            <text x="110" y="254" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Just a biological act</text>
+            <text x="110" y="278" text-anchor="middle" fill="var(--accent-danger)" font-size="16" font-weight="800" font-family="Inter">0</text>
+            <!-- Path 2: Worldly intention -->
+            <rect x="220" y="122" width="200" height="170" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="320" y="148" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">WORLDLY INTENTION</text>
+            <text x="320" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Eating to enjoy the</text>
+            <text x="320" y="186" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">taste &amp; socialise</text>
+            <line x1="250" y1="200" x2="390" y2="200" stroke="var(--border)" stroke-width="0.5"/>
+            <text x="320" y="220" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">Result:</text>
+            <text x="320" y="238" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Permissible, not sinful</text>
+            <text x="320" y="254" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">But no extra reward</text>
+            <text x="320" y="278" text-anchor="middle" fill="var(--accent)" font-size="16" font-weight="800" font-family="Inter">~</text>
+            <!-- Path 3: Sincere intention -->
+            <rect x="440" y="122" width="180" height="170" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="530" y="148" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-weight="700" font-family="Inter">SINCERE NIYYAH</text>
+            <text x="530" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Eating to gain strength</text>
+            <text x="530" y="186" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">for worship of Allah</text>
+            <line x1="470" y1="200" x2="590" y2="200" stroke="var(--accent-3)" stroke-width="0.5"/>
+            <text x="530" y="220" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">Result:</text>
+            <text x="530" y="238" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Rewarded as IBADAH</text>
+            <text x="530" y="254" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Barakah multiplied</text>
+            <text x="530" y="278" text-anchor="middle" fill="var(--accent-3)" font-size="16" font-weight="800" font-family="Inter">+++</text>
+          </svg>
+          <p class="viz-caption">The identical physical action of eating produces three completely different spiritual outcomes depending solely on the intention behind it.</p>
+        </div>
+
         <p>This is the magic of Niyyah: it turns ordinary life into a continuous act of worship. When you drive to work with the intention of earning halal income to support your family for Allah's sake, even the commute becomes an act of ibadah (worship). The Barakah Culture demands that we become intentional about everything we do, starting every action with a conscious, sincere niyyah directed towards pleasing Allah.</p>
         <div class="insight-box">
           <strong>Hadith:</strong> "Actions are but by intentions, and every person will have only what they intended. So whoever emigrated for the sake of Allah and His Messenger, then his emigration was for Allah and His Messenger. And whoever emigrated for worldly gain or to marry a woman, then his emigration was for what he emigrated for." (Bukhari &amp; Muslim)
         </div>
       </div>
 
+      <!-- ===== LESSON 2 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Seven Intentions for Every Action</h2></div>
         <p>The author presents a powerful method for maximising the Barakah in any action: before starting any significant task, write down multiple sincere intentions. This practice of stacking intentions multiplies the reward and Barakah of a single action many times over. The more sincere intentions you attach to an act, the more Barakah it attracts.</p>
@@ -103,25 +377,414 @@
           <p class="viz-caption">Stacking multiple sincere intentions on one action multiplies its Barakah and reward.</p>
         </div>
 
+        <!-- STEP-THROUGH DIAGRAM 1: Building Intention Stack -->
+        <div class="viz-container step-diagram" id="stepIntentions">
+          <div class="viz-title"><i class="fas fa-layer-group"></i> Step-Through: Building Your Intention Stack</div>
+          <svg id="svgIntentionStack" viewBox="0 0 600 320" width="100%" height="320">
+            <defs>
+              <linearGradient id="gStack" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.08"/>
+              </linearGradient>
+            </defs>
+            <!-- Base action block always visible -->
+            <rect x="175" y="260" width="250" height="44" rx="10" fill="var(--accent)" opacity="0.9"/>
+            <text x="300" y="286" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Inter">Your Action</text>
+            <!-- Intention layers (shown progressively) -->
+            <g id="stackLayer1" opacity="0">
+              <rect x="185" y="218" width="230" height="36" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+              <text x="300" y="240" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">1. Please Allah &amp; seek His reward</text>
+            </g>
+            <g id="stackLayer2" opacity="0">
+              <rect x="195" y="178" width="210" height="36" rx="8" fill="var(--accent-3)" opacity="0.85"/>
+              <text x="300" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">2. Benefit the Ummah</text>
+            </g>
+            <g id="stackLayer3" opacity="0">
+              <rect x="205" y="138" width="190" height="36" rx="8" fill="var(--accent-2)" opacity="0.8"/>
+              <text x="300" y="160" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">3. Serve as Sadaqa Jariya</text>
+            </g>
+            <g id="stackLayer4" opacity="0">
+              <rect x="215" y="98" width="170" height="36" rx="8" fill="var(--accent-3)" opacity="0.8"/>
+              <text x="300" y="120" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">4. Encourage others</text>
+            </g>
+            <g id="stackLayer5" opacity="0">
+              <rect x="225" y="58" width="150" height="36" rx="8" fill="var(--accent-2)" opacity="0.75"/>
+              <text x="300" y="80" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">5. Earn halal income</text>
+            </g>
+            <g id="stackLayer6" opacity="0">
+              <rect x="235" y="18" width="130" height="36" rx="8" fill="var(--accent-3)" opacity="0.75"/>
+              <text x="300" y="40" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Inter">6. Learn &amp; grow</text>
+            </g>
+            <!-- Reward multiplier -->
+            <text id="stackMultiplier" x="540" y="160" text-anchor="middle" fill="var(--accent)" font-size="28" font-weight="800" font-family="Inter" opacity="0">x1</text>
+            <text id="stackRewardLabel" x="540" y="180" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter" opacity="0">Reward</text>
+          </svg>
+          <div class="step-narrative" id="stepIntentionsNarrative">Click "Next" to start stacking intentions on your action and see the reward multiplier grow.</div>
+          <div class="step-controls">
+            <button class="btn-step" id="stepIntPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="step-indicator" id="stepIntIndicator">Start</span>
+            <button class="btn-step" id="stepIntNext">Next <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
         <p>This method is not about being calculating -- it is about being conscious. When you pause before an action and articulate your intentions, you are aligning your nafs (self) with your purpose. You are forcing yourself to answer: "Why am I doing this? Who am I doing this for?" If the answer keeps coming back to Allah, you know you are on the right track.</p>
-      </div>
 
-      <div class="lesson">
-        <div class="lesson-header"><div class="lesson-number">3</div><h2>Istikharah: Seeking Allah's Guidance</h2></div>
-        <p>Before making any major decision, a Muslim has a powerful tool at their disposal: Salat al-Istikharah, the prayer of seeking guidance. The Prophet (peace be upon him) taught his companions to make Istikharah for all their affairs, just as he would teach them a surah from the Quran (Bukhari). This shows how central this practice is to Islamic decision-making.</p>
-        <p>A common misconception is that Istikharah is about seeing dreams or receiving supernatural signs. In reality, Istikharah is about surrendering the outcome to Allah. You pray two rak'ahs, then make the du'a of Istikharah, asking Allah to facilitate the matter if it is good for your religion, your livelihood, and your affairs -- and to turn it away from you if it is harmful. After making Istikharah, you proceed with the decision and trust that Allah will guide you to the best outcome.</p>
-        <p>Making Istikharah a habit before every significant decision -- a new job, a business venture, a marriage, a move -- is a practical way to invite Barakah into your choices. It transforms decision-making from a purely rational exercise into a spiritual act of reliance on Allah.</p>
-      </div>
+        <!-- SVG: Intention Alignment Funnel -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-filter"></i> The Intention Alignment Funnel</div>
+          <svg viewBox="0 0 600 260" width="100%" height="260">
+            <!-- Funnel shape -->
+            <polygon points="120,30 480,30 420,100 180,100" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="300" y="55" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">RAW MOTIVATIONS</text>
+            <text x="300" y="72" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Career, money, fame, comfort, habit, social pressure...</text>
+            <polygon points="180,104 420,104 380,170 220,170" fill="var(--accent-2)" opacity="0.1" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="300" y="128" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="700" font-family="Inter">CONSCIOUS FILTERING</text>
+            <text x="300" y="145" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">"Why am I really doing this?"</text>
+            <text x="300" y="160" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">"Who am I doing this for?"</text>
+            <polygon points="220,174 380,174 340,230 260,230" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="300" y="196" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">PURE NIYYAH</text>
+            <text x="300" y="213" text-anchor="middle" fill="var(--accent-3)" font-size="8.5" font-family="Inter">"For the sake of Allah"</text>
+            <!-- Arrow out -->
+            <line x1="300" y1="232" x2="300" y2="255" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrNiy)"/>
+          </svg>
+          <p class="viz-caption">Pausing to filter your motivations through conscious questioning purifies your intention and aligns your action with Allah's pleasure.</p>
+        </div>
 
-      <div class="lesson">
-        <div class="lesson-header"><div class="lesson-number">4</div><h2>Asking Allah for Help (Isti'anah)</h2></div>
-        <p>Every day, in every rak'ah of every prayer, Muslims recite: "You alone we worship, and You alone we ask for help" (Quran 1:5). This ayah from Surah Al-Fatihah encapsulates the dual relationship between the servant and Allah -- worship and seeking assistance. Isti'anah (seeking Allah's help) is not a sign of weakness; it is the highest form of spiritual intelligence.</p>
-        <p>The Prophet (peace be upon him) said: "Tie your camel, then put your trust in Allah" (Tirmidhi). This hadith perfectly balances effort and reliance. You do your best -- you plan, prepare, work hard -- and then you turn to Allah and ask for His help with the outcome. Du'a (supplication) is described as the weapon of the believer, and there are specific du'as for starting work, beginning a project, and seeking success.</p>
-        <div class="insight-box">
-          <strong>Practical du'as for work:</strong> "Bismillah, tawakkaltu 'alallah" (In the name of Allah, I place my trust in Allah) when leaving the house. "Rabbi ishrah li sadri, wa yassir li amri" (My Lord, expand my chest and ease my task for me -- Quran 20:25-26) before starting a difficult project. Making these du'as habitual invites Barakah into your daily work.
+        <!-- INTERACTIVE EXERCISE 1: Intention Scenario Builder -->
+        <div class="exercise-box" id="exerciseScenario">
+          <div class="exercise-title"><i class="fas fa-pen-fancy"></i> Interactive Exercise</div>
+          <h4>Intention Scenario Builder</h4>
+          <p>Choose an everyday action below, then write at least 3 sincere intentions for it. The exercise will score your intention stack and give feedback.</p>
+          <div style="margin-bottom:1rem;">
+            <label style="font-size:0.85rem; font-weight:600; color:var(--text); display:block; margin-bottom:0.4rem;">Pick an action:</label>
+            <select id="scenarioAction" style="padding:0.5rem 0.75rem; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:0.85rem; font-family:Inter,sans-serif; width:100%; max-width:320px;">
+              <option value="working">Going to work</option>
+              <option value="cooking">Cooking a meal</option>
+              <option value="studying">Studying / learning</option>
+              <option value="exercising">Exercising / staying healthy</option>
+              <option value="custom">Custom action...</option>
+            </select>
+            <input type="text" id="scenarioCustom" placeholder="Type your custom action..." style="display:none; margin-top:0.5rem; padding:0.5rem 0.75rem; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:0.85rem; font-family:Inter,sans-serif; width:100%; max-width:320px;" />
+          </div>
+          <div class="scenario-card">
+            <div class="scenario-label">Intention 1 (most important)</div>
+            <textarea id="scenarioInt1" placeholder="e.g., To please Allah and seek His reward..."></textarea>
+          </div>
+          <div class="scenario-card">
+            <div class="scenario-label">Intention 2</div>
+            <textarea id="scenarioInt2" placeholder="e.g., To benefit my family and community..."></textarea>
+          </div>
+          <div class="scenario-card">
+            <div class="scenario-label">Intention 3</div>
+            <textarea id="scenarioInt3" placeholder="e.g., To serve as a good example for others..."></textarea>
+          </div>
+          <div class="scenario-card">
+            <div class="scenario-label">Intention 4 (optional bonus)</div>
+            <textarea id="scenarioInt4" placeholder="Add another intention for extra Barakah..."></textarea>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;">
+            <button class="btn-step" id="scenarioSubmit"><i class="fas fa-star"></i> Evaluate My Intentions</button>
+            <button class="btn-step" id="scenarioReset"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+          <div class="scenario-result" id="scenarioResult">
+            <h5 id="scenarioResultTitle"></h5>
+            <p id="scenarioResultText"></p>
+          </div>
         </div>
       </div>
 
+      <!-- ===== LESSON 3 ===== -->
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">3</div><h2>Istikharah: Seeking Allah's Guidance</h2></div>
+        <p>Before making any major decision, a Muslim has a powerful tool at their disposal: Salat al-Istikharah, the prayer of seeking guidance. The Prophet (peace be upon him) taught his companions to make Istikharah for all their affairs, just as he would teach them a surah from the Quran (Bukhari). This shows how central this practice is to Islamic decision-making.</p>
+
+        <!-- SVG: Istikharah Decision Flow (Step-Through) -->
+        <div class="viz-container step-diagram" id="stepIstikharah">
+          <div class="viz-title"><i class="fas fa-route"></i> Step-Through: The Istikharah Process</div>
+          <svg id="svgIstikharah" viewBox="0 0 640 300" width="100%" height="300">
+            <defs>
+              <marker id="arrIst" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+            </defs>
+            <!-- Step boxes -->
+            <g id="istStep1" opacity="0.25">
+              <rect x="20" y="100" width="110" height="90" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="75" y="135" text-anchor="middle" fill="var(--accent)" font-size="16" font-weight="800" font-family="Inter">?</text>
+              <text x="75" y="155" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Face a</text>
+              <text x="75" y="168" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Decision</text>
+            </g>
+            <line id="istArrow1" x1="132" y1="145" x2="158" y2="145" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrIst)" opacity="0"/>
+            <g id="istStep2" opacity="0.25">
+              <rect x="160" y="100" width="110" height="90" rx="12" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <text x="215" y="135" text-anchor="middle" fill="var(--accent-3)" font-size="16" font-weight="800" font-family="Inter">2R</text>
+              <text x="215" y="155" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Pray 2</text>
+              <text x="215" y="168" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Rak'ahs</text>
+            </g>
+            <line id="istArrow2" x1="272" y1="145" x2="298" y2="145" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrIst)" opacity="0"/>
+            <g id="istStep3" opacity="0.25">
+              <rect x="300" y="100" width="110" height="90" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <text x="355" y="135" text-anchor="middle" fill="var(--accent-2)" font-size="16" font-weight="800" font-family="Inter">Du'a</text>
+              <text x="355" y="155" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Make the</text>
+              <text x="355" y="168" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Istikharah Du'a</text>
+            </g>
+            <line id="istArrow3" x1="412" y1="145" x2="438" y2="145" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrIst)" opacity="0"/>
+            <g id="istStep4" opacity="0.25">
+              <rect x="440" y="100" width="110" height="90" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="495" y="135" text-anchor="middle" fill="var(--accent)" font-size="16" font-weight="800" font-family="Inter">Go</text>
+              <text x="495" y="155" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Proceed with</text>
+              <text x="495" y="168" text-anchor="middle" fill="var(--text)" font-size="9.5" font-weight="700" font-family="Inter">Tawakkul</text>
+            </g>
+            <!-- Misconception X -->
+            <g id="istMisconception" opacity="0">
+              <rect x="180" y="220" width="280" height="55" rx="10" fill="var(--error-bg)" stroke="var(--error-border)" stroke-width="1.2"/>
+              <text x="195" y="245" fill="var(--accent-danger)" font-size="14" font-weight="800" font-family="Inter">X</text>
+              <text x="215" y="245" fill="var(--accent-danger)" font-size="10" font-weight="600" font-family="Inter">Misconception: Wait for a dream or sign</text>
+              <text x="215" y="260" fill="var(--text-muted)" font-size="9" font-family="Inter">Reality: Proceed and trust Allah to guide the outcome</text>
+            </g>
+          </svg>
+          <div class="step-narrative" id="stepIstiNarrative">Walk through the four steps of the Istikharah process. Click "Next" to begin.</div>
+          <div class="step-controls">
+            <button class="btn-step" id="stepIstPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="step-indicator" id="stepIstIndicator">Start</span>
+            <button class="btn-step" id="stepIstNext">Next <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <p>A common misconception is that Istikharah is about seeing dreams or receiving supernatural signs. In reality, Istikharah is about surrendering the outcome to Allah. You pray two rak'ahs, then make the du'a of Istikharah, asking Allah to facilitate the matter if it is good for your religion, your livelihood, and your affairs -- and to turn it away from you if it is harmful. After making Istikharah, you proceed with the decision and trust that Allah will guide you to the best outcome.</p>
+
+        <!-- SVG: Istikharah vs Worldly Decision Making -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Worldly Decision-Making vs Istikharah-Based Decision-Making</div>
+          <svg viewBox="0 0 640 300" width="100%" height="300">
+            <!-- Left: Worldly -->
+            <rect x="20" y="20" width="280" height="260" rx="14" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1"/>
+            <text x="160" y="48" text-anchor="middle" fill="var(--text-muted)" font-size="11" font-weight="700" font-family="Inter">WORLDLY APPROACH</text>
+            <g transform="translate(160,80)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--border)" opacity="0.4"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">1. Analyse pros &amp; cons</text>
+            </g>
+            <g transform="translate(160,118)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--border)" opacity="0.4"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">2. Consult experts</text>
+            </g>
+            <g transform="translate(160,156)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--border)" opacity="0.4"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">3. Trust your gut feeling</text>
+            </g>
+            <g transform="translate(160,194)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--accent-danger)" opacity="0.08" stroke="var(--accent-danger)" stroke-width="0.8"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--accent-danger)" font-size="9" font-weight="600" font-family="Inter">4. Anxiety over outcome</text>
+            </g>
+            <text x="160" y="248" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Outcome: Stress, second-guessing,</text>
+            <text x="160" y="262" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">and no spiritual dimension</text>
+            <!-- Right: Istikharah -->
+            <rect x="340" y="20" width="280" height="260" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="480" y="48" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-weight="700" font-family="Inter">ISTIKHARAH APPROACH</text>
+            <g transform="translate(480,80)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">1. Research &amp; prepare</text>
+            </g>
+            <g transform="translate(480,118)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">2. Pray Istikharah &amp; make du'a</text>
+            </g>
+            <g transform="translate(480,156)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">3. Proceed with tawakkul</text>
+            </g>
+            <g transform="translate(480,194)">
+              <rect x="-90" y="0" width="180" height="28" rx="6" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="0.8"/>
+              <text x="0" y="18" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">4. Inner peace &amp; acceptance</text>
+            </g>
+            <text x="480" y="248" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Outcome: Peace, Barakah, trust</text>
+            <text x="480" y="262" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter">that Allah guides the best path</text>
+          </svg>
+          <p class="viz-caption">Istikharah does not replace rational decision-making -- it adds a spiritual dimension that brings peace and Barakah to the process.</p>
+        </div>
+
+        <p>Making Istikharah a habit before every significant decision -- a new job, a business venture, a marriage, a move -- is a practical way to invite Barakah into your choices. It transforms decision-making from a purely rational exercise into a spiritual act of reliance on Allah.</p>
+      </div>
+
+      <!-- ===== LESSON 4 ===== -->
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number">4</div><h2>Asking Allah for Help (Isti'anah)</h2></div>
+        <p>Every day, in every rak'ah of every prayer, Muslims recite: "You alone we worship, and You alone we ask for help" (Quran 1:5). This ayah from Surah Al-Fatihah encapsulates the dual relationship between the servant and Allah -- worship and seeking assistance. Isti'anah (seeking Allah's help) is not a sign of weakness; it is the highest form of spiritual intelligence.</p>
+
+        <!-- SVG: The Dual Pillars of Al-Fatihah 1:5 -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale-left"></i> The Two Pillars of Al-Fatihah 1:5</div>
+          <svg viewBox="0 0 600 300" width="100%" height="300">
+            <!-- Foundation -->
+            <rect x="100" y="250" width="400" height="36" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="300" y="273" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">"Iyyaka na'budu wa iyyaka nasta'in" (1:5)</text>
+            <!-- Left pillar -->
+            <rect x="130" y="100" width="140" height="148" rx="4" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="200" y="128" text-anchor="middle" fill="var(--accent-2)" font-size="18" font-weight="800" font-family="Inter">I</text>
+            <text x="200" y="160" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-weight="800" font-family="Inter">IBADAH</text>
+            <text x="200" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Worship Allah alone</text>
+            <text x="200" y="194" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Salah, fasting, du'a</text>
+            <text x="200" y="210" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Obedience &amp; devotion</text>
+            <text x="200" y="226" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Every act with niyyah</text>
+            <!-- Right pillar -->
+            <rect x="330" y="100" width="140" height="148" rx="4" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="400" y="128" text-anchor="middle" fill="var(--accent-3)" font-size="18" font-weight="800" font-family="Inter">II</text>
+            <text x="400" y="160" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-weight="800" font-family="Inter">ISTI'ANAH</text>
+            <text x="400" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Seek help from Allah</text>
+            <text x="400" y="194" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Du'a before every task</text>
+            <text x="400" y="210" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Tawakkul on outcome</text>
+            <text x="400" y="226" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Tie your camel first</text>
+            <!-- Top arch connecting -->
+            <path d="M200 100 Q200 60, 300 55 Q400 60, 400 100" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="300" y="50" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">BALANCED RELATIONSHIP</text>
+          </svg>
+          <p class="viz-caption">The servant's relationship with Allah stands on two pillars: devoted worship and humble reliance.</p>
+        </div>
+
+        <p>The Prophet (peace be upon him) said: "Tie your camel, then put your trust in Allah" (Tirmidhi). This hadith perfectly balances effort and reliance. You do your best -- you plan, prepare, work hard -- and then you turn to Allah and ask for His help with the outcome. Du'a (supplication) is described as the weapon of the believer, and there are specific du'as for starting work, beginning a project, and seeking success.</p>
+
+        <!-- SVG: The Tie Your Camel Balance -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale"></i> Tie Your Camel, Then Trust: The Balance of Effort and Tawakkul</div>
+          <svg viewBox="0 0 640 280" width="100%" height="280">
+            <defs>
+              <linearGradient id="gBalance" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.12"/>
+              </linearGradient>
+            </defs>
+            <!-- Centre fulcrum -->
+            <polygon points="320,170 300,220 340,220" fill="var(--accent)" opacity="0.6"/>
+            <text x="320" y="245" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">BALANCED MUSLIM APPROACH</text>
+            <!-- Balance beam -->
+            <line x1="120" y1="170" x2="520" y2="170" stroke="var(--accent)" stroke-width="2.5"/>
+            <!-- Left pan: Effort -->
+            <rect x="70" y="115" width="170" height="50" rx="10" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="155" y="138" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-weight="700" font-family="Inter">TIE YOUR CAMEL</text>
+            <text x="155" y="155" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Plan, prepare, work hard</text>
+            <!-- Left details -->
+            <text x="155" y="85" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Research thoroughly</text>
+            <text x="155" y="70" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Develop skills</text>
+            <text x="155" y="55" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Take concrete steps</text>
+            <text x="155" y="100" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Use all resources</text>
+            <!-- Right pan: Tawakkul -->
+            <rect x="400" y="115" width="170" height="50" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="485" y="138" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-weight="700" font-family="Inter">TRUST IN ALLAH</text>
+            <text x="485" y="155" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Du'a, tawakkul, acceptance</text>
+            <!-- Right details -->
+            <text x="485" y="85" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Make du'a sincerely</text>
+            <text x="485" y="70" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Accept Allah's decree</text>
+            <text x="485" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">No anxiety over outcome</text>
+            <text x="485" y="100" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Surrender the result</text>
+            <!-- Extremes warning -->
+            <rect x="30" y="260" width="120" height="16" rx="4" fill="var(--error-bg)"/>
+            <text x="90" y="272" text-anchor="middle" fill="var(--accent-danger)" font-size="8" font-weight="600" font-family="Inter">Only effort = burnout</text>
+            <rect x="490" y="260" width="130" height="16" rx="4" fill="var(--error-bg)"/>
+            <text x="555" y="272" text-anchor="middle" fill="var(--accent-danger)" font-size="8" font-weight="600" font-family="Inter">Only trust = negligence</text>
+          </svg>
+          <p class="viz-caption">Both extremes are harmful. Islam teaches us to maximise our effort AND maximise our reliance on Allah simultaneously.</p>
+        </div>
+
+        <div class="insight-box">
+          <strong>Practical du'as for work:</strong> "Bismillah, tawakkaltu 'alallah" (In the name of Allah, I place my trust in Allah) when leaving the house. "Rabbi ishrah li sadri, wa yassir li amri" (My Lord, expand my chest and ease my task for me -- Quran 20:25-26) before starting a difficult project. Making these du'as habitual invites Barakah into your daily work.
+        </div>
+
+        <!-- STEP-THROUGH DIAGRAM 3: The Du'a-Action Cycle -->
+        <div class="viz-container step-diagram" id="stepDuaAction">
+          <div class="viz-title"><i class="fas fa-sync-alt"></i> Step-Through: The Du'a-Action-Gratitude Cycle</div>
+          <svg id="svgDuaAction" viewBox="0 0 640 340" width="100%" height="340">
+            <defs>
+              <marker id="arrDua" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker>
+            </defs>
+            <!-- Circular path guide (always visible, faint) -->
+            <circle cx="320" cy="170" r="120" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+            <!-- Step 1: Du'a Before -->
+            <g id="duaStep1" opacity="0.2">
+              <rect x="250" y="20" width="140" height="60" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="320" y="45" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">DU'A BEFORE</text>
+              <text x="320" y="62" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"Bismillah, ya Allah help me"</text>
+            </g>
+            <!-- Arrow 1 -->
+            <g id="duaArrow1" opacity="0">
+              <path d="M390,60 Q460,80 460,130" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrDua)"/>
+            </g>
+            <!-- Step 2: Take Action -->
+            <g id="duaStep2" opacity="0.2">
+              <rect x="420" y="140" width="140" height="60" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <text x="490" y="165" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-weight="700" font-family="Inter">TAKE ACTION</text>
+              <text x="490" y="182" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Maximum effort + excellence</text>
+            </g>
+            <!-- Arrow 2 -->
+            <g id="duaArrow2" opacity="0">
+              <path d="M480,205 Q460,260 390,280" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrDua)"/>
+            </g>
+            <!-- Step 3: Accept Outcome -->
+            <g id="duaStep3" opacity="0.2">
+              <rect x="250" y="260" width="140" height="60" rx="12" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <text x="320" y="285" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-weight="700" font-family="Inter">ACCEPT QADR</text>
+              <text x="320" y="302" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Trust Allah's decree</text>
+            </g>
+            <!-- Arrow 3 -->
+            <g id="duaArrow3" opacity="0">
+              <path d="M250,280 Q180,260 160,205" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrDua)"/>
+            </g>
+            <!-- Step 4: Gratitude / Patience -->
+            <g id="duaStep4" opacity="0.2">
+              <rect x="80" y="140" width="140" height="60" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="150" y="165" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">SHUKR / SABR</text>
+              <text x="150" y="182" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Gratitude or patience</text>
+            </g>
+            <!-- Arrow 4 (cycle back) -->
+            <g id="duaArrow4" opacity="0">
+              <path d="M155,140 Q175,80 250,55" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrDua)"/>
+            </g>
+            <!-- Centre label -->
+            <g id="duaCentre" opacity="0">
+              <circle cx="320" cy="170" r="35" fill="var(--accent)" opacity="0.12"/>
+              <text x="320" y="167" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">BARAKAH</text>
+              <text x="320" y="181" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter">CYCLE</text>
+            </g>
+          </svg>
+          <div class="step-narrative" id="stepDuaNarrative">This cycle shows how du'a, action, acceptance, and gratitude form a continuous loop of Barakah. Click "Next" to begin.</div>
+          <div class="step-controls">
+            <button class="btn-step" id="stepDuaPrev" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="step-indicator" id="stepDuaIndicator">Start</span>
+            <button class="btn-step" id="stepDuaNext">Next <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 2: Barakah Intention Builder (Sliders) -->
+        <div class="exercise-box" id="exerciseSliders">
+          <div class="exercise-title"><i class="fas fa-sliders-h"></i> Interactive Exercise</div>
+          <h4>Barakah Intention Meter</h4>
+          <p>For a hypothetical work project, adjust each slider to reflect how much you prioritise each factor. Watch the Barakah Meter respond in real time.</p>
+          <div class="slider-row">
+            <label>Sincerity to Allah</label>
+            <input type="range" min="0" max="10" value="5" data-slider="sincerity" />
+            <span class="slider-val" id="valSincerity">5</span>
+          </div>
+          <div class="slider-row">
+            <label>Effort &amp; Preparation</label>
+            <input type="range" min="0" max="10" value="5" data-slider="effort" />
+            <span class="slider-val" id="valEffort">5</span>
+          </div>
+          <div class="slider-row">
+            <label>Du'a &amp; Tawakkul</label>
+            <input type="range" min="0" max="10" value="5" data-slider="dua" />
+            <span class="slider-val" id="valDua">5</span>
+          </div>
+          <div class="slider-row">
+            <label>Seeking People's Praise</label>
+            <input type="range" min="0" max="10" value="3" data-slider="riya" />
+            <span class="slider-val" id="valRiya">3</span>
+          </div>
+          <div class="barakah-meter">
+            <span class="meter-label" id="meterLabel">Barakah Level: Moderate</span>
+            <div class="meter-bar"><div class="meter-fill" id="meterFill" style="width:50%"></div></div>
+            <div class="meter-tip" id="meterTip">Increase sincerity and du'a while reducing desire for people's approval to maximise Barakah.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LESSON 5 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Purifying Intentions: The Danger of Riya'</h2></div>
         <p>The flipside of sincere intention is riya' -- showing off or performing actions for the sake of people's approval rather than Allah's pleasure. Riya' is described as the "hidden shirk" (minor polytheism) because it directs worship away from Allah towards the creation. The Prophet (peace be upon him) warned his companions that he feared riya' for them more than he feared the Dajjal (Antichrist).</p>
@@ -136,14 +799,167 @@
             <text x="150" y="105" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Attracts Barakah</text>
             <text x="150" y="125" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Accepted by Allah</text>
             <text x="150" y="145" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Brings inner peace</text>
-            <rect x="330" y="30" width="240" height="140" rx="14" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
-            <text x="450" y="60" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="700">Riya' (Showing Off)</text>
+            <rect x="330" y="30" width="240" height="140" rx="14" fill="var(--accent-danger)" opacity="0.1" stroke="var(--accent-danger)" stroke-width="1.5"/>
+            <text x="450" y="60" text-anchor="middle" fill="var(--accent-danger)" font-size="13" font-family="Inter" font-weight="700">Riya' (Showing Off)</text>
             <text x="450" y="85" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Inter">Action done for people's praise</text>
             <text x="450" y="105" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Strips away Barakah</text>
             <text x="450" y="125" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Rejected by Allah</text>
             <text x="450" y="145" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Leads to anxiety</text>
           </svg>
           <p class="viz-caption">The same outward action can lead to Paradise or Hellfire depending on its underlying intention.</p>
+        </div>
+
+        <!-- SVG: The Three People Hadith -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> The Three People with Corrupt Intentions</div>
+          <svg viewBox="0 0 640 240" width="100%" height="240">
+            <!-- Scholar -->
+            <g transform="translate(110,110)">
+              <circle r="50" fill="var(--accent-danger)" opacity="0.08" stroke="var(--accent-danger)" stroke-width="1.2"/>
+              <text y="-12" text-anchor="middle" fill="var(--accent-danger)" font-size="20" font-weight="800" font-family="Inter">1</text>
+              <text y="10" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="700" font-family="Inter">The Scholar</text>
+              <text y="26" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Sought knowledge to</text>
+              <text y="38" text-anchor="middle" fill="var(--accent-danger)" font-size="8.5" font-weight="600" font-family="Inter">be called "learned"</text>
+            </g>
+            <!-- Generous person -->
+            <g transform="translate(320,110)">
+              <circle r="50" fill="var(--accent-danger)" opacity="0.08" stroke="var(--accent-danger)" stroke-width="1.2"/>
+              <text y="-12" text-anchor="middle" fill="var(--accent-danger)" font-size="20" font-weight="800" font-family="Inter">2</text>
+              <text y="10" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="700" font-family="Inter">The Generous</text>
+              <text y="26" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Gave charity to</text>
+              <text y="38" text-anchor="middle" fill="var(--accent-danger)" font-size="8.5" font-weight="600" font-family="Inter">be called "generous"</text>
+            </g>
+            <!-- Warrior -->
+            <g transform="translate(530,110)">
+              <circle r="50" fill="var(--accent-danger)" opacity="0.08" stroke="var(--accent-danger)" stroke-width="1.2"/>
+              <text y="-12" text-anchor="middle" fill="var(--accent-danger)" font-size="20" font-weight="800" font-family="Inter">3</text>
+              <text y="10" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="700" font-family="Inter">The Warrior</text>
+              <text y="26" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Fought bravely to</text>
+              <text y="38" text-anchor="middle" fill="var(--accent-danger)" font-size="8.5" font-weight="600" font-family="Inter">be called "brave"</text>
+            </g>
+            <!-- Warning banner -->
+            <rect x="120" y="185" width="400" height="28" rx="6" fill="var(--error-bg)" stroke="var(--error-border)" stroke-width="1"/>
+            <text x="320" y="204" text-anchor="middle" fill="var(--accent-danger)" font-size="10" font-weight="700" font-family="Inter">Outwardly righteous actions + corrupt intentions = rejection</text>
+          </svg>
+          <p class="viz-caption">The hadith warns that beautiful actions driven by riya' are among the gravest spiritual dangers.</p>
+        </div>
+
+        <!-- SVG: The Riya Spectrum -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-thermometer-half"></i> The Riya' Spectrum: From Pure to Poisoned</div>
+          <svg viewBox="0 0 640 200" width="100%" height="200">
+            <defs>
+              <linearGradient id="gRiyaSpec" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-3)"/>
+                <stop offset="40%" stop-color="var(--accent)"/>
+                <stop offset="70%" stop-color="var(--accent-2)"/>
+                <stop offset="100%" stop-color="var(--accent-danger)"/>
+              </linearGradient>
+            </defs>
+            <!-- Spectrum bar -->
+            <rect x="60" y="80" width="520" height="20" rx="10" fill="url(#gRiyaSpec)" opacity="0.7"/>
+            <!-- Markers -->
+            <line x1="60" y1="75" x2="60" y2="105" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="60" y="68" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="700" font-family="Inter">100% IKHLAS</text>
+            <text x="60" y="120" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-family="Inter">Only for Allah</text>
+            <text x="60" y="132" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-family="Inter">Maximum Barakah</text>
+
+            <line x1="268" y1="75" x2="268" y2="105" stroke="var(--accent)" stroke-width="2"/>
+            <text x="268" y="68" text-anchor="middle" fill="var(--accent)" font-size="9" font-weight="700" font-family="Inter">MIXED</text>
+            <text x="268" y="120" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Inter">Mostly sincere but</text>
+            <text x="268" y="132" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Inter">some people-pleasing</text>
+
+            <line x1="424" y1="75" x2="424" y2="105" stroke="var(--accent-2)" stroke-width="2"/>
+            <text x="424" y="68" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="700" font-family="Inter">DANGEROUS</text>
+            <text x="424" y="120" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-family="Inter">Primarily seeking</text>
+            <text x="424" y="132" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-family="Inter">human approval</text>
+
+            <line x1="580" y1="75" x2="580" y2="105" stroke="var(--accent-danger)" stroke-width="2"/>
+            <text x="580" y="68" text-anchor="middle" fill="var(--accent-danger)" font-size="9" font-weight="700" font-family="Inter">100% RIYA'</text>
+            <text x="580" y="120" text-anchor="middle" fill="var(--accent-danger)" font-size="8" font-family="Inter">Entirely for show</text>
+            <text x="580" y="132" text-anchor="middle" fill="var(--accent-danger)" font-size="8" font-family="Inter">Hidden shirk</text>
+
+            <!-- Warning -->
+            <rect x="170" y="155" width="300" height="28" rx="6" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1"/>
+            <text x="320" y="174" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="600" font-family="Inter">Constant self-checking (muhasabah) keeps intentions pure</text>
+          </svg>
+          <p class="viz-caption">Intention purity exists on a spectrum. The goal is to continually renew and purify your niyyah through self-accountability.</p>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 3: Drag & Drop Intention Sorter -->
+        <div class="exercise-box" id="exerciseDragDrop">
+          <div class="exercise-title"><i class="fas fa-hand-pointer"></i> Interactive Exercise</div>
+          <h4>Sort the Intentions: Sincere or Corrupt?</h4>
+          <p>Drag each intention into the correct category (or click/tap to cycle between zones). Is it a sincere (Ikhlas) intention or a corrupt (Riya') one?</p>
+
+          <div style="margin-bottom:0.75rem;">
+            <div class="dd-zone-label">Unsorted Intentions</div>
+            <div class="dd-zone" id="ddSource"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.5rem;">
+            <div>
+              <div class="dd-zone-label" style="color:var(--accent-3);">Ikhlas (Sincere)</div>
+              <div class="dd-zone" id="ddSincere" data-accept="sincere"></div>
+            </div>
+            <div>
+              <div class="dd-zone-label" style="color:var(--accent-danger);">Riya' (Corrupt)</div>
+              <div class="dd-zone" id="ddCorrupt" data-accept="corrupt"></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn-step" id="ddCheck"><i class="fas fa-check"></i> Check Answers</button>
+            <button class="btn-step" id="ddReset"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+          <div class="dd-feedback" id="ddFeedback"></div>
+        </div>
+
+        <!-- INTERACTIVE EXERCISE 4: Riya Self-Check -->
+        <div class="exercise-box" id="exerciseSelfCheck">
+          <div class="exercise-title"><i class="fas fa-user-check"></i> Interactive Exercise</div>
+          <h4>Riya' Self-Check Assessment</h4>
+          <p>Honestly check any statements that apply to you. This is a private self-assessment to help you identify areas where riya' may be creeping in.</p>
+
+          <div id="selfCheckItems">
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc1" />
+              <label for="sc1">I sometimes check how many likes my posts get about good deeds</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc2" />
+              <label for="sc2">I pray more carefully when others are watching me</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc3" />
+              <label for="sc3">I feel disappointed when nobody notices my charitable work</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc4" />
+              <label for="sc4">I mention my good deeds in conversations to get respect</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc5" />
+              <label for="sc5">I choose to do good deeds mainly when others can see</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc6" />
+              <label for="sc6">I sometimes feel competitive about religious practices</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc7" />
+              <label for="sc7">I would feel embarrassed if people thought I was not religious</label>
+            </div>
+            <div class="selfcheck-item">
+              <input type="checkbox" id="sc8" />
+              <label for="sc8">I rarely do good deeds in complete secrecy</label>
+            </div>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <button class="btn-step" id="selfCheckSubmit"><i class="fas fa-chart-bar"></i> See My Assessment</button>
+          </div>
+          <div class="selfcheck-result" id="selfCheckResult">
+            <div class="score-circle" id="selfCheckCircle"></div>
+            <p id="selfCheckText"></p>
+          </div>
         </div>
 
         <p>How do you check your intentions? The author suggests asking yourself: "Would I still do this if no one ever found out?" If the answer is yes, your intention is likely sincere. If the answer is no, or if you feel hesitation, then riya' may have crept in. Purifying intentions is an ongoing struggle -- even the salaf (pious predecessors) would constantly examine and renew their niyyah.</p>
@@ -184,50 +1000,11 @@
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- TAB: Mind Map (Interactive) -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh6" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
-          <style>
-            #mmCh6 .mm-node { animation: mmFadeInCH6 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH6 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh6 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh6 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh6 .mm-center-label { font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh6 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
-          </style>
-          <line class="mm-branch" x1="350" y1="210" x2="140" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="560" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="120" y2="260"/>
-          <line class="mm-branch" x1="350" y1="210" x2="580" y2="260"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="206" text-anchor="middle">Intention &amp;</text>
-            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Seeking Help</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="140" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="140" y="74" text-anchor="middle">Power of Niyyah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">7 Intentions</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="560" cy="70" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="560" y="74" text-anchor="middle">Istikharah</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="120" cy="260" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="120" y="264" text-anchor="middle">Isti'anah &amp; Du'a</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="580" cy="260" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="580" y="264" text-anchor="middle">Purifying / Riya'</text>
-          </g>
-        </svg>
+      <div class="viz-container" style="min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <svg id="mmCh6" viewBox="0 0 800 520" width="100%" height="520" style="max-width:800px;"></svg>
+        <p class="mm-hint"><i class="fas fa-mouse-pointer"></i> Click any topic node to expand or collapse its children. All nodes start collapsed -- explore the chapter structure by clicking.</p>
       </div>
     </div>
 
@@ -244,7 +1021,10 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    // =============================================
+    // QUIZ
+    // =============================================
+    var QUESTIONS = [
       { question: "What is the famous hadith that opens the discussion on Niyyah?", options: ["'Seek knowledge from the cradle to the grave'", "'Actions are but by intentions'", "'The best of you are those who learn the Quran and teach it'", "'None of you truly believes until he loves for his brother what he loves for himself'"], correct: 1, explanation: "The hadith 'Actions are but by intentions, and every person will have only what they intended' (Bukhari & Muslim) is one of the most foundational hadiths in Islam." },
       { question: "How does Niyyah transform mundane actions into worship?", options: ["By reciting Quran during the action", "By performing the action in a mosque", "By directing the intention behind the action towards pleasing Allah", "By telling others about the action"], correct: 2, explanation: "When you direct your intention towards Allah -- eating to gain strength for prayer, sleeping to rest for Fajr -- the mundane action becomes an act of worship." },
       { question: "How many intentions did the author set when writing 'The Barakah Effect'?", options: ["Three", "Five", "Seven", "Ten"], correct: 2, explanation: "The author set seven specific intentions including pleasing Allah, fighting Hustle Culture, reconnecting the Ummah with Barakah, and serving as sadaqa jariya." },
@@ -258,6 +1038,598 @@
     ];
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    // =============================================
+    // STEP-THROUGH DIAGRAM 1: Intention Stack
+    // =============================================
+    (function() {
+      var step = 0;
+      var maxStep = 7;
+      var layers = ['stackLayer1','stackLayer2','stackLayer3','stackLayer4','stackLayer5','stackLayer6'];
+      var narratives = [
+        'Click "Next" to start stacking intentions on your action and see the reward multiplier grow.',
+        'Layer 1: "To please Allah and seek His reward." This is the foundation -- every action must begin here.',
+        'Layer 2: "To benefit the Ummah." Your action gains a communal dimension, multiplying its impact.',
+        'Layer 3: "To serve as Sadaqa Jariya." Now the reward extends beyond your lifetime -- continuous charity.',
+        'Layer 4: "To encourage others to do good." Your action becomes an inspiration, a ripple effect of Barakah.',
+        'Layer 5: "To earn halal income for my family." Supporting dependents for Allah\'s sake is itself worship.',
+        'Layer 6: "To learn and grow as a servant of Allah." Personal development becomes an act of devotion.',
+        'All six intentions stacked! One single action now carries the weight of six acts of worship. This is the power of intention stacking.'
+      ];
+      var prevBtn = document.getElementById('stepIntPrev');
+      var nextBtn = document.getElementById('stepIntNext');
+      var indicator = document.getElementById('stepIntIndicator');
+      var narrative = document.getElementById('stepIntentionsNarrative');
+      var multiplier = document.getElementById('stackMultiplier');
+      var rewardLabel = document.getElementById('stackRewardLabel');
+
+      function render() {
+        for (var i = 0; i < layers.length; i++) {
+          var el = document.getElementById(layers[i]);
+          el.setAttribute('opacity', i < step ? '1' : '0');
+        }
+        if (step > 0) {
+          multiplier.setAttribute('opacity', '1');
+          rewardLabel.setAttribute('opacity', '1');
+          multiplier.textContent = 'x' + Math.min(step, 6);
+        } else {
+          multiplier.setAttribute('opacity', '0');
+          rewardLabel.setAttribute('opacity', '0');
+        }
+        narrative.textContent = narratives[step];
+        indicator.textContent = step === 0 ? 'Start' : 'Step ' + step + ' / 7';
+        prevBtn.disabled = step === 0;
+        nextBtn.disabled = step === maxStep;
+      }
+      prevBtn.addEventListener('click', function() { if (step > 0) { step--; render(); } });
+      nextBtn.addEventListener('click', function() { if (step < maxStep) { step++; render(); } });
+      render();
+    })();
+
+    // =============================================
+    // STEP-THROUGH DIAGRAM 2: Istikharah Process
+    // =============================================
+    (function() {
+      var step = 0;
+      var maxStep = 5;
+      var steps = ['istStep1','istStep2','istStep3','istStep4'];
+      var arrows = ['istArrow1','istArrow2','istArrow3'];
+      var narratives = [
+        'Walk through the four steps of the Istikharah process. Click "Next" to begin.',
+        'Step 1: You face a significant decision -- a new job, a move, a business venture, a marriage proposal. You feel uncertain about the best path forward.',
+        'Step 2: You pray two voluntary rak\'ahs of prayer. This is the Salat al-Istikharah itself -- two units of prayer before you make the du\'a.',
+        'Step 3: After completing the prayer, you recite the du\'a of Istikharah, asking Allah to facilitate the matter if it is good and to turn it away if it is harmful.',
+        'Step 4: You proceed with your decision, placing full trust (tawakkul) in Allah. You do not wait for a dream or a sign -- you move forward with confidence.',
+        'Common misconception debunked: Istikharah is NOT about waiting for supernatural signs. It is about surrendering the outcome to Allah while taking action.'
+      ];
+      var prevBtn = document.getElementById('stepIstPrev');
+      var nextBtn = document.getElementById('stepIstNext');
+      var indicator = document.getElementById('stepIstIndicator');
+      var narrative = document.getElementById('stepIstiNarrative');
+      var misconception = document.getElementById('istMisconception');
+
+      function render() {
+        for (var i = 0; i < steps.length; i++) {
+          document.getElementById(steps[i]).setAttribute('opacity', i < step ? '1' : '0.25');
+        }
+        for (var j = 0; j < arrows.length; j++) {
+          document.getElementById(arrows[j]).setAttribute('opacity', j < step - 1 ? '1' : '0');
+        }
+        misconception.setAttribute('opacity', step === maxStep ? '1' : '0');
+        narrative.textContent = narratives[step];
+        indicator.textContent = step === 0 ? 'Start' : 'Step ' + step + ' / ' + maxStep;
+        prevBtn.disabled = step === 0;
+        nextBtn.disabled = step === maxStep;
+      }
+      prevBtn.addEventListener('click', function() { if (step > 0) { step--; render(); } });
+      nextBtn.addEventListener('click', function() { if (step < maxStep) { step++; render(); } });
+      render();
+    })();
+
+    // =============================================
+    // STEP-THROUGH DIAGRAM 3: Du'a-Action Cycle
+    // =============================================
+    (function() {
+      var step = 0;
+      var maxStep = 5;
+      var stepsEls = ['duaStep1','duaStep2','duaStep3','duaStep4'];
+      var arrowsEls = ['duaArrow1','duaArrow2','duaArrow3','duaArrow4'];
+      var narratives = [
+        'This cycle shows how du\'a, action, acceptance, and gratitude form a continuous loop of Barakah. Click "Next" to begin.',
+        'Step 1: DU\'A BEFORE -- Before beginning any task, turn to Allah. Say "Bismillah" and ask for His help. This sets the spiritual foundation for everything that follows.',
+        'Step 2: TAKE ACTION -- With du\'a made, now put in your maximum effort. Work with excellence (ihsan) knowing that Allah is watching and helping you.',
+        'Step 3: ACCEPT QADR -- Whatever the outcome, accept it as Allah\'s decree. If it is good, it is a blessing. If it seems unfavourable, trust that Allah knows what you do not.',
+        'Step 4: SHUKR or SABR -- Respond with gratitude (shukr) if the outcome is favourable, or patience (sabr) if it is a test. Both responses earn reward from Allah.',
+        'The cycle is complete -- and it begins again. Every new task starts with du\'a, creating a continuous loop of Barakah in your life. This is the Barakah lifestyle.'
+      ];
+      var prevBtn = document.getElementById('stepDuaPrev');
+      var nextBtn = document.getElementById('stepDuaNext');
+      var indicator = document.getElementById('stepDuaIndicator');
+      var narrative = document.getElementById('stepDuaNarrative');
+      var centre = document.getElementById('duaCentre');
+
+      function render() {
+        for (var i = 0; i < stepsEls.length; i++) {
+          document.getElementById(stepsEls[i]).setAttribute('opacity', i < step ? '1' : '0.2');
+        }
+        for (var j = 0; j < arrowsEls.length; j++) {
+          document.getElementById(arrowsEls[j]).setAttribute('opacity', j < step ? '1' : '0');
+        }
+        centre.setAttribute('opacity', step === maxStep ? '1' : '0');
+        narrative.textContent = narratives[step];
+        indicator.textContent = step === 0 ? 'Start' : 'Step ' + step + ' / ' + maxStep;
+        prevBtn.disabled = step === 0;
+        nextBtn.disabled = step === maxStep;
+      }
+      prevBtn.addEventListener('click', function() { if (step > 0) { step--; render(); } });
+      nextBtn.addEventListener('click', function() { if (step < maxStep) { step++; render(); } });
+      render();
+    })();
+
+    // =============================================
+    // INTERACTIVE EXERCISE 1: Intention Scenario Builder
+    // =============================================
+    (function() {
+      var actionSelect = document.getElementById('scenarioAction');
+      var customInput = document.getElementById('scenarioCustom');
+      var submitBtn = document.getElementById('scenarioSubmit');
+      var resetBtn = document.getElementById('scenarioReset');
+      var resultDiv = document.getElementById('scenarioResult');
+      var resultTitle = document.getElementById('scenarioResultTitle');
+      var resultText = document.getElementById('scenarioResultText');
+
+      actionSelect.addEventListener('change', function() {
+        customInput.style.display = actionSelect.value === 'custom' ? 'block' : 'none';
+      });
+
+      var godKeywords = ['allah', 'his sake', 'please', 'reward', 'jannah', 'paradise', 'akhirah', 'hereafter', 'worship', 'ibadah', 'deen', 'blessing'];
+      var communityKeywords = ['ummah', 'community', 'family', 'others', 'help', 'benefit', 'serve', 'teach', 'inspire', 'support', 'children', 'parents', 'spouse'];
+      var continuousKeywords = ['sadaqa', 'jariya', 'continuous', 'ongoing', 'lasting', 'legacy', 'after', 'future', 'generations'];
+      var selfKeywords = ['learn', 'grow', 'improve', 'develop', 'health', 'strength', 'knowledge', 'skill', 'better'];
+
+      function scoreIntention(text) {
+        var t = text.toLowerCase();
+        var score = 0;
+        var feedback = [];
+        if (t.trim().length < 5) return { score: 0, feedback: ['This intention is too short to evaluate.'] };
+
+        var hasGod = godKeywords.some(function(k) { return t.indexOf(k) !== -1; });
+        var hasCommunity = communityKeywords.some(function(k) { return t.indexOf(k) !== -1; });
+        var hasContinuous = continuousKeywords.some(function(k) { return t.indexOf(k) !== -1; });
+        var hasSelf = selfKeywords.some(function(k) { return t.indexOf(k) !== -1; });
+
+        if (hasGod) { score += 3; feedback.push('Directed towards Allah -- excellent foundation.'); }
+        if (hasCommunity) { score += 2; feedback.push('Includes benefit to others -- multiplied reward.'); }
+        if (hasContinuous) { score += 2; feedback.push('Has a continuous charity dimension -- reward beyond your lifetime.'); }
+        if (hasSelf) { score += 1; feedback.push('Self-improvement for Allah\'s sake is also rewarded.'); }
+        if (!hasGod && !hasCommunity && !hasContinuous) { score += 1; feedback.push('Consider anchoring this intention to Allah\'s pleasure for maximum Barakah.'); }
+
+        return { score: score, feedback: feedback };
+      }
+
+      submitBtn.addEventListener('click', function() {
+        var fields = [
+          document.getElementById('scenarioInt1').value,
+          document.getElementById('scenarioInt2').value,
+          document.getElementById('scenarioInt3').value,
+          document.getElementById('scenarioInt4').value
+        ];
+        var filledCount = fields.filter(function(f) { return f.trim().length > 4; }).length;
+
+        if (filledCount < 2) {
+          resultDiv.className = 'scenario-result show';
+          resultDiv.style.borderColor = 'rgba(239,68,68,0.3)';
+          resultDiv.style.background = 'var(--error-bg)';
+          resultTitle.style.color = 'var(--accent-danger)';
+          resultTitle.textContent = 'Please write at least 2 intentions';
+          resultText.textContent = 'The power of intention stacking requires multiple sincere intentions. Try to articulate at least 2-3 reasons for your action.';
+          return;
+        }
+
+        var totalScore = 0;
+        var allFeedback = [];
+        fields.forEach(function(f, i) {
+          if (f.trim().length > 4) {
+            var result = scoreIntention(f);
+            totalScore += result.score;
+            result.feedback.forEach(function(fb) {
+              allFeedback.push('Intention ' + (i + 1) + ': ' + fb);
+            });
+          }
+        });
+
+        var maxPossible = filledCount * 8;
+        var pct = Math.round((totalScore / maxPossible) * 100);
+
+        resultDiv.className = 'scenario-result show';
+        resultDiv.style.borderColor = 'rgba(16,185,129,0.3)';
+        resultDiv.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(212,161,6,0.06))';
+        resultTitle.style.color = 'var(--accent-3)';
+
+        if (pct >= 60) {
+          resultTitle.textContent = 'Excellent Intention Stack! (' + filledCount + ' intentions, score: ' + totalScore + ')';
+        } else if (pct >= 35) {
+          resultTitle.textContent = 'Good Start! (' + filledCount + ' intentions, score: ' + totalScore + ')';
+        } else {
+          resultTitle.textContent = 'Keep Refining (' + filledCount + ' intentions, score: ' + totalScore + ')';
+        }
+        resultText.innerHTML = allFeedback.join('<br>') + '<br><br><strong>Tip:</strong> The strongest intention stacks begin with pleasing Allah, include benefit to others, and aim for lasting impact (sadaqa jariya).';
+      });
+
+      resetBtn.addEventListener('click', function() {
+        document.getElementById('scenarioInt1').value = '';
+        document.getElementById('scenarioInt2').value = '';
+        document.getElementById('scenarioInt3').value = '';
+        document.getElementById('scenarioInt4').value = '';
+        resultDiv.className = 'scenario-result';
+        actionSelect.value = 'working';
+        customInput.style.display = 'none';
+        customInput.value = '';
+      });
+    })();
+
+    // =============================================
+    // INTERACTIVE EXERCISE 2: Barakah Meter (Sliders)
+    // =============================================
+    (function() {
+      var sliders = document.querySelectorAll('#exerciseSliders input[type="range"]');
+      var meterFill = document.getElementById('meterFill');
+      var meterLabel = document.getElementById('meterLabel');
+      var meterTip = document.getElementById('meterTip');
+
+      function update() {
+        var sincerity = parseInt(document.querySelector('[data-slider="sincerity"]').value);
+        var effort = parseInt(document.querySelector('[data-slider="effort"]').value);
+        var dua = parseInt(document.querySelector('[data-slider="dua"]').value);
+        var riya = parseInt(document.querySelector('[data-slider="riya"]').value);
+
+        document.getElementById('valSincerity').textContent = sincerity;
+        document.getElementById('valEffort').textContent = effort;
+        document.getElementById('valDua').textContent = dua;
+        document.getElementById('valRiya').textContent = riya;
+
+        // Barakah formula: sincerity and dua add, riya subtracts heavily, effort is a multiplier
+        var raw = (sincerity * 3 + dua * 2.5 + effort * 1.5 - riya * 4);
+        var pct = Math.max(0, Math.min(100, Math.round((raw / 70) * 100)));
+
+        meterFill.style.width = pct + '%';
+
+        if (pct >= 80) {
+          meterLabel.textContent = 'Barakah Level: Excellent';
+          meterTip.textContent = 'Your action is driven by sincerity, effort, and reliance on Allah. Maximum Barakah!';
+        } else if (pct >= 55) {
+          meterLabel.textContent = 'Barakah Level: Good';
+          meterTip.textContent = 'Strong foundation. Increase sincerity or du\'a to reach the highest level of Barakah.';
+        } else if (pct >= 30) {
+          meterLabel.textContent = 'Barakah Level: Moderate';
+          meterTip.textContent = 'Check for riya\' creeping in. Renew your intention and add more du\'a to boost Barakah.';
+        } else {
+          meterLabel.textContent = 'Barakah Level: Low';
+          meterTip.textContent = 'Warning: Desire for people\'s praise is overwhelming sincerity. This action risks losing all Barakah.';
+        }
+      }
+      sliders.forEach(function(s) { s.addEventListener('input', update); });
+      update();
+    })();
+
+    // =============================================
+    // INTERACTIVE EXERCISE 3: Drag & Drop Intention Sorter
+    // =============================================
+    (function() {
+      var items = [
+        { text: 'I want to help others for Allah\'s sake', answer: 'sincere' },
+        { text: 'I want people to praise my generosity', answer: 'corrupt' },
+        { text: 'I study to gain knowledge that benefits the Ummah', answer: 'sincere' },
+        { text: 'I post charity work online for likes', answer: 'corrupt' },
+        { text: 'I work hard to earn halal for my family', answer: 'sincere' },
+        { text: 'I volunteer so people think I am pious', answer: 'corrupt' },
+        { text: 'I fast extra days seeking Allah\'s reward', answer: 'sincere' },
+        { text: 'I pray in the front row so others see me', answer: 'corrupt' }
+      ];
+      var source = document.getElementById('ddSource');
+      var sincereZone = document.getElementById('ddSincere');
+      var corruptZone = document.getElementById('ddCorrupt');
+      var feedback = document.getElementById('ddFeedback');
+      var checkBtn = document.getElementById('ddCheck');
+      var resetBtn = document.getElementById('ddReset');
+      var draggedEl = null;
+
+      function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+        }
+        return arr;
+      }
+
+      function clearChildren(el) {
+        while (el.firstChild) el.removeChild(el.firstChild);
+      }
+
+      function createItem(item) {
+        var el = document.createElement('div');
+        el.className = 'dd-item neutral';
+        el.textContent = item.text;
+        el.draggable = true;
+        el.dataset.answer = item.answer;
+        el.addEventListener('dragstart', function(e) {
+          draggedEl = el;
+          el.style.opacity = '0.5';
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        el.addEventListener('dragend', function() {
+          el.style.opacity = '1';
+          draggedEl = null;
+        });
+        // Click to cycle through zones on mobile
+        el.addEventListener('click', function() {
+          if (!el.draggable) return;
+          var parent = el.parentElement;
+          if (parent === source) { sincereZone.appendChild(el); }
+          else if (parent === sincereZone) { corruptZone.appendChild(el); }
+          else { source.appendChild(el); }
+        });
+        return el;
+      }
+
+      function setupZone(zone) {
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+        zone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          zone.classList.remove('dragover');
+          if (draggedEl) zone.appendChild(draggedEl);
+        });
+      }
+
+      function init() {
+        clearChildren(source);
+        clearChildren(sincereZone);
+        clearChildren(corruptZone);
+        feedback.className = 'dd-feedback';
+        feedback.textContent = '';
+        var shuffled = shuffle(items.slice());
+        shuffled.forEach(function(item) {
+          source.appendChild(createItem(item));
+        });
+      }
+
+      setupZone(source);
+      setupZone(sincereZone);
+      setupZone(corruptZone);
+
+      checkBtn.addEventListener('click', function() {
+        var allItems = document.querySelectorAll('#exerciseDragDrop .dd-item');
+        var correct = 0;
+        var total = allItems.length;
+        allItems.forEach(function(el) {
+          var parent = el.parentElement;
+          var answer = el.dataset.answer;
+          var placed = parent === sincereZone ? 'sincere' : (parent === corruptZone ? 'corrupt' : null);
+          el.classList.remove('sincere', 'corrupt', 'neutral');
+          if (placed === answer) {
+            correct++;
+            el.classList.add(answer === 'sincere' ? 'sincere' : 'corrupt');
+          } else {
+            el.classList.add('neutral');
+            el.style.outline = '2px solid var(--accent-danger)';
+            setTimeout(function() { el.style.outline = ''; }, 2000);
+          }
+        });
+        feedback.classList.add('show');
+        if (correct === total) {
+          feedback.className = 'dd-feedback show correct';
+          feedback.textContent = 'All correct! You can distinguish sincere intentions from corrupt ones.';
+        } else {
+          feedback.className = 'dd-feedback show incorrect';
+          feedback.textContent = correct + ' of ' + total + ' correct. Highlighted items are in the wrong zone -- try again!';
+        }
+      });
+
+      resetBtn.addEventListener('click', init);
+      init();
+    })();
+
+    // =============================================
+    // INTERACTIVE EXERCISE 4: Riya Self-Check
+    // =============================================
+    (function() {
+      var submitBtn = document.getElementById('selfCheckSubmit');
+      var resultDiv = document.getElementById('selfCheckResult');
+      var scoreCircle = document.getElementById('selfCheckCircle');
+      var resultText = document.getElementById('selfCheckText');
+
+      submitBtn.addEventListener('click', function() {
+        var checks = document.querySelectorAll('#selfCheckItems input[type="checkbox"]');
+        var checked = 0;
+        checks.forEach(function(c) { if (c.checked) checked++; });
+        var total = checks.length;
+        var purityScore = Math.round(((total - checked) / total) * 100);
+
+        resultDiv.className = 'selfcheck-result show';
+        scoreCircle.textContent = purityScore + '%';
+
+        if (purityScore >= 88) {
+          scoreCircle.style.background = 'var(--accent-3)';
+          resultText.innerHTML = '<strong>Strong sincerity foundation.</strong> You show very few signs of riya\'. Keep up the self-awareness and continue doing good deeds in private to strengthen your ikhlas even further.';
+        } else if (purityScore >= 63) {
+          scoreCircle.style.background = 'var(--accent)';
+          resultText.innerHTML = '<strong>Some areas to watch.</strong> You have a generally good foundation, but there are a few areas where riya\' might be creeping in. Focus on increasing private worship and checking your motivations before sharing good deeds publicly.';
+        } else if (purityScore >= 38) {
+          scoreCircle.style.background = 'var(--accent-2)';
+          resultText.innerHTML = '<strong>Attention needed.</strong> Several indicators suggest riya\' may be influencing your actions. This is normal and recognising it is the first step. Try the "secret deed" practice: do one good deed every day that absolutely no one knows about.';
+        } else {
+          scoreCircle.style.background = 'var(--accent-danger)';
+          resultText.innerHTML = '<strong>Significant riya\' risk.</strong> Many of your actions may be motivated by people\'s approval. This is a serious spiritual danger. Begin by making sincere tawbah (repentance) and commit to a 30-day "hidden good deeds" challenge where you perform acts of worship that only Allah knows about.';
+        }
+        resultText.innerHTML += '<br><br><em>Remember: The fact that you are self-assessing is itself a sign of sincerity. The one who fears riya\' is usually the one least afflicted by it.</em>';
+      });
+    })();
+
+    // =============================================
+    // INTERACTIVE MIND MAP (Expand/Collapse)
+    // =============================================
+    (function() {
+      var svg = document.getElementById('mmCh6');
+      if (!svg) return;
+
+      var data = {
+        label: 'Ch6: Intention\n& Seeking Help',
+        children: [
+          {
+            label: 'Power of\nNiyyah',
+            color: 'var(--accent-3)',
+            angle: -130,
+            children: [
+              { label: 'Actions judged\nby intentions', color: 'var(--accent-3)' },
+              { label: 'Mundane becomes\nworship', color: 'var(--accent-3)' },
+              { label: 'Foundational\nhadith', color: 'var(--accent-3)' },
+              { label: 'Spiritual outcome\ndepends on niyyah', color: 'var(--accent-3)' }
+            ]
+          },
+          {
+            label: '7 Intentions\nMethod',
+            color: 'var(--accent-2)',
+            angle: -65,
+            children: [
+              { label: 'Please Allah', color: 'var(--accent-2)' },
+              { label: 'Stack intentions\nfor more Barakah', color: 'var(--accent-2)' },
+              { label: 'Sadaqa Jariya', color: 'var(--accent-2)' },
+              { label: 'Intention\nalignment funnel', color: 'var(--accent-2)' }
+            ]
+          },
+          {
+            label: 'Istikharah\nGuidance',
+            color: 'var(--accent-3)',
+            angle: 0,
+            children: [
+              { label: '2 Rak\'ahs +\nDu\'a', color: 'var(--accent-3)' },
+              { label: 'Surrender\noutcome', color: 'var(--accent-3)' },
+              { label: 'Not about\ndreams', color: 'var(--accent-3)' },
+              { label: 'Spiritual decision-\nmaking', color: 'var(--accent-3)' }
+            ]
+          },
+          {
+            label: 'Isti\'anah\n& Du\'a',
+            color: 'var(--accent-2)',
+            angle: 65,
+            children: [
+              { label: 'Al-Fatihah\n1:5 pillars', color: 'var(--accent-2)' },
+              { label: 'Tie your camel\nthen trust', color: 'var(--accent-2)' },
+              { label: 'Daily du\'as\nfor work', color: 'var(--accent-2)' },
+              { label: 'Du\'a-Action-\nGratitude cycle', color: 'var(--accent-2)' }
+            ]
+          },
+          {
+            label: 'Purifying\nIntentions',
+            color: 'var(--accent-danger)',
+            angle: 130,
+            children: [
+              { label: 'Riya\' = hidden\nshirk', color: 'var(--accent-danger)' },
+              { label: 'Three people\nin Hellfire', color: 'var(--accent-danger)' },
+              { label: '"Would I still\ndo this?"', color: 'var(--accent-danger)' },
+              { label: 'Riya\' spectrum\n& self-check', color: 'var(--accent-danger)' }
+            ]
+          }
+        ]
+      };
+
+      var cx = 400, cy = 260;
+      var branchLen = 160, childLen = 100;
+      var expanded = {};
+      data.children.forEach(function(_, i) { expanded[i] = false; });
+
+      function toRad(deg) { return deg * Math.PI / 180; }
+
+      function svgEl(tag, attrs) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs) { if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]); }
+        return el;
+      }
+
+      function makeLine(x1, y1, x2, y2, cls) {
+        return svgEl('line', { x1:x1, y1:y1, x2:x2, y2:y2, stroke:'var(--border)', 'stroke-width':'1.5', 'class': cls || '' });
+      }
+
+      function makeTextGroup(x, y, txt, size, weight, fill) {
+        var g = svgEl('g', {});
+        var lines = txt.split('\n');
+        lines.forEach(function(line, li) {
+          var t = svgEl('text', {
+            x: x, y: y + li * 13,
+            'text-anchor': 'middle', 'font-size': size,
+            'font-weight': weight, 'font-family': 'Inter, sans-serif',
+            fill: fill, 'pointer-events': 'none'
+          });
+          t.textContent = line;
+          g.appendChild(t);
+        });
+        return g;
+      }
+
+      function render() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // Draw branches to main nodes
+        data.children.forEach(function(child, i) {
+          var angle = toRad(child.angle);
+          var nx = cx + Math.cos(angle) * branchLen;
+          var ny = cy + Math.sin(angle) * branchLen;
+          svg.appendChild(makeLine(cx, cy, nx, ny, 'mm-branch'));
+
+          // Draw child branches if expanded
+          if (expanded[i] && child.children) {
+            var childCount = child.children.length;
+            child.children.forEach(function(gc, gi) {
+              var spread = 24;
+              var baseAngle = child.angle - spread * (childCount - 1) / 2 + gi * spread;
+              var ga = toRad(baseAngle);
+              var gx = nx + Math.cos(ga) * childLen;
+              var gy = ny + Math.sin(ga) * childLen;
+              svg.appendChild(makeLine(nx, ny, gx, gy, 'mm-branch-child'));
+              var gcg = svgEl('g', { 'class': 'mm-child' });
+              gcg.appendChild(svgEl('ellipse', { cx:gx, cy:gy, rx:'56', ry:'22', fill:gc.color, opacity:'0.75' }));
+              gcg.appendChild(makeTextGroup(gx, gy - 4, gc.label, '8', '600', 'white'));
+              svg.appendChild(gcg);
+            });
+          }
+        });
+
+        // Draw centre node
+        var cg = svgEl('g', { 'class': 'mm-node', style: 'cursor:default' });
+        cg.appendChild(svgEl('ellipse', { cx:cx, cy:cy, rx:'80', ry:'38', fill:'var(--accent)', opacity:'0.9' }));
+        cg.appendChild(makeTextGroup(cx, cy - 5, data.label, '11', '700', 'white'));
+        svg.appendChild(cg);
+
+        // Draw main topic nodes
+        data.children.forEach(function(child, i) {
+          var angle = toRad(child.angle);
+          var nx = cx + Math.cos(angle) * branchLen;
+          var ny = cy + Math.sin(angle) * branchLen;
+          var g = svgEl('g', { 'class': 'mm-node' });
+          g.appendChild(svgEl('ellipse', { cx:nx, cy:ny, rx:'68', ry:'28', fill:child.color, opacity:'0.85' }));
+          g.appendChild(makeTextGroup(nx, ny - 4, child.label, '9.5', '600', 'white'));
+          // Toggle indicator
+          if (child.children) {
+            var ind = svgEl('text', {
+              x: nx + 55, y: ny + 5, 'text-anchor': 'middle',
+              'font-size': '12', 'font-weight': '800', fill: 'white', 'pointer-events': 'none'
+            });
+            ind.textContent = expanded[i] ? '\u2212' : '+';
+            g.appendChild(ind);
+          }
+          (function(idx) {
+            g.addEventListener('click', function() {
+              expanded[idx] = !expanded[idx];
+              render();
+            });
+          })(i);
+          svg.appendChild(g);
+        });
+      }
+
+      render();
+    })();
   </script>
 </body>
 </html>

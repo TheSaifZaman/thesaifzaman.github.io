@@ -15,6 +15,52 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animated diagrams */
+    .step-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin: 1.2rem 0; }
+    .step-diagram .step-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent); display:flex; align-items:center; gap:0.5rem; }
+    .step-diagram .step-controls { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .step-diagram .step-controls button { padding: 0.4rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all var(--transition); }
+    .step-diagram .step-controls button:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    .step-diagram .step-controls button:disabled { opacity: 0.35; cursor: not-allowed; }
+    .step-diagram .step-controls button:disabled:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .step-info { font-size: 0.85rem; color: var(--text-muted); padding: 0.6rem 0.8rem; background: var(--surface-2); border-radius: var(--radius-sm); margin-top: 0.6rem; min-height: 2.4rem; line-height: 1.5; }
+    .step-counter { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+    /* Interactive exercises */
+    .exercise-box { background: var(--surface); border: 2px solid var(--accent-2); border-radius: var(--radius); padding: 1.5rem; margin: 1.5rem 0; }
+    .exercise-box .exercise-title { font-weight: 700; font-size: 1rem; color: var(--accent-2); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .exercise-box .exercise-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6; }
+    .exercise-box .drop-zone { min-height: 48px; border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 0.5rem; margin: 0.3rem 0; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; transition: all var(--transition); }
+    .exercise-box .drop-zone.drag-over { border-color: var(--accent); background: rgba(220,38,38,0.05); }
+    .exercise-box .drag-item { padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: grab; user-select: none; transition: all var(--transition); }
+    .exercise-box .drag-item:active { cursor: grabbing; }
+    .exercise-box .drag-item.lsm-color { background: var(--accent-3); color: white; }
+    .exercise-box .drag-item.btree-color { background: var(--accent-2); color: white; }
+    .exercise-box .drag-item.both-color { background: var(--accent); color: white; }
+    .exercise-box .check-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; border: none; border-radius: var(--radius-sm); background: var(--accent-2); color: white; font-weight: 700; cursor: pointer; font-size: 0.88rem; transition: all var(--transition); }
+    .exercise-box .check-btn:hover { filter: brightness(1.1); }
+    .exercise-box .exercise-feedback { margin-top: 0.75rem; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; display: none; }
+    .exercise-box .exercise-feedback.correct { display: block; background: var(--success-bg); color: var(--accent-3); border: 1px solid var(--success-border); }
+    .exercise-box .exercise-feedback.incorrect { display: block; background: var(--error-bg); color: var(--accent-danger); border: 1px solid var(--error-border); }
+    .exercise-box select, .exercise-box input[type="text"] { padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: 0.85rem; font-family: inherit; }
+    .exercise-box .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.75rem 0; }
+    .exercise-box .option-btn { padding: 0.5rem; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; font-size: 0.82rem; font-weight: 500; text-align: center; transition: all var(--transition); }
+    .exercise-box .option-btn:hover { border-color: var(--accent-2); }
+    .exercise-box .option-btn.selected { border-color: var(--accent-2); background: rgba(37,99,235,0.1); }
+    .exercise-box .option-btn.correct-answer { border-color: var(--accent-3); background: var(--success-bg); }
+    .exercise-box .option-btn.wrong-answer { border-color: var(--accent-danger); background: var(--error-bg); }
+
+    /* Interactive mind map */
+    .mindmap-interactive { position: relative; }
+    .mm-children { overflow: hidden; transition: max-height 0.35s ease; }
+    .mm-children.collapsed { max-height: 0 !important; }
+    .mm-toggle-hint { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem; }
+
+    @media (max-width: 600px) {
+      .exercise-box .option-grid { grid-template-columns: 1fr; }
+      .step-diagram svg { max-height: 260px; }
+    }
   </style>
 </head>
 <body data-chapter="ch3">
@@ -50,62 +96,172 @@
       <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
     </div>
 
-    <!-- TAB: Lessons -->
+    <!-- ============================================================ -->
+    <!-- TAB: Lessons                                                  -->
+    <!-- ============================================================ -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- ==================== LESSON 1 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>Log-Structured Storage</h2></div>
         <p>The simplest possible database: two bash functions. <code>db_set key value</code> appends a key-value pair to the end of a file. <code>db_get key</code> greps for the last occurrence of the key. Writes are O(1) (just append), but reads are O(n) (scan the whole file). To speed up reads, we need an <strong>index</strong>.</p>
         <p><strong>Hash indexes (Bitcask):</strong> Keep an in-memory hash map where every key maps to a byte offset in the data file pointing to the most recent value. Writes are still fast (append + update hash map). Reads are fast (one disk seek). Limitation: all keys must fit in memory. Works well when you have many writes per key but a manageable number of distinct keys.</p>
         <p>To avoid running out of disk space, break the log into <strong>segments</strong>. When a segment reaches a certain size, close it and start a new one. Then run <strong>compaction</strong>: throw away duplicate keys in the log, keeping only the most recent update for each key. Compacted segments can be merged together.</p>
+
+        <!-- SVG: Hash Index / Bitcask -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hashtag"></i> Hash Index (Bitcask Model)</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs><marker id="arr-h1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+            <!-- In-memory hash map -->
+            <rect x="20" y="10" width="200" height="170" rx="12" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="120" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-2)">In-Memory Hash Map</text>
+            <rect x="35" y="42" width="170" height="24" rx="4" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="42" y="58" font-family="JetBrains Mono" font-size="9" fill="var(--text)">"dog" -> byte 0</text>
+            <rect x="35" y="70" width="170" height="24" rx="4" fill="var(--accent-2)" opacity="0.10"/>
+            <text x="42" y="86" font-family="JetBrains Mono" font-size="9" fill="var(--text)">"cat" -> byte 64</text>
+            <rect x="35" y="98" width="170" height="24" rx="4" fill="var(--accent-2)" opacity="0.15"/>
+            <text x="42" y="114" font-family="JetBrains Mono" font-size="9" fill="var(--text)">"dog" -> byte 128</text>
+            <text x="120" y="148" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Points to most recent</text>
+            <text x="120" y="162" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">value per key</text>
+
+            <!-- Arrow -->
+            <line x1="220" y1="100" x2="278" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr-h1)"/>
+            <text x="250" y="90" font-family="Inter" font-size="8" fill="var(--accent)" font-weight="600">seek</text>
+
+            <!-- Append-only log on disk -->
+            <rect x="290" y="10" width="310" height="170" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="445" y="32" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Append-Only Log (Disk)</text>
+            <rect x="305" y="44" width="280" height="20" rx="4" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="312" y="58" font-family="JetBrains Mono" font-size="8" fill="var(--text)">0: dog=Buddy | 32: cat=Whiskers</text>
+            <rect x="305" y="68" width="280" height="20" rx="4" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="312" y="82" font-family="JetBrains Mono" font-size="8" fill="var(--text)">64: cat=Luna  | 96: bird=Tweety</text>
+            <rect x="305" y="92" width="280" height="20" rx="4" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="312" y="106" font-family="JetBrains Mono" font-size="8" fill="var(--accent)" font-weight="600">128: dog=Rex  (latest!)</text>
+            <rect x="305" y="116" width="280" height="20" rx="4" fill="var(--accent-3)" opacity="0.06" stroke="var(--border)" stroke-dasharray="3 2"/>
+            <text x="445" y="130" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">... more appends ...</text>
+            <text x="445" y="162" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Only appends, never overwrites</text>
+          </svg>
+          <p class="viz-caption">Hash index: an in-memory hash map maps each key to a byte offset in an append-only log file on disk. O(1) writes (append) and O(1) reads (one seek).</p>
+        </div>
+
         <p><strong>SSTables (Sorted String Tables):</strong> Like the segment files above, but the key-value pairs are <em>sorted by key</em>. Merging segments is efficient (like merge sort). You don't need to keep all keys in memory -- a sparse in-memory index works because you can scan between two known positions to find intermediate keys.</p>
+
+        <!-- SVG: SSTable merging -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sort-amount-down"></i> SSTable Merge (Sorted Segments)</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <defs><marker id="arr-ss" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker></defs>
+            <!-- Segment 1 -->
+            <rect x="20" y="20" width="240" height="55" rx="8" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="140" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">Segment 1 (sorted)</text>
+            <text x="35" y="58" font-family="JetBrains Mono" font-size="9" fill="var(--text)">apple:3  cat:7  dog:2  fish:9</text>
+            <!-- Segment 2 -->
+            <rect x="20" y="90" width="240" height="55" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="140" y="108" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Segment 2 (sorted)</text>
+            <text x="35" y="128" font-family="JetBrains Mono" font-size="9" fill="var(--text)">bird:4  cat:1  egg:5  goat:6</text>
+            <!-- Arrow -->
+            <line x1="270" y1="95" x2="330" y2="95" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr-ss)"/>
+            <text x="300" y="85" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">merge</text>
+            <!-- Merged -->
+            <rect x="340" y="30" width="265" height="130" rx="10" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="472" y="52" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Merged Segment (sorted)</text>
+            <text x="355" y="74" font-family="JetBrains Mono" font-size="9" fill="var(--text)">apple:3  bird:4  cat:1</text>
+            <text x="355" y="92" font-family="JetBrains Mono" font-size="9" fill="var(--text)">dog:2    egg:5   fish:9</text>
+            <text x="355" y="110" font-family="JetBrains Mono" font-size="9" fill="var(--text)">goat:6</text>
+            <text x="472" y="145" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">cat:1 wins (newer segment)</text>
+            <!-- Note -->
+            <text x="310" y="200" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Like merge sort: walk both segments in order, pick smaller key, prefer newer for duplicates</text>
+          </svg>
+          <p class="viz-caption">SSTable merge: two sorted segments are merged like merge sort. Duplicate keys keep only the newer value. Output is a single sorted segment.</p>
+        </div>
+
         <p><strong>LSM-Trees (Log-Structured Merge-Trees):</strong> Writes go to an in-memory balanced tree (the <strong>memtable</strong>, typically a red-black tree or AVL tree). When the memtable exceeds a threshold, it's flushed to disk as a new SSTable segment. Reads check the memtable first, then each SSTable on disk from newest to oldest. Background compaction periodically merges and compacts SSTables. <strong>Bloom filters</strong> are used to avoid pointless disk reads for keys that don't exist.</p>
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-stream"></i> LSM-Tree Write Path</div>
           <svg viewBox="0 0 620 220" width="100%" height="220">
             <defs><marker id="arr3a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
-
-            <!-- Write -->
             <rect x="20" y="80" width="80" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
             <text x="60" y="105" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="var(--text)">Write</text>
-
-            <!-- Memtable -->
             <rect x="150" y="60" width="120" height="80" rx="12" fill="var(--accent)" opacity="0.9"/>
             <text x="210" y="90" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Memtable</text>
             <text x="210" y="108" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">In-memory</text>
             <text x="210" y="122" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">sorted tree</text>
             <line x1="100" y1="100" x2="148" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3a)"/>
-
-            <!-- Flush arrow -->
             <text x="310" y="95" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">flush when full</text>
             <line x1="270" y1="100" x2="340" y2="100" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr3a)"/>
-
-            <!-- SSTables on disk -->
             <rect x="350" y="30" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="400" y="52" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
             <rect x="350" y="75" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.7"/>
             <text x="400" y="97" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
             <rect x="350" y="120" width="100" height="35" rx="8" fill="var(--accent-2)" opacity="0.55"/>
             <text x="400" y="142" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable L0</text>
-
-            <!-- Compaction -->
             <text x="500" y="95" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">compact</text>
             <line x1="450" y1="92" x2="510" y2="92" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr3a)"/>
-
             <rect x="520" y="60" width="90" height="70" rx="8" fill="var(--accent-3)" opacity="0.85"/>
             <text x="565" y="88" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Merged</text>
             <text x="565" y="104" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">SSTable</text>
             <text x="565" y="120" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">L1+</text>
-
-            <!-- Disk label -->
             <rect x="340" y="175" width="280" height="30" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 3"/>
             <text x="480" y="195" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--text-muted)">On Disk (sorted by key)</text>
           </svg>
           <p class="viz-caption">Writes go to the in-memory memtable (sorted tree). When full, it's flushed as an SSTable. Background compaction merges SSTables into larger sorted files.</p>
         </div>
+
+        <!-- SVG: Bloom Filter -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-filter"></i> Bloom Filter: Avoid Pointless Disk Reads</div>
+          <svg viewBox="0 0 620 170" width="100%" height="170">
+            <defs><marker id="arr-bf" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
+            <!-- Query -->
+            <rect x="15" y="55" width="95" height="40" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="62" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="var(--text)">GET "xyz"</text>
+            <text x="62" y="86" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">key lookup</text>
+            <line x1="110" y1="75" x2="155" y2="75" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr-bf)"/>
+            <!-- Bloom filter bit array -->
+            <rect x="160" y="30" width="200" height="90" rx="10" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="260" y="50" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Bloom Filter</text>
+            <!-- Bit array visualization -->
+            <g transform="translate(175,60)">
+              <rect x="0" y="0" width="18" height="18" rx="3" fill="var(--accent-3)" opacity="0.7"/><text x="9" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">1</text>
+              <rect x="22" y="0" width="18" height="18" rx="3" fill="var(--surface)" stroke="var(--border)"/><text x="31" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0</text>
+              <rect x="44" y="0" width="18" height="18" rx="3" fill="var(--accent-3)" opacity="0.7"/><text x="53" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">1</text>
+              <rect x="66" y="0" width="18" height="18" rx="3" fill="var(--surface)" stroke="var(--border)"/><text x="75" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0</text>
+              <rect x="88" y="0" width="18" height="18" rx="3" fill="var(--surface)" stroke="var(--border)"/><text x="97" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0</text>
+              <rect x="110" y="0" width="18" height="18" rx="3" fill="var(--accent-3)" opacity="0.7"/><text x="119" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">1</text>
+              <rect x="132" y="0" width="18" height="18" rx="3" fill="var(--surface)" stroke="var(--border)"/><text x="141" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0</text>
+              <rect x="154" y="0" width="18" height="18" rx="3" fill="var(--accent-3)" opacity="0.7"/><text x="163" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">1</text>
+            </g>
+            <text x="260" y="100" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">hash("xyz") -> bits 2,5 -> bit 5 is 0</text>
+            <!-- Result paths -->
+            <line x1="360" y1="55" x2="410" y2="35" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-bf)"/>
+            <line x1="360" y1="95" x2="410" y2="115" stroke="var(--accent-danger)" stroke-width="1.5" marker-end="url(#arr-bf)"/>
+            <!-- Definitely not -->
+            <rect x="415" y="90" width="190" height="35" rx="8" fill="var(--error-bg)" stroke="var(--error-border)" stroke-width="1"/>
+            <text x="510" y="112" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-danger)">Definitely NOT in set</text>
+            <text x="510" y="138" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Skip disk read entirely</text>
+            <!-- Maybe yes -->
+            <rect x="415" y="15" width="190" height="35" rx="8" fill="var(--success-bg)" stroke="var(--success-border)" stroke-width="1"/>
+            <text x="510" y="37" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Maybe in set (check disk)</text>
+          </svg>
+          <p class="viz-caption">Bloom filter: a probabilistic data structure. If any hash bit is 0, the key definitely does not exist (skip the disk). If all bits are 1, the key might exist (check SSTables).</p>
+        </div>
+
+        <!-- STEP-THROUGH: LSM-Tree Compaction -->
+        <div class="step-diagram" id="lsmCompactionDiagram">
+          <div class="step-title"><i class="fas fa-play-circle"></i> Step-Through: LSM-Tree Compaction</div>
+          <svg id="lsmCompSvg" viewBox="0 0 620 280" width="100%" height="280"></svg>
+          <div class="step-controls">
+            <button id="lsmPrev" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-counter" id="lsmCounter">Step 1 / 6</span>
+            <button id="lsmNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="step-info" id="lsmStepInfo">Initial state: writes arrive and go into the in-memory memtable (a sorted tree structure).</div>
+        </div>
       </div>
 
+      <!-- ==================== LESSON 2 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>B-Trees</h2></div>
         <p>B-trees are the most widely used indexing structure, standard in almost all relational databases. Like SSTables, B-trees keep key-value pairs sorted by key, enabling efficient lookups and range queries. But the design is fundamentally different.</p>
@@ -119,106 +275,203 @@
           <div class="viz-title"><i class="fas fa-sitemap"></i> B-Tree Structure</div>
           <svg viewBox="0 0 620 220" width="100%" height="220">
             <defs><marker id="arr3b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
-
-            <!-- Root -->
             <rect x="230" y="15" width="160" height="40" rx="8" fill="var(--accent)" opacity="0.9"/>
             <text x="260" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">100</text>
             <text x="310" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">250</text>
             <text x="360" y="40" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="white">400</text>
             <text x="310" y="12" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)" font-weight="600">Root</text>
-
-            <!-- Internal nodes -->
             <rect x="50" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="80" y="112" font-family="JetBrains Mono" font-size="9" fill="white">30</text>
             <text x="115" y="112" font-family="JetBrains Mono" font-size="9" fill="white">70</text>
             <text x="150" y="112" font-family="JetBrains Mono" font-size="9" fill="white">90</text>
-
             <rect x="245" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="275" y="112" font-family="JetBrains Mono" font-size="9" fill="white">130</text>
             <text x="315" y="112" font-family="JetBrains Mono" font-size="9" fill="white">180</text>
             <text x="350" y="112" font-family="JetBrains Mono" font-size="9" fill="white">220</text>
-
             <rect x="440" y="90" width="130" height="35" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="470" y="112" font-family="JetBrains Mono" font-size="9" fill="white">280</text>
             <text x="510" y="112" font-family="JetBrains Mono" font-size="9" fill="white">330</text>
             <text x="545" y="112" font-family="JetBrains Mono" font-size="9" fill="white">380</text>
-
-            <!-- Lines root to internal -->
             <line x1="260" y1="55" x2="115" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
             <line x1="310" y1="55" x2="310" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
             <line x1="360" y1="55" x2="505" y2="88" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr3b)"/>
-
-            <!-- Leaf nodes -->
             <rect x="20" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
             <text x="55" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">10,20</text>
             <text x="55" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
-
             <rect x="100" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
             <text x="135" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">35,50</text>
             <text x="135" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
-
             <rect x="180" y="160" width="70" height="40" rx="6" fill="var(--accent-3)" opacity="0.75"/>
             <text x="215" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">75,85</text>
             <text x="215" y="192" text-anchor="middle" font-family="Inter" font-size="7" fill="rgba(255,255,255,0.7)">values...</text>
-
             <line x1="70" y1="125" x2="55" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
             <line x1="115" y1="125" x2="135" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
             <line x1="155" y1="125" x2="215" y2="158" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr3b)"/>
-
             <text x="460" y="180" font-family="Inter" font-size="9" fill="var(--text-muted)">Branching factor</text>
             <text x="460" y="195" font-family="Inter" font-size="9" fill="var(--text-muted)">= refs per page</text>
             <text x="460" y="210" font-family="Inter" font-size="9" fill="var(--accent)" font-weight="600">(typically ~500)</text>
           </svg>
           <p class="viz-caption">B-tree pages: root references internal pages, which reference leaf pages holding actual values. Balanced -- O(log n) depth.</p>
         </div>
+
+        <!-- SVG: Write-Ahead Log -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shield-alt"></i> Write-Ahead Log (WAL) for Crash Recovery</div>
+          <svg viewBox="0 0 620 160" width="100%" height="160">
+            <defs><marker id="arr-wal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker></defs>
+            <!-- Write request -->
+            <rect x="15" y="50" width="90" height="45" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="60" y="70" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">INSERT</text>
+            <text x="60" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">key=42</text>
+            <!-- Step 1: WAL -->
+            <line x1="105" y1="72" x2="155" y2="72" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr-wal)"/>
+            <text x="130" y="64" font-family="Inter" font-size="8" font-weight="700" fill="var(--accent)">1st</text>
+            <rect x="160" y="35" width="170" height="75" rx="10" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="245" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Write-Ahead Log</text>
+            <text x="175" y="74" font-family="JetBrains Mono" font-size="8" fill="var(--text)">txn#1: set page5[2]=42</text>
+            <text x="175" y="90" font-family="JetBrains Mono" font-size="8" fill="var(--text)">txn#1: split page5</text>
+            <text x="245" y="104" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">append-only, sequential</text>
+            <!-- Step 2: B-tree -->
+            <line x1="330" y1="72" x2="385" y2="72" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr-wal)"/>
+            <text x="358" y="64" font-family="Inter" font-size="8" font-weight="700" fill="var(--accent-2)">2nd</text>
+            <rect x="390" y="35" width="120" height="75" rx="10" fill="var(--accent-2)" opacity="0.1" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="450" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">B-Tree Pages</text>
+            <text x="450" y="74" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">Update in-place</text>
+            <text x="450" y="90" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text)">(overwrite page)</text>
+            <!-- Crash note -->
+            <rect x="530" y="42" width="80" height="60" rx="8" fill="var(--error-bg)" stroke="var(--error-border)" stroke-width="1"/>
+            <text x="570" y="62" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-danger)">Crash?</text>
+            <text x="570" y="78" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Replay WAL</text>
+            <text x="570" y="90" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">to recover</text>
+            <!-- Caption -->
+            <text x="310" y="145" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Log changes BEFORE applying them. If crash occurs, replay the log to restore consistency.</text>
+          </svg>
+          <p class="viz-caption">WAL: every modification is first written to an append-only log, then applied to B-tree pages. On crash, replay the WAL.</p>
+        </div>
+
+        <!-- STEP-THROUGH: B-Tree Page Split -->
+        <div class="step-diagram" id="btreeSplitDiagram">
+          <div class="step-title"><i class="fas fa-play-circle"></i> Step-Through: B-Tree Page Split</div>
+          <svg id="btreeSplitSvg" viewBox="0 0 620 260" width="100%" height="260"></svg>
+          <div class="step-controls">
+            <button id="btreePrev" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-counter" id="btreeCounter">Step 1 / 5</span>
+            <button id="btreeNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="step-info" id="btreeStepInfo">Starting state: a leaf page [10, 20, 30, 40] is full (max 4 keys). We want to insert key 25.</div>
+        </div>
       </div>
 
+      <!-- ==================== LESSON 3 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Comparing B-Trees and LSM-Trees</h2></div>
         <p>Both B-trees and LSM-trees are widely used, and each has trade-offs.</p>
         <p><strong>LSM-tree advantages:</strong> Writes are sequential (append-only), which is much faster than random writes for both HDDs and SSDs. LSM-trees have lower <strong>write amplification</strong> (the ratio of bytes written to disk vs bytes written by the application) compared to B-trees, which rewrite entire pages. LSM-trees can be compressed better because there's no page fragmentation -- compaction produces tightly packed files. This means LSM-trees often use less disk space for the same dataset.</p>
         <p><strong>B-tree advantages:</strong> Each key exists in exactly <strong>one place</strong> in the index. This makes B-trees attractive for transactional workloads needing strong isolation via locks -- you can lock a specific key range at the tree level. B-trees offer more <strong>predictable performance</strong> because there's no background compaction competing for disk I/O.</p>
         <p><strong>LSM-tree downsides:</strong> Compaction can interfere with read/write performance, especially at high percentiles. If the rate of incoming writes consistently outpaces compaction, unmerged segments pile up on disk, slowing reads (which must check more files) and eventually running out of disk space. You need careful monitoring.</p>
+
+        <!-- SVG: Comparison Diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale"></i> B-Tree vs LSM-Tree Trade-offs</div>
+          <svg viewBox="0 0 620 250" width="100%" height="250">
+            <!-- LSM side -->
+            <rect x="15" y="10" width="285" height="230" rx="12" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="157" y="35" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="var(--accent-3)">LSM-Tree</text>
+            <text x="30" y="62" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="42" y="62" font-family="Inter" font-size="9" fill="var(--text)">Sequential writes (fast HDD/SSD)</text>
+            <text x="30" y="82" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="42" y="82" font-family="Inter" font-size="9" fill="var(--text)">Lower write amplification</text>
+            <text x="30" y="102" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="42" y="102" font-family="Inter" font-size="9" fill="var(--text)">Better compression (no fragmentation)</text>
+            <text x="30" y="122" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="42" y="122" font-family="Inter" font-size="9" fill="var(--text)">Higher write throughput</text>
+            <text x="30" y="152" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="42" y="152" font-family="Inter" font-size="9" fill="var(--text)">Compaction competes with I/O</text>
+            <text x="30" y="172" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="42" y="172" font-family="Inter" font-size="9" fill="var(--text)">Key may exist in multiple segments</text>
+            <text x="30" y="192" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="42" y="192" font-family="Inter" font-size="9" fill="var(--text)">Unpredictable latency spikes</text>
+            <text x="157" y="225" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--text-muted)">LevelDB, RocksDB, Cassandra, HBase</text>
+            <!-- B-Tree side -->
+            <rect x="320" y="10" width="285" height="230" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="462" y="35" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="var(--accent-2)">B-Tree</text>
+            <text x="335" y="62" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="347" y="62" font-family="Inter" font-size="9" fill="var(--text)">Predictable read/write latency</text>
+            <text x="335" y="82" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="347" y="82" font-family="Inter" font-size="9" fill="var(--text)">Each key in exactly ONE place</text>
+            <text x="335" y="102" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="347" y="102" font-family="Inter" font-size="9" fill="var(--text)">Good for transactional locks</text>
+            <text x="335" y="122" font-family="Inter" font-size="9" fill="var(--accent-3)">+</text><text x="347" y="122" font-family="Inter" font-size="9" fill="var(--text)">No background compaction</text>
+            <text x="335" y="152" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="347" y="152" font-family="Inter" font-size="9" fill="var(--text)">Random writes (slower on HDD)</text>
+            <text x="335" y="172" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="347" y="172" font-family="Inter" font-size="9" fill="var(--text)">Higher write amplification</text>
+            <text x="335" y="192" font-family="Inter" font-size="9" fill="var(--accent-danger)">-</text><text x="347" y="192" font-family="Inter" font-size="9" fill="var(--text)">Page fragmentation wastes space</text>
+            <text x="462" y="225" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--text-muted)">PostgreSQL, MySQL/InnoDB, Oracle, SQL Server</text>
+          </svg>
+          <p class="viz-caption">Both structures have valid use cases. LSM-trees excel at write-heavy workloads; B-trees offer predictable latency and simpler transactional semantics.</p>
+        </div>
       </div>
 
+      <!-- ==================== LESSON 4 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>OLTP vs OLAP</h2></div>
         <p><strong>OLTP (Online Transaction Processing):</strong> The access pattern of most user-facing applications. Many small transactions, each reading or writing a small number of records based on a key. Examples: inserting a sale, looking up a user profile, updating an inventory count. High volume, low latency, user-interactive.</p>
         <p><strong>OLAP (Online Analytical Processing):</strong> Business analysts run queries that scan huge numbers of records, aggregating data to compute statistics. Examples: "What was total revenue per store in January?" These queries are few but each one touches millions of rows. Read-heavy, not user-interactive.</p>
         <p><strong>Data warehousing:</strong> Running OLAP queries directly on the OLTP database would harm its performance. The solution: <strong>ETL (Extract-Transform-Load)</strong> -- extract data from OLTP databases, transform it into an analysis-friendly schema, and load it into a separate <strong>data warehouse</strong> optimized for analytics. The warehouse can be indexed and tuned differently from the OLTP system.</p>
+
+        <!-- SVG: ETL Pipeline -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exchange-alt"></i> ETL: OLTP to Data Warehouse</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <defs><marker id="arr-etl" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent)"/></marker></defs>
+            <!-- OLTP sources -->
+            <rect x="15" y="20" width="120" height="40" rx="8" fill="var(--accent-2)" opacity="0.85"/>
+            <text x="75" y="44" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Orders DB</text>
+            <rect x="15" y="70" width="120" height="40" rx="8" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="75" y="94" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Users DB</text>
+            <rect x="15" y="120" width="120" height="40" rx="8" fill="var(--accent-2)" opacity="0.55"/>
+            <text x="75" y="144" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Inventory DB</text>
+            <text x="75" y="13" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-2)">OLTP Sources</text>
+            <!-- Extract -->
+            <line x1="135" y1="45" x2="195" y2="88" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#arr-etl)"/>
+            <line x1="135" y1="90" x2="195" y2="90" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#arr-etl)"/>
+            <line x1="135" y1="140" x2="195" y2="92" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#arr-etl)"/>
+            <!-- ETL box -->
+            <rect x="200" y="55" width="70" height="70" rx="12" fill="var(--accent)" opacity="0.9"/>
+            <text x="235" y="82" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white">E</text>
+            <text x="235" y="96" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white">T</text>
+            <text x="235" y="110" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white">L</text>
+            <!-- Transform -->
+            <line x1="270" y1="90" x2="340" y2="90" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr-etl)"/>
+            <text x="305" y="82" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent)">Transform</text>
+            <!-- Warehouse -->
+            <rect x="345" y="45" width="170" height="90" rx="14" fill="var(--accent-3)" opacity="0.85"/>
+            <text x="430" y="75" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="white">Data Warehouse</text>
+            <text x="430" y="95" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Star/Snowflake Schema</text>
+            <text x="430" y="112" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">Column-oriented storage</text>
+            <!-- Analysts -->
+            <line x1="515" y1="90" x2="548" y2="90" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arr-etl)"/>
+            <rect x="553" y="60" width="60" height="55" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="583" y="83" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--text)">Analysts</text>
+            <text x="583" y="100" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">OLAP</text>
+            <!-- Caption -->
+            <text x="310" y="172" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Extract from OLTP databases, Transform into analytics schema, Load into warehouse</text>
+          </svg>
+          <p class="viz-caption">ETL pipeline: data is extracted from OLTP sources, transformed into an analytics-friendly schema, and loaded into a data warehouse for OLAP queries.</p>
+        </div>
+
         <p><strong>Star schema</strong> (dimensional modeling): A central <strong>fact table</strong> records events (e.g., each sale). Each row has foreign keys to <strong>dimension tables</strong> -- who (customer), what (product), where (store), when (date), how (promotion). Dimension tables are usually much smaller than the fact table. <strong>Snowflake schema:</strong> Like star, but dimensions are further normalized into sub-dimensions (e.g., brand and category tables referenced by the product dimension).</p>
 
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-star"></i> Star Schema</div>
           <svg viewBox="0 0 620 260" width="100%" height="260">
             <defs><marker id="arr3c" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
-
-            <!-- Fact table (center) -->
             <rect x="225" y="85" width="170" height="90" rx="12" fill="var(--accent)" opacity="0.9"/>
             <text x="310" y="115" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="white">fact_sales</text>
             <text x="310" y="135" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">date_key, product_key,</text>
             <text x="310" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">store_key, customer_key,</text>
             <text x="310" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.8)">quantity, net_price, ...</text>
-
-            <!-- Dimension: Date -->
             <rect x="30" y="15" width="120" height="50" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="90" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_date</text>
             <text x="90" y="54" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">year, month, day...</text>
             <line x1="150" y1="50" x2="225" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
-
-            <!-- Dimension: Product -->
             <rect x="470" y="15" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.85"/>
             <text x="530" y="38" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_product</text>
             <text x="530" y="54" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, brand, category</text>
             <line x1="470" y1="50" x2="395" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
-
-            <!-- Dimension: Store -->
             <rect x="30" y="195" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.85"/>
             <text x="90" y="218" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_store</text>
             <text x="90" y="234" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, city, state</text>
             <line x1="150" y1="210" x2="225" y2="160" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr3c)"/>
-
-            <!-- Dimension: Customer -->
             <rect x="470" y="195" width="120" height="50" rx="8" fill="var(--accent-2)" opacity="0.85"/>
             <text x="530" y="218" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="white">dim_customer</text>
             <text x="530" y="234" text-anchor="middle" font-family="Inter" font-size="8" fill="rgba(255,255,255,0.8)">name, age, segment</text>
@@ -228,6 +481,7 @@
         </div>
       </div>
 
+      <!-- ==================== LESSON 5 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Column-Oriented Storage</h2></div>
         <p>Fact tables can grow to trillions of rows with hundreds of columns. A typical OLAP query accesses only 4-5 columns but across millions of rows. In a <strong>row-oriented</strong> store, the database must read entire rows from disk, loading all 100+ columns even if only 3 are needed -- an enormous waste of I/O.</p>
@@ -238,62 +492,161 @@
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-columns"></i> Row-Oriented vs Column-Oriented Layout</div>
           <svg viewBox="0 0 620 200" width="100%" height="200">
-            <!-- Row store -->
             <rect x="10" y="10" width="290" height="180" rx="12" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
             <text x="155" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Row-Oriented</text>
-
             <rect x="30" y="50" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.15"/>
             <text x="40" y="65" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan1 | prod=42 | store=7 | qty=3 | $29</text>
             <rect x="30" y="76" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.10"/>
             <text x="40" y="91" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan1 | prod=55 | store=3 | qty=1 | $15</text>
             <rect x="30" y="102" width="250" height="22" rx="4" fill="var(--accent)" opacity="0.15"/>
             <text x="40" y="117" font-family="JetBrains Mono" font-size="8" fill="var(--text)">date=Jan2 | prod=42 | store=7 | qty=5 | $48</text>
-
             <text x="155" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Must read ALL columns</text>
             <text x="155" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">even if query needs only 2</text>
-
-            <!-- Column store -->
             <rect x="320" y="10" width="290" height="180" rx="12" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
             <text x="465" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-2)">Column-Oriented</text>
-
             <rect x="335" y="50" width="80" height="75" rx="6" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
             <text x="375" y="68" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-2)">product_id</text>
             <text x="375" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">42</text>
             <text x="375" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">55</text>
             <text x="375" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">42</text>
-
             <rect x="425" y="50" width="60" height="75" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="455" y="68" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">quantity</text>
             <text x="455" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">3</text>
             <text x="455" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">1</text>
             <text x="455" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text)">5</text>
-
             <rect x="495" y="50" width="60" height="75" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
             <text x="525" y="68" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">price</text>
             <text x="525" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">29</text>
             <text x="525" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">15</text>
             <text x="525" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">48</text>
-
             <text x="465" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)" font-weight="600">Read only needed columns!</text>
             <text x="465" y="165" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">+ compresses well</text>
           </svg>
           <p class="viz-caption">Row store reads entire rows. Column store reads only the columns the query needs, reducing disk I/O dramatically for analytical queries.</p>
         </div>
+
+        <!-- SVG: Bitmap encoding -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-th"></i> Bitmap Encoding & Run-Length Compression</div>
+          <svg viewBox="0 0 620 210" width="100%" height="210">
+            <!-- Column values -->
+            <rect x="15" y="15" width="100" height="180" rx="8" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="65" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">product_id</text>
+            <text x="65" y="58" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">42</text>
+            <text x="65" y="76" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">55</text>
+            <text x="65" y="94" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">42</text>
+            <text x="65" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">42</text>
+            <text x="65" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">55</text>
+            <text x="65" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">99</text>
+            <text x="65" y="166" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">42</text>
+            <text x="65" y="184" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">99</text>
+            <!-- Arrow -->
+            <text x="138" y="105" font-family="Inter" font-size="10" fill="var(--accent)" font-weight="700">-></text>
+            <!-- Bitmaps -->
+            <rect x="165" y="15" width="200" height="180" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="265" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Bitmaps</text>
+            <text x="195" y="55" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">prod=42:</text>
+            <text x="250" y="55" font-family="JetBrains Mono" font-size="9" fill="var(--text)">1 0 1 1 0 0 1 0</text>
+            <text x="195" y="75" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-2)">prod=55:</text>
+            <text x="250" y="75" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0 1 0 0 1 0 0 0</text>
+            <text x="195" y="95" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent)">prod=99:</text>
+            <text x="250" y="95" font-family="JetBrains Mono" font-size="9" fill="var(--text)">0 0 0 0 0 1 0 1</text>
+            <text x="265" y="125" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">1 bit per row per distinct value</text>
+            <text x="265" y="142" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">WHERE prod=42 AND store=7?</text>
+            <text x="265" y="159" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">Bitwise AND the two bitmaps!</text>
+            <text x="265" y="182" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Run-length encoded: "1x1, 1x0, 2x1, 3x0, 1x1"</text>
+            <!-- Arrow to compression -->
+            <text x="388" y="75" font-family="Inter" font-size="10" fill="var(--accent)" font-weight="700">-></text>
+            <!-- Compressed -->
+            <rect x="410" y="15" width="195" height="110" rx="8" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="507" y="35" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Run-Length Encoded</text>
+            <text x="425" y="58" font-family="JetBrains Mono" font-size="8" fill="var(--text)">prod=42: (1,1)(1,0)(2,1)</text>
+            <text x="425" y="76" font-family="JetBrains Mono" font-size="8" fill="var(--text)">          (3,0)(1,1)(1,0)</text>
+            <text x="507" y="100" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Long runs of 0s compress to</text>
+            <text x="507" y="115" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">a single (count, 0) pair</text>
+          </svg>
+          <p class="viz-caption">Bitmap encoding: one bitmap per distinct value. Queries use bitwise AND/OR on bitmaps. Run-length encoding compresses long runs of 0s efficiently.</p>
+        </div>
       </div>
 
+      <!-- ==================== LESSON 6 ==================== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">6</div><h2>Materialized Views</h2></div>
         <p>A <strong>materialized view</strong> is a precomputed cache of query results stored on disk. Unlike a standard (virtual) view which re-executes the query every time, a materialized view is an actual copy of the query results. When underlying data changes, the materialized view needs to be updated (either eagerly on write or lazily/periodically).</p>
         <p><strong>Data cubes (OLAP cubes):</strong> A special case of materialized view. Imagine a 2D grid with one axis being product and the other being date. Each cell contains an aggregate (e.g., total revenue for that product on that date). You can roll up by summing across a dimension -- sum all products to get revenue per date, or sum all dates to get revenue per product. With more dimensions (store, customer segment, promotion), you get an n-dimensional hypercube.</p>
         <p>The trade-off: data cubes make <strong>certain aggregation queries very fast</strong> (just look up the precomputed cell). But they are <strong>inflexible</strong> -- you can only query the exact dimensions and aggregates the cube was built for. Ad-hoc queries that don't fit the cube's structure must still go to the raw data. Most data warehouses keep the raw data and use cubes/materialized views as a performance optimization for known query patterns.</p>
+
+        <!-- SVG: Data Cube -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-cube"></i> Data Cube (OLAP Cube)</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <!-- 3D cube effect -->
+            <!-- Front face -->
+            <polygon points="120,60 350,60 350,180 120,180" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <!-- Top face -->
+            <polygon points="120,60 200,20 430,20 350,60" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
+            <!-- Right face -->
+            <polygon points="350,60 430,20 430,140 350,180" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1"/>
+            <!-- Grid on front -->
+            <line x1="197" y1="60" x2="197" y2="180" stroke="var(--accent-2)" stroke-width="0.5" opacity="0.4"/>
+            <line x1="273" y1="60" x2="273" y2="180" stroke="var(--accent-2)" stroke-width="0.5" opacity="0.4"/>
+            <line x1="120" y1="100" x2="350" y2="100" stroke="var(--accent-2)" stroke-width="0.5" opacity="0.4"/>
+            <line x1="120" y1="140" x2="350" y2="140" stroke="var(--accent-2)" stroke-width="0.5" opacity="0.4"/>
+            <!-- Labels -->
+            <text x="235" y="195" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)">Products -></text>
+            <text x="100" y="125" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-2)" transform="rotate(-90, 100, 125)">Dates -></text>
+            <text x="420" y="15" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Stores -></text>
+            <!-- Values in cells -->
+            <text x="158" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$120</text>
+            <text x="235" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$85</text>
+            <text x="311" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$200</text>
+            <text x="158" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$95</text>
+            <text x="235" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$140</text>
+            <text x="311" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text)">$60</text>
+            <!-- Roll-up annotation -->
+            <rect x="460" y="50" width="150" height="100" rx="8" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="535" y="72" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-3)">Roll-up</text>
+            <text x="535" y="92" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">Sum across products</text>
+            <text x="535" y="106" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">= revenue per date</text>
+            <text x="535" y="124" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">Sum across dates</text>
+            <text x="535" y="138" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text)">= revenue per product</text>
+          </svg>
+          <p class="viz-caption">Data cube: precomputed aggregates at every dimension intersection. Fast lookups but inflexible -- only works for predefined dimensions.</p>
+        </div>
+
         <div class="insight-box">
           <strong>Key insight:</strong> Storage engines are optimized for different access patterns. OLTP (B-trees, LSM-trees) optimizes for reading/writing individual records by key. OLAP (column storage, compression, materialized views) optimizes for scanning large numbers of rows and aggregating. Understanding these internals helps you choose the right database for your workload.
         </div>
       </div>
 
+      <!-- ==================== INTERACTIVE EXERCISES ==================== -->
+      <div class="lesson">
+        <div class="lesson-header"><div class="lesson-number"><i class="fas fa-dumbbell"></i></div><h2>Interactive Exercises</h2></div>
+
+        <!-- Exercise 1: Classify the property -->
+        <div class="exercise-box" id="exercise1">
+          <div class="exercise-title"><i class="fas fa-tags"></i> Exercise 1: Classify B-Tree vs LSM-Tree Properties</div>
+          <div class="exercise-desc">For each property below, select whether it applies to <strong>B-Trees</strong>, <strong>LSM-Trees</strong>, or <strong>Both</strong>.</div>
+          <div id="classifyItems"></div>
+          <button class="check-btn" id="checkExercise1"><i class="fas fa-check"></i> Check Answers</button>
+          <div class="exercise-feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Exercise 2: LSM Read Path ordering -->
+        <div class="exercise-box" id="exercise2">
+          <div class="exercise-title"><i class="fas fa-sort-numeric-down"></i> Exercise 2: Order the LSM-Tree Read Path</div>
+          <div class="exercise-desc">When reading a key from an LSM-tree, the system checks multiple locations. Click the steps in the correct order (1st to 5th):</div>
+          <div class="option-grid" id="readPathGrid"></div>
+          <button class="check-btn" id="checkExercise2"><i class="fas fa-check"></i> Check Order</button>
+          <div class="exercise-feedback" id="feedback2"></div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- TAB: Summary -->
+    <!-- ============================================================ -->
+    <!-- TAB: Summary                                                  -->
+    <!-- ============================================================ -->
     <div class="tab-panel" id="tab-summary">
       <div class="summary-box">
         <h3><i class="fas fa-bookmark"></i> Chapter 3 Summary</h3>
@@ -322,58 +675,30 @@
       </div>
     </div>
 
-    <!-- TAB: Quiz -->
+    <!-- ============================================================ -->
+    <!-- TAB: Quiz                                                     -->
+    <!-- ============================================================ -->
     <div class="tab-panel" id="tab-quiz">
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- ============================================================ -->
+    <!-- TAB: Interactive Mind Map                                     -->
+    <!-- ============================================================ -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh3" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+      <p class="mm-toggle-hint"><i class="fas fa-hand-pointer"></i> Click any node to expand/collapse its children</p>
+      <div class="viz-container mindmap-interactive" style="min-height:520px; display:flex; align-items:center; justify-content:center;">
+        <svg id="mmCh3" viewBox="0 0 760 520" width="100%" height="520" style="max-width:760px;">
           <style>
-            #mmCh3 .mm-node { animation: mmFadeInCH3 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH3 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh3 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh3 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh3 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh3 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+            #mmCh3 .mm-node { cursor:pointer; transition: transform 0.2s ease; }
+            #mmCh3 .mm-node:hover { filter: brightness(1.12); }
+            #mmCh3 .mm-label { font-family:'Inter',sans-serif; font-size:10px; fill:white; pointer-events:none; font-weight:600; }
+            #mmCh3 .mm-sub-label { font-family:'Inter',sans-serif; font-size:8.5px; fill:var(--text); pointer-events:none; }
+            #mmCh3 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:white; pointer-events:none; }
+            #mmCh3 .mm-branch { stroke-width:1.8; fill:none; transition: opacity 0.3s ease; }
+            #mmCh3 .mm-sub-branch { stroke-width:1.2; fill:none; transition: opacity 0.3s ease; }
+            #mmCh3 .mm-hidden { opacity:0; pointer-events:none; transition: opacity 0.3s ease; }
           </style>
-          <line class="mm-branch" x1="350" y1="210" x2="120" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="580" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="100" y2="310"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="370"/>
-          <line class="mm-branch" x1="350" y1="210" x2="600" y2="310"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Storage & Retrieval</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="120" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="120" y="74" text-anchor="middle">LSM-Trees</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="50" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">B-Trees</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="580" cy="70" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="580" y="74" text-anchor="middle">OLTP vs OLAP</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="100" cy="310" rx="60" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="100" y="314" text-anchor="middle">Star Schema</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="370" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="374" text-anchor="middle">Column Storage</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="600" cy="310" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="600" y="314" text-anchor="middle">Materialized Views</text>
-          </g>
         </svg>
       </div>
     </div>
@@ -391,6 +716,11 @@
 
   <script src="app.js"></script>
   <script>
+    /* ============================================================
+       Chapter 3 Interactive Logic
+       ============================================================ */
+
+    // ---- Quiz ----
     const QUESTIONS = [
       { question: "What is the simplest possible database described in the chapter?", options: ["A B-tree index", "An append-only log file with a hash index", "A column-oriented store", "A materialized view"], correct: 1, explanation: "The simplest database is two bash functions: append key-value to a file (O(1) write) and grep for the last occurrence (O(n) read). Adding a hash index makes reads O(1)." },
       { question: "What is the key advantage of SSTables over unsorted log segments?", options: ["They are smaller", "Keys are sorted, enabling efficient merging (merge sort) and sparse in-memory indexes", "They don't need compaction", "They support transactions"], correct: 1, explanation: "SSTables sort key-value pairs by key. This allows efficient merging of segments (like merge sort) and means you only need a sparse in-memory index -- you can scan between known positions." },
@@ -405,6 +735,546 @@
     ];
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    /* ============================================================
+       STEP-THROUGH #1: LSM-Tree Compaction Animation
+       ============================================================ */
+    (function() {
+      var svg = document.getElementById('lsmCompSvg');
+      var prevBtn = document.getElementById('lsmPrev');
+      var nextBtn = document.getElementById('lsmNext');
+      var counter = document.getElementById('lsmCounter');
+      var info = document.getElementById('lsmStepInfo');
+      var step = 0;
+
+      var steps = [
+        { info: "Step 1: Writes arrive and are inserted into the in-memory memtable (a sorted balanced tree like a red-black tree)." },
+        { info: "Step 2: The memtable fills up (exceeds its size threshold). Time to flush it to disk as a new sorted SSTable file." },
+        { info: "Step 3: The memtable is written to disk as SSTable-1 (Level 0). A new empty memtable is created for incoming writes." },
+        { info: "Step 4: More writes arrive, filling another memtable. It gets flushed as SSTable-2. Now we have two L0 SSTables." },
+        { info: "Step 5: Background compaction kicks in. It reads SSTable-1 and SSTable-2, merges them (like merge sort), and removes duplicates." },
+        { info: "Step 6: Compaction produces a single, larger SSTable at Level 1. The old L0 files are deleted. The tree is now more compact and reads are faster." }
+      ];
+
+      function drawStep(s) {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // Helper to create SVG elements
+        function el(tag, attrs, textContent) {
+          var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+          for (var k in attrs) e.setAttribute(k, attrs[k]);
+          if (textContent !== undefined) e.textContent = textContent;
+          return e;
+        }
+
+        // Arrow marker
+        var defs = el('defs', {});
+        var marker = el('marker', {id:'arr-lc', markerWidth:'8', markerHeight:'6', refX:'8', refY:'3', orient:'auto'});
+        marker.appendChild(el('polygon', {points:'0 0, 8 3, 0 6', fill:'var(--text-muted)'}));
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+
+        // Common: WAL on left
+        var walG = el('g', {opacity: '0.5'});
+        walG.appendChild(el('rect', {x:'10',y:'230',width:'600',height:'30',rx:'6',fill:'var(--surface)',stroke:'var(--border)','stroke-width':'1','stroke-dasharray':'4 3'}));
+        walG.appendChild(el('text', {x:'310',y:'250','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'var(--text-muted)'}, 'Write-Ahead Log (for crash recovery)'));
+        svg.appendChild(walG);
+
+        // Memtable
+        var memFill = (s <= 0) ? 0.3 : (s === 1) ? 0.9 : (s === 3) ? 0.9 : 0.3;
+        var memColor = (s === 1 || s === 3) ? 'var(--accent)' : 'var(--accent)';
+        var memOpacity = (s === 1 || s === 3) ? '1' : '0.75';
+
+        svg.appendChild(el('rect', {x:'20',y:'60',width:'130',height:'100',rx:'14',fill:memColor,opacity:memOpacity}));
+        svg.appendChild(el('text', {x:'85',y:'90','text-anchor':'middle','font-family':'Inter','font-size':'12','font-weight':'700',fill:'white'}, 'Memtable'));
+
+        if (s === 0) {
+          svg.appendChild(el('text', {x:'85',y:'112','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'9',fill:'rgba(255,255,255,0.8)'}, 'a:1, c:3, f:7'));
+          svg.appendChild(el('text', {x:'85',y:'128','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.7)'}, '(filling up...)'));
+        } else if (s === 1) {
+          svg.appendChild(el('text', {x:'85',y:'108','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'9',fill:'rgba(255,255,255,0.9)'}, 'a:1, c:3, f:7'));
+          svg.appendChild(el('text', {x:'85',y:'124','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'9',fill:'rgba(255,255,255,0.9)'}, 'h:2, k:5, m:8'));
+          svg.appendChild(el('text', {x:'85',y:'148','text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'700',fill:'white'}, 'FULL!'));
+        } else if (s === 2) {
+          svg.appendChild(el('text', {x:'85',y:'115','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'rgba(255,255,255,0.7)'}, '(empty)'));
+        } else if (s === 3) {
+          svg.appendChild(el('text', {x:'85',y:'108','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'9',fill:'rgba(255,255,255,0.9)'}, 'b:4, c:9, d:1'));
+          svg.appendChild(el('text', {x:'85',y:'124','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'9',fill:'rgba(255,255,255,0.9)'}, 'g:6, k:2, p:3'));
+          svg.appendChild(el('text', {x:'85',y:'148','text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'700',fill:'white'}, 'FULL!'));
+        } else {
+          svg.appendChild(el('text', {x:'85',y:'115','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'rgba(255,255,255,0.7)'}, '(accepting writes)'));
+        }
+
+        // Write arrow into memtable
+        svg.appendChild(el('rect', {x:'30',y:'15',width:'70',height:'30',rx:'6',fill:'var(--surface)',stroke:'var(--border)','stroke-width':'1.5'}));
+        svg.appendChild(el('text', {x:'65',y:'34','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'600',fill:'var(--text)'}, 'Writes'));
+        svg.appendChild(el('line', {x1:'65',y1:'45',x2:'85',y2:'58',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-lc)'}));
+
+        // Flush arrow
+        if (s >= 1) {
+          var flushOpacity = (s === 1 || s === 3) ? '1' : '0.3';
+          var fG = el('g', {opacity:flushOpacity});
+          fG.appendChild(el('text', {x:'185',y:'100','font-family':'Inter','font-size':'8','font-weight':'700',fill:'var(--accent)'}, 'flush'));
+          fG.appendChild(el('line', {x1:'150',y1:'108',x2:'208',y2:'108',stroke:'var(--accent)','stroke-width':'1.5','marker-end':'url(#arr-lc)'}));
+          svg.appendChild(fG);
+        }
+
+        // SSTables on disk
+        if (s >= 2) {
+          svg.appendChild(el('rect', {x:'215',y:'60',width:'130',height:'45',rx:'8',fill:'var(--accent-2)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'280',y:'80','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'600',fill:'white'}, 'SSTable-1 (L0)'));
+          svg.appendChild(el('text', {x:'280',y:'96','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'rgba(255,255,255,0.8)'}, 'a:1 c:3 f:7 h:2 k:5 m:8'));
+        }
+        if (s >= 3 && s <= 4) {
+          svg.appendChild(el('rect', {x:'215',y:'115',width:'130',height:'45',rx:'8',fill:'var(--accent-2)',opacity:'0.7'}));
+          svg.appendChild(el('text', {x:'280',y:'135','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'600',fill:'white'}, 'SSTable-2 (L0)'));
+          svg.appendChild(el('text', {x:'280',y:'151','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'rgba(255,255,255,0.8)'}, 'b:4 c:9 d:1 g:6 k:2 p:3'));
+        }
+
+        // Compaction
+        if (s === 4) {
+          svg.appendChild(el('text', {x:'380',y:'100','font-family':'Inter','font-size':'9','font-weight':'700',fill:'var(--accent-3)'}, 'compact'));
+          svg.appendChild(el('line', {x1:'345',y1:'105',x2:'410',y2:'105',stroke:'var(--accent-3)','stroke-width':'2','marker-end':'url(#arr-lc)'}));
+          // Merge visualization
+          svg.appendChild(el('rect', {x:'420',y:'55',width:'185',height:'110',rx:'10',fill:'var(--accent-3)',opacity:'0.15',stroke:'var(--accent-3)','stroke-width':'1.5','stroke-dasharray':'5 3'}));
+          svg.appendChild(el('text', {x:'512',y:'80','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'700',fill:'var(--accent-3)'}, 'Merging...'));
+          svg.appendChild(el('text', {x:'512',y:'100','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'var(--text)'}, 'a:1 b:4 c:9 d:1'));
+          svg.appendChild(el('text', {x:'512',y:'116','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'var(--text)'}, 'f:7 g:6 h:2 k:2'));
+          svg.appendChild(el('text', {x:'512',y:'132','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'var(--text)'}, 'm:8 p:3'));
+          svg.appendChild(el('text', {x:'512',y:'152','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'var(--accent-3)'}, 'c:9 wins (newer), k:2 wins'));
+        }
+
+        if (s === 5) {
+          // Old L0 files shown as deleted
+          var del1 = el('g', {opacity:'0.2'});
+          del1.appendChild(el('rect', {x:'215',y:'60',width:'130',height:'45',rx:'8',fill:'var(--accent-2)',opacity:'0.5'}));
+          del1.appendChild(el('line', {x1:'215',y1:'60',x2:'345',y2:'105',stroke:'var(--accent-danger)','stroke-width':'2'}));
+          del1.appendChild(el('line', {x1:'345',y1:'60',x2:'215',y2:'105',stroke:'var(--accent-danger)','stroke-width':'2'}));
+          svg.appendChild(del1);
+          svg.appendChild(el('text', {x:'280',y:'130','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'var(--accent-danger)','font-weight':'600'}, 'old L0 files deleted'));
+
+          // New L1 SSTable
+          svg.appendChild(el('rect', {x:'420',y:'55',width:'185',height:'100',rx:'10',fill:'var(--accent-3)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'512',y:'78','text-anchor':'middle','font-family':'Inter','font-size':'11','font-weight':'700',fill:'white'}, 'SSTable (L1)'));
+          svg.appendChild(el('text', {x:'512',y:'98','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'rgba(255,255,255,0.9)'}, 'a:1 b:4 c:9 d:1 f:7'));
+          svg.appendChild(el('text', {x:'512',y:'114','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'8',fill:'rgba(255,255,255,0.9)'}, 'g:6 h:2 k:2 m:8 p:3'));
+          svg.appendChild(el('text', {x:'512',y:'140','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'rgba(255,255,255,0.7)'}, 'Compacted & merged'));
+        }
+
+        // Disk label
+        if (s >= 2) {
+          svg.appendChild(el('rect', {x:'200',y:'190',width:'410',height:'28',rx:'6',fill:'var(--surface)',stroke:'var(--border)','stroke-width':'1','stroke-dasharray':'4 3'}));
+          svg.appendChild(el('text', {x:'405',y:'208','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'var(--text-muted)'}, 'On Disk (sorted by key within each SSTable)'));
+        }
+
+        counter.textContent = 'Step ' + (s + 1) + ' / ' + steps.length;
+        info.textContent = steps[s].info;
+        prevBtn.disabled = (s === 0);
+        nextBtn.disabled = (s === steps.length - 1);
+      }
+
+      prevBtn.addEventListener('click', function() { if (step > 0) { step--; drawStep(step); } });
+      nextBtn.addEventListener('click', function() { if (step < steps.length - 1) { step++; drawStep(step); } });
+      drawStep(0);
+    })();
+
+    /* ============================================================
+       STEP-THROUGH #2: B-Tree Page Split Animation
+       ============================================================ */
+    (function() {
+      var svg = document.getElementById('btreeSplitSvg');
+      var prevBtn = document.getElementById('btreePrev');
+      var nextBtn = document.getElementById('btreeNext');
+      var counter = document.getElementById('btreeCounter');
+      var info = document.getElementById('btreeStepInfo');
+      var step = 0;
+
+      var steps = [
+        { info: "Starting state: a leaf page [10, 20, 30, 40] is full (max 4 keys per page). Its parent has key 30 with a pointer to it. We want to insert key 25." },
+        { info: "Step 2: We traverse from root to the leaf page. Key 25 < 30, so we follow the left pointer. We find the leaf page [10, 20, 30, 40] -- but it is FULL." },
+        { info: "Step 3: Since the leaf is full, we SPLIT it into two pages. We pick the median key (25 sorts between 20 and 30). Left page: [10, 20, 25]. Right page: [30, 40]." },
+        { info: "Step 4: We promote the split key (30) up to the parent page. The parent now has an additional key and pointer to the new right page." },
+        { info: "Step 5: Done! The tree is still balanced. The new key 25 is in the left leaf. If the parent were also full, we would recursively split it too (splits can cascade to the root)." }
+      ];
+
+      function drawStep(s) {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        function el(tag, attrs, textContent) {
+          var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+          for (var k in attrs) e.setAttribute(k, attrs[k]);
+          if (textContent !== undefined) e.textContent = textContent;
+          return e;
+        }
+        var defs = el('defs', {});
+        var marker = el('marker', {id:'arr-bs', markerWidth:'8', markerHeight:'6', refX:'8', refY:'3', orient:'auto'});
+        marker.appendChild(el('polygon', {points:'0 0, 8 3, 0 6', fill:'var(--text-muted)'}));
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+
+        if (s === 0 || s === 1) {
+          // Parent
+          svg.appendChild(el('rect', {x:'220',y:'20',width:'180',height:'45',rx:'8',fill:'var(--accent)',opacity:'0.9'}));
+          svg.appendChild(el('text', {x:'310',y:'48','text-anchor':'middle','font-family':'Inter','font-size':'11','font-weight':'700',fill:'white'}, 'Parent: [ ... 30 ... ]'));
+          svg.appendChild(el('text', {x:'310',y:'14','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'var(--accent)','font-weight':'600'}, 'Internal Page'));
+          // Arrow to leaf
+          svg.appendChild(el('line', {x1:'270',y1:'65',x2:'270',y2:'110',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          if (s === 1) {
+            svg.appendChild(el('text', {x:'290',y:'90','font-family':'Inter','font-size':'8','font-weight':'700',fill:'var(--accent)'}, '25 < 30'));
+          }
+          // Leaf -- full
+          var leafFill = s === 1 ? 'var(--accent-danger)' : 'var(--accent-2)';
+          svg.appendChild(el('rect', {x:'170',y:'115',width:'200',height:'50',rx:'8',fill:leafFill,opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'270',y:'140','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 10  20  30  40 ]'));
+          svg.appendChild(el('text', {x:'270',y:'157','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'rgba(255,255,255,0.8)'}, s === 0 ? 'Leaf page (FULL - 4 keys)' : 'FULL! Cannot insert 25 here'));
+          // Insert 25 indicator
+          if (s === 0) {
+            svg.appendChild(el('rect', {x:'460',y:'125',width:'120',height:'35',rx:'8',fill:'var(--accent-3)',opacity:'0.85'}));
+            svg.appendChild(el('text', {x:'520',y:'147','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'600',fill:'white'}, 'INSERT 25'));
+          }
+          if (s === 1) {
+            svg.appendChild(el('rect', {x:'430',y:'125',width:'160',height:'35',rx:'8',fill:'var(--accent-danger)',opacity:'0.15',stroke:'var(--accent-danger)','stroke-width':'1.5'}));
+            svg.appendChild(el('text', {x:'510',y:'147','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'700',fill:'var(--accent-danger)'}, 'Need to SPLIT!'));
+          }
+        }
+
+        if (s === 2) {
+          // Parent unchanged
+          svg.appendChild(el('rect', {x:'220',y:'20',width:'180',height:'45',rx:'8',fill:'var(--accent)',opacity:'0.9'}));
+          svg.appendChild(el('text', {x:'310',y:'48','text-anchor':'middle','font-family':'Inter','font-size':'11','font-weight':'700',fill:'white'}, 'Parent: [ ... 30 ... ]'));
+          // Split into two leaves
+          svg.appendChild(el('rect', {x:'80',y:'120',width:'160',height:'50',rx:'8',fill:'var(--accent-3)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'160',y:'143','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 10  20  25 ]'));
+          svg.appendChild(el('text', {x:'160',y:'162','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.8)'}, 'Left leaf (new key 25 added)'));
+          svg.appendChild(el('rect', {x:'380',y:'120',width:'140',height:'50',rx:'8',fill:'var(--accent-2)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'450',y:'143','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 30  40 ]'));
+          svg.appendChild(el('text', {x:'450',y:'162','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.8)'}, 'Right leaf'));
+          // Split indicator
+          svg.appendChild(el('line', {x1:'270',y1:'65',x2:'160',y2:'118',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          svg.appendChild(el('line', {x1:'350',y1:'65',x2:'450',y2:'118',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          svg.appendChild(el('text', {x:'310',y:'100','text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'700',fill:'var(--accent)'}, 'SPLIT'));
+          // Arrow showing promote
+          svg.appendChild(el('text', {x:'500',y:'90','font-family':'Inter','font-size':'8','font-weight':'600',fill:'var(--accent-3)'}, 'promote 30'));
+          svg.appendChild(el('line', {x1:'530',y1:'95',x2:'530',y2:'50',stroke:'var(--accent-3)','stroke-width':'1.5','stroke-dasharray':'4 2','marker-end':'url(#arr-bs)'}));
+        }
+
+        if (s === 3) {
+          // Updated parent
+          svg.appendChild(el('rect', {x:'170',y:'20',width:'280',height:'45',rx:'8',fill:'var(--accent)',opacity:'0.9'}));
+          svg.appendChild(el('text', {x:'310',y:'48','text-anchor':'middle','font-family':'Inter','font-size':'11','font-weight':'700',fill:'white'}, 'Parent: [ ... 30 | 30 ... ]'));
+          svg.appendChild(el('text', {x:'310',y:'14','text-anchor':'middle','font-family':'Inter','font-size':'9',fill:'var(--accent-3)','font-weight':'700'}, 'Updated: new key + pointer added'));
+          // Two leaves
+          svg.appendChild(el('rect', {x:'80',y:'120',width:'160',height:'50',rx:'8',fill:'var(--accent-3)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'160',y:'143','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 10  20  25 ]'));
+          svg.appendChild(el('rect', {x:'380',y:'120',width:'140',height:'50',rx:'8',fill:'var(--accent-2)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'450',y:'143','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 30  40 ]'));
+          svg.appendChild(el('line', {x1:'250',y1:'65',x2:'160',y2:'118',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          svg.appendChild(el('line', {x1:'370',y1:'65',x2:'450',y2:'118',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+        }
+
+        if (s === 4) {
+          // Final state
+          svg.appendChild(el('rect', {x:'170',y:'15',width:'280',height:'50',rx:'10',fill:'var(--accent)',opacity:'0.9'}));
+          svg.appendChild(el('text', {x:'310',y:'32','text-anchor':'middle','font-family':'Inter','font-size':'9','font-weight':'600',fill:'rgba(255,255,255,0.8)'}, 'Internal Page'));
+          svg.appendChild(el('text', {x:'310',y:'50','text-anchor':'middle','font-family':'Inter','font-size':'11','font-weight':'700',fill:'white'}, '[ ... 30 ... ]'));
+          // Leaves
+          svg.appendChild(el('rect', {x:'80',y:'110',width:'160',height:'55',rx:'8',fill:'var(--accent-3)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'160',y:'130','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 10  20  25 ]'));
+          svg.appendChild(el('text', {x:'160',y:'154','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.7)'}, '25 successfully inserted'));
+          svg.appendChild(el('rect', {x:'380',y:'110',width:'140',height:'55',rx:'8',fill:'var(--accent-2)',opacity:'0.85'}));
+          svg.appendChild(el('text', {x:'450',y:'130','text-anchor':'middle','font-family':'JetBrains Mono','font-size':'11','font-weight':'600',fill:'white'}, '[ 30  40 ]'));
+          svg.appendChild(el('text', {x:'450',y:'154','text-anchor':'middle','font-family':'Inter','font-size':'8',fill:'rgba(255,255,255,0.7)'}, 'Room for more keys'));
+          svg.appendChild(el('line', {x1:'250',y1:'65',x2:'160',y2:'108',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          svg.appendChild(el('line', {x1:'370',y1:'65',x2:'450',y2:'108',stroke:'var(--text-muted)','stroke-width':'1.5','marker-end':'url(#arr-bs)'}));
+          // Success badge
+          svg.appendChild(el('rect', {x:'220',y:'195',width:'180',height:'35',rx:'8',fill:'var(--success-bg)',stroke:'var(--success-border)','stroke-width':'1.5'}));
+          svg.appendChild(el('text', {x:'310',y:'217','text-anchor':'middle','font-family':'Inter','font-size':'10','font-weight':'700',fill:'var(--accent-3)'}, 'Tree remains balanced! O(log n)'));
+        }
+
+        counter.textContent = 'Step ' + (s + 1) + ' / ' + steps.length;
+        info.textContent = steps[s].info;
+        prevBtn.disabled = (s === 0);
+        nextBtn.disabled = (s === steps.length - 1);
+      }
+
+      prevBtn.addEventListener('click', function() { if (step > 0) { step--; drawStep(step); } });
+      nextBtn.addEventListener('click', function() { if (step < steps.length - 1) { step++; drawStep(step); } });
+      drawStep(0);
+    })();
+
+    /* ============================================================
+       EXERCISE 1: Classify B-Tree vs LSM-Tree Properties
+       ============================================================ */
+    (function() {
+      var items = [
+        { text: "Sequential writes (append-only)", answer: "LSM" },
+        { text: "In-place page updates", answer: "B-Tree" },
+        { text: "O(log n) lookups", answer: "Both" },
+        { text: "Background compaction required", answer: "LSM" },
+        { text: "Write-ahead log for crash recovery", answer: "B-Tree" },
+        { text: "Each key in exactly one location", answer: "B-Tree" },
+        { text: "Better compression, less fragmentation", answer: "LSM" },
+        { text: "Sorted key-value pairs", answer: "Both" }
+      ];
+
+      var container = document.getElementById('classifyItems');
+      var selections = {};
+
+      items.forEach(function(item, i) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex; align-items:center; gap:0.75rem; margin:0.5rem 0; flex-wrap:wrap;';
+        var label = document.createElement('span');
+        label.style.cssText = 'flex:1; min-width:200px; font-size:0.85rem; color:var(--text);';
+        label.textContent = item.text;
+        row.appendChild(label);
+
+        var btnGroup = document.createElement('div');
+        btnGroup.style.cssText = 'display:flex; gap:0.35rem;';
+        ['LSM', 'B-Tree', 'Both'].forEach(function(choice) {
+          var btn = document.createElement('button');
+          btn.textContent = choice;
+          btn.style.cssText = 'padding:0.25rem 0.6rem; border:1.5px solid var(--border); border-radius:6px; background:var(--surface); color:var(--text); font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s;';
+          btn.addEventListener('click', function() {
+            selections[i] = choice;
+            btnGroup.querySelectorAll('button').forEach(function(b) {
+              b.style.borderColor = 'var(--border)';
+              b.style.background = 'var(--surface)';
+              b.style.color = 'var(--text)';
+            });
+            btn.style.borderColor = 'var(--accent-2)';
+            btn.style.background = 'rgba(37,99,235,0.12)';
+            btn.style.color = 'var(--accent-2)';
+          });
+          btnGroup.appendChild(btn);
+        });
+        row.appendChild(btnGroup);
+        container.appendChild(row);
+      });
+
+      document.getElementById('checkExercise1').addEventListener('click', function() {
+        var correct = 0;
+        items.forEach(function(item, i) {
+          if (selections[i] === item.answer) correct++;
+        });
+        var fb = document.getElementById('feedback1');
+        fb.className = 'exercise-feedback';
+        if (correct === items.length) {
+          fb.classList.add('correct');
+          fb.textContent = 'Perfect! ' + correct + '/' + items.length + ' correct. You understand the trade-offs between B-Trees and LSM-Trees.';
+        } else {
+          fb.classList.add('incorrect');
+          var hints = [];
+          items.forEach(function(item, i) {
+            if (selections[i] !== item.answer) {
+              hints.push('"' + item.text + '" is ' + item.answer);
+            }
+          });
+          fb.textContent = correct + '/' + items.length + ' correct. Corrections: ' + hints.join('. ') + '.';
+        }
+      });
+    })();
+
+    /* ============================================================
+       EXERCISE 2: Order the LSM-Tree Read Path
+       ============================================================ */
+    (function() {
+      var stepsData = [
+        { id: 'memtable', text: 'Check the memtable (in-memory)', order: 1 },
+        { id: 'bloom', text: 'Check Bloom filter for each SSTable', order: 2 },
+        { id: 'newest-ss', text: 'Check newest SSTable on disk', order: 3 },
+        { id: 'older-ss', text: 'Check older SSTables (newest to oldest)', order: 4 },
+        { id: 'not-found', text: 'Key not found (checked all levels)', order: 5 }
+      ];
+
+      // Shuffle for display
+      var shuffled = stepsData.slice().sort(function() { return Math.random() - 0.5; });
+
+      var grid = document.getElementById('readPathGrid');
+      var selectedOrder = [];
+
+      function renderGrid() {
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+        shuffled.forEach(function(s) {
+          var btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.dataset.id = s.id;
+          var idx = selectedOrder.indexOf(s.id);
+          if (idx !== -1) {
+            btn.classList.add('selected');
+            btn.textContent = (idx + 1) + '. ' + s.text;
+          } else {
+            btn.textContent = s.text;
+          }
+          btn.addEventListener('click', function() {
+            var existing = selectedOrder.indexOf(s.id);
+            if (existing !== -1) {
+              selectedOrder.splice(existing, 1);
+            } else {
+              selectedOrder.push(s.id);
+            }
+            renderGrid();
+          });
+          grid.appendChild(btn);
+        });
+      }
+
+      renderGrid();
+
+      document.getElementById('checkExercise2').addEventListener('click', function() {
+        var correct = true;
+        var correctOrder = stepsData.map(function(s) { return s.id; });
+        if (selectedOrder.length !== correctOrder.length) {
+          correct = false;
+        } else {
+          for (var i = 0; i < correctOrder.length; i++) {
+            if (selectedOrder[i] !== correctOrder[i]) { correct = false; break; }
+          }
+        }
+
+        var btns = grid.querySelectorAll('.option-btn');
+        btns.forEach(function(btn) {
+          btn.classList.remove('selected', 'correct-answer', 'wrong-answer');
+          var s = stepsData.find(function(x) { return x.id === btn.dataset.id; });
+          btn.textContent = s.order + '. ' + s.text;
+          btn.classList.add('correct-answer');
+        });
+
+        var fb = document.getElementById('feedback2');
+        fb.className = 'exercise-feedback';
+        if (correct) {
+          fb.classList.add('correct');
+          fb.textContent = 'Correct! Reads check memtable first, then use Bloom filters to skip SSTables, then check from newest to oldest on disk.';
+        } else {
+          fb.classList.add('incorrect');
+          fb.textContent = 'Not quite. The correct order is shown above. The memtable is always checked first (fastest), then Bloom filters gate disk access, then SSTables from newest to oldest.';
+        }
+      });
+    })();
+
+    /* ============================================================
+       INTERACTIVE MIND MAP with Expand/Collapse
+       ============================================================ */
+    (function() {
+      var svg = document.getElementById('mmCh3');
+      // Clear any existing content (keeping the style)
+      var styleEl = svg.querySelector('style');
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      if (styleEl) svg.appendChild(styleEl);
+
+      var cx = 380, cy = 260;
+
+      // Tree data
+      var branches = [
+        { label: 'Log-Structured', x: 120, y: 80, color: 'var(--accent-3)',
+          children: [
+            { label: 'Hash Index', x: 30, y: 30 },
+            { label: 'SSTables', x: 120, y: 15 },
+            { label: 'LSM-Tree', x: 60, y: 140 },
+            { label: 'Bloom Filter', x: 170, y: 140 }
+          ]
+        },
+        { label: 'B-Trees', x: 380, y: 60, color: 'var(--accent-2)',
+          children: [
+            { label: 'Pages & Branching', x: 310, y: 10 },
+            { label: 'WAL', x: 390, y: 5 },
+            { label: 'Page Splits', x: 460, y: 15 },
+            { label: 'Latches', x: 350, y: 130 }
+          ]
+        },
+        { label: 'LSM vs B-Tree', x: 640, y: 100, color: 'var(--accent)',
+          children: [
+            { label: 'Write Amplify', x: 590, y: 40 },
+            { label: 'Compaction Cost', x: 700, y: 50 },
+            { label: 'Predictability', x: 680, y: 155 }
+          ]
+        },
+        { label: 'OLTP vs OLAP', x: 110, y: 410, color: 'var(--accent-2)',
+          children: [
+            { label: 'Transactions', x: 30, y: 370 },
+            { label: 'Analytics', x: 30, y: 450 },
+            { label: 'ETL Pipeline', x: 140, y: 475 }
+          ]
+        },
+        { label: 'Column Storage', x: 380, y: 460, color: 'var(--accent-3)',
+          children: [
+            { label: 'Bitmap Encoding', x: 300, y: 500 },
+            { label: 'Run-Length Enc.', x: 400, y: 510 },
+            { label: 'Vectorized Proc.', x: 480, y: 495 }
+          ]
+        },
+        { label: 'Materialized Views', x: 640, y: 420, color: 'var(--accent)',
+          children: [
+            { label: 'Data Cubes', x: 590, y: 470 },
+            { label: 'Star Schema', x: 700, y: 465 },
+            { label: 'Snowflake', x: 680, y: 380 }
+          ]
+        }
+      ];
+
+      var expanded = {};
+      branches.forEach(function(b, i) { expanded[i] = true; });
+
+      function render() {
+        // Keep style
+        var existingStyle = svg.querySelector('style');
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        if (existingStyle) svg.appendChild(existingStyle);
+
+        function el(tag, attrs, textContent) {
+          var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+          for (var k in attrs) e.setAttribute(k, attrs[k]);
+          if (textContent !== undefined) e.textContent = textContent;
+          return e;
+        }
+
+        // Draw branches from center to main nodes
+        branches.forEach(function(b, i) {
+          svg.appendChild(el('line', {class:'mm-branch', x1:cx, y1:cy, x2:b.x, y2:b.y, stroke:b.color, opacity:'0.4'}));
+        });
+
+        // Draw sub-branches
+        branches.forEach(function(b, i) {
+          if (!expanded[i]) return;
+          b.children.forEach(function(c) {
+            svg.appendChild(el('line', {class:'mm-sub-branch', x1:b.x, y1:b.y, x2:c.x, y2:c.y, stroke:b.color, opacity:'0.25'}));
+          });
+        });
+
+        // Draw child nodes
+        branches.forEach(function(b, i) {
+          if (!expanded[i]) return;
+          b.children.forEach(function(c) {
+            var g = el('g', {class:'mm-node'});
+            g.appendChild(el('ellipse', {cx:c.x, cy:c.y, rx:'50', ry:'16', fill:b.color, opacity:'0.55'}));
+            g.appendChild(el('text', {class:'mm-label', x:c.x, y:c.y + 4, 'text-anchor':'middle', 'font-size':'8.5'}, c.label));
+            svg.appendChild(g);
+          });
+        });
+
+        // Draw main nodes (on top)
+        branches.forEach(function(b, i) {
+          var g = el('g', {class:'mm-node'});
+          g.appendChild(el('ellipse', {cx:b.x, cy:b.y, rx:'60', ry:'22', fill:b.color, opacity:'0.9'}));
+          g.appendChild(el('text', {class:'mm-label', x:b.x, y:b.y + 4, 'text-anchor':'middle', 'font-size':'10'}, b.label));
+          // Expand/collapse indicator
+          var indicator = expanded[i] ? '-' : '+';
+          g.appendChild(el('text', {x:b.x + 48, y:b.y - 10, 'text-anchor':'middle', 'font-family':'Inter', 'font-size':'12', 'font-weight':'700', fill:b.color}, indicator));
+          g.addEventListener('click', function() {
+            expanded[i] = !expanded[i];
+            render();
+          });
+          svg.appendChild(g);
+        });
+
+        // Center node (always on top)
+        var cg = el('g', {class:'mm-node'});
+        cg.appendChild(el('ellipse', {cx:cx, cy:cy, rx:'80', ry:'34', fill:'var(--accent)', opacity:'0.9'}));
+        cg.appendChild(el('text', {class:'mm-center-label', x:cx, y:cy - 4, 'text-anchor':'middle'}, 'Storage &'));
+        cg.appendChild(el('text', {class:'mm-center-label', x:cx, y:cy + 14, 'text-anchor':'middle'}, 'Retrieval'));
+        svg.appendChild(cg);
+      }
+
+      render();
+    })();
   </script>
 </body>
 </html>

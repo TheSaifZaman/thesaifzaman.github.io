@@ -15,6 +15,48 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animation controls */
+    .step-controls { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
+    .step-controls .btn { min-width: 90px; font-size: 0.82rem; padding: 0.4rem 0.9rem; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all 0.2s; }
+    .step-controls .btn:hover { background: var(--surface-hover); }
+    .step-controls .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .step-controls .step-indicator { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; min-width: 80px; text-align: center; }
+    .step-controls .step-label { font-size: 0.85rem; color: var(--text); text-align: center; width: 100%; margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: 8px; line-height: 1.5; }
+
+    /* Interactive exercise styles */
+    .exercise-box { background: var(--surface); border: 1.5px solid var(--accent-2); border-radius: 14px; padding: 1.5rem; margin-top: 1.5rem; }
+    .exercise-box h3 { color: var(--accent-2); font-size: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .exercise-box h3 i { font-size: 0.9rem; }
+    .exercise-feedback { margin-top: 0.75rem; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.88rem; display: none; }
+    .exercise-feedback.show { display: block; }
+    .exercise-feedback.success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .exercise-feedback.error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+    .exercise-row { display: flex; gap: 0.75rem; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
+    .exercise-row label { font-size: 0.88rem; font-weight: 600; min-width: 160px; color: var(--text); }
+    .exercise-select { padding: 0.4rem 0.8rem; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.85rem; font-family: inherit; cursor: pointer; min-width: 180px; }
+    .exercise-btn { padding: 0.45rem 1.2rem; border-radius: 8px; border: none; background: var(--accent-2); color: white; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .exercise-btn:hover { filter: brightness(1.1); }
+
+    /* Mind map interactive styles */
+    .mm-toggle-hint { font-size: 0.72rem; color: var(--text-light); text-align: center; margin-bottom: 0.75rem; }
+
+    /* Drag exercise styles */
+    .drag-zone { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 48px; padding: 0.75rem; border-radius: 10px; border: 2px dashed var(--border); margin-bottom: 0.75rem; background: var(--surface-2); transition: border-color 0.2s; }
+    .drag-zone.over { border-color: var(--accent-2); background: rgba(37,99,235,0.05); }
+    .drag-chip { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600; cursor: grab; user-select: none; transition: transform 0.15s, box-shadow 0.15s; }
+    .drag-chip:active { cursor: grabbing; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .drag-chip.blue { background: rgba(37,99,235,0.15); color: #2563eb; border: 1px solid rgba(37,99,235,0.3); }
+    .drag-chip.green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .drag-chip.red { background: rgba(220,38,38,0.15); color: #dc2626; border: 1px solid rgba(220,38,38,0.3); }
+    .drag-chip.purple { background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); }
+    .drag-target-label { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+
+    /* Hash simulator styles */
+    .hash-sim-input { padding: 0.45rem 0.9rem; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; width: 200px; }
+    .hash-sim-result { margin-top: 0.75rem; font-size: 0.85rem; }
+    .hash-bar { height: 32px; border-radius: 6px; display: flex; overflow: hidden; margin: 0.5rem 0; }
+    .hash-bar-segment { display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; color: white; transition: width 0.4s ease; }
   </style>
 </head>
 <body data-chapter="ch6">
@@ -50,99 +92,320 @@
       <button class="tab-btn" data-tab="tab-mindmap" role="tab"><i class="fas fa-project-diagram"></i> Mind Map</button>
     </div>
 
-    <!-- TAB: Lessons -->
+    <!-- ======================== TAB: Lessons ======================== -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- ===== LESSON 1 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>Partitioning of Key-Value Data</h2></div>
         <p>The goal of partitioning (also called sharding) is to spread data and query load evenly across multiple nodes. If the partitioning is unfair -- some partitions have much more data or receive more queries than others -- it is called <strong>skewed</strong>, and the overloaded partition is called a <strong>hot spot</strong>.</p>
         <p><strong>Key range partitioning:</strong> Assign a continuous range of keys to each partition, like volumes of an encyclopedia (A-D, E-H, ...). This preserves key ordering, enabling efficient range queries. The downside: if keys are accessed sequentially (e.g., timestamp-prefixed keys), all writes hit the same partition, creating a hot spot. Partition boundaries must be chosen carefully -- often adaptively based on the data distribution.</p>
         <p><strong>Hash partitioning:</strong> Apply a hash function to each key and assign hash ranges to partitions. A good hash function distributes keys uniformly, eliminating hot spots from sequential keys. But you lose the ability to do efficient range queries -- adjacent keys are scattered across partitions. Some systems (like Cassandra) allow <em>compound primary keys</em> where the first part is hashed (for distribution) and the rest is range-sorted within the partition.</p>
 
+        <!-- SVG 1: Key-Range vs Hash Partitioning -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-th-large"></i> Key-Range vs Hash Partitioning</div>
           <svg viewBox="0 0 620 240" width="100%" height="240">
-            <!-- Key Range -->
             <text x="155" y="25" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent)">Key Range Partitioning</text>
             <rect x="10" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
             <text x="55" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 1</text>
             <text x="55" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">A - F</text>
-
             <rect x="110" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
             <text x="155" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 2</text>
             <text x="155" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">G - N</text>
-
             <rect x="210" y="40" width="90" height="55" rx="8" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
             <text x="255" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Partition 3</text>
             <text x="255" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">O - Z</text>
-
             <rect x="30" y="110" width="110" height="28" rx="6" fill="var(--accent-2)" opacity="0.15"/>
             <text x="85" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)">Range queries: efficient</text>
             <rect x="175" y="110" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.1"/>
             <text x="230" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">Hot spots: possible</text>
 
-            <!-- Hash -->
             <text x="465" y="25" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="var(--accent-3)">Hash Partitioning</text>
             <rect x="320" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="365" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 1</text>
             <text x="365" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 0-33%</text>
-
             <rect x="420" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="465" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 2</text>
             <text x="465" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 34-66%</text>
-
             <rect x="520" y="40" width="90" height="55" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="565" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Partition 3</text>
             <text x="565" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)">hash 67-100%</text>
-
             <rect x="340" y="110" width="110" height="28" rx="6" fill="var(--accent-2)" opacity="0.15"/>
             <text x="395" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-2)">Even distribution</text>
             <rect x="485" y="110" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.1"/>
             <text x="540" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)">No range queries</text>
 
-            <!-- Comparison bar -->
             <rect x="60" y="170" width="500" height="50" rx="10" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
             <text x="310" y="192" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">Trade-off: Range queries vs Even load distribution</text>
             <text x="310" y="208" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Compound keys (Cassandra) combine both: hash first part, range-sort the rest</text>
           </svg>
         </div>
+
+        <!-- SVG 2: Compound key diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-key"></i> Compound Primary Key (Cassandra-style)</div>
+          <svg viewBox="0 0 620 190" width="100%" height="190">
+            <text x="310" y="22" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--text)">Key = (user_id, timestamp)</text>
+            <rect x="20" y="45" width="180" height="120" rx="10" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
+            <text x="110" y="68" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">Partition A</text>
+            <text x="110" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">hash(user_123) -&gt; here</text>
+            <rect x="35" y="95" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="110" y="107" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-01 08:00</text>
+            <rect x="35" y="114" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.08"/>
+            <text x="110" y="126" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-01 12:30</text>
+            <rect x="35" y="133" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.05"/>
+            <text x="110" y="145" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-02 09:15</text>
+
+            <rect x="220" y="45" width="180" height="120" rx="10" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="310" y="68" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">Partition B</text>
+            <text x="310" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">hash(user_456) -&gt; here</text>
+            <rect x="235" y="95" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="310" y="107" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-01 07:00</text>
+            <rect x="235" y="114" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.08"/>
+            <text x="310" y="126" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-01 19:45</text>
+            <rect x="235" y="133" width="150" height="16" rx="4" fill="var(--accent-2)" opacity="0.05"/>
+            <text x="310" y="145" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-2)">2024-01-03 11:00</text>
+
+            <rect x="420" y="50" width="180" height="50" rx="8" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="510" y="70" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">First part: HASHED</text>
+            <text x="510" y="85" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">distributes across partitions</text>
+            <rect x="420" y="112" width="180" height="50" rx="8" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="510" y="132" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Second part: SORTED</text>
+            <text x="510" y="147" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">efficient range scans within</text>
+
+            <text x="310" y="183" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Range query on timestamps for one user: efficient! Range query across users: not possible.</text>
+          </svg>
+        </div>
+
+        <!-- SVG 3: NEW - Hash Function Visualization -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-random"></i> How a Hash Function Distributes Sequential Keys</div>
+          <svg viewBox="0 0 620 210" width="100%" height="210">
+            <defs>
+              <marker id="arr-hf" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker>
+            </defs>
+            <text x="80" y="20" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--text)">Sequential Keys</text>
+            <rect x="20" y="30" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="45" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-01</text>
+            <rect x="20" y="56" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="71" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-02</text>
+            <rect x="20" y="82" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-03</text>
+            <rect x="20" y="108" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="123" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-04</text>
+            <rect x="20" y="134" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="149" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-05</text>
+            <rect x="20" y="160" width="120" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="80" y="175" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--accent)">2024-01-06</text>
+
+            <!-- Hash function box -->
+            <rect x="200" y="60" width="100" height="70" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="250" y="85" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">hash(key)</text>
+            <text x="250" y="105" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">MD5, MurmurHash,</text>
+            <text x="250" y="118" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">xxHash, etc.</text>
+
+            <!-- Arrows in -->
+            <line x1="140" y1="44" x2="198" y2="75" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-hf)"/>
+            <line x1="140" y1="96" x2="198" y2="95" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-hf)"/>
+            <line x1="140" y1="148" x2="198" y2="115" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-hf)"/>
+
+            <!-- Scattered output arrows -->
+            <line x1="300" y1="75" x2="368" y2="42" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+            <line x1="300" y1="85" x2="368" y2="132" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+            <line x1="300" y1="95" x2="368" y2="72" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+            <line x1="300" y1="105" x2="520" y2="42" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+            <line x1="300" y1="115" x2="520" y2="132" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+            <line x1="300" y1="120" x2="368" y2="162" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hf)"/>
+
+            <!-- Output partitions -->
+            <rect x="370" y="28" width="140" height="35" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="440" y="43" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Partition 1</text>
+            <text x="440" y="56" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">Jan-01, Jan-04</text>
+
+            <rect x="370" y="68" width="140" height="35" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="440" y="83" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Partition 2</text>
+            <text x="440" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">Jan-03</text>
+
+            <rect x="370" y="118" width="140" height="35" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="440" y="133" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 3</text>
+            <text x="440" y="146" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">Jan-02, Jan-05</text>
+
+            <rect x="370" y="158" width="140" height="25" rx="8" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" stroke-width="1"/>
+            <text x="440" y="175" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="#8b5cf6">Partition 4</text>
+
+            <!-- Summary -->
+            <rect x="530" y="65" width="80" height="65" rx="8" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="570" y="85" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="var(--accent-3)">Result:</text>
+            <text x="570" y="100" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Even spread</text>
+            <text x="570" y="112" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">No hot spot</text>
+            <text x="570" y="124" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">No ordering</text>
+
+            <rect x="120" y="190" width="380" height="18" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="310" y="203" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Sequential keys become randomly distributed -- eliminates write hot spots</text>
+          </svg>
+        </div>
+
+        <!-- SVG 4: NEW - Partition Boundary Adaptation -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sliders-h"></i> Adaptive Partition Boundaries</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <text x="310" y="18" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">Key range boundaries adapt to actual data distribution</text>
+
+            <!-- Naive even split -->
+            <text x="310" y="42" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">Naive even split (bad)</text>
+            <rect x="20" y="50" width="193" height="30" rx="6" fill="var(--accent)" opacity="0.35" stroke="var(--accent)" stroke-width="1"/>
+            <text x="116" y="69" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white">A-H (80% of data!)</text>
+            <rect x="213" y="50" width="194" height="30" rx="6" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="310" y="69" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">I-P (15%)</text>
+            <rect x="407" y="50" width="193" height="30" rx="6" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
+            <text x="503" y="69" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Q-Z (5%)</text>
+
+            <!-- Adaptive split -->
+            <text x="310" y="105" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-3)">Adaptive split (good)</text>
+            <rect x="20" y="113" width="115" height="30" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="78" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">A-C (33%)</text>
+            <rect x="135" y="113" width="115" height="30" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="193" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">D-H (33%)</text>
+            <rect x="250" y="113" width="175" height="30" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="338" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">I-P (24%)</text>
+            <rect x="425" y="113" width="175" height="30" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="513" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)">Q-Z (10%)</text>
+
+            <rect x="130" y="155" width="360" height="20" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="310" y="169" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Boundaries chosen based on data volume, not alphabet position</text>
+          </svg>
+        </div>
       </div>
 
+      <!-- ===== LESSON 2 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Skewed Workloads and Hot Spots</h2></div>
         <p>Even with hash partitioning, hot spots can still occur. Imagine a social media platform where a celebrity with millions of followers posts an update: all reads and writes for that single key (the post ID or user ID) will hammer one partition. Hashing distributes different keys evenly, but it cannot help when a single key receives disproportionate traffic.</p>
         <p>Today, most data systems cannot automatically compensate for a single highly skewed key. It is the <strong>application's responsibility</strong> to handle this. A common technique: append a random number (e.g., two-digit suffix, giving 100 variants) to hot keys, spreading writes across 100 partitions. But reads now need to query all 100 keys and merge results. This trade-off only makes sense for the small number of keys known to be hot -- applying it to all keys would add unnecessary overhead.</p>
         <p>Future systems may detect and compensate for skew automatically, but for now it remains an application-level concern that requires explicit engineering.</p>
+
+        <!-- SVG: Celebrity Hot Spot Problem -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-fire-alt"></i> Celebrity Hot Spot Problem and Key Splitting</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <defs>
+              <marker id="arr-hot" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker>
+            </defs>
+            <text x="155" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Before: Single Hot Key</text>
+            <rect x="100" y="35" width="110" height="30" rx="6" fill="var(--accent-2)" opacity="0.7"/>
+            <text x="155" y="55" text-anchor="middle" font-family="Inter" font-size="9" fill="white">celebrity_post_123</text>
+            <line x1="155" y1="65" x2="155" y2="90" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr-hot)"/>
+            <line x1="80" y1="50" x2="120" y2="85" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr-hot)" opacity="0.5"/>
+            <line x1="230" y1="50" x2="190" y2="85" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr-hot)" opacity="0.5"/>
+            <rect x="60" y="95" width="70" height="50" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="95" y="118" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">P1</text>
+            <rect x="140" y="95" width="70" height="50" rx="8" fill="var(--accent)" opacity="0.5" stroke="var(--accent)" stroke-width="2.5"/>
+            <text x="175" y="115" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">P2</text>
+            <text x="175" y="132" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent)">OVERLOADED</text>
+            <rect x="220" y="95" width="70" height="50" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="255" y="118" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">P3</text>
+
+            <text x="465" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">After: Key Splitting (random suffix)</text>
+            <rect x="380" y="35" width="80" height="22" rx="5" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="420" y="51" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">post_123_00</text>
+            <rect x="470" y="35" width="80" height="22" rx="5" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="510" y="51" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">post_123_01</text>
+            <rect x="425" y="62" width="80" height="22" rx="5" fill="var(--accent-3)" opacity="0.5"/>
+            <text x="465" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">post_123_02</text>
+            <line x1="420" y1="57" x2="400" y2="95" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hot)"/>
+            <line x1="510" y1="57" x2="490" y2="95" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hot)"/>
+            <line x1="465" y1="84" x2="465" y2="95" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr-hot)"/>
+            <rect x="360" y="100" width="70" height="50" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="395" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">P1</text>
+            <rect x="440" y="100" width="70" height="50" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="475" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">P2</text>
+            <rect x="520" y="100" width="70" height="50" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="555" y="128" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)">P3</text>
+
+            <rect x="30" y="175" width="270" height="85" rx="10" fill="var(--accent)" opacity="0.05" stroke="var(--accent)" stroke-width="1"/>
+            <text x="165" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Problem</text>
+            <text x="165" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">1 million reads/sec -&gt; 1 partition</text>
+            <text x="165" y="232" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Latency spikes, potential failure</text>
+            <text x="165" y="249" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Cannot be fixed by hashing alone</text>
+            <rect x="320" y="175" width="270" height="85" rx="10" fill="var(--accent-3)" opacity="0.05" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="455" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Solution</text>
+            <text x="455" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Append random 00-99 suffix to hot key</text>
+            <text x="455" y="232" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">100 keys spread across partitions</text>
+            <text x="455" y="249" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Reads merge from all 100 variants</text>
+          </svg>
+        </div>
+
+        <!-- SVG: NEW - Read vs Write Cost of Key Splitting -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale"></i> Key Splitting: Write vs Read Cost Trade-off</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs>
+              <marker id="arr-ks" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker>
+            </defs>
+            <!-- Write path -->
+            <text x="155" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Write Path (Fast)</text>
+            <rect x="100" y="32" width="110" height="26" rx="6" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="155" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="white">write(key_42)</text>
+            <line x1="155" y1="58" x2="155" y2="73" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr-ks)"/>
+            <rect x="80" y="76" width="150" height="26" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="155" y="94" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">key_42 + "_" + rand(0,99)</text>
+            <line x1="155" y1="102" x2="155" y2="117" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr-ks)"/>
+            <rect x="110" y="120" width="90" height="30" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="155" y="138" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">1 partition</text>
+            <text x="155" y="170" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent-3)" font-weight="600">O(1) - single write</text>
+
+            <!-- Read path -->
+            <text x="465" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Read Path (Expensive)</text>
+            <rect x="410" y="32" width="110" height="26" rx="6" fill="var(--accent)" opacity="0.6"/>
+            <text x="465" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="white">read(key_42)</text>
+            <line x1="430" y1="58" x2="380" y2="73" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <line x1="465" y1="58" x2="465" y2="73" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <line x1="500" y1="58" x2="550" y2="73" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <rect x="340" y="76" width="75" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="378" y="91" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--accent)">key_42_00</text>
+            <rect x="428" y="76" width="75" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="465" y="91" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--accent)">key_42_01</text>
+            <rect x="515" y="76" width="75" height="22" rx="5" fill="var(--accent)" opacity="0.12"/>
+            <text x="553" y="91" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent)">... key_42_99</text>
+            <line x1="378" y1="98" x2="430" y2="120" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <line x1="465" y1="98" x2="465" y2="120" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <line x1="553" y1="98" x2="500" y2="120" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr-ks)"/>
+            <rect x="400" y="122" width="130" height="30" rx="8" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1"/>
+            <text x="465" y="141" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">MERGE results</text>
+            <text x="465" y="170" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--accent)" font-weight="600">O(100) - read all variants</text>
+
+            <rect x="200" y="185" width="220" height="14" rx="4" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="310" y="196" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Only split keys that are KNOWN to be hot</text>
+          </svg>
+        </div>
       </div>
 
+      <!-- ===== LESSON 3 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Partitioning and Secondary Indexes</h2></div>
         <p>Key-value data is straightforward to partition -- just map the key to a partition. But most applications also need <strong>secondary indexes</strong> (e.g., "find all cars where color = red"), and secondary indexes don't map neatly to partitions. Two approaches exist:</p>
         <p><strong>Document-partitioned (local) indexes:</strong> Each partition maintains its own secondary index covering only the documents in that partition. Writing is simple (update one partition's index), but reads require <strong>scatter/gather</strong> -- querying all partitions and merging results. This is expensive and prone to tail latency amplification.</p>
         <p><strong>Term-partitioned (global) indexes:</strong> The secondary index is itself partitioned -- e.g., colors a-m on partition 1, n-z on partition 2. Reads are efficient (query one partition of the index), but writes may need to update indexes across multiple partitions. These cross-partition writes are often implemented asynchronously.</p>
 
+        <!-- SVG: Local vs Global Secondary Indexes -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-search"></i> Local vs Global Secondary Indexes</div>
           <svg viewBox="0 0 620 260" width="100%" height="260">
             <defs><marker id="arr6a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
-
-            <!-- Local -->
             <text x="155" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">Document-Partitioned (Local)</text>
             <rect x="20" y="35" width="120" height="90" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
             <text x="80" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 1</text>
             <text x="80" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Data + Local Index</text>
             <rect x="35" y="80" width="90" height="18" rx="4" fill="var(--accent)" opacity="0.15"/>
-            <text x="80" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -> doc3</text>
-
+            <text x="80" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -&gt; doc3</text>
             <rect x="160" y="35" width="120" height="90" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
             <text x="220" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 2</text>
             <text x="220" y="72" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Data + Local Index</text>
             <rect x="175" y="80" width="90" height="18" rx="4" fill="var(--accent)" opacity="0.15"/>
-            <text x="220" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -> doc7</text>
-
+            <text x="220" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent)">color:red -&gt; doc7</text>
             <text x="155" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read "color:red" = scatter to ALL partitions</text>
 
-            <!-- Global -->
             <text x="465" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">Term-Partitioned (Global)</text>
             <rect x="340" y="35" width="120" height="90" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="400" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Index Partition 1</text>
@@ -150,30 +413,96 @@
             <text x="400" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">color:a-m</text>
             <rect x="350" y="88" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
             <text x="400" y="101" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">blue,green,black</text>
-
             <rect x="480" y="35" width="120" height="90" rx="8" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="540" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Index Partition 2</text>
             <rect x="490" y="65" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
             <text x="540" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">color:n-z</text>
             <rect x="490" y="88" width="100" height="18" rx="4" fill="var(--accent-3)" opacity="0.15"/>
             <text x="540" y="101" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--accent-3)">red,white,yellow</text>
-
             <text x="465" y="150" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read "color:red" = query ONE index partition</text>
 
-            <!-- Comparison -->
             <rect x="60" y="175" width="240" height="65" rx="8" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1"/>
             <text x="180" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent)">Local Index</text>
             <text x="180" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Write: fast (one partition)</text>
             <text x="180" y="230" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read: slow (scatter/gather)</text>
-
             <rect x="320" y="175" width="240" height="65" rx="8" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="440" y="198" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--accent-3)">Global Index</text>
             <text x="440" y="215" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Write: slow (cross-partition)</text>
             <text x="440" y="230" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">Read: fast (one partition)</text>
           </svg>
         </div>
+
+        <!-- SVG: Scatter/Gather -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-arrows-alt"></i> Scatter/Gather in Action</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <defs>
+              <marker id="arr6sg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker>
+              <marker id="arr6sg2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/></marker>
+            </defs>
+            <rect x="240" y="10" width="140" height="35" rx="8" fill="var(--accent-2)" opacity="0.8"/>
+            <text x="310" y="32" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="white">Client: WHERE color=red</text>
+            <line x1="270" y1="45" x2="105" y2="78" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr6sg)"/>
+            <line x1="310" y1="45" x2="310" y2="78" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr6sg)"/>
+            <line x1="350" y1="45" x2="515" y2="78" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr6sg)"/>
+            <text x="160" y="65" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)" font-weight="600">SCATTER</text>
+            <rect x="40" y="82" width="130" height="45" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
+            <text x="105" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 1</text>
+            <text x="105" y="118" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">found: doc3, doc11</text>
+            <rect x="245" y="82" width="130" height="45" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
+            <text x="310" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 2</text>
+            <text x="310" y="118" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">found: doc7</text>
+            <rect x="450" y="82" width="130" height="45" rx="8" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1"/>
+            <text x="515" y="100" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Partition 3</text>
+            <text x="515" y="118" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--text-muted)">found: doc22, doc35</text>
+            <line x1="105" y1="127" x2="270" y2="158" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr6sg2)"/>
+            <line x1="310" y1="127" x2="310" y2="155" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr6sg2)"/>
+            <line x1="515" y1="127" x2="350" y2="158" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arr6sg2)"/>
+            <text x="460" y="148" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)" font-weight="600">GATHER</text>
+            <rect x="210" y="160" width="200" height="30" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="310" y="180" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Merge: doc3, doc7, doc11, doc22, doc35</text>
+          </svg>
+        </div>
+
+        <!-- SVG: NEW - Tail Latency Amplification -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hourglass-half"></i> Tail Latency Amplification with Scatter/Gather</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <text x="310" y="18" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--text)">Client must wait for the SLOWEST partition</text>
+
+            <!-- Timeline -->
+            <line x1="60" y1="42" x2="560" y2="42" stroke="var(--border)" stroke-width="1"/>
+            <text x="60" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-light)">0ms</text>
+            <text x="210" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-light)">50ms</text>
+            <text x="360" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-light)">100ms</text>
+            <text x="510" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-light)">150ms</text>
+
+            <!-- Partition response bars -->
+            <text x="30" y="65" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">P1</text>
+            <rect x="60" y="55" width="90" height="16" rx="4" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="105" y="66" text-anchor="middle" font-family="Inter" font-size="7" fill="white">30ms</text>
+
+            <text x="30" y="88" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-2)">P2</text>
+            <rect x="60" y="78" width="120" height="16" rx="4" fill="var(--accent-2)" opacity="0.6"/>
+            <text x="120" y="89" text-anchor="middle" font-family="Inter" font-size="7" fill="white">40ms</text>
+
+            <text x="30" y="111" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent)">P3</text>
+            <rect x="60" y="101" width="350" height="16" rx="4" fill="var(--accent)" opacity="0.6"/>
+            <text x="235" y="112" text-anchor="middle" font-family="Inter" font-size="7" fill="white">120ms (GC pause!)</text>
+
+            <text x="30" y="134" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="#8b5cf6">P4</text>
+            <rect x="60" y="124" width="150" height="16" rx="4" fill="#8b5cf6" opacity="0.5"/>
+            <text x="135" y="135" text-anchor="middle" font-family="Inter" font-size="7" fill="white">50ms</text>
+
+            <!-- Wait line -->
+            <line x1="410" y1="50" x2="410" y2="145" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 3"/>
+            <text x="410" y="160" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">Total: 120ms</text>
+            <text x="410" y="175" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">p99 of 4 partitions &gt; p99 of 1</text>
+          </svg>
+        </div>
       </div>
 
+      <!-- ===== LESSON 4 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>Rebalancing Partitions</h2></div>
         <p>Over time, data grows, query throughput changes, or machines fail. You need to move data between nodes -- this is <strong>rebalancing</strong>. The key requirement: after rebalancing, load should be shared fairly, the database must continue accepting reads and writes during the process, and no more data than necessary should be moved.</p>
@@ -181,11 +510,123 @@
         <p><strong>Fixed number of partitions:</strong> Create many more partitions than nodes at the start (e.g., 1000 partitions for 10 nodes). When a node is added, it steals a few partitions from existing nodes. The partition count doesn't change -- only the assignment of partitions to nodes. Used by Riak, Elasticsearch, Couchbase, Voldemort.</p>
         <p><strong>Dynamic partitioning:</strong> Partitions split when they grow too large and merge when they shrink. HBase and RethinkDB use this approach. It adapts well to data volume but starts with a single partition (pre-splitting can help).</p>
         <p><strong>Proportional to nodes:</strong> Keep a fixed number of partitions per node. When a new node joins, it randomly splits existing partitions and takes half. Used by Cassandra.</p>
+
+        <!-- SVG: hash mod N problem -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-exclamation-triangle"></i> Why hash(key) mod N Is Dangerous</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <text x="155" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent)">N = 3 nodes</text>
+            <text x="465" y="20" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--accent-3)">N = 4 nodes (added one!)</text>
+            <rect x="20" y="35" width="85" height="80" rx="8" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="62" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Node 0</text>
+            <text x="62" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=0,3,6,9,12</text>
+            <text x="62" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">15,18,21...</text>
+            <rect x="115" y="35" width="85" height="80" rx="8" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="157" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Node 1</text>
+            <text x="157" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=1,4,7,10,13</text>
+            <text x="157" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">16,19,22...</text>
+            <rect x="210" y="35" width="85" height="80" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="252" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Node 2</text>
+            <text x="252" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=2,5,8,11,14</text>
+            <text x="252" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">17,20,23...</text>
+
+            <rect x="330" y="35" width="68" height="80" rx="8" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1"/>
+            <text x="364" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent)">Node 0</text>
+            <text x="364" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=0,4,8</text>
+            <text x="364" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">12,16,20</text>
+            <rect x="405" y="35" width="68" height="80" rx="8" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="439" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Node 1</text>
+            <text x="439" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=1,5,9</text>
+            <text x="439" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">13,17,21</text>
+            <rect x="480" y="35" width="68" height="80" rx="8" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="514" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-3)">Node 2</text>
+            <text x="514" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=2,6,10</text>
+            <text x="514" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">14,18,22</text>
+            <rect x="555" y="35" width="58" height="80" rx="8" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text x="584" y="55" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="#8b5cf6">Node 3</text>
+            <text x="584" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">h=3,7,11</text>
+            <text x="584" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">15,19,23</text>
+
+            <rect x="120" y="140" width="380" height="45" rx="10" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="310" y="160" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">~75% of keys must move when adding 1 node!</text>
+            <text x="310" y="176" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--text-muted)">e.g., hash=3 was on Node 0, now on Node 3. hash=4 was on Node 1, now on Node 0.</text>
+          </svg>
+        </div>
+
+        <!-- SVG: NEW - Rebalancing Strategies Comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-columns"></i> Rebalancing Strategies at a Glance</div>
+          <svg viewBox="0 0 620 240" width="100%" height="240">
+            <!-- Fixed -->
+            <rect x="10" y="10" width="145" height="210" rx="10" fill="var(--accent-2)" opacity="0.06" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="82" y="32" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-2)">Fixed Partitions</text>
+            <rect x="20" y="42" width="125" height="42" rx="6" fill="var(--accent-2)" opacity="0.1"/>
+            <text x="82" y="58" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">1000 partitions</text>
+            <text x="82" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">10 nodes = 100 each</text>
+            <rect x="20" y="90" width="125" height="52" rx="6" fill="var(--accent-2)" opacity="0.08"/>
+            <text x="82" y="106" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-2)" font-weight="600">+ Simple operations</text>
+            <text x="82" y="118" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-2)" font-weight="600">+ Easy rebalancing</text>
+            <text x="82" y="130" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">- Must choose # upfront</text>
+            <text x="82" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-light)">Riak, Elasticsearch</text>
+            <text x="82" y="172" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-light)">Couchbase, Voldemort</text>
+
+            <!-- Dynamic -->
+            <rect x="165" y="10" width="145" height="210" rx="10" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="237" y="32" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent-3)">Dynamic Partitions</text>
+            <rect x="175" y="42" width="125" height="42" rx="6" fill="var(--accent-3)" opacity="0.1"/>
+            <text x="237" y="58" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Split when too large</text>
+            <text x="237" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Merge when too small</text>
+            <rect x="175" y="90" width="125" height="52" rx="6" fill="var(--accent-3)" opacity="0.08"/>
+            <text x="237" y="106" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-3)" font-weight="600">+ Adapts to data volume</text>
+            <text x="237" y="118" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-3)" font-weight="600">+ No config needed</text>
+            <text x="237" y="130" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">- Starts with 1 partition</text>
+            <text x="237" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-light)">HBase, RethinkDB</text>
+
+            <!-- Proportional -->
+            <rect x="320" y="10" width="145" height="210" rx="10" fill="#8b5cf6" opacity="0.06" stroke="#8b5cf6" stroke-width="1"/>
+            <text x="392" y="32" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#8b5cf6">Proportional to Nodes</text>
+            <rect x="330" y="42" width="125" height="42" rx="6" fill="#8b5cf6" opacity="0.1"/>
+            <text x="392" y="58" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Fixed # per node</text>
+            <text x="392" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">New node splits existing</text>
+            <rect x="330" y="90" width="125" height="52" rx="6" fill="#8b5cf6" opacity="0.08"/>
+            <text x="392" y="106" text-anchor="middle" font-family="Inter" font-size="7" fill="#8b5cf6" font-weight="600">+ Scales with cluster</text>
+            <text x="392" y="118" text-anchor="middle" font-family="Inter" font-size="7" fill="#8b5cf6" font-weight="600">+ Consistent sizing</text>
+            <text x="392" y="130" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">- Random splits may skew</text>
+            <text x="392" y="160" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-light)">Cassandra</text>
+
+            <!-- hash mod N (bad) -->
+            <rect x="475" y="10" width="135" height="210" rx="10" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 3"/>
+            <text x="542" y="32" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="var(--accent)">hash mod N</text>
+            <rect x="485" y="42" width="115" height="42" rx="6" fill="var(--accent)" opacity="0.1"/>
+            <text x="542" y="58" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">key % num_nodes</text>
+            <text x="542" y="70" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">Simplest approach</text>
+            <rect x="485" y="90" width="115" height="52" rx="6" fill="var(--accent)" opacity="0.08"/>
+            <text x="542" y="106" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent)" font-weight="600">- Massive reshuffling</text>
+            <text x="542" y="118" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent)" font-weight="600">- ~75% keys move</text>
+            <text x="542" y="130" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--text-muted)">- Catastrophic for large DB</text>
+            <rect x="505" y="155" width="75" height="22" rx="6" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="542" y="170" text-anchor="middle" font-family="Inter" font-size="8" font-weight="700" fill="var(--accent)">NEVER USE</text>
+          </svg>
+        </div>
+
+        <!-- STEP-THROUGH: Partition Rebalancing with Fixed Partitions -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step-Through: Fixed Partition Rebalancing</div>
+          <div id="rebalanceContainer"></div>
+          <div class="step-controls">
+            <button class="btn" id="rebalPrev"><i class="fas fa-arrow-left"></i> Prev</button>
+            <span class="step-indicator" id="rebalStep">Step 1 / 5</span>
+            <button class="btn" id="rebalNext">Next <i class="fas fa-arrow-right"></i></button>
+            <div class="step-label" id="rebalLabel">Initial state: 6 partitions spread across 3 nodes.</div>
+          </div>
+        </div>
+
         <div class="insight-box">
           <strong>Automatic vs manual rebalancing:</strong> Fully automatic rebalancing is convenient but can be dangerous -- it can overload the network or cascade failures if combined with automatic failure detection. Many production systems use a hybrid: the system suggests partition moves, but a human confirms them.
         </div>
       </div>
 
+      <!-- ===== LESSON 5 ===== -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Request Routing</h2></div>
         <p>When a client wants to read or write a key, how does it know which node to contact? This is an instance of a general problem called <strong>service discovery</strong>. Three common approaches:</p>
@@ -193,12 +634,11 @@
         <p><strong>2. Routing tier:</strong> All requests go through a partition-aware routing layer (load balancer) that determines the correct node. The routing tier uses a coordination service like <strong>ZooKeeper</strong> to track partition assignments. Used by HBase, SolrCloud, and Kafka. Clean separation of concerns but adds a network hop.</p>
         <p><strong>3. Client-aware:</strong> The client itself knows the partition-to-node mapping and connects directly to the correct node. The client subscribes to ZooKeeper to stay updated. Most efficient but requires smarter clients.</p>
 
+        <!-- SVG: Three Routing Approaches -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-route"></i> Three Request Routing Approaches</div>
           <svg viewBox="0 0 620 220" width="100%" height="220">
             <defs><marker id="arr6b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-muted)"/></marker></defs>
-
-            <!-- Approach 1: Gossip -->
             <rect x="10" y="15" width="190" height="190" rx="12" fill="var(--accent)" opacity="0.08" stroke="var(--accent)" stroke-width="1"/>
             <text x="105" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent)">1. Any Node (Gossip)</text>
             <rect x="55" y="55" width="45" height="25" rx="6" fill="var(--accent)" opacity="0.7"/>
@@ -215,7 +655,6 @@
             <text x="105" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Nodes gossip partition map</text>
             <text x="105" y="168" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Forward if needed</text>
 
-            <!-- Approach 2: Routing tier -->
             <rect x="215" y="15" width="190" height="190" rx="12" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1"/>
             <text x="310" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">2. Routing Tier (ZK)</text>
             <rect x="265" y="55" width="45" height="25" rx="6" fill="var(--accent-2)" opacity="0.7"/>
@@ -232,7 +671,6 @@
             <line x1="308" y1="125" x2="303" y2="143" stroke="var(--text-muted)" stroke-width="1" marker-end="url(#arr6b)"/>
             <text x="370" y="117" text-anchor="start" font-family="Inter" font-size="7" fill="var(--text-muted)">ZK</text>
 
-            <!-- Approach 3: Client-aware -->
             <rect x="420" y="15" width="190" height="190" rx="12" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
             <text x="515" y="38" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-3)">3. Client-Aware</text>
             <rect x="468" y="55" width="55" height="25" rx="6" fill="var(--accent-3)" opacity="0.7"/>
@@ -253,11 +691,232 @@
         </div>
 
         <p><strong>Parallel query execution:</strong> Massively parallel processing (MPP) databases like Teradata, Vertica, and Presto support complex analytical queries that touch many partitions. The query optimizer breaks the query into execution stages, and each stage runs in parallel across partitions before results are combined.</p>
+
+        <!-- SVG: NEW - ZooKeeper Coordination Flow -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-sitemap"></i> ZooKeeper-based Routing in Detail</div>
+          <svg viewBox="0 0 620 230" width="100%" height="230">
+            <defs>
+              <marker id="arr-zk" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-2)"/></marker>
+              <marker id="arr-zk2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--accent-3)"/></marker>
+            </defs>
+
+            <!-- ZooKeeper -->
+            <rect x="230" y="10" width="160" height="45" rx="10" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="310" y="30" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="var(--accent-2)">ZooKeeper</text>
+            <text x="310" y="46" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">Partition-to-Node Map</text>
+
+            <!-- Nodes register with ZK -->
+            <text x="520" y="18" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-3)" font-weight="600">1. Nodes register</text>
+            <line x1="480" y1="90" x2="395" y2="50" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-zk2)"/>
+            <line x1="540" y1="90" x2="395" y2="45" stroke="var(--accent-3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-zk2)"/>
+
+            <!-- Data nodes -->
+            <rect x="440" y="92" width="60" height="40" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="470" y="108" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">Node 1</text>
+            <text x="470" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">P1, P2</text>
+            <rect x="510" y="92" width="60" height="40" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="540" y="108" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="var(--accent-3)">Node 2</text>
+            <text x="540" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="var(--text-muted)">P3, P4</text>
+            <rect x="580" y="92" width="35" height="40" rx="8" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="598" y="116" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-3)">N3</text>
+
+            <!-- Router subscribes -->
+            <text x="150" y="18" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--accent-2)" font-weight="600">2. Router subscribes</text>
+            <rect x="60" y="90" width="120" height="40" rx="8" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="120" y="115" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--accent-2)">Routing Tier</text>
+            <line x1="170" y1="95" x2="228" y2="50" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr-zk)"/>
+
+            <!-- ZK notifies on change -->
+            <text x="310" y="80" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">3. ZK notifies on partition changes</text>
+            <line x1="260" y1="55" x2="160" y2="88" stroke="var(--accent-2)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-zk)"/>
+
+            <!-- Client flow -->
+            <rect x="20" y="160" width="80" height="30" rx="6" fill="var(--accent)" opacity="0.6"/>
+            <text x="60" y="179" text-anchor="middle" font-family="Inter" font-size="9" fill="white">Client</text>
+            <line x1="100" y1="175" x2="118" y2="132" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arr-zk)"/>
+            <text x="70" y="148" text-anchor="start" font-family="Inter" font-size="7" fill="var(--text-muted)">4. Request</text>
+
+            <!-- Router forwards -->
+            <line x1="180" y1="110" x2="438" y2="110" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arr-zk)"/>
+            <text x="310" y="105" text-anchor="middle" font-family="Inter" font-size="7" fill="var(--accent-2)" font-weight="600">5. Route to correct node</text>
+
+            <!-- Summary -->
+            <rect x="80" y="205" width="460" height="22" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+            <text x="310" y="220" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--text-muted)">ZooKeeper is the source of truth; all routing decisions derive from its state</text>
+          </svg>
+        </div>
+
+        <!-- STEP-THROUGH: Consistent Hashing Ring -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step-Through: Consistent Hashing Ring</div>
+          <div id="hashRingContainer"></div>
+          <div class="step-controls">
+            <button class="btn" id="ringPrev"><i class="fas fa-arrow-left"></i> Prev</button>
+            <span class="step-indicator" id="ringStep">Step 1 / 6</span>
+            <button class="btn" id="ringNext">Next <i class="fas fa-arrow-right"></i></button>
+            <div class="step-label" id="ringLabel">A hash ring maps the full hash space (0 to 2^32) onto a circle.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== EXERCISE 1 ===== -->
+      <div class="exercise-box" id="exercise1">
+        <h3><i class="fas fa-flask"></i> Exercise 1: Match the Partitioning Strategy</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">For each scenario, select the best partitioning strategy.</p>
+        <div class="exercise-row">
+          <label>Time-series IoT sensor data:</label>
+          <select class="exercise-select" data-answer="key-range">
+            <option value="">-- Choose --</option>
+            <option value="key-range">Key Range Partitioning</option>
+            <option value="hash">Hash Partitioning</option>
+            <option value="compound">Compound Key (Hash + Range)</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>User profile lookups by ID:</label>
+          <select class="exercise-select" data-answer="hash">
+            <option value="">-- Choose --</option>
+            <option value="key-range">Key Range Partitioning</option>
+            <option value="hash">Hash Partitioning</option>
+            <option value="compound">Compound Key (Hash + Range)</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>Social media posts per user, queried by date range:</label>
+          <select class="exercise-select" data-answer="compound">
+            <option value="">-- Choose --</option>
+            <option value="key-range">Key Range Partitioning</option>
+            <option value="hash">Hash Partitioning</option>
+            <option value="compound">Compound Key (Hash + Range)</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>E-commerce product catalog (alphabetical browsing):</label>
+          <select class="exercise-select" data-answer="key-range">
+            <option value="">-- Choose --</option>
+            <option value="key-range">Key Range Partitioning</option>
+            <option value="hash">Hash Partitioning</option>
+            <option value="compound">Compound Key (Hash + Range)</option>
+          </select>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="exercise-btn" id="ex1Check"><i class="fas fa-check"></i> Check Answers</button>
+          <button class="exercise-btn" style="background:var(--text-muted); margin-left:0.5rem;" id="ex1Reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        <div class="exercise-feedback" id="ex1Feedback"></div>
+      </div>
+
+      <!-- ===== EXERCISE 2 ===== -->
+      <div class="exercise-box" id="exercise2">
+        <h3><i class="fas fa-flask"></i> Exercise 2: Rebalancing Strategy Decision Tree</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Given these constraints, select the best rebalancing strategy for each scenario.</p>
+        <div class="exercise-row">
+          <label>Dataset grows unpredictably, from 1 GB to 1 TB:</label>
+          <select class="exercise-select" data-answer="dynamic">
+            <option value="">-- Choose --</option>
+            <option value="fixed">Fixed Number of Partitions</option>
+            <option value="dynamic">Dynamic Partitioning</option>
+            <option value="proportional">Proportional to Nodes</option>
+            <option value="hashmod">hash(key) mod N</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>Known dataset size, need simple operations:</label>
+          <select class="exercise-select" data-answer="fixed">
+            <option value="">-- Choose --</option>
+            <option value="fixed">Fixed Number of Partitions</option>
+            <option value="dynamic">Dynamic Partitioning</option>
+            <option value="proportional">Proportional to Nodes</option>
+            <option value="hashmod">hash(key) mod N</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>Cassandra-style, each node handles equal share:</label>
+          <select class="exercise-select" data-answer="proportional">
+            <option value="">-- Choose --</option>
+            <option value="fixed">Fixed Number of Partitions</option>
+            <option value="dynamic">Dynamic Partitioning</option>
+            <option value="proportional">Proportional to Nodes</option>
+            <option value="hashmod">hash(key) mod N</option>
+          </select>
+        </div>
+        <div class="exercise-row">
+          <label>Never use this strategy in production:</label>
+          <select class="exercise-select" data-answer="hashmod">
+            <option value="">-- Choose --</option>
+            <option value="fixed">Fixed Number of Partitions</option>
+            <option value="dynamic">Dynamic Partitioning</option>
+            <option value="proportional">Proportional to Nodes</option>
+            <option value="hashmod">hash(key) mod N</option>
+          </select>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="exercise-btn" id="ex2Check"><i class="fas fa-check"></i> Check Answers</button>
+          <button class="exercise-btn" style="background:var(--text-muted); margin-left:0.5rem;" id="ex2Reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        <div class="exercise-feedback" id="ex2Feedback"></div>
+      </div>
+
+      <!-- ===== EXERCISE 3: Interactive Hash Simulator ===== -->
+      <div class="exercise-box" id="exercise3">
+        <h3><i class="fas fa-hashtag"></i> Exercise 3: Interactive Hash Partition Simulator</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Type keys below and watch which partition they hash to. See how sequential keys get distributed randomly.</p>
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <input type="text" class="hash-sim-input" id="hashSimInput" placeholder="Type a key (e.g., user_42)" />
+          <button class="exercise-btn" id="hashSimAdd"><i class="fas fa-plus"></i> Add Key</button>
+          <button class="exercise-btn" style="background:var(--text-muted);" id="hashSimClear"><i class="fas fa-trash"></i> Clear</button>
+          <span style="font-size:0.78rem; color:var(--text-light);">Partitions: 4</span>
+        </div>
+        <div class="hash-bar" id="hashBar" style="margin-top:1rem;">
+          <div class="hash-bar-segment" style="width:25%; background:#dc2626;">P1 (0)</div>
+          <div class="hash-bar-segment" style="width:25%; background:#2563eb;">P2 (0)</div>
+          <div class="hash-bar-segment" style="width:25%; background:#10b981;">P3 (0)</div>
+          <div class="hash-bar-segment" style="width:25%; background:#8b5cf6;">P4 (0)</div>
+        </div>
+        <div class="hash-sim-result" id="hashSimResult">
+          <div style="display:flex; flex-wrap:wrap; gap:0.4rem;" id="hashSimKeys"></div>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <button class="exercise-btn" style="background:var(--accent-3);" id="hashSimBatch"><i class="fas fa-bolt"></i> Auto-add 20 sequential keys</button>
+        </div>
+      </div>
+
+      <!-- ===== EXERCISE 4: Drag & Drop Index Type ===== -->
+      <div class="exercise-box" id="exercise4">
+        <h3><i class="fas fa-flask"></i> Exercise 4: Classify the Trade-offs</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Drag each characteristic to the correct index type.</p>
+        <div style="margin-bottom:1rem;">
+          <div class="drag-target-label">Available items:</div>
+          <div class="drag-zone" id="dragSource">
+            <span class="drag-chip blue" draggable="true" data-answer="local" data-id="d1">Fast writes (one partition)</span>
+            <span class="drag-chip green" draggable="true" data-answer="global" data-id="d2">Fast reads (one index partition)</span>
+            <span class="drag-chip red" draggable="true" data-answer="local" data-id="d3">Scatter/gather on read</span>
+            <span class="drag-chip purple" draggable="true" data-answer="global" data-id="d4">Cross-partition writes</span>
+            <span class="drag-chip blue" draggable="true" data-answer="local" data-id="d5">Index co-located with data</span>
+            <span class="drag-chip green" draggable="true" data-answer="global" data-id="d6">Often updated asynchronously</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <div class="drag-target-label" style="color:var(--accent);">Local (Document) Index</div>
+            <div class="drag-zone" id="dragLocal" data-target="local"></div>
+          </div>
+          <div>
+            <div class="drag-target-label" style="color:var(--accent-3);">Global (Term) Index</div>
+            <div class="drag-zone" id="dragGlobal" data-target="global"></div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="exercise-btn" id="ex4Check"><i class="fas fa-check"></i> Check Answers</button>
+          <button class="exercise-btn" style="background:var(--text-muted); margin-left:0.5rem;" id="ex4Reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        <div class="exercise-feedback" id="ex4Feedback"></div>
       </div>
 
     </div>
 
-    <!-- TAB: Summary -->
+    <!-- ======================== TAB: Summary ======================== -->
     <div class="tab-panel" id="tab-summary">
       <div class="summary-box">
         <h3><i class="fas fa-bookmark"></i> Chapter 6 Summary</h3>
@@ -286,65 +945,18 @@
       </div>
     </div>
 
-    <!-- TAB: Quiz -->
+    <!-- ======================== TAB: Quiz ======================== -->
     <div class="tab-panel" id="tab-quiz">
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- ======================== TAB: Mind Map (Interactive) ======================== -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh6" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
-          <style>
-            #mmCh6 .mm-node { animation: mmFadeInCH6 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH6 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh6 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh6 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh6 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
-            #mmCh6 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
-          </style>
-          <line class="mm-branch" x1="350" y1="210" x2="130" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="570" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="110" y2="280"/>
-          <line class="mm-branch" x1="350" y1="210" x2="590" y2="280"/>
-          <line class="mm-branch" x1="350" y1="210" x2="200" y2="370"/>
-          <line class="mm-branch" x1="350" y1="210" x2="500" y2="370"/>
-
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="65" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="214" text-anchor="middle">Partitioning</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="130" cy="70" rx="62" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="130" y="74" text-anchor="middle">Key Range</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">Hash Partitioning</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="570" cy="70" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="570" y="74" text-anchor="middle">Hot Spots</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="110" cy="280" rx="68" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="110" y="284" text-anchor="middle">Secondary Indexes</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="590" cy="280" rx="60" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="590" y="284" text-anchor="middle">Rebalancing</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.6s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="200" cy="370" rx="65" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="200" y="374" text-anchor="middle">Request Routing</text>
-          </g>
-          <g class="mm-node" style="animation-delay:0.7s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="500" cy="370" rx="55" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="500" y="374" text-anchor="middle">MPP Queries</text>
-          </g>
-        </svg>
+      <p class="mm-toggle-hint"><i class="fas fa-info-circle"></i> Click any node to expand or collapse its children. Click leaf nodes for details.</p>
+      <div class="viz-container" style="min-height:560px; display:flex; align-items:center; justify-content:center;">
+        <div id="mindmapContainer"></div>
       </div>
+      <div id="mmDetail" style="display:none; margin-top:0.75rem; padding:1rem; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:0.85rem; line-height:1.6; color:var(--text-muted);"></div>
     </div>
 
     <div class="chapter-nav">
@@ -360,7 +972,874 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    /* ============================================================
+       STEP-THROUGH 1: Fixed Partition Rebalancing
+       ============================================================ */
+    (function() {
+      var step = 0;
+      var colors = ['#dc2626', '#2563eb', '#10b981', '#8b5cf6'];
+      var stepData = [
+        {
+          label: 'Initial state: 6 partitions spread across 3 nodes (2 partitions each).',
+          nodes: [
+            { name: 'Node A', x: 60, parts: ['P1','P2'] },
+            { name: 'Node B', x: 250, parts: ['P3','P4'] },
+            { name: 'Node C', x: 440, parts: ['P5','P6'] }
+          ],
+          highlight: [], arrows: []
+        },
+        {
+          label: 'A new Node D joins the cluster and needs to take on some partitions.',
+          nodes: [
+            { name: 'Node A', x: 40, parts: ['P1','P2'] },
+            { name: 'Node B', x: 190, parts: ['P3','P4'] },
+            { name: 'Node C', x: 340, parts: ['P5','P6'] },
+            { name: 'Node D (NEW)', x: 490, parts: [] }
+          ],
+          highlight: [], arrows: []
+        },
+        {
+          label: 'Node D steals P2 from Node A. Only P2 moves -- other partitions stay put.',
+          nodes: [
+            { name: 'Node A', x: 40, parts: ['P1'] },
+            { name: 'Node B', x: 190, parts: ['P3','P4'] },
+            { name: 'Node C', x: 340, parts: ['P5','P6'] },
+            { name: 'Node D', x: 490, parts: ['P2'] }
+          ],
+          highlight: ['P2'],
+          arrows: [{ from: 0, to: 3 }]
+        },
+        {
+          label: 'Node D steals P4 from Node B. Now each node has a fairer share.',
+          nodes: [
+            { name: 'Node A', x: 40, parts: ['P1'] },
+            { name: 'Node B', x: 190, parts: ['P3'] },
+            { name: 'Node C', x: 340, parts: ['P5','P6'] },
+            { name: 'Node D', x: 490, parts: ['P2','P4'] }
+          ],
+          highlight: ['P4'],
+          arrows: [{ from: 1, to: 3 }]
+        },
+        {
+          label: 'Final state: load is more evenly distributed. Only 2 of 6 partitions moved!',
+          nodes: [
+            { name: 'Node A', x: 40, parts: ['P1'] },
+            { name: 'Node B', x: 190, parts: ['P3'] },
+            { name: 'Node C', x: 340, parts: ['P5','P6'] },
+            { name: 'Node D', x: 490, parts: ['P2','P4'] }
+          ],
+          highlight: [], arrows: []
+        }
+      ];
+
+      function render() {
+        var container = document.getElementById('rebalanceContainer');
+        var s = stepData[step];
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 620 260');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '260');
+
+        // Draw movement arrows
+        if (s.arrows) {
+          var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+          var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+          marker.setAttribute('id', 'arr-rebal'); marker.setAttribute('markerWidth', '8');
+          marker.setAttribute('markerHeight', '6'); marker.setAttribute('refX', '8');
+          marker.setAttribute('refY', '3'); marker.setAttribute('orient', 'auto');
+          var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          poly.setAttribute('points', '0 0, 8 3, 0 6'); poly.setAttribute('fill', '#8b5cf6');
+          marker.appendChild(poly); defs.appendChild(marker); svg.appendChild(defs);
+
+          s.arrows.forEach(function(arr) {
+            var fromN = s.nodes[arr.from]; var toN = s.nodes[arr.to];
+            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', fromN.x + 60); line.setAttribute('y1', 20);
+            line.setAttribute('x2', toN.x + 60); line.setAttribute('y2', 20);
+            line.setAttribute('stroke', '#8b5cf6'); line.setAttribute('stroke-width', '2');
+            line.setAttribute('stroke-dasharray', '6 3'); line.setAttribute('marker-end', 'url(#arr-rebal)');
+            svg.appendChild(line);
+            var moveLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            moveLabel.setAttribute('x', (fromN.x + toN.x) / 2 + 60); moveLabel.setAttribute('y', 14);
+            moveLabel.setAttribute('text-anchor', 'middle'); moveLabel.setAttribute('font-family', 'Inter');
+            moveLabel.setAttribute('font-size', '8'); moveLabel.setAttribute('font-weight', '600');
+            moveLabel.setAttribute('fill', '#8b5cf6'); moveLabel.textContent = 'MOVE';
+            svg.appendChild(moveLabel);
+          });
+        }
+
+        s.nodes.forEach(function(node, ni) {
+          var c = colors[ni % colors.length];
+          var w = 120;
+          var partH = node.parts.length * 28;
+          var h = 40 + Math.max(partH, 10) + 10;
+          var y = 30;
+
+          var bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          bg.setAttribute('x', node.x); bg.setAttribute('y', y);
+          bg.setAttribute('width', w); bg.setAttribute('height', Math.max(h, 55));
+          bg.setAttribute('rx', '10'); bg.setAttribute('fill', c);
+          bg.setAttribute('opacity', '0.1'); bg.setAttribute('stroke', c);
+          bg.setAttribute('stroke-width', node.name.indexOf('NEW') >= 0 ? '2.5' : '1');
+          svg.appendChild(bg);
+
+          var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', node.x + w/2); label.setAttribute('y', y + 22);
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('font-family', 'Inter'); label.setAttribute('font-size', '10');
+          label.setAttribute('font-weight', '700'); label.setAttribute('fill', c);
+          label.textContent = node.name;
+          svg.appendChild(label);
+
+          node.parts.forEach(function(p, pi) {
+            var isHL = s.highlight.indexOf(p) >= 0;
+            var py = y + 32 + pi * 28;
+            var partBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            partBg.setAttribute('x', node.x + 10); partBg.setAttribute('y', py);
+            partBg.setAttribute('width', w - 20); partBg.setAttribute('height', '22');
+            partBg.setAttribute('rx', '6');
+            partBg.setAttribute('fill', isHL ? '#8b5cf6' : c);
+            partBg.setAttribute('opacity', isHL ? '0.5' : '0.25');
+            if (isHL) { partBg.setAttribute('stroke', '#8b5cf6'); partBg.setAttribute('stroke-width', '2'); }
+            svg.appendChild(partBg);
+
+            var partLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            partLabel.setAttribute('x', node.x + w/2); partLabel.setAttribute('y', py + 15);
+            partLabel.setAttribute('text-anchor', 'middle');
+            partLabel.setAttribute('font-family', 'JetBrains Mono'); partLabel.setAttribute('font-size', '9');
+            partLabel.setAttribute('font-weight', isHL ? '700' : '500');
+            partLabel.setAttribute('fill', isHL ? '#8b5cf6' : 'var(--text)');
+            partLabel.textContent = p;
+            svg.appendChild(partLabel);
+          });
+        });
+
+        if (step === stepData.length - 1) {
+          var summBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          summBg.setAttribute('x', '80'); summBg.setAttribute('y', '210');
+          summBg.setAttribute('width', '460'); summBg.setAttribute('height', '40');
+          summBg.setAttribute('rx', '10'); summBg.setAttribute('fill', '#10b981');
+          summBg.setAttribute('opacity', '0.1'); summBg.setAttribute('stroke', '#10b981');
+          summBg.setAttribute('stroke-width', '1');
+          svg.appendChild(summBg);
+
+          var summText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          summText.setAttribute('x', '310'); summText.setAttribute('y', '234');
+          summText.setAttribute('text-anchor', 'middle');
+          summText.setAttribute('font-family', 'Inter'); summText.setAttribute('font-size', '10');
+          summText.setAttribute('font-weight', '600'); summText.setAttribute('fill', '#10b981');
+          summText.textContent = 'Only 33% of partitions moved -- much better than hash mod N (~75%)';
+          svg.appendChild(summText);
+        }
+
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.appendChild(svg);
+        document.getElementById('rebalStep').textContent = 'Step ' + (step + 1) + ' / ' + stepData.length;
+        document.getElementById('rebalLabel').textContent = s.label;
+        document.getElementById('rebalPrev').disabled = step === 0;
+        document.getElementById('rebalNext').disabled = step === stepData.length - 1;
+      }
+
+      document.getElementById('rebalNext').addEventListener('click', function() { if (step < stepData.length - 1) { step++; render(); } });
+      document.getElementById('rebalPrev').addEventListener('click', function() { if (step > 0) { step--; render(); } });
+      render();
+    })();
+
+    /* ============================================================
+       STEP-THROUGH 2: Consistent Hashing Ring
+       ============================================================ */
+    (function() {
+      var step = 0;
+      var cx = 280, cy = 170, r = 130;
+      var stepData = [
+        {
+          label: 'A hash ring maps the full hash space (0 to 2^32) onto a circle. Each position on the ring corresponds to a hash value.',
+          nodes: [], keys: [], newNode: null, annotations: [], arcs: []
+        },
+        {
+          label: '3 nodes are placed on the ring at their hash positions. Each node owns the arc from the previous node clockwise to itself.',
+          nodes: [
+            { name: 'Node A', angle: 30, color: '#dc2626' },
+            { name: 'Node B', angle: 150, color: '#2563eb' },
+            { name: 'Node C', angle: 270, color: '#10b981' }
+          ],
+          keys: [], newNode: null, annotations: [],
+          arcs: [
+            { from: 270, to: 30, color: '#dc2626' },
+            { from: 30, to: 150, color: '#2563eb' },
+            { from: 150, to: 270, color: '#10b981' }
+          ]
+        },
+        {
+          label: 'Keys are hashed onto the ring. Each key is assigned to the next node clockwise. k1 -> B, k2 -> C, k3 -> A.',
+          nodes: [
+            { name: 'Node A', angle: 30, color: '#dc2626' },
+            { name: 'Node B', angle: 150, color: '#2563eb' },
+            { name: 'Node C', angle: 270, color: '#10b981' }
+          ],
+          keys: [
+            { name: 'k1', angle: 80, moved: false },
+            { name: 'k2', angle: 200, moved: false },
+            { name: 'k3', angle: 330, moved: false }
+          ],
+          newNode: null,
+          annotations: ['k1 -> B (next CW)', 'k2 -> C (next CW)', 'k3 -> A (next CW)'],
+          arcs: [
+            { from: 270, to: 30, color: '#dc2626' },
+            { from: 30, to: 150, color: '#2563eb' },
+            { from: 150, to: 270, color: '#10b981' }
+          ]
+        },
+        {
+          label: 'A new Node D is added at position between A and B on the ring.',
+          nodes: [
+            { name: 'Node A', angle: 30, color: '#dc2626' },
+            { name: 'Node B', angle: 150, color: '#2563eb' },
+            { name: 'Node C', angle: 270, color: '#10b981' }
+          ],
+          keys: [
+            { name: 'k1', angle: 80, moved: false },
+            { name: 'k2', angle: 200, moved: false },
+            { name: 'k3', angle: 330, moved: false }
+          ],
+          newNode: { name: 'Node D', angle: 100, color: '#8b5cf6' },
+          annotations: [],
+          arcs: []
+        },
+        {
+          label: 'Only k1 (between A and D) moves from Node B to Node D. Keys k2 and k3 are completely unaffected!',
+          nodes: [
+            { name: 'Node A', angle: 30, color: '#dc2626' },
+            { name: 'Node B', angle: 150, color: '#2563eb' },
+            { name: 'Node C', angle: 270, color: '#10b981' },
+            { name: 'Node D', angle: 100, color: '#8b5cf6' }
+          ],
+          keys: [
+            { name: 'k1', angle: 80, moved: true },
+            { name: 'k2', angle: 200, moved: false },
+            { name: 'k3', angle: 330, moved: false }
+          ],
+          newNode: null,
+          annotations: ['k1 MOVED: B -> D', 'k2 unchanged: C', 'k3 unchanged: A'],
+          arcs: [
+            { from: 270, to: 30, color: '#dc2626' },
+            { from: 30, to: 100, color: '#8b5cf6' },
+            { from: 100, to: 150, color: '#2563eb' },
+            { from: 150, to: 270, color: '#10b981' }
+          ]
+        },
+        {
+          label: 'Consistent hashing minimizes disruption: adding a node only moves keys in the adjacent arc. On average, only 1/N of keys move.',
+          nodes: [
+            { name: 'Node A', angle: 30, color: '#dc2626' },
+            { name: 'Node B', angle: 150, color: '#2563eb' },
+            { name: 'Node C', angle: 270, color: '#10b981' },
+            { name: 'Node D', angle: 100, color: '#8b5cf6' }
+          ],
+          keys: [
+            { name: 'k1', angle: 80, moved: false },
+            { name: 'k2', angle: 200, moved: false },
+            { name: 'k3', angle: 330, moved: false }
+          ],
+          newNode: null,
+          annotations: ['Only ~25% of keys moved', '(1/N where N=4)'],
+          arcs: [
+            { from: 270, to: 30, color: '#dc2626' },
+            { from: 30, to: 100, color: '#8b5cf6' },
+            { from: 100, to: 150, color: '#2563eb' },
+            { from: 150, to: 270, color: '#10b981' }
+          ]
+        }
+      ];
+
+      function angleToXY(angle, radius) {
+        var rad = (angle - 90) * Math.PI / 180;
+        return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+      }
+
+      function describeArc(startAngle, endAngle, radius) {
+        var start = angleToXY(startAngle, radius);
+        var end = angleToXY(endAngle, radius);
+        var sweep = endAngle > startAngle ? endAngle - startAngle : 360 - startAngle + endAngle;
+        var largeArc = sweep > 180 ? 1 : 0;
+        return 'M ' + start.x + ' ' + start.y + ' A ' + radius + ' ' + radius + ' 0 ' + largeArc + ' 1 ' + end.x + ' ' + end.y;
+      }
+
+      function render() {
+        var container = document.getElementById('hashRingContainer');
+        var s = stepData[step];
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 620 360');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '360');
+
+        // Colored arcs
+        if (s.arcs && s.arcs.length) {
+          s.arcs.forEach(function(arc) {
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', describeArc(arc.from, arc.to, r));
+            path.setAttribute('fill', 'none'); path.setAttribute('stroke', arc.color);
+            path.setAttribute('stroke-width', '6'); path.setAttribute('opacity', '0.25');
+            svg.appendChild(path);
+          });
+        }
+
+        // Ring circle
+        var ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', r);
+        ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', 'var(--border)');
+        ring.setAttribute('stroke-width', '2.5');
+        svg.appendChild(ring);
+
+        // Tick marks
+        for (var i = 0; i < 12; i++) {
+          var a = i * 30;
+          var p1 = angleToXY(a, r - 5);
+          var p2 = angleToXY(a, r + 5);
+          var tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tick.setAttribute('x1', p1.x); tick.setAttribute('y1', p1.y);
+          tick.setAttribute('x2', p2.x); tick.setAttribute('y2', p2.y);
+          tick.setAttribute('stroke', 'var(--text-light)');
+          tick.setAttribute('stroke-width', '1'); tick.setAttribute('opacity', '0.4');
+          svg.appendChild(tick);
+        }
+
+        // Ring labels
+        var labels = [
+          { text: '0', x: cx, y: cy - r - 14 },
+          { text: '2^30', x: cx + r + 22, y: cy + 4 },
+          { text: '2^31', x: cx, y: cy + r + 20 },
+          { text: '3*2^30', x: cx - r - 26, y: cy + 4 }
+        ];
+        labels.forEach(function(lb) {
+          var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          t.setAttribute('x', lb.x); t.setAttribute('y', lb.y);
+          t.setAttribute('text-anchor', 'middle');
+          t.setAttribute('font-family', 'JetBrains Mono'); t.setAttribute('font-size', '8');
+          t.setAttribute('fill', 'var(--text-light)');
+          t.textContent = lb.text;
+          svg.appendChild(t);
+        });
+
+        // Nodes on ring
+        s.nodes.forEach(function(n) {
+          var p = angleToXY(n.angle, r);
+          var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y); circle.setAttribute('r', '14');
+          circle.setAttribute('fill', n.color); circle.setAttribute('opacity', '0.85');
+          circle.setAttribute('stroke', 'white'); circle.setAttribute('stroke-width', '2');
+          svg.appendChild(circle);
+
+          var lp = angleToXY(n.angle, r + 28);
+          var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', lp.x); label.setAttribute('y', lp.y + 4);
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('font-family', 'Inter'); label.setAttribute('font-size', '9');
+          label.setAttribute('font-weight', '600'); label.setAttribute('fill', n.color);
+          label.textContent = n.name;
+          svg.appendChild(label);
+        });
+
+        // New node (pulsing effect)
+        if (s.newNode) {
+          var np = angleToXY(s.newNode.angle, r);
+          var nc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          nc.setAttribute('cx', np.x); nc.setAttribute('cy', np.y); nc.setAttribute('r', '16');
+          nc.setAttribute('fill', s.newNode.color); nc.setAttribute('opacity', '0.85');
+          nc.setAttribute('stroke', 'white'); nc.setAttribute('stroke-width', '2.5');
+          svg.appendChild(nc);
+
+          var pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          pulse.setAttribute('cx', np.x); pulse.setAttribute('cy', np.y); pulse.setAttribute('r', '20');
+          pulse.setAttribute('fill', 'none'); pulse.setAttribute('stroke', s.newNode.color);
+          pulse.setAttribute('stroke-width', '2'); pulse.setAttribute('opacity', '0.4');
+          var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+          anim.setAttribute('attributeName', 'r'); anim.setAttribute('values', '16;24;16');
+          anim.setAttribute('dur', '1.2s'); anim.setAttribute('repeatCount', 'indefinite');
+          pulse.appendChild(anim);
+          var anim2 = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+          anim2.setAttribute('attributeName', 'opacity'); anim2.setAttribute('values', '0.4;0.1;0.4');
+          anim2.setAttribute('dur', '1.2s'); anim2.setAttribute('repeatCount', 'indefinite');
+          pulse.appendChild(anim2);
+          svg.appendChild(pulse);
+
+          var nlp = angleToXY(s.newNode.angle, r + 30);
+          var nlabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          nlabel.setAttribute('x', nlp.x); nlabel.setAttribute('y', nlp.y + 4);
+          nlabel.setAttribute('text-anchor', 'middle');
+          nlabel.setAttribute('font-family', 'Inter'); nlabel.setAttribute('font-size', '9');
+          nlabel.setAttribute('font-weight', '700'); nlabel.setAttribute('fill', s.newNode.color);
+          nlabel.textContent = s.newNode.name + ' (NEW)';
+          svg.appendChild(nlabel);
+        }
+
+        // Keys on ring
+        s.keys.forEach(function(k) {
+          var kp = angleToXY(k.angle, r - 25);
+          var kbg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          kbg.setAttribute('x', kp.x - 12); kbg.setAttribute('y', kp.y - 8);
+          kbg.setAttribute('width', '24'); kbg.setAttribute('height', '16');
+          kbg.setAttribute('rx', '4');
+          kbg.setAttribute('fill', k.moved ? '#8b5cf6' : 'var(--text)');
+          kbg.setAttribute('opacity', k.moved ? '0.6' : '0.2');
+          svg.appendChild(kbg);
+
+          var klabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          klabel.setAttribute('x', kp.x); klabel.setAttribute('y', kp.y + 4);
+          klabel.setAttribute('text-anchor', 'middle');
+          klabel.setAttribute('font-family', 'JetBrains Mono'); klabel.setAttribute('font-size', '8');
+          klabel.setAttribute('font-weight', '600');
+          klabel.setAttribute('fill', k.moved ? 'white' : 'var(--text)');
+          klabel.textContent = k.name;
+          svg.appendChild(klabel);
+        });
+
+        // Annotations on right side
+        s.annotations.forEach(function(txt, ai) {
+          var at = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          at.setAttribute('x', '470'); at.setAttribute('y', 70 + ai * 20);
+          at.setAttribute('text-anchor', 'start');
+          at.setAttribute('font-family', 'Inter'); at.setAttribute('font-size', '9');
+          at.setAttribute('fill', txt.indexOf('MOVED') >= 0 ? '#8b5cf6' : 'var(--text-muted)');
+          at.setAttribute('font-weight', txt.indexOf('MOVED') >= 0 ? '700' : '400');
+          at.textContent = txt;
+          svg.appendChild(at);
+        });
+
+        // Final summary bar
+        if (step === stepData.length - 1) {
+          var sb = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          sb.setAttribute('x', '90'); sb.setAttribute('y', '320');
+          sb.setAttribute('width', '440'); sb.setAttribute('height', '32');
+          sb.setAttribute('rx', '8'); sb.setAttribute('fill', '#10b981');
+          sb.setAttribute('opacity', '0.1'); sb.setAttribute('stroke', '#10b981');
+          sb.setAttribute('stroke-width', '1');
+          svg.appendChild(sb);
+
+          var st = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          st.setAttribute('x', '310'); st.setAttribute('y', '340');
+          st.setAttribute('text-anchor', 'middle');
+          st.setAttribute('font-family', 'Inter'); st.setAttribute('font-size', '10');
+          st.setAttribute('font-weight', '600'); st.setAttribute('fill', '#10b981');
+          st.textContent = 'Minimal disruption: foundation of modern distributed systems.';
+          svg.appendChild(st);
+        }
+
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.appendChild(svg);
+        document.getElementById('ringStep').textContent = 'Step ' + (step + 1) + ' / ' + stepData.length;
+        document.getElementById('ringLabel').textContent = s.label;
+        document.getElementById('ringPrev').disabled = step === 0;
+        document.getElementById('ringNext').disabled = step === stepData.length - 1;
+      }
+
+      document.getElementById('ringNext').addEventListener('click', function() { if (step < stepData.length - 1) { step++; render(); } });
+      document.getElementById('ringPrev').addEventListener('click', function() { if (step > 0) { step--; render(); } });
+      render();
+    })();
+
+    /* ============================================================
+       INTERACTIVE EXERCISES 1 & 2 (select-based)
+       ============================================================ */
+    function checkExercise(boxId, feedbackId, successMsg, hintMsg) {
+      var box = document.getElementById(boxId);
+      var selects = box.querySelectorAll('.exercise-select');
+      var correct = 0;
+      var total = selects.length;
+      selects.forEach(function(sel) {
+        var isCorrect = sel.value === sel.dataset.answer;
+        sel.style.borderColor = isCorrect ? 'var(--accent-3)' : 'var(--accent-danger)';
+        sel.style.background = isCorrect ? 'var(--success-bg)' : 'var(--error-bg)';
+        if (isCorrect) correct++;
+      });
+      var fb = document.getElementById(feedbackId);
+      fb.className = 'exercise-feedback show ' + (correct === total ? 'success' : 'error');
+      fb.textContent = correct === total ? successMsg : correct + '/' + total + ' correct. ' + hintMsg;
+    }
+
+    function resetExercise(boxId, feedbackId) {
+      var box = document.getElementById(boxId);
+      box.querySelectorAll('.exercise-select').forEach(function(sel) {
+        sel.value = ''; sel.style.borderColor = ''; sel.style.background = '';
+      });
+      document.getElementById(feedbackId).className = 'exercise-feedback';
+    }
+
+    document.getElementById('ex1Check').addEventListener('click', function() {
+      checkExercise('exercise1', 'ex1Feedback',
+        'All correct! IoT time-series benefits from range ordering, user IDs need even distribution, per-user date queries use compound keys, and product catalogs benefit from alphabetical ranges.',
+        'Hint: consider whether the query pattern needs range scans, even distribution, or both.');
+    });
+    document.getElementById('ex1Reset').addEventListener('click', function() { resetExercise('exercise1', 'ex1Feedback'); });
+    document.getElementById('ex2Check').addEventListener('click', function() {
+      checkExercise('exercise2', 'ex2Feedback',
+        'Perfect! Dynamic partitioning adapts to unpredictable growth, fixed partitions are simplest for known data sizes, proportional scaling is Cassandra-style, and hash mod N should never be used.',
+        'Remember: dynamic = unpredictable growth, fixed = known size, proportional = per-node, hash mod N = never use.');
+    });
+    document.getElementById('ex2Reset').addEventListener('click', function() { resetExercise('exercise2', 'ex2Feedback'); });
+
+    /* ============================================================
+       EXERCISE 3: Interactive Hash Simulator
+       ============================================================ */
+    (function() {
+      var partitions = 4;
+      var counts = [0, 0, 0, 0];
+      var keys = [];
+      var partColors = ['#dc2626', '#2563eb', '#10b981', '#8b5cf6'];
+      var partNames = ['P1', 'P2', 'P3', 'P4'];
+
+      function simpleHash(str) {
+        var hash = 5381;
+        for (var i = 0; i < str.length; i++) {
+          hash = ((hash << 5) + hash) + str.charCodeAt(i);
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        return Math.abs(hash);
+      }
+
+      function addKey(key) {
+        if (!key) return;
+        var h = simpleHash(key);
+        var p = h % partitions;
+        counts[p]++;
+        keys.push({ key: key, partition: p, hash: h });
+        renderBar();
+        renderKeys();
+      }
+
+      function renderBar() {
+        var bar = document.getElementById('hashBar');
+        var total = keys.length || 1;
+        bar.innerHTML = '';
+        for (var i = 0; i < partitions; i++) {
+          var pct = Math.max(keys.length ? (counts[i] / total * 100) : 25, 8);
+          var seg = document.createElement('div');
+          seg.className = 'hash-bar-segment';
+          seg.style.width = pct + '%';
+          seg.style.background = partColors[i];
+          seg.textContent = partNames[i] + ' (' + counts[i] + ')';
+          bar.appendChild(seg);
+        }
+      }
+
+      function renderKeys() {
+        var container = document.getElementById('hashSimKeys');
+        container.innerHTML = '';
+        keys.slice(-30).forEach(function(k) {
+          var chip = document.createElement('span');
+          chip.className = 'drag-chip';
+          chip.style.background = partColors[k.partition] + '22';
+          chip.style.color = partColors[k.partition];
+          chip.style.border = '1px solid ' + partColors[k.partition] + '44';
+          chip.style.cursor = 'default';
+          chip.style.fontSize = '0.75rem';
+          chip.textContent = k.key + ' -> ' + partNames[k.partition];
+          container.appendChild(chip);
+        });
+      }
+
+      document.getElementById('hashSimAdd').addEventListener('click', function() {
+        var input = document.getElementById('hashSimInput');
+        addKey(input.value.trim());
+        input.value = '';
+        input.focus();
+      });
+
+      document.getElementById('hashSimInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          addKey(this.value.trim());
+          this.value = '';
+        }
+      });
+
+      document.getElementById('hashSimClear').addEventListener('click', function() {
+        counts = [0, 0, 0, 0];
+        keys = [];
+        renderBar();
+        renderKeys();
+      });
+
+      document.getElementById('hashSimBatch').addEventListener('click', function() {
+        for (var i = 1; i <= 20; i++) {
+          addKey('sensor_' + (keys.length + i));
+        }
+      });
+    })();
+
+    /* ============================================================
+       EXERCISE 4: Drag & Drop Index Classification
+       ============================================================ */
+    (function() {
+      var draggedEl = null;
+
+      function initDragDrop() {
+        var chips = document.querySelectorAll('#exercise4 .drag-chip');
+        var zones = document.querySelectorAll('#exercise4 .drag-zone');
+
+        chips.forEach(function(chip) {
+          chip.addEventListener('dragstart', function(e) {
+            draggedEl = chip;
+            chip.style.opacity = '0.5';
+            e.dataTransfer.setData('text/plain', chip.dataset.id);
+          });
+          chip.addEventListener('dragend', function() {
+            chip.style.opacity = '1';
+            draggedEl = null;
+          });
+        });
+
+        zones.forEach(function(zone) {
+          zone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            zone.classList.add('over');
+          });
+          zone.addEventListener('dragleave', function() {
+            zone.classList.remove('over');
+          });
+          zone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            zone.classList.remove('over');
+            if (draggedEl) {
+              zone.appendChild(draggedEl);
+            }
+          });
+        });
+      }
+
+      document.getElementById('ex4Check').addEventListener('click', function() {
+        var localZone = document.getElementById('dragLocal');
+        var globalZone = document.getElementById('dragGlobal');
+        var allChips = document.querySelectorAll('#exercise4 .drag-chip');
+        var correct = 0;
+        var total = allChips.length;
+        var placed = 0;
+
+        allChips.forEach(function(chip) {
+          var parent = chip.parentElement;
+          if (parent.id === 'dragLocal' || parent.id === 'dragGlobal') {
+            placed++;
+            var target = parent.dataset.target;
+            var answer = chip.dataset.answer;
+            if (target === answer) {
+              chip.style.outline = '2px solid var(--accent-3)';
+              correct++;
+            } else {
+              chip.style.outline = '2px solid var(--accent-danger)';
+            }
+          }
+        });
+
+        var fb = document.getElementById('ex4Feedback');
+        if (placed < total) {
+          fb.className = 'exercise-feedback show error';
+          fb.textContent = 'Please drag all items to a category first. ' + (total - placed) + ' items remaining.';
+        } else {
+          fb.className = 'exercise-feedback show ' + (correct === total ? 'success' : 'error');
+          fb.textContent = correct === total
+            ? 'All correct! Local indexes are co-located with data (fast writes, scatter/gather reads). Global indexes are partitioned separately (fast reads, cross-partition writes).'
+            : correct + '/' + total + ' correct. Remember: local = per-partition index, global = separate partitioned index.';
+        }
+      });
+
+      document.getElementById('ex4Reset').addEventListener('click', function() {
+        var source = document.getElementById('dragSource');
+        document.querySelectorAll('#exercise4 .drag-chip').forEach(function(chip) {
+          chip.style.outline = '';
+          source.appendChild(chip);
+        });
+        document.getElementById('ex4Feedback').className = 'exercise-feedback';
+      });
+
+      initDragDrop();
+    })();
+
+    /* ============================================================
+       INTERACTIVE MIND MAP (expand/collapse with leaf details)
+       ============================================================ */
+    (function() {
+      var container = document.getElementById('mindmapContainer');
+      var detailBox = document.getElementById('mmDetail');
+      var mmCx = 390, mmCy = 260;
+
+      var tree = {
+        label: 'Partitioning',
+        children: [
+          { label: 'Key-Value Strategies', color: '#10b981',
+            children: [
+              { label: 'Key Range', detail: 'Assign continuous key ranges to partitions (A-F, G-N, O-Z). Preserves sort order for efficient range queries. Boundaries adapt to data distribution. Risk: sequential keys create hot spots.' },
+              { label: 'Hash', detail: 'Apply hash function to keys, assign hash ranges to partitions. Distributes uniformly, eliminates sequential hot spots. Sacrifices range query ability entirely.' },
+              { label: 'Compound Keys', detail: 'Cassandra-style: first key part is hashed (for distribution), remaining parts are range-sorted within the partition. Best of both worlds for specific access patterns.' }
+            ] },
+          { label: 'Hot Spots & Skew', color: '#2563eb',
+            children: [
+              { label: 'Celebrity Keys', detail: 'A single extremely popular key (e.g., celebrity post) hammers one partition regardless of hash distribution. Cannot be solved by the database alone.' },
+              { label: 'Random Suffix Split', detail: 'Append random 00-99 suffix to hot keys, splitting writes across 100 partitions. Reads must query all 100 variants and merge. Only for known hot keys.' },
+              { label: 'App-level Handling', detail: 'Application must track which keys are hot and apply splitting logic selectively. Most systems cannot detect and compensate automatically today.' }
+            ] },
+          { label: 'Secondary Indexes', color: '#8b5cf6',
+            children: [
+              { label: 'Local (Document)', detail: 'Each partition maintains its own local index. Writing updates one partition index. Reading requires scatter/gather across ALL partitions, causing tail latency amplification.' },
+              { label: 'Global (Term)', detail: 'Index is partitioned by term (e.g., colors a-m on partition 1). Reads target one index partition. Writes may touch multiple index partitions, often done asynchronously.' },
+              { label: 'Scatter/Gather', detail: 'Query all N partitions in parallel, wait for all to respond, merge results. Latency = max(all partition latencies). More partitions = worse tail latency.' }
+            ] },
+          { label: 'Rebalancing', color: '#dc2626',
+            children: [
+              { label: 'Fixed Partitions', detail: 'Create many partitions upfront (e.g., 1000 for 10 nodes). New node steals whole partitions. Simple, predictable. Used by Riak, Elasticsearch, Couchbase.' },
+              { label: 'Dynamic Split/Merge', detail: 'Partitions split when too large, merge when too small. Adapts to data volume automatically. Starts with one partition (pre-splitting helps). Used by HBase, RethinkDB.' },
+              { label: 'Proportional to Nodes', detail: 'Fixed number of partitions per node. New node splits random existing partitions. Keeps partition count proportional to cluster size. Used by Cassandra.' },
+              { label: 'Avoid hash mod N', detail: 'hash(key) mod N redistributes ~75% of keys when N changes by 1. Catastrophically expensive for any non-trivial dataset. Never use in production.' }
+            ] },
+          { label: 'Request Routing', color: '#10b981',
+            children: [
+              { label: 'Gossip (Any Node)', detail: 'Client contacts any node. Nodes gossip partition map to each other. If wrong node, request is forwarded. No external dependency. Used by Cassandra, Riak.' },
+              { label: 'Routing Tier (ZK)', detail: 'Dedicated routing layer consults ZooKeeper for partition-to-node map. Clean separation of concerns but adds a network hop. Used by HBase, SolrCloud, Kafka.' },
+              { label: 'Client-Aware', detail: 'Smart client subscribes to ZooKeeper and maintains its own partition map. Connects directly to correct node -- most efficient. Requires library support.' },
+              { label: 'MPP Queries', detail: 'Massively parallel processing databases (Teradata, Vertica, Presto) break complex queries into stages that run in parallel across partitions. Results combined at the end.' }
+            ] }
+        ]
+      };
+
+      var l1Pos = [
+        { x: 110, y: 80 },
+        { x: 670, y: 80 },
+        { x: 110, y: 440 },
+        { x: 390, y: 490 },
+        { x: 670, y: 440 }
+      ];
+
+      var subOff = [
+        [{ dx: -90, dy: -55 }, { dx: 0, dy: -65 }, { dx: 90, dy: -55 }],
+        [{ dx: -80, dy: -55 }, { dx: 10, dy: -65 }, { dx: 90, dy: -55 }],
+        [{ dx: -100, dy: 55 }, { dx: 0, dy: 65 }, { dx: 100, dy: 55 }],
+        [{ dx: -120, dy: 40 }, { dx: -40, dy: 55 }, { dx: 40, dy: 55 }, { dx: 120, dy: 40 }],
+        [{ dx: -100, dy: 55 }, { dx: -30, dy: 65 }, { dx: 40, dy: 65 }, { dx: 110, dy: 55 }]
+      ];
+
+      var expanded = [true, true, true, true, true];
+
+      function createSvgEl(tag, attrs) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs) {
+          if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]);
+        }
+        return el;
+      }
+
+      function render() {
+        var svg = createSvgEl('svg', { viewBox: '0 0 780 560', width: '100%', height: '560', style: 'max-width:780px;cursor:default;' });
+
+        // Branches root -> L1
+        tree.children.forEach(function(child, i) {
+          var p = l1Pos[i];
+          svg.appendChild(createSvgEl('line', {
+            x1: mmCx, y1: mmCy, x2: p.x, y2: p.y,
+            stroke: 'var(--border)', 'stroke-width': '1.5', fill: 'none'
+          }));
+
+          // Sub-branches
+          if (expanded[i]) {
+            child.children.forEach(function(sub, si) {
+              var off = subOff[i][si];
+              svg.appendChild(createSvgEl('line', {
+                x1: p.x, y1: p.y, x2: p.x + off.dx, y2: p.y + off.dy,
+                stroke: 'var(--text-light)', 'stroke-width': '1', fill: 'none',
+                'stroke-dasharray': '4 3'
+              }));
+            });
+          }
+        });
+
+        // Root node
+        svg.appendChild(createSvgEl('ellipse', {
+          cx: mmCx, cy: mmCy, rx: '68', ry: '30',
+          fill: 'var(--accent)', opacity: '0.9'
+        }));
+        var rootLabel = createSvgEl('text', {
+          x: mmCx, y: mmCy + 5, 'text-anchor': 'middle',
+          'font-family': 'Inter', 'font-size': '13', 'font-weight': '700', fill: 'white'
+        });
+        rootLabel.textContent = tree.label;
+        rootLabel.style.pointerEvents = 'none';
+        svg.appendChild(rootLabel);
+
+        // L1 nodes
+        tree.children.forEach(function(child, i) {
+          var p = l1Pos[i];
+          var c = child.color;
+
+          var g = createSvgEl('g', { style: 'cursor:pointer;' });
+          g.appendChild(createSvgEl('ellipse', {
+            cx: p.x, cy: p.y, rx: '72', ry: '24', fill: c, opacity: '0.85'
+          }));
+
+          var nodeLabel = createSvgEl('text', {
+            x: p.x, y: p.y + 4, 'text-anchor': 'middle',
+            'font-family': 'Inter', 'font-size': '9.5', 'font-weight': '600', fill: 'white'
+          });
+          nodeLabel.textContent = child.label;
+          nodeLabel.style.pointerEvents = 'none';
+          g.appendChild(nodeLabel);
+
+          var icon = createSvgEl('text', {
+            x: p.x + 62, y: p.y + 5, 'text-anchor': 'middle',
+            'font-family': 'Inter', 'font-size': '12', 'font-weight': '700', fill: 'white'
+          });
+          icon.textContent = expanded[i] ? '\u2212' : '+';
+          icon.style.pointerEvents = 'none';
+          g.appendChild(icon);
+
+          (function(idx) {
+            g.addEventListener('click', function() {
+              expanded[idx] = !expanded[idx];
+              detailBox.style.display = 'none';
+              render();
+            });
+          })(i);
+          svg.appendChild(g);
+
+          // Sub-nodes (clickable for detail)
+          if (expanded[i]) {
+            child.children.forEach(function(sub, si) {
+              var off = subOff[i][si];
+              var sx = p.x + off.dx;
+              var sy = p.y + off.dy;
+
+              var sg = createSvgEl('g', { style: 'cursor:pointer;' });
+              sg.appendChild(createSvgEl('ellipse', {
+                cx: sx, cy: sy, rx: '55', ry: '17', fill: c, opacity: '0.3'
+              }));
+              var subLabel = createSvgEl('text', {
+                x: sx, y: sy + 3, 'text-anchor': 'middle',
+                'font-family': 'Inter', 'font-size': '8.5', 'font-weight': '500', fill: 'var(--text)'
+              });
+              subLabel.textContent = sub.label;
+              subLabel.style.pointerEvents = 'none';
+              sg.appendChild(subLabel);
+
+              (function(detail, lbl) {
+                sg.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  detailBox.style.display = 'block';
+                  detailBox.innerHTML = '<strong style="color:' + c + '">' + lbl + ':</strong> ' + detail;
+                });
+              })(sub.detail, sub.label);
+
+              svg.appendChild(sg);
+            });
+          }
+        });
+
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.appendChild(svg);
+      }
+
+      render();
+    })();
+
+    /* ============================================================
+       QUIZ
+       ============================================================ */
+    var QUESTIONS = [
       { question: "What is the main goal of partitioning?", options: ["Reduce storage costs", "Spread data and query load evenly across multiple nodes", "Improve data durability", "Simplify application code"], correct: 1, explanation: "Partitioning aims to distribute both data and the query load across nodes so no single node becomes a bottleneck." },
       { question: "What is the key advantage of key range partitioning over hash partitioning?", options: ["Better even distribution", "Supports efficient range queries because keys are sorted", "Eliminates hot spots", "Uses less disk space"], correct: 1, explanation: "Key range partitioning keeps keys in sorted order within each partition, making range scans efficient. Hash partitioning scatters adjacent keys across partitions." },
       { question: "Why can't hash partitioning eliminate all hot spots?", options: ["Hash functions are too slow", "If a single key is extremely popular, all its reads/writes still go to one partition", "Hash partitioning doesn't work with strings", "It requires too many partitions"], correct: 1, explanation: "Hashing distributes different keys evenly, but a single very popular key (e.g., a celebrity's user ID) will still concentrate all traffic on one partition." },

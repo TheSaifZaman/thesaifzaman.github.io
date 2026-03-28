@@ -10,103 +10,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Chapter-local extras ── */
-    .chapter-hero {
-      padding: 2.5rem 0 1.5rem;
-    }
-    .chapter-hero .ch-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-    .chapter-hero h1 {
-      margin-bottom: 0.6rem;
-    }
-    .chapter-hero .ch-meta {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .chapter-hero .ch-meta span {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
+    /* -- Chapter-local extras -- */
+    .chapter-hero { padding: 2.5rem 0 1.5rem; }
+    .chapter-hero .ch-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+    .chapter-hero h1 { margin-bottom: 0.6rem; }
+    .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
+    .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
 
-    /* ── Attention heatmap ── */
-    .attn-heatmap-wrap {
-      margin: 1rem 0;
-    }
-    .attn-heatmap-label-row {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 4px;
-      padding-left: 68px;
-    }
-    .attn-heatmap-label {
-      width: 58px;
-      text-align: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      padding: 0.25rem 0;
-    }
-    .attn-row {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 4px;
-    }
-    .attn-row-label {
-      width: 64px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      text-align: right;
-      padding-right: 8px;
-      cursor: pointer;
-      transition: color var(--transition);
-      flex-shrink: 0;
-    }
-    .attn-row-label:hover, .attn-row-label.active {
-      color: var(--accent);
-    }
-    .attn-cell {
-      width: 58px;
-      height: 44px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      transition: all 0.25s;
-      cursor: default;
-      position: relative;
-    }
-    .attn-cell .cell-val {
-      font-size: 0.68rem;
-      opacity: 0.85;
-    }
-    .attn-cell.dimmed {
-      opacity: 0.25;
-    }
-    .attn-heatmap-hint {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+    /* -- Attention heatmap -- */
+    .attn-heatmap-wrap { margin: 1rem 0; }
+    .attn-heatmap-label-row { display: flex; gap: 4px; margin-bottom: 4px; padding-left: 68px; }
+    .attn-heatmap-label { width: 58px; text-align: center; font-size: 0.72rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); padding: 0.25rem 0; }
+    .attn-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+    .attn-row-label { width: 64px; font-size: 0.72rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-align: right; padding-right: 8px; cursor: pointer; transition: color var(--transition); flex-shrink: 0; }
+    .attn-row-label:hover, .attn-row-label.active { color: var(--accent); }
+    .attn-cell { width: 58px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all 0.25s; cursor: default; position: relative; }
+    .attn-cell .cell-val { font-size: 0.68rem; opacity: 0.85; }
+    .attn-cell.dimmed { opacity: 0.25; }
+    .attn-heatmap-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
     @media (max-width: 500px) {
       .attn-heatmap-label-row { padding-left: 56px; }
       .attn-row-label { width: 52px; font-size: 0.65rem; }
@@ -114,308 +35,135 @@
       .attn-heatmap-label { width: 46px; font-size: 0.65rem; }
     }
 
-    /* ── Matrix display ── */
-    .matrix-wrap {
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 1rem 0;
-    }
-    .matrix-card {
-      flex: 1;
-      min-width: 200px;
-    }
-    .matrix-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-    .matrix-grid {
-      display: inline-grid;
-      gap: 3px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-    }
-    .matrix-cell {
-      width: 52px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      font-weight: 600;
-    }
+    /* -- Matrix display -- */
+    .matrix-wrap { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; margin: 1rem 0; }
+    .matrix-card { flex: 1; min-width: 200px; }
+    .matrix-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .matrix-grid { display: inline-grid; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+    .matrix-cell { width: 52px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 600; }
     .matrix-cell.mc-raw { background: rgba(79,110,247,0.12); color: var(--accent); }
     .matrix-cell.mc-soft { background: rgba(16,185,129,0.14); color: var(--accent-3); }
     .matrix-cell.mc-out { background: rgba(245,158,11,0.14); color: var(--accent-2); }
-    @media (max-width: 540px) {
-      .matrix-cell { width: 42px; height: 32px; font-size: 0.68rem; }
-    }
+    @media (max-width: 540px) { .matrix-cell { width: 42px; height: 32px; font-size: 0.68rem; } }
 
-    /* ── QKV flow diagram ── */
-    .qkv-diagram {
-      display: flex;
-      gap: 0.75rem;
-      align-items: stretch;
-      margin: 1rem 0;
-      flex-wrap: wrap;
-    }
-    .qkv-col {
-      flex: 1;
-      min-width: 120px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .qkv-col-header {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      text-align: center;
-    }
+    /* -- QKV flow diagram -- */
+    .qkv-diagram { display: flex; gap: 0.75rem; align-items: stretch; margin: 1rem 0; flex-wrap: wrap; }
+    .qkv-col { flex: 1; min-width: 120px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .qkv-col-header { padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; text-align: center; }
     .qkv-col-header.qh { background: rgba(79,110,247,0.14); color: var(--accent); }
     .qkv-col-header.kh { background: rgba(239,68,68,0.12); color: #ef4444; }
     .qkv-col-header.vh { background: rgba(16,185,129,0.12); color: var(--accent-3); }
-    .qkv-col-body {
-      padding: 0.65rem 0.75rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
+    .qkv-col-body { padding: 0.65rem 0.75rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
     .qkv-col-body strong { color: var(--text); display: block; margin-bottom: 0.2rem; font-size: 0.83rem; }
-    .qkv-formula {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      background: var(--surface-2);
-      padding: 0.3rem 0.55rem;
-      border-radius: 4px;
-      margin-top: 0.4rem;
-      color: var(--text-muted);
-    }
+    .qkv-formula { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: var(--surface-2); padding: 0.3rem 0.55rem; border-radius: 4px; margin-top: 0.4rem; color: var(--text-muted); }
 
-    /* ── Causal mask toggle ── */
-    .mask-grid-wrap {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      margin: 1rem 0;
-    }
-    .mask-grid-section {
-      flex: 1;
-      min-width: 170px;
-    }
-    .mask-grid-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.5rem;
-    }
-    .mask-grid {
-      display: inline-grid;
-      grid-template-columns: repeat(4, 44px);
-      gap: 3px;
-    }
-    .mask-cell {
-      width: 44px;
-      height: 36px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      transition: all 0.3s;
-    }
+    /* -- Causal mask toggle -- */
+    .mask-grid-wrap { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; margin: 1rem 0; }
+    .mask-grid-section { flex: 1; min-width: 170px; }
+    .mask-grid-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+    .mask-grid { display: inline-grid; grid-template-columns: repeat(4, 44px); gap: 3px; }
+    .mask-cell { width: 44px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; transition: all 0.3s; }
     .mask-cell.mc-allowed { background: rgba(79,110,247,0.18); color: var(--accent); }
     .mask-cell.mc-blocked { background: rgba(239,68,68,0.12); color: rgba(239,68,68,0.5); text-decoration: line-through; }
     .mask-cell.mc-neg-inf { background: rgba(239,68,68,0.08); color: rgba(239,68,68,0.6); font-size: 0.6rem; }
-    .mask-toggle-btn {
-      margin: 0.75rem 0;
-    }
-    .mask-legend {
-      display: flex;
-      gap: 1.25rem;
-      font-size: 0.77rem;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-      margin-top: 0.5rem;
-    }
+    .mask-toggle-btn { margin: 0.75rem 0; }
+    .mask-legend { display: flex; gap: 1.25rem; font-size: 0.77rem; color: var(--text-muted); flex-wrap: wrap; margin-top: 0.5rem; }
     .mask-legend-item { display: flex; align-items: center; gap: 0.4rem; }
     .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
 
-    /* ── Multi-head parallel grid ── */
-    .multi-head-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-    @media (max-width: 600px) {
-      .multi-head-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    .head-card {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .head-card-title {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
+    /* -- Multi-head parallel grid -- */
+    .multi-head-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1rem 0; }
+    @media (max-width: 600px) { .multi-head-grid { grid-template-columns: repeat(2, 1fr); } }
+    .head-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .head-card-title { padding: 0.4rem 0.6rem; font-size: 0.72rem; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.06em; }
     .head-card-title.h1 { background: rgba(79,110,247,0.14); color: var(--accent); }
     .head-card-title.h2 { background: rgba(239,68,68,0.12); color: #ef4444; }
     .head-card-title.h3 { background: rgba(16,185,129,0.12); color: var(--accent-3); }
     .head-card-title.h4 { background: rgba(245,158,11,0.12); color: var(--accent-2); }
-    .head-mini-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-      padding: 6px;
-    }
-    .head-cell {
-      height: 24px;
-      border-radius: 3px;
-      transition: opacity 0.2s;
-    }
+    .head-mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 6px; }
+    .head-cell { height: 24px; border-radius: 3px; transition: opacity 0.2s; }
 
-    /* ── Attention weight comparison ── */
-    .attn-before-after {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
+    /* -- Attention weight comparison -- */
+    .attn-before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
     @media (max-width: 500px) { .attn-before-after { grid-template-columns: 1fr; } }
-    .attn-ba-card {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .attn-ba-header {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
+    .attn-ba-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .attn-ba-header { padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
     .attn-ba-header.before { background: rgba(79,110,247,0.10); color: var(--accent); }
     .attn-ba-header.after  { background: rgba(16,185,129,0.10); color: var(--accent-3); }
-    .attn-ba-body {
-      padding: 0.75rem;
-    }
-    .attn-bar-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    .attn-bar-label {
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      min-width: 50px;
-      text-align: right;
-    }
-    .attn-bar-track {
-      flex: 1;
-      height: 14px;
-      background: var(--surface-2);
-      border-radius: 7px;
-      overflow: hidden;
-    }
-    .attn-bar-fill {
-      height: 100%;
-      border-radius: 7px;
-      transition: width 0.4s ease;
-    }
-    .attn-bar-val {
-      font-size: 0.68rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      min-width: 38px;
-    }
+    .attn-ba-body { padding: 0.75rem; }
+    .attn-bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .attn-bar-label { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); min-width: 50px; text-align: right; }
+    .attn-bar-track { flex: 1; height: 14px; background: var(--surface-2); border-radius: 7px; overflow: hidden; }
+    .attn-bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s ease; }
+    .attn-bar-val { font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); min-width: 38px; }
 
-    /* ── Dropout info ── */
-    .dropout-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 44px);
-      gap: 3px;
-      margin: 0.75rem 0;
-    }
-    .dropout-cell {
-      width: 44px;
-      height: 36px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      transition: all 0.3s;
-    }
+    /* -- Dropout info -- */
+    .dropout-grid { display: grid; grid-template-columns: repeat(4, 44px); gap: 3px; margin: 0.75rem 0; }
+    .dropout-cell { width: 44px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; transition: all 0.3s; }
     .dropout-cell.alive { background: rgba(79,110,247,0.18); color: var(--accent); }
     .dropout-cell.zero  { background: rgba(239,68,68,0.10); color: rgba(239,68,68,0.5); }
 
-    /* ── Step-by-step walkthrough ── */
-    .step-walkthrough {
-      counter-reset: step-counter;
-      margin: 1rem 0;
-    }
-    .step-item {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-      align-items: flex-start;
-    }
-    .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.78rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
-    }
-    .step-content {
-      flex: 1;
-    }
-    .step-content strong {
-      display: block;
-      font-size: 0.88rem;
-      margin-bottom: 0.2rem;
-    }
-    .step-content p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 0;
-    }
+    /* -- Step-by-step walkthrough -- */
+    .step-walkthrough { counter-reset: step-counter; margin: 1rem 0; }
+    .step-item { display: flex; gap: 0.75rem; margin-bottom: 1rem; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
+    .step-content { flex: 1; }
+    .step-content strong { display: block; font-size: 0.88rem; margin-bottom: 0.2rem; }
+    .step-content p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0; }
+
+    /* -- Step-through animated diagram -- */
+    .stepper-wrap { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 1rem 0; }
+    .stepper-header { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+    .stepper-title { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+    .stepper-counter { font-size: 0.72rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .stepper-body { padding: 1rem; min-height: 250px; position: relative; }
+    .stepper-nav { display: flex; gap: 0.5rem; justify-content: center; padding: 0.65rem; border-top: 1px solid var(--border); background: var(--surface-2); }
+    .stepper-nav .btn { min-width: 100px; }
+    .stepper-explanation { margin-top: 0.75rem; padding: 0.65rem 0.75rem; background: rgba(79,110,247,0.06); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; border-left: 3px solid var(--accent); }
+    .stepper-svg-wrap { display: flex; justify-content: center; }
+    .stepper-svg-wrap svg { max-width: 100%; height: auto; }
+
+    /* -- Step-through diagrams -- */
+    .step-through { position: relative; }
+    .step-through .step-display { min-height: 260px; display: flex; align-items: center; justify-content: center; }
+    .step-through .step-controls { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem; }
+    .step-through .step-indicator { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); min-width: 80px; text-align: center; }
+    .step-through .step-desc { text-align: center; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem; min-height: 2.5em; line-height: 1.5; }
+    @media (max-width: 600px) { .step-through .step-display { min-height: 200px; } }
+
+    /* -- Interactive exercise -- */
+    .exercise-wrap { border: 1.5px solid rgba(245,158,11,0.35); border-radius: var(--radius-sm); overflow: hidden; margin: 1.5rem 0; }
+    .exercise-header { padding: 0.5rem 0.75rem; background: rgba(245,158,11,0.10); display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; font-weight: 700; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.06em; }
+    .exercise-body { padding: 1rem; }
+    .exercise-body p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.55; }
+    .exercise-grid { display: inline-grid; gap: 3px; margin: 0.5rem 0; }
+    .exercise-cell { width: 52px; height: 38px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none; }
+    .exercise-cell.selectable { background: var(--surface-2); color: var(--text-muted); }
+    .exercise-cell.selectable:hover { border-color: var(--accent); }
+    .exercise-cell.selected { background: rgba(79,110,247,0.20); color: var(--accent); border-color: var(--accent); }
+    .exercise-cell.correct { background: rgba(16,185,129,0.20); color: var(--accent-3); border-color: var(--accent-3); }
+    .exercise-cell.incorrect { background: rgba(239,68,68,0.15); color: var(--accent-danger); border-color: var(--accent-danger); }
+    .exercise-cell.fixed { background: rgba(79,110,247,0.10); color: var(--accent); cursor: default; }
+    .exercise-feedback { margin-top: 0.75rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; display: none; }
+    .exercise-feedback.show { display: block; }
+    .exercise-feedback.success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3); }
+    .exercise-feedback.error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger); }
+    .exercise-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+    /* -- SVG illustration shared styles -- */
+    .svg-illustration { margin: 1rem 0; text-align: center; }
+    .svg-illustration svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    /* -- Mind map interactive -- */
+    .mm-node { cursor: pointer; transition: opacity 0.3s, transform 0.3s; }
+    .mm-node:hover { opacity: 0.85; }
+    .mm-tooltip { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; font-size: 0.78rem; color: var(--text); box-shadow: var(--shadow); max-width: 220px; pointer-events: none; z-index: 10; opacity: 0; transition: opacity 0.2s; }
+    .mm-tooltip.visible { opacity: 1; }
   </style>
 </head>
 <body data-chapter="ch3">
 
-  <!-- ══════════════════════════════════════════
-       HEADER
-  ══════════════════════════════════════════ -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="header-left">
       <span class="book-tag">Visual Book</span>
@@ -428,24 +176,19 @@
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT -->
   <main class="page-wrapper">
 
-    <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="index.html"><i class="fas fa-book-open"></i> Home</a>
-      <span class="sep">›</span>
+      <span class="sep">&rsaquo;</span>
       <span class="current">Chapter 3</span>
     </nav>
 
-    <!-- Chapter progress bar -->
     <div class="chapter-progress">
       <div class="chapter-progress-fill" style="width:0%"></div>
     </div>
 
-    <!-- Chapter title hero -->
     <div class="chapter-hero">
       <div class="ch-label">Chapter 3</div>
       <h1>Coding Attention Mechanisms</h1>
@@ -457,9 +200,7 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TAB BAR
-    ══════════════════════════════════════════ -->
+    <!-- TAB BAR -->
     <div class="tab-bar" id="chapterTabs">
       <button class="tab-btn active" data-tab="tab-lessons">
         <i class="fas fa-book-reader"></i> Lessons
@@ -475,82 +216,193 @@
       </button>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TAB: LESSONS
-    ══════════════════════════════════════════ -->
+    <!-- ========== TAB: LESSONS ========== -->
     <div class="tab-panel active" id="tab-lessons">
 
-      <p>Attention is the single most important architectural innovation in modern language models. It is what allows a transformer to capture long-range dependencies in a sequence, understand what each word refers to, and build rich contextual representations — all in a single forward pass. This chapter builds attention from first principles: starting from a simple intuition, deriving the scaled dot-product formula, adding learnable projections, enforcing causal masking, and finally scaling up to multi-head attention as used in GPT-2.</p>
+      <p>Attention is the single most important architectural innovation in modern language models. It is what allows a transformer to capture long-range dependencies in a sequence, understand what each word refers to, and build rich contextual representations &mdash; all in a single forward pass. This chapter builds attention from first principles: starting from a simple intuition, deriving the scaled dot-product formula, adding learnable projections, enforcing causal masking, and finally scaling up to multi-head attention as used in GPT-2.</p>
 
-      <!-- ══════════════════
-           LESSON 3.1
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.1 ===================== -->
       <section class="lesson" id="lesson-3-1">
         <div class="lesson-header">
           <span class="lesson-number">3.1</span>
           <h2>The Problem with Long Sequences</h2>
         </div>
 
-        <p>The first sequence-to-sequence (seq2seq) neural networks, used for tasks like machine translation, followed an <strong>encoder-decoder RNN architecture</strong>. The encoder read the full input sentence token by token, updating a hidden state at every step. When it finished, that final hidden state — a single fixed-size vector — was passed to the decoder as the "context". The decoder then generated the output translation, one token at a time, using only this single context vector.</p>
+        <p>The first sequence-to-sequence (seq2seq) neural networks, used for tasks like machine translation, followed an <strong>encoder-decoder RNN architecture</strong>. The encoder read the full input sentence token by token, updating a hidden state at every step. When it finished, that final hidden state &mdash; a single fixed-size vector &mdash; was passed to the decoder as the "context". The decoder then generated the output translation, one token at a time, using only this single context vector.</p>
 
-        <p>This design has a fundamental weakness: <strong>the information bottleneck</strong>. Every piece of information in the input sentence — all its words, their relationships, the grammar — must be compressed into a single fixed-size vector. For short sentences this is manageable, but for long sequences (say, 50+ words), the early parts of the sentence are essentially forgotten by the time the encoder reaches the end. The vector simply cannot hold everything. Performance degrades noticeably as input length increases.</p>
+        <p>This design has a fundamental weakness: <strong>the information bottleneck</strong>. Every piece of information in the input sentence &mdash; all its words, their relationships, the grammar &mdash; must be compressed into a single fixed-size vector. For short sentences this is manageable, but for long sequences (say, 50+ words), the early parts of the sentence are essentially forgotten by the time the encoder reaches the end. The vector simply cannot hold everything. Performance degrades noticeably as input length increases.</p>
 
-        <p><strong>Attention was invented to break this bottleneck.</strong> Instead of forcing the decoder to rely on a single compressed context vector, attention gives each output position a direct, weighted read over <em>all</em> encoder hidden states. When generating the translation of word i, the decoder can "attend" strongly to the relevant input words and weakly to irrelevant ones — effectively computing a new, position-specific context vector for every output step.</p>
+        <p><strong>Attention was invented to break this bottleneck.</strong> Instead of forcing the decoder to rely on a single compressed context vector, attention gives each output position a direct, weighted read over <em>all</em> encoder hidden states. When generating the translation of word i, the decoder can "attend" strongly to the relevant input words and weakly to irrelevant ones &mdash; effectively computing a new, position-specific context vector for every output step.</p>
 
-        <p><strong>GPT uses self-attention</strong>, which is different from the original encoder-decoder attention. In self-attention, there is no separate encoder and decoder — a single stack of transformer blocks processes the sequence. Each token attends to <em>all other tokens in the same sequence</em>, building rich contextual representations for every position simultaneously. This is far more powerful than RNNs and, crucially, fully parallelizable: all positions are processed in one matrix operation rather than token-by-token.</p>
+        <p><strong>GPT uses self-attention</strong>, which is different from the original encoder-decoder attention. In self-attention, there is no separate encoder and decoder &mdash; a single stack of transformer blocks processes the sequence. Each token attends to <em>all other tokens in the same sequence</em>, building rich contextual representations for every position simultaneously. This is far more powerful than RNNs and, crucially, fully parallelizable: all positions are processed in one matrix operation rather than token-by-token.</p>
 
         <div class="insight-box">
-          <strong>Key Contrast:</strong> In encoder-decoder attention (used in translation), each decoder token attends to encoder outputs. In GPT-style <em>self-attention</em>, each token in a single sequence attends to all other tokens in that same sequence. The goal is not translation — it is building context-aware representations to predict the next token.
+          <strong>Key Contrast:</strong> In encoder-decoder attention (used in translation), each decoder token attends to encoder outputs. In GPT-style <em>self-attention</em>, each token in a single sequence attends to all other tokens in that same sequence. The goal is not translation &mdash; it is building context-aware representations to predict the next token.
         </div>
 
+        <!-- SVG: Information bottleneck vs attention -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-compress-arrows-alt"></i> Information Bottleneck vs Attention</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:0.75rem 0;">
-            <div style="border:1.5px solid var(--border); border-radius:var(--radius-sm); overflow:hidden;">
-              <div style="padding:0.5rem 0.85rem; background:rgba(239,68,68,0.10); color:#ef4444; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">RNN Encoder-Decoder</div>
-              <div style="padding:0.75rem 0.85rem; font-size:0.82rem; color:var(--text-muted); line-height:1.55;">
-                <div style="margin-bottom:0.4rem;">Encoder reads all input tokens <em>sequentially</em>.</div>
-                <div style="margin-bottom:0.4rem;">Final hidden state = single fixed vector.</div>
-                <div style="margin-bottom:0.4rem;">Decoder gets <strong>only that one vector</strong>.</div>
-                <div style="color:#ef4444; font-size:0.78rem;">Early tokens are forgotten in long sequences.</div>
-              </div>
-            </div>
-            <div style="border:1.5px solid var(--border); border-radius:var(--radius-sm); overflow:hidden;">
-              <div style="padding:0.5rem 0.85rem; background:rgba(16,185,129,0.10); color:var(--accent-3); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Self-Attention (GPT)</div>
-              <div style="padding:0.75rem 0.85rem; font-size:0.82rem; color:var(--text-muted); line-height:1.55;">
-                <div style="margin-bottom:0.4rem;">All tokens processed <em>in parallel</em>.</div>
-                <div style="margin-bottom:0.4rem;">Every token attends to every other token.</div>
-                <div style="margin-bottom:0.4rem;"><strong>Direct connections</strong> across any distance.</div>
-                <div style="color:var(--accent-3); font-size:0.78rem;">No bottleneck — full sequence access.</div>
-              </div>
-            </div>
+          <div class="svg-illustration">
+            <svg viewBox="0 0 700 220" aria-label="RNN bottleneck vs self-attention comparison">
+              <!-- Left: RNN bottleneck -->
+              <text x="175" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444" font-family="Inter,sans-serif">RNN Encoder-Decoder</text>
+              <!-- Encoder tokens -->
+              <rect x="30" y="35" width="50" height="28" rx="5" fill="rgba(79,110,247,0.15)" stroke="var(--accent)" stroke-width="1.2"/>
+              <text x="55" y="53" text-anchor="middle" font-size="9" fill="var(--accent)" font-family="JetBrains Mono,monospace">T1</text>
+              <rect x="90" y="35" width="50" height="28" rx="5" fill="rgba(79,110,247,0.15)" stroke="var(--accent)" stroke-width="1.2"/>
+              <text x="115" y="53" text-anchor="middle" font-size="9" fill="var(--accent)" font-family="JetBrains Mono,monospace">T2</text>
+              <rect x="150" y="35" width="50" height="28" rx="5" fill="rgba(79,110,247,0.15)" stroke="var(--accent)" stroke-width="1.2"/>
+              <text x="175" y="53" text-anchor="middle" font-size="9" fill="var(--accent)" font-family="JetBrains Mono,monospace">T3</text>
+              <rect x="210" y="35" width="50" height="28" rx="5" fill="rgba(79,110,247,0.15)" stroke="var(--accent)" stroke-width="1.2"/>
+              <text x="235" y="53" text-anchor="middle" font-size="9" fill="var(--accent)" font-family="JetBrains Mono,monospace">T4</text>
+              <rect x="270" y="35" width="50" height="28" rx="5" fill="rgba(79,110,247,0.10)" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="295" y="53" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">T5</text>
+              <!-- Arrows from tokens to bottleneck -->
+              <line x1="55" y1="63" x2="175" y2="100" stroke="#ef4444" stroke-width="1" opacity="0.4"/>
+              <line x1="115" y1="63" x2="175" y2="100" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
+              <line x1="175" y1="63" x2="175" y2="100" stroke="#ef4444" stroke-width="1.5" opacity="0.7"/>
+              <line x1="235" y1="63" x2="175" y2="100" stroke="#ef4444" stroke-width="1.5" opacity="0.8"/>
+              <line x1="295" y1="63" x2="175" y2="100" stroke="#ef4444" stroke-width="1.5" opacity="0.9"/>
+              <!-- Bottleneck vector -->
+              <rect x="140" y="100" width="70" height="30" rx="15" fill="rgba(239,68,68,0.20)" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="175" y="119" text-anchor="middle" font-size="9" font-weight="700" fill="#ef4444" font-family="Inter,sans-serif">1 vector</text>
+              <!-- Decoder -->
+              <line x1="175" y1="130" x2="175" y2="150" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+              <rect x="135" y="155" width="80" height="25" rx="5" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1"/>
+              <text x="175" y="171" text-anchor="middle" font-size="8.5" fill="#ef4444" font-family="Inter,sans-serif">Decoder</text>
+              <text x="175" y="200" text-anchor="middle" font-size="8" fill="var(--text-muted)" font-family="Inter,sans-serif">Early tokens forgotten</text>
+
+              <!-- Right: Self-Attention -->
+              <text x="525" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-3)" font-family="Inter,sans-serif">Self-Attention (GPT)</text>
+              <rect x="390" y="35" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="415" y="53" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T1</text>
+              <rect x="450" y="35" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="475" y="53" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T2</text>
+              <rect x="510" y="35" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="535" y="53" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T3</text>
+              <rect x="570" y="35" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="595" y="53" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T4</text>
+              <rect x="630" y="35" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="655" y="53" text-anchor="middle" font-size="9" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T5</text>
+              <!-- Cross connections (every token to every token) -->
+              <g opacity="0.25" stroke="var(--accent-3)" stroke-width="0.8">
+                <line x1="415" y1="63" x2="475" y2="100"/><line x1="415" y1="63" x2="535" y2="100"/>
+                <line x1="415" y1="63" x2="595" y2="100"/><line x1="415" y1="63" x2="655" y2="100"/>
+                <line x1="475" y1="63" x2="415" y2="100"/><line x1="475" y1="63" x2="535" y2="100"/>
+                <line x1="475" y1="63" x2="595" y2="100"/><line x1="475" y1="63" x2="655" y2="100"/>
+                <line x1="535" y1="63" x2="415" y2="100"/><line x1="535" y1="63" x2="475" y2="100"/>
+                <line x1="535" y1="63" x2="595" y2="100"/><line x1="535" y1="63" x2="655" y2="100"/>
+                <line x1="595" y1="63" x2="415" y2="100"/><line x1="595" y1="63" x2="475" y2="100"/>
+                <line x1="595" y1="63" x2="535" y2="100"/><line x1="595" y1="63" x2="655" y2="100"/>
+                <line x1="655" y1="63" x2="415" y2="100"/><line x1="655" y1="63" x2="475" y2="100"/>
+                <line x1="655" y1="63" x2="535" y2="100"/><line x1="655" y1="63" x2="595" y2="100"/>
+              </g>
+              <!-- Self connections -->
+              <g stroke="var(--accent-3)" stroke-width="1.5" opacity="0.6">
+                <line x1="415" y1="63" x2="415" y2="100"/>
+                <line x1="475" y1="63" x2="475" y2="100"/>
+                <line x1="535" y1="63" x2="535" y2="100"/>
+                <line x1="595" y1="63" x2="595" y2="100"/>
+                <line x1="655" y1="63" x2="655" y2="100"/>
+              </g>
+              <!-- Context-rich output tokens -->
+              <rect x="390" y="105" width="50" height="28" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="415" y="123" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T1'</text>
+              <rect x="450" y="105" width="50" height="28" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="475" y="123" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T2'</text>
+              <rect x="510" y="105" width="50" height="28" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="535" y="123" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T3'</text>
+              <rect x="570" y="105" width="50" height="28" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="595" y="123" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T4'</text>
+              <rect x="630" y="105" width="50" height="28" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="655" y="123" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">T5'</text>
+              <text x="535" y="155" text-anchor="middle" font-size="8.5" fill="var(--accent-3)" font-family="Inter,sans-serif">Each output = context-aware blend</text>
+              <text x="535" y="170" text-anchor="middle" font-size="8" fill="var(--text-muted)" font-family="Inter,sans-serif">All tokens processed in parallel</text>
+              <!-- Arrow marker defs -->
+              <defs>
+                <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+                </marker>
+              </defs>
+            </svg>
           </div>
           <div class="viz-caption">The bottleneck in RNN seq2seq models forces all input information through a single vector. Attention eliminates this constraint by giving every output position direct read access to every input position, weighted by relevance.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.2
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.2 ===================== -->
       <section class="lesson" id="lesson-3-2">
         <div class="lesson-header">
           <span class="lesson-number">3.2</span>
           <h2>Self-Attention Intuition</h2>
         </div>
 
-        <p>Self-attention is best understood through a concrete example. Consider the sentence: <em>"The animal didn't cross the street because it was too tired."</em> When a human reads "it", they immediately understand it refers to "animal" — not "street". But how does the model figure this out?</p>
+        <p>Self-attention is best understood through a concrete example. Consider the sentence: <em>"The animal didn't cross the street because it was too tired."</em> When a human reads "it", they immediately understand it refers to "animal" &mdash; not "street". But how does the model figure this out?</p>
 
         <p>Self-attention computes, for each token, a score representing how relevant every other token is to interpreting its meaning. When processing the token "it", the attention mechanism assigns a <strong>high weight</strong> to "animal" (because "it" is a pronoun that grammatically relates to the noun subject) and a <strong>low weight</strong> to "street" (even though it is another noun, the context makes "animal" the better referent). The output representation of "it" is then a weighted combination of all token representations, dominated by "animal".</p>
 
         <p>This happens simultaneously for <em>every</em> token in the sequence. When processing "tired", the model might attend heavily to "it" and "animal". When processing "cross", it might attend to "street" and "didn't". Each token builds its own context-specific representation by selectively aggregating information from the rest of the sequence.</p>
 
         <div class="insight-box">
-          <strong>The Core Question:</strong> Self-attention is the model asking — "Given what I am (this token), which other tokens in the sequence are most relevant to understanding my meaning?" The answer is a probability distribution over all positions, which is used to compute a weighted sum.
+          <strong>The Core Question:</strong> Self-attention is the model asking &mdash; "Given what I am (this token), which other tokens in the sequence are most relevant to understanding my meaning?" The answer is a probability distribution over all positions, which is used to compute a weighted sum.
+        </div>
+
+        <!-- SVG: Coreference illustration -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-link"></i> Coreference Resolution via Attention</div>
+          <div class="svg-illustration">
+            <svg viewBox="0 0 660 130" aria-label="Coreference: 'it' attends to 'animal'">
+              <defs>
+                <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--text-light)"/>
+                </marker>
+              </defs>
+              <!-- Tokens -->
+              <g font-family="JetBrains Mono,monospace" font-size="10" font-weight="600">
+                <rect x="10" y="70" width="40" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="30" y="87" text-anchor="middle" fill="var(--text-muted)">The</text>
+                <rect x="58" y="70" width="62" height="26" rx="5" fill="rgba(79,110,247,0.22)" stroke="var(--accent)" stroke-width="1.5"/>
+                <text x="89" y="87" text-anchor="middle" fill="var(--accent)">animal</text>
+                <rect x="128" y="70" width="52" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="154" y="87" text-anchor="middle" fill="var(--text-muted)">didn't</text>
+                <rect x="188" y="70" width="50" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="213" y="87" text-anchor="middle" fill="var(--text-muted)">cross</text>
+                <rect x="246" y="70" width="38" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="265" y="87" text-anchor="middle" fill="var(--text-muted)">the</text>
+                <rect x="292" y="70" width="52" height="26" rx="5" fill="rgba(239,68,68,0.10)" stroke="var(--border)" stroke-width="1"/>
+                <text x="318" y="87" text-anchor="middle" fill="var(--text-muted)">street</text>
+                <rect x="352" y="70" width="66" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="385" y="87" text-anchor="middle" fill="var(--text-muted)">because</text>
+                <rect x="426" y="70" width="30" height="26" rx="5" fill="rgba(16,185,129,0.25)" stroke="var(--accent-3)" stroke-width="1.8"/>
+                <text x="441" y="87" text-anchor="middle" fill="var(--accent-3)" font-weight="800">it</text>
+                <rect x="464" y="70" width="38" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="483" y="87" text-anchor="middle" fill="var(--text-muted)">was</text>
+                <rect x="510" y="70" width="38" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="529" y="87" text-anchor="middle" fill="var(--text-muted)">too</text>
+                <rect x="556" y="70" width="48" height="26" rx="5" fill="rgba(79,110,247,0.08)" stroke="var(--border)" stroke-width="1"/>
+                <text x="580" y="87" text-anchor="middle" fill="var(--text-muted)">tired</text>
+              </g>
+              <!-- Strong attention arc: it -> animal -->
+              <path d="M 441 70 Q 441 20 89 20 Q 89 20 89 70" fill="none" stroke="var(--accent)" stroke-width="2.5" opacity="0.7" marker-end="url(#arrowBlue)"/>
+              <text x="265" y="15" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="Inter,sans-serif">Strong attention (0.62)</text>
+              <!-- Weak attention arc: it -> street -->
+              <path d="M 441 70 Q 441 50 318 50 Q 318 50 318 70" fill="none" stroke="var(--text-light)" stroke-width="1" opacity="0.4" stroke-dasharray="3" marker-end="url(#arrowGray)"/>
+              <text x="380" y="47" text-anchor="middle" font-size="7.5" fill="var(--text-light)" font-family="Inter,sans-serif">Weak (0.05)</text>
+              <!-- Labels -->
+              <text x="441" y="115" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="Inter,sans-serif">Query token</text>
+              <text x="89" y="115" text-anchor="middle" font-size="8" fill="var(--accent)" font-family="Inter,sans-serif">High-weight key</text>
+            </svg>
+          </div>
+          <div class="viz-caption">When computing the context for "it", attention strongly weights "animal" (the correct referent) and weakly weights "street" &mdash; resolving coreference through learned attention patterns.</div>
         </div>
 
         <!-- Attention heatmap visualization -->
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-th"></i> Interactive Attention Heatmap — "The cat sat down"</div>
+          <div class="viz-title"><i class="fas fa-th"></i> Interactive Attention Heatmap &mdash; "The cat sat down"</div>
           <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">Click on a token label (left) to see which tokens it attends to most. Darker blue = higher attention weight.</p>
 
           <div class="attn-heatmap-wrap">
@@ -562,46 +414,65 @@
             Click any row label to highlight that token's attention pattern.
           </div>
 
-          <div class="viz-caption">Each row represents a token and shows how much it "attends to" every other token. Clicking a row label dims all other rows, making it easy to read off the attention weights for that token. These weights are illustrative — real attention weights are learned during training.</div>
+          <div class="viz-caption">Each row represents a token and shows how much it "attends to" every other token. Clicking a row label dims all other rows, making it easy to read off the attention weights for that token. These weights are illustrative &mdash; real attention weights are learned during training.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.3
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.3 ===================== -->
       <section class="lesson" id="lesson-3-3">
         <div class="lesson-header">
           <span class="lesson-number">3.3</span>
           <h2>Simplified Self-Attention (No Learned Weights)</h2>
         </div>
 
-        <p>Before adding trainable parameters, let us understand the raw mechanism. In simplified self-attention, we compute attention directly between the input token embeddings themselves — no projections, no extra parameters. This gives us a clean view of the three-step procedure that is at the heart of all attention variants.</p>
+        <p>Before adding trainable parameters, let us understand the raw mechanism. In simplified self-attention, we compute attention directly between the input token embeddings themselves &mdash; no projections, no extra parameters. This gives us a clean view of the three-step procedure that is at the heart of all attention variants.</p>
 
         <div class="step-walkthrough">
           <div class="step-item">
             <div class="step-num">1</div>
             <div class="step-content">
               <strong>Compute raw attention scores (dot products)</strong>
-              <p>For each pair of tokens (i, j), compute the dot product of their embedding vectors: score(i,j) = x<sub>i</sub> · x<sub>j</sub>. This gives an unnormalised measure of "similarity" between token i and token j. Higher dot product = more similar direction in embedding space = higher relevance. The result is an [N×N] score matrix where N is the sequence length.</p>
+              <p>For each pair of tokens (i, j), compute the dot product of their embedding vectors: score(i,j) = x<sub>i</sub> &middot; x<sub>j</sub>. This gives an unnormalised measure of "similarity" between token i and token j. Higher dot product = more similar direction in embedding space = higher relevance. The result is an [N&times;N] score matrix where N is the sequence length.</p>
             </div>
           </div>
           <div class="step-item">
             <div class="step-num">2</div>
             <div class="step-content">
               <strong>Normalise with softmax to get attention weights</strong>
-              <p>Apply softmax row-wise: weights(i, :) = softmax(scores(i, :]). This converts raw scores into a proper probability distribution — all weights in each row sum to exactly 1 and are non-negative. Now each row describes "how much token i attends to every other token".</p>
+              <p>Apply softmax row-wise: weights(i, :) = softmax(scores(i, :]). This converts raw scores into a proper probability distribution &mdash; all weights in each row sum to exactly 1 and are non-negative. Now each row describes "how much token i attends to every other token".</p>
             </div>
           </div>
           <div class="step-item">
             <div class="step-num">3</div>
             <div class="step-content">
               <strong>Compute context vectors (weighted sum)</strong>
-              <p>For each token i, compute a new "context-aware" representation: context(i) = Σ<sub>j</sub> weights(i,j) × x<sub>j</sub>. This is a weighted average of all token embeddings, where the weights determine how much each token contributes. Token i ends up with a representation that blends in information from the tokens it attends to most.</p>
+              <p>For each token i, compute a new "context-aware" representation: context(i) = &Sigma;<sub>j</sub> weights(i,j) &times; x<sub>j</sub>. This is a weighted average of all token embeddings, where the weights determine how much each token contributes. Token i ends up with a representation that blends in information from the tokens it attends to most.</p>
             </div>
           </div>
         </div>
 
         <p>This is the complete pipeline: <code>scores = X @ X.T</code>, <code>weights = softmax(scores)</code>, <code>context = weights @ X</code>. Three matrix operations, no learned parameters.</p>
+
+        <!-- ===== STEP-THROUGH: ATTENTION SCORE COMPUTATION ===== -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step-Through: Attention Score Computation</div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.5rem;">Walk through each stage of simplified self-attention with 3 tokens. Use Previous/Next to advance.</p>
+
+          <div class="stepper-wrap" id="attnScoreStepper">
+            <div class="stepper-header">
+              <div class="stepper-title"><i class="fas fa-play-circle"></i> Attention Score Walkthrough</div>
+              <div class="stepper-counter" id="attnStepCounter">Step 1 / 5</div>
+            </div>
+            <div class="stepper-body" id="attnStepBody">
+              <div class="stepper-svg-wrap" id="attnStepSVG"></div>
+              <div class="stepper-explanation" id="attnStepExpl"></div>
+            </div>
+            <div class="stepper-nav">
+              <button class="btn btn-ghost btn-sm" id="attnPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+              <button class="btn btn-primary btn-sm" id="attnNext">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
 
         <!-- Before/after softmax visualization -->
         <div class="viz-container">
@@ -610,41 +481,41 @@
 
           <div class="attn-before-after">
             <div class="attn-ba-card">
-              <div class="attn-ba-header before">Raw Scores — X @ X.T</div>
+              <div class="attn-ba-header before">Raw Scores &mdash; X @ X.T</div>
               <div class="attn-ba-body">
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T1</span>
+                  <span class="attn-bar-label">T1&rarr;T1</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:85%; background:rgba(79,110,247,0.55);"></div></div>
                   <span class="attn-bar-val">1.07</span>
                 </div>
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T2</span>
+                  <span class="attn-bar-label">T1&rarr;T2</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:76%; background:rgba(79,110,247,0.40);"></div></div>
                   <span class="attn-bar-val">0.95</span>
                 </div>
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T3</span>
+                  <span class="attn-bar-label">T1&rarr;T3</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:72%; background:rgba(79,110,247,0.35);"></div></div>
                   <span class="attn-bar-val">0.90</span>
                 </div>
-                <div style="margin-top:0.5rem; font-size:0.73rem; color:var(--text-muted);">Values not bounded, sum ≠ 1</div>
+                <div style="margin-top:0.5rem; font-size:0.73rem; color:var(--text-muted);">Values not bounded, sum &#x2260; 1</div>
               </div>
             </div>
             <div class="attn-ba-card">
-              <div class="attn-ba-header after">After Softmax — Attention Weights</div>
+              <div class="attn-ba-header after">After Softmax &mdash; Attention Weights</div>
               <div class="attn-ba-body">
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T1</span>
+                  <span class="attn-bar-label">T1&rarr;T1</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:38%; background:rgba(16,185,129,0.55);"></div></div>
                   <span class="attn-bar-val">0.38</span>
                 </div>
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T2</span>
+                  <span class="attn-bar-label">T1&rarr;T2</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:34%; background:rgba(16,185,129,0.45);"></div></div>
                   <span class="attn-bar-val">0.34</span>
                 </div>
                 <div class="attn-bar-row">
-                  <span class="attn-bar-label">T1→T3</span>
+                  <span class="attn-bar-label">T1&rarr;T3</span>
                   <div class="attn-bar-track"><div class="attn-bar-fill" style="width:28%; background:rgba(16,185,129,0.35);"></div></div>
                   <span class="attn-bar-val">0.28</span>
                 </div>
@@ -672,38 +543,126 @@ context = weights @ x                <span class="cmt"># shape [3, 3]</span>
 
 <span class="fn">print</span>(weights.<span class="fn">sum</span>(dim=<span class="num">-1</span>))  <span class="cmt"># tensor([1., 1., 1.]) — rows sum to 1</span></code></pre>
 
-          <div class="viz-caption">Softmax converts unconstrained dot-product scores into a probability distribution over positions. The resulting attention weights define a convex combination of the value vectors — the context vector is literally a weighted average of all token embeddings in the sequence.</div>
+          <div class="viz-caption">Softmax converts unconstrained dot-product scores into a probability distribution over positions. The resulting attention weights define a convex combination of the value vectors &mdash; the context vector is literally a weighted average of all token embeddings in the sequence.</div>
+        </div>
+
+        <!-- STEP-THROUGH: Attention Score Computation -->
+        <div class="viz-container step-through" id="stepAttnScore">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step Through: Computing Attention for One Token</div>
+          <div class="step-display" id="stepAttnScoreDisplay"></div>
+          <div class="step-desc" id="stepAttnScoreDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-sm btn-ghost" id="stepAttnScorePrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepAttnScoreIndicator">1 / 5</span>
+            <button class="btn btn-sm btn-primary" id="stepAttnScoreNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- EXERCISE 1: Compute Dot Product -->
+        <div class="exercise-wrap" id="exercise1">
+          <div class="exercise-header"><i class="fas fa-pen-fancy"></i> Exercise 1: Compute the Dot Product</div>
+          <div class="exercise-body">
+            <p>Given two 3-dimensional token embeddings, compute their dot product (the attention score). Drag the slider for each element-wise product and see the sum update in real time.</p>
+            <p style="font-family:'JetBrains Mono',monospace; font-size:0.82rem;">
+              <strong>x<sub>1</sub></strong> = [0.4, 0.2, 0.8] &nbsp;&nbsp;
+              <strong>x<sub>2</sub></strong> = [0.5, 0.9, 0.7]
+            </p>
+            <div id="dotProductExercise" style="margin:0.75rem 0;"></div>
+            <div class="exercise-feedback" id="dotFeedback"></div>
+          </div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.4
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.4 ===================== -->
       <section class="lesson" id="lesson-3-4">
         <div class="lesson-header">
           <span class="lesson-number">3.4</span>
           <h2>Trainable QKV Projections</h2>
         </div>
 
-        <p>The simplified version above uses the raw token embeddings to compute attention — but the embeddings were optimized for a different purpose (representing semantic meaning), not for finding which tokens are relevant to which. The improved design introduces <strong>three separate learned linear projections</strong>: W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>, each of shape [d_model, d_k].</p>
+        <p>The simplified version above uses the raw token embeddings to compute attention &mdash; but the embeddings were optimized for a different purpose (representing semantic meaning), not for finding which tokens are relevant to which. The improved design introduces <strong>three separate learned linear projections</strong>: W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>, each of shape [d_model, d_k].</p>
 
-        <p>Each token embedding x<sub>i</sub> is projected into three separate vectors:
+        <p>Each token embedding x<sub>i</sub> is projected into three separate vectors:</p>
         <ul style="margin: 0.5rem 0 0.75rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
-          <li><strong>Query (q<sub>i</sub> = x<sub>i</sub> W<sub>Q</sub>)</strong> — what this token is looking for</li>
-          <li><strong>Key (k<sub>i</sub> = x<sub>i</sub> W<sub>K</sub>)</strong> — what this token has to offer for matching</li>
-          <li><strong>Value (v<sub>i</sub> = x<sub>i</sub> W<sub>V</sub>)</strong> — the actual content to retrieve when matched</li>
+          <li><strong>Query (q<sub>i</sub> = x<sub>i</sub> W<sub>Q</sub>)</strong> &mdash; what this token is looking for</li>
+          <li><strong>Key (k<sub>i</sub> = x<sub>i</sub> W<sub>K</sub>)</strong> &mdash; what this token has to offer for matching</li>
+          <li><strong>Value (v<sub>i</sub> = x<sub>i</sub> W<sub>V</sub>)</strong> &mdash; the actual content to retrieve when matched</li>
         </ul>
-        </p>
 
-        <p>The attention formula becomes: <code>Attention(Q, K, V) = softmax(Q @ K.T / √d_k) @ V</code>. The <strong>√d_k scaling factor</strong> is critical: for large d_k, dot products grow in magnitude proportionally to d_k, pushing softmax into regions with near-zero gradients (the softmax becomes a one-hot distribution). Dividing by √d_k keeps the variance of the dot products roughly constant regardless of dimensionality, preserving healthy gradients during training.</p>
+        <p>The attention formula becomes: <code>Attention(Q, K, V) = softmax(Q @ K.T / &radic;d_k) @ V</code>. The <strong>&radic;d_k scaling factor</strong> is critical: for large d_k, dot products grow in magnitude proportionally to d_k, pushing softmax into regions with near-zero gradients (the softmax becomes a one-hot distribution). Dividing by &radic;d_k keeps the variance of the dot products roughly constant regardless of dimensionality, preserving healthy gradients during training.</p>
 
         <div class="insight-box">
-          <strong>Database Analogy:</strong> Think of attention as a soft database lookup. The <strong>Query</strong> is "what I'm searching for". The <strong>Keys</strong> are "what the database has indexed". Matching Q against K produces attention weights — how relevant each entry is. The <strong>Values</strong> are the actual data returned when a key matches your query. Unlike a hard database (exact match), attention is differentiable and soft — every entry contributes proportionally to its match score.
+          <strong>Database Analogy:</strong> Think of attention as a soft database lookup. The <strong>Query</strong> is "what I'm searching for". The <strong>Keys</strong> are "what the database has indexed". Matching Q against K produces attention weights &mdash; how relevant each entry is. The <strong>Values</strong> are the actual data returned when a key matches your query. Unlike a hard database (exact match), attention is differentiable and soft &mdash; every entry contributes proportionally to its match score.
         </div>
 
-        <!-- QKV flow diagram -->
+        <!-- SVG: QKV flow pipeline -->
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-database"></i> Query / Key / Value — Database Analogy</div>
+          <div class="viz-title"><i class="fas fa-project-diagram"></i> QKV Projection Pipeline</div>
+          <div class="svg-illustration">
+            <svg viewBox="0 0 680 200" aria-label="QKV projection flow diagram">
+              <!-- Input embedding -->
+              <rect x="20" y="80" width="85" height="40" rx="8" fill="rgba(79,110,247,0.12)" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="62" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="Inter,sans-serif">Input x</text>
+              <text x="62" y="110" text-anchor="middle" font-size="7.5" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[T, d_model]</text>
+              <!-- Three projection arrows -->
+              <line x1="105" y1="88" x2="170" y2="40" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="105" y1="100" x2="170" y2="100" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowKey)"/>
+              <line x1="105" y1="112" x2="170" y2="160" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrowVal)"/>
+              <!-- W labels on arrows -->
+              <text x="140" y="55" text-anchor="middle" font-size="8" fill="var(--accent)" font-family="JetBrains Mono,monospace">W_Q</text>
+              <text x="140" y="93" text-anchor="middle" font-size="8" fill="#ef4444" font-family="JetBrains Mono,monospace">W_K</text>
+              <text x="140" y="148" text-anchor="middle" font-size="8" fill="var(--accent-3)" font-family="JetBrains Mono,monospace">W_V</text>
+              <!-- Q box -->
+              <rect x="170" y="22" width="70" height="36" rx="7" fill="rgba(79,110,247,0.18)" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="205" y="37" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent)" font-family="Inter,sans-serif">Q</text>
+              <text x="205" y="50" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[T, d_k]</text>
+              <!-- K box -->
+              <rect x="170" y="82" width="70" height="36" rx="7" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="205" y="97" text-anchor="middle" font-size="10" font-weight="700" fill="#ef4444" font-family="Inter,sans-serif">K</text>
+              <text x="205" y="110" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[T, d_k]</text>
+              <!-- V box -->
+              <rect x="170" y="142" width="70" height="36" rx="7" fill="rgba(16,185,129,0.15)" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <text x="205" y="157" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent-3)" font-family="Inter,sans-serif">V</text>
+              <text x="205" y="170" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[T, d_k]</text>
+              <!-- Q @ K.T -->
+              <line x1="240" y1="40" x2="300" y2="70" stroke="var(--accent)" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+              <line x1="240" y1="100" x2="300" y2="80" stroke="#ef4444" stroke-width="1.2" marker-end="url(#arrowKey)"/>
+              <!-- Scores box -->
+              <rect x="300" y="55" width="90" height="36" rx="7" fill="rgba(139,92,246,0.12)" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="345" y="70" text-anchor="middle" font-size="9" font-weight="700" fill="#8b5cf6" font-family="Inter,sans-serif">Q @ K.T</text>
+              <text x="345" y="83" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">[T, T] / sqrt(d_k)</text>
+              <!-- Softmax -->
+              <line x1="390" y1="73" x2="420" y2="73" stroke="#8b5cf6" stroke-width="1.2" marker-end="url(#arrowPurple)"/>
+              <rect x="420" y="55" width="75" height="36" rx="7" fill="rgba(245,158,11,0.12)" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <text x="457" y="70" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent-2)" font-family="Inter,sans-serif">Softmax</text>
+              <text x="457" y="83" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">weights [T, T]</text>
+              <!-- Weights @ V -->
+              <line x1="495" y1="80" x2="540" y2="100" stroke="var(--accent-2)" stroke-width="1.2"/>
+              <line x1="240" y1="160" x2="540" y2="110" stroke="var(--accent-3)" stroke-width="1.2" stroke-dasharray="4"/>
+              <!-- Output -->
+              <rect x="540" y="85" width="90" height="36" rx="7" fill="rgba(16,185,129,0.18)" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <text x="585" y="100" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent-3)" font-family="Inter,sans-serif">Context</text>
+              <text x="585" y="113" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">weights @ V [T, d_k]</text>
+              <!-- Arrow markers -->
+              <defs>
+                <marker id="arrowKey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowVal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-3)"/>
+                </marker>
+                <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <div class="viz-caption">Data flows from left to right: the input x is projected into Q, K, V via separate weight matrices. Q and K are matched to produce attention scores, softmax normalizes them, and the result is used to weight-sum the Value vectors into context-rich output representations.</div>
+        </div>
+
+        <!-- QKV cards -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-database"></i> Query / Key / Value &mdash; Database Analogy</div>
           <div class="qkv-diagram">
             <div class="qkv-col">
               <div class="qkv-col-header qh"><i class="fas fa-search"></i> Query</div>
@@ -750,73 +709,85 @@ context = weights @ x                <span class="cmt"># shape [3, 3]</span>
         weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</span>)
         <span class="kw">return</span> weights @ V  <span class="cmt"># [B, T, d_out]</span></code></pre>
 
-          <div class="viz-caption">The three weight matrices W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> are learned during training. Separating Query, Key, and Value allows the model to independently learn "what to search for", "what to match against", and "what to return" — giving far more representational flexibility than using the raw embeddings directly.</div>
+          <div class="viz-caption">The three weight matrices W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> are learned during training. Separating Query, Key, and Value allows the model to independently learn "what to search for", "what to match against", and "what to return" &mdash; giving far more representational flexibility than using the raw embeddings directly.</div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.5
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.5 ===================== -->
       <section class="lesson" id="lesson-3-5">
         <div class="lesson-header">
           <span class="lesson-number">3.5</span>
           <h2>Causal (Masked) Self-Attention</h2>
         </div>
 
-        <p>GPT is an <strong>autoregressive</strong> language model: it generates text one token at a time, left to right. At each step, it can only use tokens that have already been generated — it must never "peek" at future tokens. During training, this constraint must be enforced, because if the model can see the answer (future tokens) while computing attention, it learns nothing useful.</p>
+        <p>GPT is an <strong>autoregressive</strong> language model: it generates text one token at a time, left to right. At each step, it can only use tokens that have already been generated &mdash; it must never "peek" at future tokens. During training, this constraint must be enforced, because if the model can see the answer (future tokens) while computing attention, it learns nothing useful.</p>
 
-        <p>This is solved with a <strong>causal mask</strong>, also called a <em>lower-triangular mask</em>. Before computing the softmax, we set all positions in the attention score matrix where j > i (future positions) to <code>-∞</code>. When softmax is applied, <code>exp(-∞) = 0</code>, so those positions receive exactly zero attention weight. Token i can attend to tokens 0, 1, …, i (itself and all past tokens) but receives zero contribution from tokens i+1, i+2, … onwards.</p>
+        <p>This is solved with a <strong>causal mask</strong>, also called a <em>lower-triangular mask</em>. Before computing the softmax, we set all positions in the attention score matrix where j > i (future positions) to <code>-&infin;</code>. When softmax is applied, <code>exp(-&infin;) = 0</code>, so those positions receive exactly zero attention weight. Token i can attend to tokens 0, 1, &hellip;, i (itself and all past tokens) but receives zero contribution from tokens i+1, i+2, &hellip; onwards.</p>
 
-        <p>The mask pattern for a 4-token sequence looks like a lower triangle:</p>
-
-        <div style="overflow-x:auto; margin: 0.75rem 0;">
-          <table style="border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:0.82rem;">
-            <thead>
-              <tr>
-                <th style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--text-muted);">Pos →</th>
-                <th style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">0</th>
-                <th style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">1</th>
-                <th style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">2</th>
-                <th style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">3</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">Token 0</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-              </tr>
-              <tr>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">Token 1</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-              </tr>
-              <tr>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">Token 2</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(239,68,68,0.08); color:rgba(239,68,68,0.5);">−∞</td>
-              </tr>
-              <tr>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); color:var(--accent);">Token 3</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-                <td style="padding:0.4rem 0.7rem; border:1px solid var(--border); background:rgba(16,185,129,0.12); color:var(--accent-3);">✓</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- SVG: Causal mask triangle -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shapes"></i> Causal Mask Structure (4 Tokens)</div>
+          <div class="svg-illustration">
+            <svg viewBox="0 0 420 210" aria-label="Causal mask lower-triangular pattern">
+              <!-- Column headers -->
+              <text x="155" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T0</text>
+              <text x="205" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T1</text>
+              <text x="255" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T2</text>
+              <text x="305" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T3</text>
+              <!-- Row headers -->
+              <text x="110" y="53" text-anchor="end" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T0</text>
+              <text x="110" y="93" text-anchor="end" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T1</text>
+              <text x="110" y="133" text-anchor="end" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T2</text>
+              <text x="110" y="173" text-anchor="end" font-size="9" font-weight="700" fill="var(--accent)" font-family="JetBrains Mono,monospace">T3</text>
+              <!-- Grid cells -->
+              <!-- Row 0 -->
+              <rect x="130" y="30" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="155" y="52" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="180" y="30" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="205" y="52" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <rect x="230" y="30" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="255" y="52" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <rect x="280" y="30" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="305" y="52" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <!-- Row 1 -->
+              <rect x="130" y="70" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="155" y="92" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="180" y="70" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="205" y="92" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="230" y="70" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="255" y="92" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <rect x="280" y="70" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="305" y="92" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <!-- Row 2 -->
+              <rect x="130" y="110" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="155" y="132" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="180" y="110" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="205" y="132" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="230" y="110" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="255" y="132" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="280" y="110" width="50" height="35" rx="4" fill="rgba(239,68,68,0.10)" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+              <text x="305" y="132" text-anchor="middle" font-size="9" fill="rgba(239,68,68,0.6)" font-family="JetBrains Mono,monospace">-inf</text>
+              <!-- Row 3 -->
+              <rect x="130" y="150" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="155" y="172" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="180" y="150" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="205" y="172" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="230" y="150" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="255" y="172" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <rect x="280" y="150" width="50" height="35" rx="4" fill="rgba(16,185,129,0.20)" stroke="var(--accent-3)" stroke-width="1"/>
+              <text x="305" y="172" text-anchor="middle" font-size="10" fill="var(--accent-3)" font-family="Inter,sans-serif" font-weight="700">&#10003;</text>
+              <!-- Diagonal line -->
+              <line x1="128" y1="28" x2="332" y2="188" stroke="var(--accent-2)" stroke-width="2" stroke-dasharray="5" opacity="0.6"/>
+              <text x="370" y="105" font-size="8.5" fill="var(--accent-2)" font-family="Inter,sans-serif" font-weight="600">Lower</text>
+              <text x="370" y="118" font-size="8.5" fill="var(--accent-2)" font-family="Inter,sans-serif" font-weight="600">triangle</text>
+            </svg>
+          </div>
         </div>
 
         <!-- Interactive mask toggle -->
         <div class="viz-container">
           <div class="viz-title"><i class="fas fa-mask"></i> Interactive Causal Mask Toggle</div>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">Toggle between the full (unmasked) attention matrix and the causal (lower-triangle) masked version. Masked positions are set to −∞ before softmax, becoming 0 after it.</p>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">Toggle between the full (unmasked) attention matrix and the causal (lower-triangle) masked version. Masked positions are set to &minus;&infin; before softmax, becoming 0 after it.</p>
 
           <button id="maskToggleBtn" class="btn btn-primary btn-sm mask-toggle-btn">
             <i class="fas fa-eye-slash"></i> Apply Causal Mask
@@ -837,7 +808,7 @@ context = weights @ x                <span class="cmt"># shape [3, 3]</span>
 
           <div class="mask-legend">
             <div class="mask-legend-item"><div class="legend-dot" style="background:rgba(79,110,247,0.35); border:1.5px solid var(--accent);"></div><span>Allowed (attends)</span></div>
-            <div class="mask-legend-item"><div class="legend-dot" style="background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.5);"></div><span>Blocked (−∞ → 0 after softmax)</span></div>
+            <div class="mask-legend-item"><div class="legend-dot" style="background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.5);"></div><span>Blocked (&minus;&infin; &rarr; 0 after softmax)</span></div>
           </div>
 
           <pre class="code-block" style="margin-top:1rem;"><code>T = x.shape[<span class="num">1</span>]  <span class="cmt"># sequence length</span>
@@ -850,38 +821,70 @@ scores = scores.<span class="fn">masked_fill</span>(mask, <span class="fn">float
 weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</span>)
 <span class="cmt"># exp(-inf) = 0, so masked positions get zero attention weight</span></code></pre>
 
-          <div class="viz-caption">The causal mask is a one-time operation per forward pass. <code>torch.triu(ones, diagonal=1)</code> creates an upper-triangular matrix; <code>masked_fill</code> sets those positions to −∞. After softmax, these become exactly 0, ensuring no information from future tokens leaks into past token representations.</div>
+          <div class="viz-caption">The causal mask is a one-time operation per forward pass. <code>torch.triu(ones, diagonal=1)</code> creates an upper-triangular matrix; <code>masked_fill</code> sets those positions to &minus;&infin;. After softmax, these become exactly 0, ensuring no information from future tokens leaks into past token representations.</div>
+        </div>
+
+        <!-- EXERCISE 2: Build the causal mask -->
+        <div class="exercise-wrap" id="exercise2">
+          <div class="exercise-header"><i class="fas fa-pen-fancy"></i> Exercise 2: Build the Causal Mask</div>
+          <div class="exercise-body">
+            <p>Click on the cells that should be <strong>masked</strong> (set to &minus;&infin;) in a 4&times;4 causal attention matrix. Remember: token i cannot attend to any token j where j&nbsp;>&nbsp;i (no peeking at the future).</p>
+            <div class="exercise-grid" id="maskExerciseGrid" style="grid-template-columns: repeat(4, 52px);"></div>
+            <div class="exercise-actions">
+              <button class="btn btn-primary btn-sm" id="maskExCheck"><i class="fas fa-check"></i> Check Answer</button>
+              <button class="btn btn-ghost btn-sm" id="maskExReset"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <div class="exercise-feedback" id="maskExFeedback"></div>
+          </div>
         </div>
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.6
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.6 ===================== -->
       <section class="lesson" id="lesson-3-6">
         <div class="lesson-header">
           <span class="lesson-number">3.6</span>
           <h2>Multi-Head Attention</h2>
         </div>
 
-        <p>A single attention head learns one "type" of relationship in the data. But language has many simultaneously active relationships: token i might have a syntactic dependency on token j, a coreference link to token k, and a semantic similarity to token l — all at the same time. A single attention head's weight matrix can only attend to one combination of these patterns at once.</p>
+        <p>A single attention head learns one "type" of relationship in the data. But language has many simultaneously active relationships: token i might have a syntactic dependency on token j, a coreference link to token k, and a semantic similarity to token l &mdash; all at the same time. A single attention head's weight matrix can only attend to one combination of these patterns at once.</p>
 
         <p><strong>Multi-head attention</strong> solves this by running <strong>h attention heads in parallel</strong>, each with its own independent W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub> projection matrices. Each head operates on a lower-dimensional subspace (d_k = d_model / h), so the total computation is the same as a single attention operation. The outputs of all heads are then concatenated and projected through an output matrix W<sub>O</sub>.</p>
 
-        <p>In practice, the heads learn complementary specializations:
+        <p>In practice, the heads learn complementary specializations:</p>
         <ul style="margin: 0.5rem 0 0.75rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
           <li><strong>Head 1</strong> might track syntactic subject-verb dependencies</li>
           <li><strong>Head 2</strong> might resolve pronoun coreferences</li>
           <li><strong>Head 3</strong> might capture semantic role relationships</li>
           <li><strong>Head 4</strong> might attend to positional proximity</li>
         </ul>
-        </p>
 
-        <p><strong>GPT-2 Small stats:</strong> d_model = 768, num_heads = 12, so d_k = 768 / 12 = <strong>64</strong> per head. Total parameters per multi-head attention block = 4 × d_model × d_model = 4 × 768 × 768 = <strong>2,359,296</strong> (one each for W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>, W<sub>O</sub>).</p>
+        <p><strong>GPT-2 Small stats:</strong> d_model = 768, num_heads = 12, so d_k = 768 / 12 = <strong>64</strong> per head. Total parameters per multi-head attention block = 4 &times; d_model &times; d_model = 4 &times; 768 &times; 768 = <strong>2,359,296</strong> (one each for W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>, W<sub>O</sub>).</p>
+
+        <!-- ===== STEP-THROUGH: MULTI-HEAD ATTENTION ===== -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-shoe-prints"></i> Step-Through: Multi-Head Attention Pipeline</div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.5rem;">Walk through the full multi-head attention flow, from input to output. Use Previous/Next to advance.</p>
+
+          <div class="stepper-wrap" id="mhaStepper">
+            <div class="stepper-header">
+              <div class="stepper-title"><i class="fas fa-play-circle"></i> Multi-Head Attention Walkthrough</div>
+              <div class="stepper-counter" id="mhaStepCounter">Step 1 / 6</div>
+            </div>
+            <div class="stepper-body" id="mhaStepBody">
+              <div class="stepper-svg-wrap" id="mhaStepSVG"></div>
+              <div class="stepper-explanation" id="mhaStepExpl"></div>
+            </div>
+            <div class="stepper-nav">
+              <button class="btn btn-ghost btn-sm" id="mhaPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+              <button class="btn btn-primary btn-sm" id="mhaNext">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
 
         <!-- Multi-head parallel visualization -->
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-columns"></i> 4 Heads — Different Attention Patterns on the Same Sequence</div>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">"The cat sat down" — each head learns a different pattern. Darker = higher attention weight. Heads are shown running in parallel on the same input.</p>
+          <div class="viz-title"><i class="fas fa-columns"></i> 4 Heads &mdash; Different Attention Patterns on the Same Sequence</div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">"The cat sat down" &mdash; each head learns a different pattern. Darker = higher attention weight. Heads are shown running in parallel on the same input.</p>
 
           <div class="multi-head-grid" id="multiHeadGrid"></div>
 
@@ -901,44 +904,93 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
 
     <span class="kw">def</span> <span class="fn">forward</span>(self, x):
         B, T, C = x.shape
-        <span class="cmt"># Project & split into h heads: [B, T, C] → [B, h, T, d_k]</span>
+        <span class="cmt"># Project & split into h heads: [B, T, C] -> [B, h, T, d_k]</span>
         Q = self.W_q(x).<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
         K = self.W_k(x).<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
         V = self.W_v(x).<span class="fn">view</span>(B, T, self.h, self.d_k).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
         <span class="cmt"># Attention for all heads in parallel</span>
         scores = Q @ K.<span class="fn">transpose</span>(<span class="num">-2</span>, <span class="num">-1</span>) / self.d_k**<span class="num">0.5</span>
         out    = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</span>) @ V
-        <span class="cmt"># Concatenate heads: [B, h, T, d_k] → [B, T, C]</span>
+        <span class="cmt"># Concatenate heads: [B, h, T, d_k] -> [B, T, C]</span>
         out = out.<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>).<span class="fn">contiguous</span>().<span class="fn">view</span>(B, T, C)
         <span class="kw">return</span> self.W_o(out)  <span class="cmt"># Final output projection</span></code></pre>
+        <!-- STEP-THROUGH: Multi-Head Attention Assembly -->
+        <div class="viz-container step-through" id="stepMultiHead">
+          <div class="viz-title"><i class="fas fa-play-circle"></i> Step Through: Multi-Head Attention Assembly</div>
+          <div class="step-display" id="stepMultiHeadDisplay"></div>
+          <div class="step-desc" id="stepMultiHeadDesc"></div>
+          <div class="step-controls">
+            <button class="btn btn-sm btn-ghost" id="stepMultiHeadPrev"><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="stepMultiHeadIndicator">1 / 5</span>
+            <button class="btn btn-sm btn-primary" id="stepMultiHeadNext">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
       </section>
 
-      <!-- ══════════════════
-           LESSON 3.7
-      ══════════════════ -->
+      <!-- ===================== LESSON 3.7 ===================== -->
       <section class="lesson" id="lesson-3-7">
         <div class="lesson-header">
           <span class="lesson-number">3.7</span>
           <h2>Dropout in Attention</h2>
         </div>
 
-        <p>Like other components of a deep neural network, the attention mechanism is susceptible to <strong>overfitting</strong>: the model may learn to always heavily attend to the same specific token pairs in the training data, rather than generalising to flexible, content-dependent patterns. This is especially risky in attention because the soft alignment weights can become very peaked (near one-hot) — the model "locks in" to specific token relationships that may not generalise.</p>
+        <p>Like other components of a deep neural network, the attention mechanism is susceptible to <strong>overfitting</strong>: the model may learn to always heavily attend to the same specific token pairs in the training data, rather than generalising to flexible, content-dependent patterns. This is especially risky in attention because the soft alignment weights can become very peaked (near one-hot) &mdash; the model "locks in" to specific token relationships that may not generalise.</p>
 
-        <p><strong>Dropout</strong> combats this by randomly zeroing out some attention weights during training, with probability p (typically 0.1 to 0.2). At each training step, a different random subset of attention connections is disabled. The model must therefore learn to not over-rely on any single attention path — it must develop multiple, redundant pathways to represent each relationship. This acts as a form of regularisation that improves generalisation.</p>
+        <p><strong>Dropout</strong> combats this by randomly zeroing out some attention weights during training, with probability p (typically 0.1 to 0.2). At each training step, a different random subset of attention connections is disabled. The model must therefore learn to not over-rely on any single attention path &mdash; it must develop multiple, redundant pathways to represent each relationship. This acts as a form of regularisation that improves generalisation.</p>
 
-        <p>In GPT-2, dropout is applied at two points in the attention block:
+        <p>In GPT-2, dropout is applied at two points in the attention block:</p>
         <ol style="margin: 0.5rem 0 0.75rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
-          <li><strong>After the softmax attention weights</strong> — randomly zeroing some weights before the weighted sum with V</li>
-          <li><strong>After the output projection W<sub>O</sub></strong> — applied to the final attention output before adding to the residual stream</li>
+          <li><strong>After the softmax attention weights</strong> &mdash; randomly zeroing some weights before the weighted sum with V</li>
+          <li><strong>After the output projection W<sub>O</sub></strong> &mdash; applied to the final attention output before adding to the residual stream</li>
         </ol>
-        </p>
 
-        <p>At inference time, dropout is disabled (by calling <code>model.eval()</code>), and all attention weights are used — the model has already learned robust patterns during training that do not over-rely on any single connection.</p>
+        <p>At inference time, dropout is disabled (by calling <code>model.eval()</code>), and all attention weights are used &mdash; the model has already learned robust patterns during training that do not over-rely on any single connection.</p>
+
+        <!-- SVG: Dropout visualization diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-random"></i> Where Dropout Is Applied in the Attention Block</div>
+          <div class="svg-illustration">
+            <svg viewBox="0 0 520 180" aria-label="Dropout locations in attention block">
+              <!-- Pipeline boxes -->
+              <rect x="10" y="70" width="70" height="35" rx="6" fill="rgba(79,110,247,0.12)" stroke="var(--accent)" stroke-width="1.2"/>
+              <text x="45" y="92" text-anchor="middle" font-size="8.5" font-weight="700" fill="var(--accent)" font-family="Inter,sans-serif">Softmax</text>
+              <line x1="80" y1="87" x2="110" y2="87" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowGray)"/>
+              <!-- Dropout 1 -->
+              <rect x="110" y="62" width="85" height="50" rx="6" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4"/>
+              <text x="152" y="82" text-anchor="middle" font-size="8" font-weight="700" fill="#ef4444" font-family="Inter,sans-serif">Dropout #1</text>
+              <text x="152" y="95" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter,sans-serif">on weights</text>
+              <text x="152" y="107" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">p=0.1</text>
+              <line x1="195" y1="87" x2="225" y2="87" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowGray)"/>
+              <!-- Weighted sum -->
+              <rect x="225" y="70" width="70" height="35" rx="6" fill="rgba(16,185,129,0.12)" stroke="var(--accent-3)" stroke-width="1.2"/>
+              <text x="260" y="92" text-anchor="middle" font-size="8" font-weight="700" fill="var(--accent-3)" font-family="Inter,sans-serif">W @ V</text>
+              <line x1="295" y1="87" x2="325" y2="87" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowGray)"/>
+              <!-- W_O projection -->
+              <rect x="325" y="70" width="65" height="35" rx="6" fill="rgba(139,92,246,0.12)" stroke="#8b5cf6" stroke-width="1.2"/>
+              <text x="357" y="92" text-anchor="middle" font-size="8" font-weight="700" fill="#8b5cf6" font-family="Inter,sans-serif">W_O</text>
+              <line x1="390" y1="87" x2="420" y2="87" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowGray)"/>
+              <!-- Dropout 2 -->
+              <rect x="420" y="62" width="85" height="50" rx="6" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4"/>
+              <text x="462" y="82" text-anchor="middle" font-size="8" font-weight="700" fill="#ef4444" font-family="Inter,sans-serif">Dropout #2</text>
+              <text x="462" y="95" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="Inter,sans-serif">on output</text>
+              <text x="462" y="107" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="JetBrains Mono,monospace">p=0.1</text>
+              <!-- Labels -->
+              <text x="152" y="42" text-anchor="middle" font-size="7.5" fill="#ef4444" font-family="Inter,sans-serif">Prevents over-reliance</text>
+              <text x="152" y="52" text-anchor="middle" font-size="7.5" fill="#ef4444" font-family="Inter,sans-serif">on specific token pairs</text>
+              <text x="462" y="42" text-anchor="middle" font-size="7.5" fill="#ef4444" font-family="Inter,sans-serif">Regularizes the</text>
+              <text x="462" y="52" text-anchor="middle" font-size="7.5" fill="#ef4444" font-family="Inter,sans-serif">attention output</text>
+              <!-- Training only label -->
+              <rect x="180" y="145" width="160" height="24" rx="12" fill="rgba(245,158,11,0.15)" stroke="var(--accent-2)" stroke-width="1"/>
+              <text x="260" y="161" text-anchor="middle" font-size="8" font-weight="700" fill="var(--accent-2)" font-family="Inter,sans-serif">Active during training only</text>
+            </svg>
+          </div>
+        </div>
 
         <!-- Dropout visualization -->
         <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-random"></i> Dropout on Attention Weights (p=0.2) — Training Step Example</div>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">A 4×4 attention weight grid. Red cells are randomly zeroed by dropout. Each training step zeroes a different random ~20% of connections.</p>
+          <div class="viz-title"><i class="fas fa-dice"></i> Dropout on Attention Weights (p=0.2) &mdash; Training Step Example</div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">A 4&times;4 attention weight grid. Red cells are randomly zeroed by dropout. Each training step zeroes a different random ~20% of connections.</p>
 
           <div class="dropout-grid" id="dropoutGrid"></div>
           <button id="dropoutRefreshBtn" class="btn btn-ghost btn-sm" style="margin-top:0.75rem;">
@@ -956,39 +1008,35 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
         <span class="cmt"># ... compute Q, K, V as before ...</span>
         scores  = Q @ K.<span class="fn">transpose</span>(<span class="num">-2</span>,<span class="num">-1</span>) / self.d_k**<span class="num">0.5</span>
         weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</span>)
-        weights = self.<span class="fn">attn_drop</span>(weights)  <span class="cmt"># ← dropout on weights</span>
+        weights = self.<span class="fn">attn_drop</span>(weights)  <span class="cmt"># &lt;- dropout on weights</span>
         out     = weights @ V
         <span class="cmt"># ... reshape and project ...</span>
-        <span class="kw">return</span> self.<span class="fn">proj_drop</span>(self.W_o(out))  <span class="cmt"># ← dropout on output</span></code></pre>
+        <span class="kw">return</span> self.<span class="fn">proj_drop</span>(self.W_o(out))  <span class="cmt"># &lt;- dropout on output</span></code></pre>
 
-          <div class="viz-caption">Dropout is only active during training (<code>model.train()</code>). During inference (<code>model.eval()</code>), PyTorch automatically disables all dropout layers. The p=0.1 setting in GPT-2 means roughly 10% of attention weights are zeroed per training step — light regularisation to prevent overfitting without significantly disrupting learning.</div>
+          <div class="viz-caption">Dropout is only active during training (<code>model.train()</code>). During inference (<code>model.eval()</code>), PyTorch automatically disables all dropout layers. The p=0.1 setting in GPT-2 means roughly 10% of attention weights are zeroed per training step &mdash; light regularisation to prevent overfitting without significantly disrupting learning.</div>
         </div>
       </section>
 
     </div><!-- /#tab-lessons -->
 
-    <!-- ══════════════════════════════════════════
-         TAB: SUMMARY
-    ══════════════════════════════════════════ -->
+    <!-- ========== TAB: SUMMARY ========== -->
     <div class="tab-panel" id="tab-summary">
 
       <div class="summary-box glass">
-        <h3><i class="fas fa-bookmark"></i> Chapter 3 — Key Takeaways</h3>
+        <h3><i class="fas fa-bookmark"></i> Chapter 3 &mdash; Key Takeaways</h3>
         <ul>
-          <li><strong>Self-attention</strong> computes context-aware representations by allowing every token to attend to all other tokens simultaneously — breaking the information bottleneck of RNN seq2seq models.</li>
-          <li><strong>QKV projections</strong> (W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>) are three separate learned linear transformations that independently learn what to query, what to match against, and what to retrieve — giving far more representational power than using raw embeddings.</li>
-          <li><strong>Scaling by √d_k</strong> prevents the dot products from growing too large as embedding dimensions increase, keeping the softmax distribution well-behaved and gradients healthy during training.</li>
-          <li><strong>Causal masking</strong> (lower-triangular mask) ensures GPT never attends to future tokens — preserving the autoregressive property required for left-to-right text generation. Future positions are set to −∞ before softmax.</li>
+          <li><strong>Self-attention</strong> computes context-aware representations by allowing every token to attend to all other tokens simultaneously &mdash; breaking the information bottleneck of RNN seq2seq models.</li>
+          <li><strong>QKV projections</strong> (W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>) are three separate learned linear transformations that independently learn what to query, what to match against, and what to retrieve &mdash; giving far more representational power than using raw embeddings.</li>
+          <li><strong>Scaling by &radic;d_k</strong> prevents the dot products from growing too large as embedding dimensions increase, keeping the softmax distribution well-behaved and gradients healthy during training.</li>
+          <li><strong>Causal masking</strong> (lower-triangular mask) ensures GPT never attends to future tokens &mdash; preserving the autoregressive property required for left-to-right text generation. Future positions are set to &minus;&infin; before softmax.</li>
           <li><strong>Multi-head attention</strong> runs h attention heads in parallel, each with independent projections, allowing different heads to specialise in different relationship types (syntactic, semantic, coreference, etc.).</li>
-          <li><strong>Dropout</strong> randomly zeros attention weights during training (p=0.1–0.2) to prevent the model from over-relying on specific token pairs — acting as regularisation that improves generalisation.</li>
+          <li><strong>Dropout</strong> randomly zeros attention weights during training (p=0.1&ndash;0.2) to prevent the model from over-relying on specific token pairs &mdash; acting as regularisation that improves generalisation.</li>
         </ul>
       </div>
 
     </div><!-- /#tab-summary -->
 
-    <!-- ══════════════════════════════════════════
-         TAB: QUIZ
-    ══════════════════════════════════════════ -->
+    <!-- ========== TAB: QUIZ ========== -->
     <div class="tab-panel" id="tab-quiz">
 
       <div class="quiz-box glass">
@@ -999,133 +1047,17 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
 
     </div><!-- /#tab-quiz -->
 
-    <!-- Tab: Mind Map -->
+    <!-- ========== TAB: MIND MAP (Interactive) ========== -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container">
-        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 3 Mind Map — Self-Attention</div>
-        <svg id="mindmap-ch3" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Mind map of Chapter 3: Attention Mechanisms"></svg>
+      <div class="viz-container" style="position:relative;">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 3 Mind Map &mdash; Click to Explore</div>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.5rem;">Click any branch to focus on it and see details. Click the center node to reset. Click a sub-node to scroll to the related lesson.</p>
+        <div id="mindmapTooltip" class="mm-tooltip"></div>
+        <svg id="mindmap-ch3" viewBox="0 0 800 600" style="width:100%;height:auto;display:block;" aria-label="Interactive mind map of Chapter 3: Attention Mechanisms"></svg>
       </div>
-      <script>
-      (function() {
-        var svg = document.getElementById('mindmap-ch3');
-        var NS = 'http://www.w3.org/2000/svg';
-
-        var cx = 400, cy = 300;
-        var branches = [
-          { label: 'Problem',           angle: -90, color: '#4f6ef7', subs: ['RNN Bottleneck', 'Long Dependencies', 'Sequential Processing'] },
-          { label: 'Intuition',         angle: -30, color: '#f59e0b', subs: ['Relevance Scores', 'Coreference', 'Context'] },
-          { label: 'Simplified Attn',   angle:  30, color: '#10b981', subs: ['Dot Product', 'Softmax', 'Weighted Sum'] },
-          { label: 'QKV Weights',       angle:  90, color: '#8b5cf6', subs: ['Query', 'Key', 'Value'] },
-          { label: 'Causal Masking',    angle: 150, color: '#ef4444', subs: ['Lower Triangle', 'Future Masking', 'Autoregressive'] },
-          { label: 'Multi-Head',        angle: 210, color: '#06b6d4', subs: ['Parallel Heads', 'Different Patterns', 'Concat+Project'] }
-        ];
-
-        var branchR = 150, subR = 90;
-
-        function toRad(deg) { return deg * Math.PI / 180; }
-
-        function makeSVGEl(tag, attrs) {
-          var el = document.createElementNS(NS, tag);
-          for (var k in attrs) el.setAttribute(k, attrs[k]);
-          return el;
-        }
-
-        function addText(parent, x, y, text, fontSize, fill, bold) {
-          var words = text.split(' ');
-          var lineH = fontSize * 1.25;
-          var lines = [];
-          var cur = '';
-          words.forEach(function(w) {
-            var test = cur ? cur + ' ' + w : w;
-            if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
-            else { cur = test; }
-          });
-          if (cur) lines.push(cur);
-          var startY = y - (lines.length - 1) * lineH / 2;
-          lines.forEach(function(line, i) {
-            var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
-            t.textContent = line;
-            parent.appendChild(t);
-          });
-        }
-
-        var allBranchGroups = [];
-
-        var centerG = makeSVGEl('g', { class: 'mm-center', style: 'cursor:pointer' });
-        var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
-        centerG.appendChild(centerCircle);
-        addText(centerG, cx, cy, 'Self-Attention', 11, '#fff', true);
-        svg.appendChild(centerG);
-
-        branches.forEach(function(b, bi) {
-          var rad = toRad(b.angle);
-          var bx = cx + branchR * Math.cos(rad);
-          var by = cy + branchR * Math.sin(rad);
-
-          var g = makeSVGEl('g', { class: 'mm-branch', 'data-branch': bi, style: 'cursor:pointer' });
-
-          var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
-          g.appendChild(line);
-
-          var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
-          g.appendChild(bc);
-          addText(g, bx, by, b.label, 9.5, '#fff', true);
-
-          var subCount = b.subs.length;
-          b.subs.forEach(function(sub, si) {
-            var spread = 50;
-            var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
-            var srad = toRad(baseAngle);
-            var sx = bx + subR * Math.cos(srad);
-            var sy = by + subR * Math.sin(srad);
-
-            var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
-            g.appendChild(sl);
-
-            var sw = 68, sh = 26;
-            var sr = makeSVGEl('rect', { x: sx - sw/2, y: sy - sh/2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5' });
-            g.appendChild(sr);
-            addText(g, sx, sy, sub, 8.5, 'var(--text, #1e293b)', false);
-          });
-
-          svg.insertBefore(g, centerG);
-          allBranchGroups.push(g);
-        });
-
-        var allNodes = svg.querySelectorAll('circle, rect');
-        allNodes.forEach(function(n, i) {
-          setTimeout(function() {
-            n.style.transition = 'opacity 0.4s ease';
-            n.setAttribute('opacity', '1');
-          }, i * 60);
-        });
-
-        allBranchGroups.forEach(function(g, gi) {
-          g.addEventListener('click', function(e) {
-            e.stopPropagation();
-            allBranchGroups.forEach(function(og, oi) {
-              var opacity = (oi === gi) ? '1' : '0.25';
-              og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', opacity); });
-              og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', opacity); });
-              og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', oi === gi ? '0.8' : '0.15'); });
-            });
-          });
-        });
-
-        centerG.addEventListener('click', function() {
-          allBranchGroups.forEach(function(g) {
-            g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
-            g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
-            g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
-          });
-        });
-      })();
-      </script>
     </div><!-- /#tab-mindmap -->
 
-    <!-- ══════════════════════════════════════════
-         CHAPTER NAV (outside tabs)
-    ══════════════════════════════════════════ -->
+    <!-- CHAPTER NAV -->
     <nav class="chapter-nav" aria-label="Chapter navigation">
       <a href="ch2.html" class="nav-prev" aria-label="Previous chapter">
         <i class="fas fa-arrow-left"></i> Ch2: Working with Text Data
@@ -1137,26 +1069,22 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
 
   </main><!-- /.page-wrapper -->
 
-  <!-- ══════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════ -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <p class="copyright">Content based on <em>"Build a Large Language Model (From Scratch)"</em> by Sebastian Raschka, &copy; 2025 Manning Publications. Independent educational companion.</p>
-    <p>This is an independent educational companion — not affiliated with Manning Publications or the author.</p>
+    <p>This is an independent educational companion &mdash; not affiliated with Manning Publications or the author.</p>
     <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Book Index</a></p>
   </footer>
 
-  <!-- ══════════════════════════════════════════
-       SCRIPTS
-  ══════════════════════════════════════════ -->
+  <!-- SCRIPTS -->
   <script src="app.js"></script>
   <script>
-    /* ─────────────────────────────────────────
-       Quiz questions — Chapter 3
-    ───────────────────────────────────────── */
+    /* ============================================================
+       Quiz questions -- Chapter 3
+    ============================================================ */
     const QUESTIONS = [
       {
-        question: "In the scaled dot-product attention formula, why do we divide by √d_k?",
+        question: "In the scaled dot-product attention formula, why do we divide by \u221Ad_k?",
         options: [
           "To normalize outputs to [0,1]",
           "To prevent the dot products from growing too large, causing vanishing softmax gradients",
@@ -1164,7 +1092,7 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
           "To reduce computation cost"
         ],
         correct: 1,
-        explanation: "For large d_k, dot products grow in magnitude, pushing softmax into regions with near-zero gradients. Dividing by √d_k keeps gradients healthy during training."
+        explanation: "For large d_k, dot products grow in magnitude, pushing softmax into regions with near-zero gradients. Dividing by \u221Ad_k keeps gradients healthy during training."
       },
       {
         question: "What is the purpose of the causal (lower-triangular) mask in GPT?",
@@ -1175,7 +1103,7 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
           "Normalize attention weights"
         ],
         correct: 1,
-        explanation: "GPT generates text left-to-right. The causal mask sets future positions to -infinity before softmax, ensuring token i can only attend to tokens 0..i — it never sees future tokens."
+        explanation: "GPT generates text left-to-right. The causal mask sets future positions to -infinity before softmax, ensuring token i can only attend to tokens 0..i \u2014 it never sees future tokens."
       },
       {
         question: "What are the three learned weight matrices in self-attention?",
@@ -1186,7 +1114,7 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
           "Encoder, Decoder, Projector"
         ],
         correct: 1,
-        explanation: "Each token is projected into three vectors via W_q (Query), W_k (Key), and W_v (Value). Attention scores = Q·K^T/√d_k; context = softmax(scores)·V."
+        explanation: "Each token is projected into three vectors via W_q (Query), W_k (Key), and W_v (Value). Attention scores = Q\u00b7K^T/\u221Ad_k; context = softmax(scores)\u00b7V."
       },
       {
         question: "In GPT-2 Small (d_model=768, 12 heads), what is the head dimension d_k?",
@@ -1208,7 +1136,7 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
           "Eliminates the need for feed-forward layers"
         ],
         correct: 1,
-        explanation: "Multiple heads run in parallel, each learning different projection matrices. One head might track syntactic dependencies while another tracks semantic similarity — richer than a single attention pattern."
+        explanation: "Multiple heads run in parallel, each learning different projection matrices. One head might track syntactic dependencies while another tracks semantic similarity \u2014 richer than a single attention pattern."
       },
       {
         question: "In the QKV analogy, what role does the Query vector play?",
@@ -1222,7 +1150,7 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
         explanation: "Query = 'what am I looking for?' Keys = 'what do I have?'. The match between Q and K determines attention weight; V is what's actually retrieved when a Key matches a Query."
       },
       {
-        question: "After computing attention scores Q·K^T/√d_k, what operation converts them to attention weights?",
+        question: "After computing attention scores Q\u00b7K^T/\u221Ad_k, what operation converts them to attention weights?",
         options: [
           "ReLU activation",
           "Layer normalization",
@@ -1246,55 +1174,81 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
     ];
 
     VB.initQuiz('quizContainer', QUESTIONS);
-
     VB.initTabs('chapterTabs');
 
-    /* ─────────────────────────────────────────
+    /* Step-through 1: Attention Score Computation */
+    (function() {
+      var steps = [
+        { svg: '<svg viewBox="0 0 480 180" width="100%"><rect x="30" y="50" width="120" height="80" rx="10" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="2"/><text x="90" y="78" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700" font-family="Inter">Query (q)</text><text x="90" y="96" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">From current token</text><rect x="190" y="30" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/><text x="250" y="55" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Key 1</text><rect x="190" y="90" width="120" height="50" rx="8" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/><text x="250" y="115" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Key 2</text><rect x="350" y="60" width="110" height="60" rx="10" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/><text x="405" y="90" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-weight="600" font-family="Inter">Key 3</text></svg>', desc: 'Step 1: The query vector (from current token) will be compared against all key vectors.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="60" y="30" width="360" height="100" rx="12" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2"/><text x="240" y="58" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="700" font-family="Inter">Dot Product: q dot k_i</text><text x="240" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">score1 = 2.1 (low)</text><text x="240" y="96" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">score2 = 5.8 (high)</text><text x="240" y="112" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">score3 = 3.4 (medium)</text></svg>', desc: 'Step 2: Compute dot products. Higher scores mean more relevant context.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="40" y="30" width="400" height="100" rx="12" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="2"/><text x="240" y="58" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-weight="700" font-family="Inter">Scale by 1/sqrt(d_k)</text><text x="240" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">[2.1, 5.8, 3.4] / 8 = [0.26, 0.73, 0.43]</text><text x="240" y="110" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Prevents softmax saturation with large d_k</text></svg>', desc: 'Step 3: Scale by 1/sqrt(d_k) to keep gradients healthy.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="40" y="30" width="400" height="100" rx="12" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="2"/><text x="240" y="58" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-weight="700" font-family="Inter">Softmax = Attention Weights</text><text x="240" y="82" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-weight="700" font-family="Inter">[0.19, 0.47, 0.34]</text><text x="240" y="110" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Sum to 1.0 - a probability distribution</text></svg>', desc: 'Step 4: Softmax converts to probabilities - the attention weights.' },
+        { svg: '<svg viewBox="0 0 480 160" width="100%"><rect x="40" y="20" width="180" height="120" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="1.5"/><text x="130" y="48" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">Weighted Sum</text><text x="130" y="70" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">0.19*v1 + 0.47*v2</text><text x="130" y="86" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">+ 0.34*v3</text><text x="130" y="118" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-weight="600" font-family="Inter">Token 2 contributes 47%</text><rect x="260" y="30" width="180" height="100" rx="10" fill="var(--accent-3)" opacity="0.9"/><text x="350" y="65" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Inter">Context Vector</text><text x="350" y="85" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.8">Enriched representation</text><text x="350" y="105" text-anchor="middle" fill="white" font-size="8" font-family="Inter" opacity="0.6">of current token</text></svg>', desc: 'Step 5: Weight values by attention weights and sum. The context vector captures relevant context.' }
+      ];
+      var curr = 0, d = document.getElementById('stepAttnScoreDisplay'), ds = document.getElementById('stepAttnScoreDesc'), ind = document.getElementById('stepAttnScoreIndicator');
+      if (!d) return;
+      function r() { d.innerHTML = steps[curr].svg; ds.textContent = steps[curr].desc; ind.textContent = (curr+1)+'/'+steps.length; }
+      r();
+      document.getElementById('stepAttnScoreNext').onclick = function() { curr = Math.min(curr+1, steps.length-1); r(); };
+      document.getElementById('stepAttnScorePrev').onclick = function() { curr = Math.max(curr-1, 0); r(); };
+    })();
+
+    /* Step-through 2: Multi-Head Attention Assembly */
+    (function() {
+      var steps = [
+        { svg: '<svg viewBox="0 0 480 140" width="100%"><rect x="140" y="30" width="200" height="80" rx="12" fill="var(--accent)" opacity="0.9"/><text x="240" y="60" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Inter">Input: [B, T, 768]</text><text x="240" y="80" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.8">Full embedding dimension</text></svg>', desc: 'Input tensor enters multi-head attention: [batch, seq_len, 768].' },
+        { svg: '<svg viewBox="0 0 480 140" width="100%"><rect x="20" y="30" width="130" height="80" rx="10" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="2"/><text x="85" y="60" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">W_q (768-768)</text><text x="85" y="78" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Queries</text><rect x="175" y="30" width="130" height="80" rx="10" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="2"/><text x="240" y="60" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-weight="700" font-family="Inter">W_k (768-768)</text><text x="240" y="78" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Keys</text><rect x="330" y="30" width="130" height="80" rx="10" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="2"/><text x="395" y="60" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="700" font-family="Inter">W_v (768-768)</text><text x="395" y="78" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Values</text></svg>', desc: 'Three linear projections create Q, K, V matrices.' },
+        { svg: '<svg viewBox="0 0 480 120" width="100%"><text x="240" y="20" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="700" font-family="Inter">Split: 768 / 12 heads = 64 dims each</text><rect x="10" y="35" width="60" height="70" rx="6" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/><text x="40" y="58" text-anchor="middle" fill="var(--accent)" font-size="8" font-weight="600" font-family="Inter">H1</text><text x="40" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">d=64</text><rect x="80" y="35" width="60" height="70" rx="6" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/><text x="110" y="58" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-weight="600" font-family="Inter">H2</text><rect x="150" y="35" width="60" height="70" rx="6" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/><text x="180" y="58" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-weight="600" font-family="Inter">H3</text><text x="260" y="70" text-anchor="middle" fill="var(--text-muted)" font-size="16" font-family="Inter">...</text><rect x="330" y="35" width="60" height="70" rx="6" fill="#8b5cf6" opacity="0.2" stroke="#8b5cf6" stroke-width="1"/><text x="360" y="58" text-anchor="middle" fill="#8b5cf6" font-size="8" font-weight="600" font-family="Inter">H12</text></svg>', desc: 'Reshape into 12 parallel heads of 64 dimensions each.' },
+        { svg: '<svg viewBox="0 0 480 120" width="100%"><rect x="40" y="20" width="180" height="80" rx="10" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.5"/><text x="130" y="48" text-anchor="middle" fill="var(--accent)" font-size="9" font-weight="600" font-family="Inter">Head 1: syntax</text><text x="130" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">subject-verb agreement</text><rect x="260" y="20" width="180" height="80" rx="10" fill="var(--accent-3)" opacity="0.12" stroke="var(--accent-3)" stroke-width="1.5"/><text x="350" y="48" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-weight="600" font-family="Inter">Head 7: semantics</text><text x="350" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">agent-patient relations</text></svg>', desc: 'Each head runs scaled dot-product attention in parallel, specializing in different patterns.' },
+        { svg: '<svg viewBox="0 0 480 140" width="100%"><rect x="20" y="20" width="200" height="100" rx="10" fill="var(--accent-2)" opacity="0.12" stroke="var(--accent-2)" stroke-width="2"/><text x="120" y="48" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-weight="700" font-family="Inter">Concatenate</text><text x="120" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">12 x [B,T,64] = [B,T,768]</text><rect x="260" y="20" width="200" height="100" rx="10" fill="var(--accent)" opacity="0.9"/><text x="360" y="50" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Inter">W_o (768-768)</text><text x="360" y="72" text-anchor="middle" fill="white" font-size="9" font-family="Inter" opacity="0.8">Output projection</text><text x="360" y="92" text-anchor="middle" fill="white" font-size="8" font-family="Inter" opacity="0.6">Mixes cross-head info</text></svg>', desc: 'Concatenate all heads back to 768 dims, then project through W_o to mix information across heads.' }
+      ];
+      var curr = 0, d = document.getElementById('stepMultiHeadDisplay'), ds = document.getElementById('stepMultiHeadDesc'), ind = document.getElementById('stepMultiHeadIndicator');
+      if (!d) return;
+      function r() { d.innerHTML = steps[curr].svg; ds.textContent = steps[curr].desc; ind.textContent = (curr+1)+'/'+steps.length; }
+      r();
+      document.getElementById('stepMultiHeadNext').onclick = function() { curr = Math.min(curr+1, steps.length-1); r(); };
+      document.getElementById('stepMultiHeadPrev').onclick = function() { curr = Math.max(curr-1, 0); r(); };
+    })();
+
+    /* ============================================================
        Attention heatmap (Lesson 3.2)
-       4 tokens: "The", "cat", "sat", "down"
-    ───────────────────────────────────────── */
+    ============================================================ */
     (function() {
       const TOKENS = ['The', 'cat', 'sat', 'down'];
       const N = TOKENS.length;
-
-      // Illustrative attention weights (not computed — chosen to tell a story)
-      // Row i = token i's distribution over all tokens
       const WEIGHTS = [
-        [0.70, 0.12, 0.10, 0.08], // "The" — mostly attends to itself (determiner)
-        [0.35, 0.42, 0.13, 0.10], // "cat" — attends to "The" and itself (NP)
-        [0.10, 0.30, 0.38, 0.22], // "sat" — attends to "cat" (subject) and "down"
-        [0.08, 0.22, 0.45, 0.25], // "down" — attends strongly to "sat" (verb-particle)
+        [0.70, 0.12, 0.10, 0.08],
+        [0.35, 0.42, 0.13, 0.10],
+        [0.10, 0.30, 0.38, 0.22],
+        [0.08, 0.22, 0.45, 0.25],
       ];
 
-      // Blue intensity based on weight value
       function weightToColor(w) {
-        const alpha = 0.12 + w * 0.75;
-        return `rgba(79,110,247,${alpha.toFixed(2)})`;
+        var alpha = 0.12 + w * 0.75;
+        return 'rgba(79,110,247,' + alpha.toFixed(2) + ')';
       }
       function weightToText(w) {
         return (w < 0.18) ? 'rgba(79,110,247,0.7)' : '#fff';
       }
 
-      const colLabels = document.getElementById('heatmapColLabels');
-      const rowsEl    = document.getElementById('heatmapRows');
+      var colLabels = document.getElementById('heatmapColLabels');
+      var rowsEl = document.getElementById('heatmapRows');
 
-      // Column labels
-      TOKENS.forEach(tok => {
-        const el = document.createElement('div');
+      TOKENS.forEach(function(tok) {
+        var el = document.createElement('div');
         el.className = 'attn-heatmap-label';
         el.textContent = tok;
         colLabels.appendChild(el);
       });
 
-      let activeRow = null;
+      var activeRow = null;
 
       function render() {
         rowsEl.innerHTML = '';
-        TOKENS.forEach((tok, i) => {
-          const row = document.createElement('div');
+        TOKENS.forEach(function(tok, i) {
+          var row = document.createElement('div');
           row.className = 'attn-row';
-
-          const lbl = document.createElement('div');
+          var lbl = document.createElement('div');
           lbl.className = 'attn-row-label' + (activeRow === i ? ' active' : '');
           lbl.textContent = tok;
           lbl.addEventListener('click', function() {
@@ -1303,58 +1257,54 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
           });
           row.appendChild(lbl);
 
-          TOKENS.forEach((_, j) => {
-            const cell = document.createElement('div');
+          TOKENS.forEach(function(_, j) {
+            var cell = document.createElement('div');
             cell.className = 'attn-cell';
             if (activeRow !== null && activeRow !== i) {
               cell.classList.add('dimmed');
             }
-            const w = WEIGHTS[i][j];
+            var w = WEIGHTS[i][j];
             cell.style.background = weightToColor(w);
-            const val = document.createElement('span');
+            var val = document.createElement('span');
             val.className = 'cell-val';
             val.textContent = w.toFixed(2);
             val.style.color = weightToText(w);
             cell.appendChild(val);
             row.appendChild(cell);
           });
-
           rowsEl.appendChild(row);
         });
       }
-
       render();
     })();
 
-    /* ─────────────────────────────────────────
+    /* ============================================================
        Causal mask toggle (Lesson 3.5)
-    ───────────────────────────────────────── */
+    ============================================================ */
     (function() {
-      const N = 4;
-      let masked = false;
-
-      // Illustrative scores (positive values)
-      const SCORES = [
+      var N = 4;
+      var masked = false;
+      var SCORES = [
         ['1.2', '0.8', '0.5', '0.3'],
         ['0.9', '1.4', '0.6', '0.4'],
         ['0.7', '1.1', '1.3', '0.5'],
         ['0.4', '0.8', '1.0', '1.5'],
       ];
 
-      const grid    = document.getElementById('maskGrid');
-      const btn     = document.getElementById('maskToggleBtn');
-      const stateEl = document.getElementById('maskStateLabel');
-      const descEl  = document.getElementById('maskDescription');
+      var grid = document.getElementById('maskGrid');
+      var btn = document.getElementById('maskToggleBtn');
+      var stateEl = document.getElementById('maskStateLabel');
+      var descEl = document.getElementById('maskDescription');
 
       function render() {
         grid.innerHTML = '';
-        for (let i = 0; i < N; i++) {
-          for (let j = 0; j < N; j++) {
-            const cell = document.createElement('div');
+        for (var i = 0; i < N; i++) {
+          for (var j = 0; j < N; j++) {
+            var cell = document.createElement('div');
             cell.className = 'mask-cell';
             if (masked && j > i) {
               cell.classList.add('mc-neg-inf');
-              cell.textContent = '−∞';
+              cell.textContent = '\u2212\u221E';
             } else {
               cell.classList.add('mc-allowed');
               cell.textContent = SCORES[i][j];
@@ -1365,126 +1315,782 @@ weights = F.<span class="fn">softmax</span>(scores, dim=<span class="num">-1</sp
 
         if (masked) {
           stateEl.textContent = 'State: Causal Masked';
-          descEl.textContent = 'Future positions (j > i) are set to −∞. After softmax they become 0 — no information flows from future tokens.';
+          descEl.textContent = 'Future positions (j > i) are set to \u2212\u221E. After softmax they become 0 \u2014 no information flows from future tokens.';
           btn.innerHTML = '<i class="fas fa-eye"></i> Remove Mask';
           btn.classList.remove('btn-primary');
           btn.classList.add('btn-ghost');
         } else {
           stateEl.textContent = 'State: Full (unmasked)';
-          descEl.textContent = 'All positions can attend to all other positions. No causal constraint — future token scores are visible.';
+          descEl.textContent = 'All positions can attend to all other positions. No causal constraint \u2014 future token scores are visible.';
           btn.innerHTML = '<i class="fas fa-eye-slash"></i> Apply Causal Mask';
           btn.classList.remove('btn-ghost');
           btn.classList.add('btn-primary');
         }
       }
 
-      btn.addEventListener('click', function() {
-        masked = !masked;
+      btn.addEventListener('click', function() { masked = !masked; render(); });
+      render();
+    })();
+
+    /* ============================================================
+       Multi-head attention visualization (Lesson 3.6)
+    ============================================================ */
+    (function() {
+      var N = 4;
+      var HEAD_COLORS = [
+        function(i, j) { var dist = Math.abs(i - j); var w = dist === 0 ? 0.55 : dist === 1 ? 0.30 : dist === 2 ? 0.10 : 0.05; return 'rgba(79,110,247,' + (0.1 + w * 1.4) + ')'; },
+        function(i, j) { var w = j === 0 ? 0.60 : (i === j ? 0.25 : 0.08); return 'rgba(239,68,68,' + (0.08 + w * 1.3) + ')'; },
+        function(i, j) { var w = i === j ? 0.50 : (j === i - 1 ? 0.35 : 0.05); return 'rgba(16,185,129,' + (0.08 + w * 1.4) + ')'; },
+        function(i, j) { var w = j === N - 1 ? 0.55 : (i === j ? 0.28 : 0.06); return 'rgba(245,158,11,' + (0.08 + w * 1.3) + ')'; },
+      ];
+      var HEAD_LABELS = ['Head 1', 'Head 2', 'Head 3', 'Head 4'];
+      var HEAD_DESC = ['Positional proximity', 'Anchor to first token', 'Self + left context', 'Attend to last token'];
+      var HEAD_CLS = ['h1', 'h2', 'h3', 'h4'];
+      var container = document.getElementById('multiHeadGrid');
+
+      HEAD_LABELS.forEach(function(label, hi) {
+        var card = document.createElement('div');
+        card.className = 'head-card';
+        var header = document.createElement('div');
+        header.className = 'head-card-title ' + HEAD_CLS[hi];
+        header.title = HEAD_DESC[hi];
+        header.textContent = label;
+        card.appendChild(header);
+        var miniGrid = document.createElement('div');
+        miniGrid.className = 'head-mini-grid';
+        for (var i = 0; i < N; i++) {
+          for (var j = 0; j < N; j++) {
+            var cell = document.createElement('div');
+            cell.className = 'head-cell';
+            cell.style.background = HEAD_COLORS[hi](i, j);
+            cell.title = 'Row ' + i + ', Col ' + j;
+            miniGrid.appendChild(cell);
+          }
+        }
+        card.appendChild(miniGrid);
+        var desc = document.createElement('div');
+        desc.style.cssText = 'font-size:0.65rem; color:var(--text-muted); text-align:center; padding:0 0.5rem 0.5rem; line-height:1.35;';
+        desc.textContent = HEAD_DESC[hi];
+        card.appendChild(desc);
+        container.appendChild(card);
+      });
+    })();
+
+    /* ============================================================
+       Dropout visualization (Lesson 3.7)
+    ============================================================ */
+    (function() {
+      var N = 4;
+      var P_DROP = 0.2;
+      function render() {
+        var grid = document.getElementById('dropoutGrid');
+        grid.innerHTML = '';
+        for (var i = 0; i < N * N; i++) {
+          var cell = document.createElement('div');
+          cell.className = 'dropout-cell';
+          var dropped = Math.random() < P_DROP;
+          if (dropped) {
+            cell.classList.add('zero');
+            cell.textContent = '0';
+          } else {
+            cell.classList.add('alive');
+            var w = (Math.random() * 0.4 + 0.05).toFixed(2);
+            cell.textContent = w;
+          }
+          grid.appendChild(cell);
+        }
+      }
+      render();
+      document.getElementById('dropoutRefreshBtn').addEventListener('click', render);
+    })();
+
+    /* ============================================================
+       STEP-THROUGH 1: Attention Score Computation (Lesson 3.3)
+    ============================================================ */
+    (function() {
+      var currentStep = 0;
+      var NS = 'http://www.w3.org/2000/svg';
+
+      // Token embeddings
+      var x1 = [0.43, 0.15, 0.89];
+      var x2 = [0.55, 0.87, 0.66];
+      var x3 = [0.57, 0.85, 0.64];
+      var embeddings = [x1, x2, x3];
+      var labels = ['T1', 'T2', 'T3'];
+
+      // Compute values
+      function dot(a, b) { return a.reduce(function(s, v, i) { return s + v * b[i]; }, 0); }
+      function softmaxRow(arr) {
+        var max = Math.max.apply(null, arr);
+        var exps = arr.map(function(v) { return Math.exp(v - max); });
+        var sum = exps.reduce(function(s, v) { return s + v; }, 0);
+        return exps.map(function(v) { return v / sum; });
+      }
+
+      var scores = embeddings.map(function(ei) { return embeddings.map(function(ej) { return dot(ei, ej); }); });
+      var weights = scores.map(function(row) { return softmaxRow(row); });
+      var contexts = weights.map(function(wRow) {
+        return [0, 1, 2].map(function(d) {
+          return wRow.reduce(function(s, w, j) { return s + w * embeddings[j][d]; }, 0);
+        });
+      });
+
+      function makeSVG(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function drawMatrix(svg, x, y, data, title, color, w, h) {
+        var cols = data[0].length, rows = data.length;
+        var cw = w / cols, ch = h / rows;
+        var tEl = makeSVG('text', { x: x + w / 2, y: y - 6, 'text-anchor': 'middle', 'font-size': '9', 'font-weight': '700', fill: color, 'font-family': 'Inter,sans-serif' });
+        tEl.textContent = title;
+        svg.appendChild(tEl);
+        for (var i = 0; i < rows; i++) {
+          for (var j = 0; j < cols; j++) {
+            var rect = makeSVG('rect', { x: x + j * cw, y: y + i * ch, width: cw - 2, height: ch - 2, rx: '3', fill: color, opacity: '0.12', stroke: color, 'stroke-width': '0.8' });
+            svg.appendChild(rect);
+            var t = makeSVG('text', { x: x + j * cw + cw / 2 - 1, y: y + i * ch + ch / 2 + 3, 'text-anchor': 'middle', 'font-size': '8', fill: color, 'font-family': 'JetBrains Mono,monospace', 'font-weight': '600' });
+            t.textContent = (typeof data[i][j] === 'number') ? data[i][j].toFixed(2) : data[i][j];
+            svg.appendChild(t);
+          }
+        }
+      }
+
+      function drawArrow(svg, x1, y1, x2, y2, color) {
+        var line = makeSVG('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: color, 'stroke-width': '1.5', opacity: '0.6' });
+        svg.appendChild(line);
+        // Simple arrowhead
+        var angle = Math.atan2(y2 - y1, x2 - x1);
+        var len = 6;
+        var p1x = x2 - len * Math.cos(angle - 0.4);
+        var p1y = y2 - len * Math.sin(angle - 0.4);
+        var p2x = x2 - len * Math.cos(angle + 0.4);
+        var p2y = y2 - len * Math.sin(angle + 0.4);
+        var poly = makeSVG('polygon', { points: x2 + ',' + y2 + ' ' + p1x + ',' + p1y + ' ' + p2x + ',' + p2y, fill: color, opacity: '0.6' });
+        svg.appendChild(poly);
+      }
+
+      var steps = [
+        {
+          title: 'Input Embeddings',
+          explanation: 'We start with 3 tokens, each represented as a 3-dimensional embedding vector. These are the raw input vectors before any attention computation.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 500 150');
+            drawMatrix(svg, 130, 30, embeddings, 'X (Input Embeddings) [3 x 3]', 'var(--accent)', 210, 105);
+            // Labels
+            for (var i = 0; i < 3; i++) {
+              var t = makeSVG('text', { x: 118, y: 55 + i * 35, 'text-anchor': 'end', 'font-size': '9', fill: 'var(--accent)', 'font-family': 'JetBrains Mono,monospace', 'font-weight': '700' });
+              t.textContent = labels[i];
+              svg.appendChild(t);
+            }
+          }
+        },
+        {
+          title: 'Step 1: Compute X @ X.T (dot products)',
+          explanation: 'For each pair of tokens, we compute the dot product of their embeddings. score(i,j) = x_i . x_j. This measures how similar each pair is. The result is a 3x3 score matrix.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 560 150');
+            drawMatrix(svg, 20, 30, embeddings, 'X [3x3]', 'var(--accent)', 180, 105);
+            var t = makeSVG('text', { x: 215, y: 85, 'text-anchor': 'middle', 'font-size': '14', fill: 'var(--text-muted)', 'font-family': 'JetBrains Mono,monospace', 'font-weight': '700' });
+            t.textContent = '@';
+            svg.appendChild(t);
+            // X.T
+            var xt = [0, 1, 2].map(function(j) { return embeddings.map(function(row) { return row[j]; }); });
+            drawMatrix(svg, 235, 30, xt, 'X.T [3x3]', '#8b5cf6', 180, 105);
+            drawArrow(svg, 425, 80, 445, 80, 'var(--accent-2)');
+            // Scores
+            var t2 = makeSVG('text', { x: 500, y: 72, 'text-anchor': 'middle', 'font-size': '9', 'font-weight': '700', fill: 'var(--accent-2)', 'font-family': 'Inter,sans-serif' });
+            t2.textContent = 'Scores';
+            svg.appendChild(t2);
+            for (var i = 0; i < 3; i++) {
+              var val = makeSVG('text', { x: 500, y: 90 + i * 14, 'text-anchor': 'middle', 'font-size': '8', fill: 'var(--accent-2)', 'font-family': 'JetBrains Mono,monospace' });
+              val.textContent = '[' + scores[i].map(function(v) { return v.toFixed(2); }).join(', ') + ']';
+              svg.appendChild(val);
+            }
+          }
+        },
+        {
+          title: 'Step 1 Result: Raw Score Matrix',
+          explanation: 'The raw score matrix shows how much each token "matches" every other token. Higher scores mean the embeddings point in more similar directions. Note: these scores are unbounded and do not sum to 1.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 400 150');
+            drawMatrix(svg, 90, 30, scores, 'Raw Scores (X @ X.T) [3 x 3]', 'var(--accent-2)', 210, 105);
+            for (var i = 0; i < 3; i++) {
+              var t = makeSVG('text', { x: 78, y: 55 + i * 35, 'text-anchor': 'end', 'font-size': '9', fill: 'var(--accent)', 'font-family': 'JetBrains Mono,monospace', 'font-weight': '700' });
+              t.textContent = labels[i];
+              svg.appendChild(t);
+            }
+          }
+        },
+        {
+          title: 'Step 2: Apply Softmax (row-wise)',
+          explanation: 'Softmax converts each row of raw scores into a probability distribution that sums to 1. This gives us attention weights: how much each token should attend to every other token. Larger scores get exponentially higher weight.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 550 150');
+            drawMatrix(svg, 20, 30, scores, 'Raw Scores [3x3]', 'var(--accent-2)', 180, 105);
+            var arrow = makeSVG('text', { x: 225, y: 82, 'text-anchor': 'middle', 'font-size': '10', fill: 'var(--accent-3)', 'font-family': 'Inter,sans-serif', 'font-weight': '700' });
+            arrow.textContent = 'softmax \u2192';
+            svg.appendChild(arrow);
+            drawMatrix(svg, 280, 30, weights, 'Attention Weights [3x3]', 'var(--accent-3)', 210, 105);
+            // Sum annotations
+            for (var i = 0; i < 3; i++) {
+              var sum = weights[i].reduce(function(a, b) { return a + b; }, 0);
+              var t = makeSVG('text', { x: 500, y: 55 + i * 35, 'text-anchor': 'start', 'font-size': '7.5', fill: 'var(--accent-3)', 'font-family': 'JetBrains Mono,monospace' });
+              t.textContent = '\u03A3=' + sum.toFixed(2);
+              svg.appendChild(t);
+            }
+          }
+        },
+        {
+          title: 'Step 3: Weighted Sum (Weights @ X)',
+          explanation: 'Finally, we compute context vectors by multiplying the attention weights by the original embeddings. Each token\'s context is a weighted average of ALL token embeddings, dominated by the tokens it attends to most. This is the output of simplified self-attention.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 580 150');
+            drawMatrix(svg, 10, 30, weights, 'Weights [3x3]', 'var(--accent-3)', 180, 105);
+            var t = makeSVG('text', { x: 205, y: 85, 'text-anchor': 'middle', 'font-size': '14', fill: 'var(--text-muted)', 'font-family': 'JetBrains Mono,monospace', 'font-weight': '700' });
+            t.textContent = '@';
+            svg.appendChild(t);
+            drawMatrix(svg, 220, 30, embeddings, 'X [3x3]', 'var(--accent)', 180, 105);
+            drawArrow(svg, 410, 80, 430, 80, 'var(--accent-2)');
+            drawMatrix(svg, 440, 30, contexts.map(function(r) { return r.map(function(v) { return v.toFixed(2); }); }), 'Context [3x3]', '#f59e0b', 130, 105);
+          }
+        }
+      ];
+
+      var bodyEl = document.getElementById('attnStepSVG');
+      var explEl = document.getElementById('attnStepExpl');
+      var counterEl = document.getElementById('attnStepCounter');
+      var prevBtn = document.getElementById('attnPrev');
+      var nextBtn = document.getElementById('attnNext');
+
+      function renderStep() {
+        counterEl.textContent = 'Step ' + (currentStep + 1) + ' / ' + steps.length;
+        bodyEl.innerHTML = '';
+        var svg = document.createElementNS(NS, 'svg');
+        svg.style.maxWidth = '100%';
+        svg.style.height = 'auto';
+        steps[currentStep].draw(svg);
+        bodyEl.appendChild(svg);
+        explEl.innerHTML = '<strong>' + steps[currentStep].title + ':</strong> ' + steps[currentStep].explanation;
+        prevBtn.disabled = currentStep === 0;
+        nextBtn.disabled = currentStep === steps.length - 1;
+      }
+
+      prevBtn.addEventListener('click', function() { if (currentStep > 0) { currentStep--; renderStep(); } });
+      nextBtn.addEventListener('click', function() { if (currentStep < steps.length - 1) { currentStep++; renderStep(); } });
+      renderStep();
+    })();
+
+    /* ============================================================
+       STEP-THROUGH 2: Multi-Head Attention Pipeline (Lesson 3.6)
+    ============================================================ */
+    (function() {
+      var currentStep = 0;
+      var NS = 'http://www.w3.org/2000/svg';
+
+      function makeSVG(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function addBox(svg, x, y, w, h, label, sublabel, fillColor, strokeColor) {
+        var rect = makeSVG('rect', { x: x, y: y, width: w, height: h, rx: '7', fill: fillColor, stroke: strokeColor, 'stroke-width': '1.5' });
+        svg.appendChild(rect);
+        var t1 = makeSVG('text', { x: x + w / 2, y: y + h / 2 - (sublabel ? 3 : 0), 'text-anchor': 'middle', 'font-size': '9', 'font-weight': '700', fill: strokeColor, 'font-family': 'Inter,sans-serif' });
+        t1.textContent = label;
+        svg.appendChild(t1);
+        if (sublabel) {
+          var t2 = makeSVG('text', { x: x + w / 2, y: y + h / 2 + 10, 'text-anchor': 'middle', 'font-size': '7', fill: 'var(--text-muted)', 'font-family': 'JetBrains Mono,monospace' });
+          t2.textContent = sublabel;
+          svg.appendChild(t2);
+        }
+      }
+
+      function addHighlightBox(svg, x, y, w, h) {
+        var rect = makeSVG('rect', { x: x - 3, y: y - 3, width: w + 6, height: h + 6, rx: '10', fill: 'none', stroke: 'var(--accent-2)', 'stroke-width': '2.5', 'stroke-dasharray': '5', opacity: '0.7' });
+        svg.appendChild(rect);
+      }
+
+      var steps = [
+        {
+          title: 'Input',
+          explanation: 'The input to multi-head attention is a tensor of shape [B, T, d_model], where B is batch size, T is sequence length, and d_model is the embedding dimension (768 in GPT-2 Small).',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 500 120');
+            addHighlightBox(svg, 175, 25, 150, 60);
+            addBox(svg, 175, 25, 150, 60, 'Input X', '[B, T, 768]', 'rgba(79,110,247,0.12)', 'var(--accent)');
+          }
+        },
+        {
+          title: 'Project into Q, K, V',
+          explanation: 'The input is projected through three separate learned linear layers (W_Q, W_K, W_V), each of size [768, 768]. This produces Q, K, and V tensors, all of shape [B, T, 768].',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 500 160');
+            addBox(svg, 175, 5, 150, 40, 'Input X', '[B, T, 768]', 'rgba(79,110,247,0.08)', 'var(--accent)');
+            addHighlightBox(svg, 30, 85, 130, 55);
+            addBox(svg, 30, 85, 130, 55, 'Q = X @ W_Q', '[B, T, 768]', 'rgba(79,110,247,0.15)', 'var(--accent)');
+            addHighlightBox(svg, 185, 85, 130, 55);
+            addBox(svg, 185, 85, 130, 55, 'K = X @ W_K', '[B, T, 768]', 'rgba(239,68,68,0.12)', '#ef4444');
+            addHighlightBox(svg, 340, 85, 130, 55);
+            addBox(svg, 340, 85, 130, 55, 'V = X @ W_V', '[B, T, 768]', 'rgba(16,185,129,0.12)', 'var(--accent-3)');
+            // Arrows
+            var line1 = makeSVG('line', { x1: '200', y1: '45', x2: '95', y2: '85', stroke: 'var(--accent)', 'stroke-width': '1', opacity: '0.5' }); svg.appendChild(line1);
+            var line2 = makeSVG('line', { x1: '250', y1: '45', x2: '250', y2: '85', stroke: '#ef4444', 'stroke-width': '1', opacity: '0.5' }); svg.appendChild(line2);
+            var line3 = makeSVG('line', { x1: '300', y1: '45', x2: '405', y2: '85', stroke: 'var(--accent-3)', 'stroke-width': '1', opacity: '0.5' }); svg.appendChild(line3);
+          }
+        },
+        {
+          title: 'Reshape into h Heads',
+          explanation: 'Each of Q, K, V is reshaped from [B, T, 768] into [B, 12, T, 64] by splitting the last dimension into 12 heads of 64 dimensions each. This is done with view() and transpose().',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 520 160');
+            // Before
+            addBox(svg, 10, 15, 100, 40, 'Q', '[B, T, 768]', 'rgba(79,110,247,0.10)', 'var(--accent)');
+            // Arrow
+            var t = makeSVG('text', { x: '145', y: '38', 'text-anchor': 'middle', 'font-size': '10', fill: 'var(--text-muted)', 'font-family': 'Inter,sans-serif' });
+            t.textContent = '\u2192';
+            svg.appendChild(t);
+            // After reshape
+            addHighlightBox(svg, 175, 5, 330, 70);
+            var colors = ['rgba(79,110,247,0.20)', 'rgba(239,68,68,0.15)', 'rgba(16,185,129,0.15)', 'rgba(245,158,11,0.15)'];
+            var strokes = ['var(--accent)', '#ef4444', 'var(--accent-3)', 'var(--accent-2)'];
+            for (var i = 0; i < 4; i++) {
+              addBox(svg, 180 + i * 82, 10, 78, 55, 'Head ' + (i + 1), '[B, T, 64]', colors[i], strokes[i]);
+            }
+            var t2 = makeSVG('text', { x: '340', y: '87', 'text-anchor': 'middle', 'font-size': '8', fill: 'var(--text-muted)', 'font-family': 'Inter,sans-serif' });
+            t2.textContent = '... same for K and V (12 heads total, showing 4)';
+            svg.appendChild(t2);
+            // Shape annotation
+            addBox(svg, 140, 110, 230, 35, 'Shape: [B, 12, T, 64]', 'view(B,T,12,64).transpose(1,2)', 'rgba(139,92,246,0.08)', '#8b5cf6');
+          }
+        },
+        {
+          title: 'Parallel Scaled Dot-Product Attention',
+          explanation: 'Each head independently computes: scores = Q_h @ K_h.T / sqrt(64), then applies causal mask and softmax, then computes output = weights @ V_h. All 12 heads run in parallel via batched matrix multiplication.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 520 160');
+            var colors = ['rgba(79,110,247,0.20)', 'rgba(239,68,68,0.15)', 'rgba(16,185,129,0.15)', 'rgba(245,158,11,0.15)'];
+            var strokes = ['var(--accent)', '#ef4444', 'var(--accent-3)', 'var(--accent-2)'];
+            for (var i = 0; i < 4; i++) {
+              var x = 15 + i * 128;
+              addHighlightBox(svg, x, 5, 118, 140);
+              // Q_h @ K_h.T
+              addBox(svg, x + 5, 10, 108, 28, 'Q_h @ K_h.T', '', colors[i], strokes[i]);
+              // Softmax
+              addBox(svg, x + 5, 50, 108, 28, 'Softmax + Mask', '', colors[i], strokes[i]);
+              // Weights @ V
+              addBox(svg, x + 5, 90, 108, 28, 'Weights @ V_h', '', colors[i], strokes[i]);
+              // Arrows
+              var l1 = makeSVG('line', { x1: x + 59, y1: '38', x2: x + 59, y2: '50', stroke: strokes[i], 'stroke-width': '1', opacity: '0.4' }); svg.appendChild(l1);
+              var l2 = makeSVG('line', { x1: x + 59, y1: '78', x2: x + 59, y2: '90', stroke: strokes[i], 'stroke-width': '1', opacity: '0.4' }); svg.appendChild(l2);
+              // Head label
+              var hl = makeSVG('text', { x: x + 59, y: '138', 'text-anchor': 'middle', 'font-size': '7.5', fill: strokes[i], 'font-family': 'Inter,sans-serif', 'font-weight': '700' });
+              hl.textContent = 'Head ' + (i + 1);
+              svg.appendChild(hl);
+            }
+          }
+        },
+        {
+          title: 'Concatenate Head Outputs',
+          explanation: 'The outputs of all 12 heads (each [B, T, 64]) are concatenated along the last dimension back to [B, T, 768]. This is done by transposing and reshaping: out.transpose(1,2).contiguous().view(B, T, 768).',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 520 120');
+            var colors = ['rgba(79,110,247,0.20)', 'rgba(239,68,68,0.15)', 'rgba(16,185,129,0.15)', 'rgba(245,158,11,0.15)'];
+            var strokes = ['var(--accent)', '#ef4444', 'var(--accent-3)', 'var(--accent-2)'];
+            for (var i = 0; i < 4; i++) {
+              addBox(svg, 10 + i * 72, 10, 68, 35, 'H' + (i + 1), '[B,T,64]', colors[i], strokes[i]);
+            }
+            var t = makeSVG('text', { x: '310', y: '30', 'text-anchor': 'middle', 'font-size': '9', fill: 'var(--text-muted)', 'font-family': 'Inter,sans-serif' });
+            t.textContent = '...  (x12 heads)';
+            svg.appendChild(t);
+            // Arrow
+            var t2 = makeSVG('text', { x: '260', y: '65', 'text-anchor': 'middle', 'font-size': '10', fill: 'var(--accent-2)', 'font-family': 'Inter,sans-serif', 'font-weight': '700' });
+            t2.textContent = 'Concat \u2192';
+            svg.appendChild(t2);
+            addHighlightBox(svg, 310, 50, 180, 45);
+            addBox(svg, 310, 50, 180, 45, 'Concatenated', '[B, T, 768]', 'rgba(139,92,246,0.12)', '#8b5cf6');
+          }
+        },
+        {
+          title: 'Output Projection (W_O)',
+          explanation: 'The concatenated output is passed through a final linear layer W_O of shape [768, 768]. This mixes information across heads and produces the final multi-head attention output. Dropout is applied after this projection.',
+          draw: function(svg) {
+            svg.setAttribute('viewBox', '0 0 520 100');
+            addBox(svg, 20, 25, 140, 50, 'Concat Output', '[B, T, 768]', 'rgba(139,92,246,0.08)', '#8b5cf6');
+            var t = makeSVG('text', { x: '195', y: '52', 'text-anchor': 'middle', 'font-size': '10', fill: 'var(--text-muted)', 'font-family': 'Inter,sans-serif' });
+            t.textContent = '\u2192  W_O  \u2192';
+            svg.appendChild(t);
+            addHighlightBox(svg, 260, 25, 140, 50);
+            addBox(svg, 260, 25, 140, 50, 'MHA Output', '[B, T, 768]', 'rgba(16,185,129,0.18)', 'var(--accent-3)');
+            var t2 = makeSVG('text', { x: '435', y: '45', 'text-anchor': 'middle', 'font-size': '8', fill: '#ef4444', 'font-family': 'Inter,sans-serif' });
+            t2.textContent = '+ Dropout';
+            svg.appendChild(t2);
+            var t3 = makeSVG('text', { x: '435', y: '60', 'text-anchor': 'middle', 'font-size': '8', fill: 'var(--text-muted)', 'font-family': 'Inter,sans-serif' });
+            t3.textContent = '+ Residual';
+            svg.appendChild(t3);
+          }
+        }
+      ];
+
+      var bodyEl = document.getElementById('mhaStepSVG');
+      var explEl = document.getElementById('mhaStepExpl');
+      var counterEl = document.getElementById('mhaStepCounter');
+      var prevBtn = document.getElementById('mhaPrev');
+      var nextBtn = document.getElementById('mhaNext');
+
+      function renderStep() {
+        counterEl.textContent = 'Step ' + (currentStep + 1) + ' / ' + steps.length;
+        bodyEl.innerHTML = '';
+        var svg = document.createElementNS(NS, 'svg');
+        svg.style.maxWidth = '100%';
+        svg.style.height = 'auto';
+        steps[currentStep].draw(svg);
+        bodyEl.appendChild(svg);
+        explEl.innerHTML = '<strong>' + steps[currentStep].title + ':</strong> ' + steps[currentStep].explanation;
+        prevBtn.disabled = currentStep === 0;
+        nextBtn.disabled = currentStep === steps.length - 1;
+      }
+
+      prevBtn.addEventListener('click', function() { if (currentStep > 0) { currentStep--; renderStep(); } });
+      nextBtn.addEventListener('click', function() { if (currentStep < steps.length - 1) { currentStep++; renderStep(); } });
+      renderStep();
+    })();
+
+    /* ============================================================
+       EXERCISE 1: Dot Product Calculator (Lesson 3.3)
+    ============================================================ */
+    (function() {
+      var x1 = [0.4, 0.2, 0.8];
+      var x2 = [0.5, 0.9, 0.7];
+      var correctAnswer = x1.reduce(function(s, v, i) { return s + v * x2[i]; }, 0); // 0.94
+
+      var container = document.getElementById('dotProductExercise');
+      var feedback = document.getElementById('dotFeedback');
+
+      var html = '<div style="display:flex; flex-direction:column; gap:0.75rem;">';
+      for (var i = 0; i < 3; i++) {
+        var product = x1[i] * x2[i];
+        html += '<div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">';
+        html += '<span style="font-family:JetBrains Mono,monospace; font-size:0.8rem; color:var(--accent); min-width:40px;">' + x1[i].toFixed(1) + '</span>';
+        html += '<span style="font-size:0.85rem; color:var(--text-muted);">&times;</span>';
+        html += '<span style="font-family:JetBrains Mono,monospace; font-size:0.8rem; color:#ef4444; min-width:40px;">' + x2[i].toFixed(1) + '</span>';
+        html += '<span style="font-size:0.85rem; color:var(--text-muted);">=</span>';
+        html += '<input type="number" step="0.01" id="dotProd' + i + '" style="width:70px; padding:0.3rem 0.5rem; border:1.5px solid var(--border); border-radius:5px; font-family:JetBrains Mono,monospace; font-size:0.8rem; background:var(--surface-2); color:var(--text);" placeholder="?">';
+        html += '<span style="font-size:0.72rem; color:var(--text-light);" id="dotCheck' + i + '"></span>';
+        html += '</div>';
+      }
+      html += '<div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid var(--border);">';
+      html += '<span style="font-size:0.85rem; font-weight:700; color:var(--text);">Sum (dot product) =</span>';
+      html += '<input type="number" step="0.01" id="dotSum" style="width:80px; padding:0.3rem 0.5rem; border:1.5px solid var(--accent); border-radius:5px; font-family:JetBrains Mono,monospace; font-size:0.85rem; font-weight:700; background:var(--surface-2); color:var(--accent);" placeholder="?">';
+      html += '<button class="btn btn-primary btn-sm" id="dotCheckBtn"><i class="fas fa-check"></i> Check</button>';
+      html += '<button class="btn btn-ghost btn-sm" id="dotRevealBtn"><i class="fas fa-eye"></i> Reveal</button>';
+      html += '</div>';
+      html += '</div>';
+      container.innerHTML = html;
+
+      document.getElementById('dotCheckBtn').addEventListener('click', function() {
+        var allCorrect = true;
+        for (var i = 0; i < 3; i++) {
+          var input = document.getElementById('dotProd' + i);
+          var check = document.getElementById('dotCheck' + i);
+          var expected = x1[i] * x2[i];
+          var val = parseFloat(input.value);
+          if (Math.abs(val - expected) < 0.02) {
+            check.textContent = '\u2713';
+            check.style.color = 'var(--accent-3)';
+            input.style.borderColor = 'var(--accent-3)';
+          } else {
+            check.textContent = '\u2717';
+            check.style.color = '#ef4444';
+            input.style.borderColor = '#ef4444';
+            allCorrect = false;
+          }
+        }
+        var sumInput = document.getElementById('dotSum');
+        var sumVal = parseFloat(sumInput.value);
+        if (Math.abs(sumVal - correctAnswer) < 0.02) {
+          sumInput.style.borderColor = 'var(--accent-3)';
+        } else {
+          sumInput.style.borderColor = '#ef4444';
+          allCorrect = false;
+        }
+        feedback.className = 'exercise-feedback show ' + (allCorrect ? 'success' : 'error');
+        feedback.textContent = allCorrect
+          ? 'Correct! The dot product is ' + correctAnswer.toFixed(2) + '. This would be one cell in the attention score matrix.'
+          : 'Not quite. Check your arithmetic: multiply each pair element-wise, then sum the products.';
+      });
+
+      document.getElementById('dotRevealBtn').addEventListener('click', function() {
+        for (var i = 0; i < 3; i++) {
+          document.getElementById('dotProd' + i).value = (x1[i] * x2[i]).toFixed(2);
+          document.getElementById('dotCheck' + i).textContent = '\u2713';
+          document.getElementById('dotCheck' + i).style.color = 'var(--accent-3)';
+          document.getElementById('dotProd' + i).style.borderColor = 'var(--accent-3)';
+        }
+        document.getElementById('dotSum').value = correctAnswer.toFixed(2);
+        document.getElementById('dotSum').style.borderColor = 'var(--accent-3)';
+        feedback.className = 'exercise-feedback show success';
+        feedback.textContent = 'The dot product is ' + correctAnswer.toFixed(2) + ' = (0.4\u00d70.5) + (0.2\u00d70.9) + (0.8\u00d70.7) = 0.20 + 0.18 + 0.56.';
+      });
+    })();
+
+    /* ============================================================
+       EXERCISE 2: Build the Causal Mask (Lesson 3.5)
+    ============================================================ */
+    (function() {
+      var N = 4;
+      var grid = document.getElementById('maskExerciseGrid');
+      var feedback = document.getElementById('maskExFeedback');
+      var selected = {};
+
+      function cellKey(i, j) { return i + '-' + j; }
+
+      function render() {
+        grid.innerHTML = '';
+        for (var i = 0; i < N; i++) {
+          for (var j = 0; j < N; j++) {
+            var cell = document.createElement('div');
+            cell.className = 'exercise-cell';
+            var key = cellKey(i, j);
+            cell.dataset.i = i;
+            cell.dataset.j = j;
+            if (selected[key]) {
+              cell.classList.add('selected');
+              cell.textContent = '\u2212\u221E';
+            } else {
+              cell.classList.add('selectable');
+              cell.textContent = 's' + i + j;
+            }
+            cell.addEventListener('click', function() {
+              var k = cellKey(this.dataset.i, this.dataset.j);
+              selected[k] = !selected[k];
+              render();
+            });
+            grid.appendChild(cell);
+          }
+        }
+      }
+
+      document.getElementById('maskExCheck').addEventListener('click', function() {
+        var correct = true;
+        var cells = grid.querySelectorAll('.exercise-cell');
+        cells.forEach(function(cell) {
+          var i = parseInt(cell.dataset.i);
+          var j = parseInt(cell.dataset.j);
+          var shouldBeMasked = j > i;
+          var isMasked = !!selected[cellKey(i, j)];
+          cell.className = 'exercise-cell';
+          if (shouldBeMasked && isMasked) {
+            cell.classList.add('correct');
+            cell.textContent = '\u2212\u221E \u2713';
+          } else if (!shouldBeMasked && !isMasked) {
+            cell.classList.add('correct');
+            cell.textContent = '\u2713';
+          } else {
+            cell.classList.add('incorrect');
+            cell.textContent = shouldBeMasked ? 'miss' : 'wrong';
+            correct = false;
+          }
+        });
+        feedback.className = 'exercise-feedback show ' + (correct ? 'success' : 'error');
+        feedback.textContent = correct
+          ? 'Perfect! You correctly identified all positions where j > i (the upper triangle) as masked. These are set to -\u221E before softmax.'
+          : 'Not quite. Remember: mask positions where the column index j is greater than the row index i (upper triangle). Token i should not attend to any future token j > i.';
+      });
+
+      document.getElementById('maskExReset').addEventListener('click', function() {
+        selected = {};
+        feedback.className = 'exercise-feedback';
         render();
       });
 
       render();
     })();
 
-    /* ─────────────────────────────────────────
-       Multi-head attention visualization (Lesson 3.6)
-    ───────────────────────────────────────── */
+    /* ============================================================
+       Interactive Mind Map (Tab: Mind Map)
+    ============================================================ */
     (function() {
-      const N = 4;
-      const HEAD_COLORS = [
-        // Head 1: blue — adjacent/positional
-        (i, j) => {
-          const dist = Math.abs(i - j);
-          const w = dist === 0 ? 0.55 : dist === 1 ? 0.30 : dist === 2 ? 0.10 : 0.05;
-          return `rgba(79,110,247,${0.1 + w * 1.4})`;
-        },
-        // Head 2: red — first-token (coreference anchor)
-        (i, j) => {
-          const w = j === 0 ? 0.60 : (i === j ? 0.25 : 0.08);
-          return `rgba(239,68,68,${0.08 + w * 1.3})`;
-        },
-        // Head 3: green — diagonal (self + one-before)
-        (i, j) => {
-          const w = i === j ? 0.50 : (j === i - 1 ? 0.35 : 0.05);
-          return `rgba(16,185,129,${0.08 + w * 1.4})`;
-        },
-        // Head 4: amber — last-token focus
-        (i, j) => {
-          const w = j === N - 1 ? 0.55 : (i === j ? 0.28 : 0.06);
-          return `rgba(245,158,11,${0.08 + w * 1.3})`;
-        },
+      var svg = document.getElementById('mindmap-ch3');
+      var tooltip = document.getElementById('mindmapTooltip');
+      var NS = 'http://www.w3.org/2000/svg';
+
+      var cx = 400, cy = 300;
+      var branches = [
+        { label: 'Problem', angle: -90, color: '#4f6ef7', lesson: 'lesson-3-1',
+          subs: [
+            { label: 'RNN Bottleneck', tip: 'All input compressed into a single fixed-size vector.' },
+            { label: 'Long Dependencies', tip: 'Early tokens forgotten in long sequences.' },
+            { label: 'Sequential Processing', tip: 'RNNs process tokens one at a time \u2014 slow and lossy.' }
+          ] },
+        { label: 'Intuition', angle: -30, color: '#f59e0b', lesson: 'lesson-3-2',
+          subs: [
+            { label: 'Relevance Scores', tip: 'Each token scores how relevant every other token is.' },
+            { label: 'Coreference', tip: '"it" attends to "animal" \u2014 resolving references.' },
+            { label: 'Context', tip: 'Output = weighted blend of all token representations.' }
+          ] },
+        { label: 'Simplified Attn', angle: 30, color: '#10b981', lesson: 'lesson-3-3',
+          subs: [
+            { label: 'Dot Product', tip: 'score(i,j) = x_i \u00b7 x_j \u2014 similarity measure.' },
+            { label: 'Softmax', tip: 'Converts scores to probabilities summing to 1.' },
+            { label: 'Weighted Sum', tip: 'context(i) = \u03A3 weights(i,j) \u00d7 x_j.' }
+          ] },
+        { label: 'QKV Weights', angle: 90, color: '#8b5cf6', lesson: 'lesson-3-4',
+          subs: [
+            { label: 'Query', tip: 'q = x @ W_Q \u2014 what this token searches for.' },
+            { label: 'Key', tip: 'k = x @ W_K \u2014 what this token advertises.' },
+            { label: 'Value', tip: 'v = x @ W_V \u2014 content retrieved on match.' }
+          ] },
+        { label: 'Causal Masking', angle: 150, color: '#ef4444', lesson: 'lesson-3-5',
+          subs: [
+            { label: 'Lower Triangle', tip: 'Only lower-triangular positions are allowed.' },
+            { label: 'Future Masking', tip: 'Positions j > i set to -\u221E before softmax.' },
+            { label: 'Autoregressive', tip: 'Ensures left-to-right generation without peeking.' }
+          ] },
+        { label: 'Multi-Head', angle: 210, color: '#06b6d4', lesson: 'lesson-3-6',
+          subs: [
+            { label: 'Parallel Heads', tip: '12 heads in GPT-2, each with d_k=64.' },
+            { label: 'Different Patterns', tip: 'Each head specializes in different relationships.' },
+            { label: 'Concat+Project', tip: 'Outputs concatenated and mixed via W_O.' }
+          ] }
       ];
 
-      const HEAD_LABELS = ['Head 1', 'Head 2', 'Head 3', 'Head 4'];
-      const HEAD_DESC   = ['Positional proximity', 'Anchor to first token', 'Self + left context', 'Attend to last token'];
-      const HEAD_CLS    = ['h1', 'h2', 'h3', 'h4'];
+      var branchR = 150, subR = 90;
 
-      const container = document.getElementById('multiHeadGrid');
+      function toRad(deg) { return deg * Math.PI / 180; }
 
-      HEAD_LABELS.forEach((label, hi) => {
-        const card = document.createElement('div');
-        card.className = 'head-card';
-
-        const header = document.createElement('div');
-        header.className = `head-card-title ${HEAD_CLS[hi]}`;
-        header.title = HEAD_DESC[hi];
-        header.textContent = label;
-        card.appendChild(header);
-
-        const miniGrid = document.createElement('div');
-        miniGrid.className = 'head-mini-grid';
-
-        for (let i = 0; i < N; i++) {
-          for (let j = 0; j < N; j++) {
-            const cell = document.createElement('div');
-            cell.className = 'head-cell';
-            cell.style.background = HEAD_COLORS[hi](i, j);
-            cell.title = `Row ${i}, Col ${j}`;
-            miniGrid.appendChild(cell);
-          }
-        }
-
-        card.appendChild(miniGrid);
-
-        const desc = document.createElement('div');
-        desc.style.cssText = 'font-size:0.65rem; color:var(--text-muted); text-align:center; padding:0 0.5rem 0.5rem; line-height:1.35;';
-        desc.textContent = HEAD_DESC[hi];
-        card.appendChild(desc);
-
-        container.appendChild(card);
-      });
-    })();
-
-    /* ─────────────────────────────────────────
-       Dropout visualization (Lesson 3.7)
-    ───────────────────────────────────────── */
-    (function() {
-      const N = 4;
-      const P_DROP = 0.2; // 20% dropout
-
-      function render() {
-        const grid = document.getElementById('dropoutGrid');
-        grid.innerHTML = '';
-        for (let i = 0; i < N * N; i++) {
-          const cell = document.createElement('div');
-          cell.className = 'dropout-cell';
-          const dropped = Math.random() < P_DROP;
-          if (dropped) {
-            cell.classList.add('zero');
-            cell.textContent = '0';
-          } else {
-            cell.classList.add('alive');
-            // Show a small weight value
-            const w = (Math.random() * 0.4 + 0.05).toFixed(2);
-            cell.textContent = w;
-          }
-          grid.appendChild(cell);
-        }
+      function makeSVGEl(tag, attrs) {
+        var el = document.createElementNS(NS, tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
       }
 
-      render();
+      function addText(parent, x, y, text, fontSize, fill, bold) {
+        var words = text.split(' ');
+        var lineH = fontSize * 1.25;
+        var lines = [];
+        var cur = '';
+        words.forEach(function(w) {
+          var test = cur ? cur + ' ' + w : w;
+          if (test.length > 14) { lines.push(cur || w); cur = cur ? w : ''; }
+          else { cur = test; }
+        });
+        if (cur) lines.push(cur);
+        var startY = y - (lines.length - 1) * lineH / 2;
+        lines.forEach(function(line, i) {
+          var t = makeSVGEl('text', { x: x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': fontSize, fill: fill, 'font-family': 'Inter, sans-serif', 'font-weight': bold ? '700' : '500', 'pointer-events': 'none' });
+          t.textContent = line;
+          parent.appendChild(t);
+        });
+      }
 
-      document.getElementById('dropoutRefreshBtn').addEventListener('click', render);
+      var allBranchGroups = [];
+      var focusedBranch = null;
+
+      // Center node
+      var centerG = makeSVGEl('g', { class: 'mm-node', style: 'cursor:pointer' });
+      var centerCircle = makeSVGEl('circle', { cx: cx, cy: cy, r: 56, fill: 'var(--accent, #4f6ef7)', opacity: '0', filter: 'drop-shadow(0 4px 12px rgba(79,110,247,0.4))' });
+      centerG.appendChild(centerCircle);
+      addText(centerG, cx, cy, 'Self-Attention', 11, '#fff', true);
+      svg.appendChild(centerG);
+
+      branches.forEach(function(b, bi) {
+        var rad = toRad(b.angle);
+        var bx = cx + branchR * Math.cos(rad);
+        var by = cy + branchR * Math.sin(rad);
+
+        var g = makeSVGEl('g', { class: 'mm-node', 'data-branch': bi, style: 'cursor:pointer' });
+
+        var line = makeSVGEl('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: b.color, 'stroke-width': '2.5', opacity: '0.6', 'stroke-linecap': 'round' });
+        g.appendChild(line);
+
+        var bc = makeSVGEl('circle', { cx: bx, cy: by, r: 38, fill: b.color, opacity: '0', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))' });
+        g.appendChild(bc);
+        addText(g, bx, by, b.label, 9.5, '#fff', true);
+
+        var subCount = b.subs.length;
+        b.subs.forEach(function(sub, si) {
+          var spread = 50;
+          var baseAngle = b.angle + (si - (subCount - 1) / 2) * spread;
+          var srad = toRad(baseAngle);
+          var sx = bx + subR * Math.cos(srad);
+          var sy = by + subR * Math.sin(srad);
+
+          var sl = makeSVGEl('line', { x1: bx, y1: by, x2: sx, y2: sy, stroke: b.color, 'stroke-width': '1.5', opacity: '0.4', 'stroke-linecap': 'round' });
+          g.appendChild(sl);
+
+          var sw = 68, sh = 26;
+          var sr = makeSVGEl('rect', { x: sx - sw / 2, y: sy - sh / 2, width: sw, height: sh, rx: 8, fill: b.color, opacity: '0', 'fill-opacity': '0.18', stroke: b.color, 'stroke-width': '1.5', 'data-tip': sub.tip, class: 'mm-sub-node' });
+          g.appendChild(sr);
+          addText(g, sx, sy, sub.label, 8.5, 'var(--text, #1e293b)', false);
+
+          // Tooltip on hover for sub-nodes
+          sr.addEventListener('mouseenter', function(e) {
+            tooltip.textContent = sub.tip;
+            tooltip.classList.add('visible');
+            var rect = svg.closest('.viz-container').getBoundingClientRect();
+            var svgRect = svg.getBoundingClientRect();
+            tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+            tooltip.style.top = (e.clientY - rect.top - 30) + 'px';
+          });
+          sr.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('visible');
+          });
+          // Click sub-node to navigate to lesson
+          sr.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Switch to lessons tab and scroll
+            var lessonsTab = document.querySelector('[data-tab="tab-lessons"]');
+            if (lessonsTab) lessonsTab.click();
+            setTimeout(function() {
+              var lesson = document.getElementById(b.lesson);
+              if (lesson) lesson.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+          });
+        });
+
+        svg.insertBefore(g, centerG);
+        allBranchGroups.push(g);
+      });
+
+      // Animate in
+      var allNodes = svg.querySelectorAll('circle, rect');
+      allNodes.forEach(function(n, i) {
+        setTimeout(function() {
+          n.style.transition = 'opacity 0.4s ease';
+          n.setAttribute('opacity', '1');
+        }, i * 40);
+      });
+
+      // Click branch to focus
+      allBranchGroups.forEach(function(g, gi) {
+        g.addEventListener('click', function(e) {
+          e.stopPropagation();
+          focusedBranch = (focusedBranch === gi) ? null : gi;
+          allBranchGroups.forEach(function(og, oi) {
+            var isFocused = focusedBranch === null || oi === focusedBranch;
+            var opacity = isFocused ? '1' : '0.15';
+            og.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', opacity); });
+            og.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', isFocused ? '1' : '0.1'); });
+            og.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', isFocused ? '0.8' : '0.1'); });
+            og.querySelectorAll('text').forEach(function(t) { t.style.opacity = isFocused ? '1' : '0.2'; });
+          });
+        });
+      });
+
+      // Click center to reset
+      centerG.addEventListener('click', function() {
+        focusedBranch = null;
+        allBranchGroups.forEach(function(g) {
+          g.querySelectorAll('circle').forEach(function(c) { c.setAttribute('opacity', '1'); });
+          g.querySelectorAll('rect').forEach(function(r) { r.setAttribute('opacity', '1'); });
+          g.querySelectorAll('line').forEach(function(l) { l.setAttribute('opacity', '0.6'); });
+          g.querySelectorAll('text').forEach(function(t) { t.style.opacity = '1'; });
+        });
+      });
     })();
   </script>
 </body>

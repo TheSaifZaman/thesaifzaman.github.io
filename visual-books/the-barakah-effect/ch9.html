@@ -15,6 +15,156 @@
     .chapter-hero h1 { margin-bottom: 0.6rem; }
     .chapter-hero .ch-meta { font-size: 0.88rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 1rem; }
     .chapter-hero .ch-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Step-through animated diagrams */
+    .step-diagram { position: relative; }
+    .step-diagram .step-controls {
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      margin-top: 1rem; flex-wrap: wrap;
+    }
+    .step-controls .btn-step {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 1rem; border-radius: var(--radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .step-controls .btn-step:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--accent); color: var(--accent); }
+    .step-controls .btn-step:disabled { opacity: 0.4; cursor: not-allowed; }
+    .step-controls .step-indicator {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      min-width: 80px; text-align: center;
+    }
+    .step-desc {
+      text-align: center; font-size: 0.88rem; color: var(--text-muted);
+      margin-top: 0.6rem; min-height: 2.4em; transition: opacity 0.3s;
+    }
+
+    /* Interactive mind map */
+    .mindmap-interactive { min-height: 500px; }
+    .mm-node-group { cursor: pointer; transition: transform 0.2s; }
+    .mm-node-group:hover { transform: scale(1.05); }
+    .mm-child-group { transition: opacity 0.35s, transform 0.35s; }
+    .mm-child-group.collapsed { opacity: 0; transform: scale(0.5); pointer-events: none; }
+    .mm-child-line { transition: opacity 0.35s; }
+    .mm-child-line.collapsed { opacity: 0; }
+    .mm-hint { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-top: 0.5rem; }
+    .mm-toggle-all {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.9rem; border-radius: var(--radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; margin-bottom: 0.75rem; transition: all var(--transition);
+    }
+    .mm-toggle-all:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Interactive exercises */
+    .exercise-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(212,161,6,0.04));
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .exercise-box h4 {
+      color: var(--accent-3); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      text-transform: none; letter-spacing: 0;
+    }
+    .exercise-box h4 i { font-size: 1.1rem; }
+    .exercise-box label {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background var(--transition);
+      font-size: 0.88rem; color: var(--text-muted);
+    }
+    .exercise-box label:hover { background: rgba(16,185,129,0.06); }
+    .exercise-box input[type="checkbox"],
+    .exercise-box input[type="radio"] {
+      accent-color: var(--accent-3); margin-top: 0.15rem; flex-shrink: 0;
+    }
+    .exercise-result {
+      margin-top: 1rem; padding: 0.8rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem; display: none;
+    }
+    .exercise-result.show { display: block; }
+    .exercise-result.correct {
+      background: var(--success-bg); border: 1px solid var(--success-border); color: var(--accent-3);
+    }
+    .exercise-result.incorrect {
+      background: var(--error-bg); border: 1px solid var(--error-border); color: var(--accent-danger);
+    }
+    .exercise-result.neutral {
+      background: rgba(212,161,6,0.08); border: 1px solid rgba(212,161,6,0.25); color: var(--accent-2);
+    }
+    .btn-exercise {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.1rem; border-radius: var(--radius-sm);
+      background: var(--accent-3); border: none;
+      color: white; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; margin-top: 0.75rem; transition: all var(--transition);
+    }
+    .btn-exercise:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* Drag-and-drop sorting exercise */
+    .drag-list { list-style: none; padding: 0; margin: 0.5rem 0; }
+    .drag-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.7rem 1rem; margin-bottom: 0.4rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); cursor: grab;
+      font-size: 0.88rem; color: var(--text); transition: all 0.15s;
+      user-select: none;
+    }
+    .drag-item:active { cursor: grabbing; }
+    .drag-item .drag-handle { color: var(--text-light); font-size: 0.85rem; }
+    .drag-item.drag-over { border-color: var(--accent-3); background: rgba(16,185,129,0.06); }
+    .drag-item.correct-pos { border-color: var(--accent-3); background: var(--success-bg); }
+    .drag-item.wrong-pos { border-color: var(--accent-danger); background: var(--error-bg); }
+
+    /* Scenario card for exercise 2 */
+    .scenario-card {
+      margin-bottom: 0.75rem; padding: 0.8rem 1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); transition: all 0.2s;
+    }
+    .scenario-card p { font-size: 0.88rem; color: var(--text); margin-bottom: 0.5rem; }
+    .scenario-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .scenario-options label {
+      padding: 0.35rem 0.75rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+
+    /* Slider exercise */
+    .slider-exercise { margin: 1rem 0; }
+    .slider-row {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;
+      padding: 0.6rem 0.8rem; background: var(--surface); border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .slider-row .slider-label { flex: 1; font-size: 0.85rem; color: var(--text); min-width: 120px; }
+    .slider-row input[type="range"] { flex: 2; accent-color: var(--accent-3); }
+    .slider-row .slider-val { min-width: 36px; text-align: center; font-weight: 700; font-size: 0.85rem; color: var(--accent-3); }
+
+    /* Reflection textarea */
+    .reflection-area {
+      width: 100%; min-height: 80px; padding: 0.8rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 0.88rem; resize: vertical;
+    }
+    .reflection-area::placeholder { color: var(--text-light); }
+    .reflection-area:focus { outline: none; border-color: var(--accent-3); }
+
+    /* Pulse animation for step diagrams */
+    @keyframes pulse-glow { 0%,100% { filter: drop-shadow(0 0 0px transparent); } 50% { filter: drop-shadow(0 0 8px rgba(16,185,129,0.4)); } }
+    .garden-step-active { animation: pulse-glow 2s infinite; }
+
+    /* SVG animation for water drops */
+    @keyframes drip { 0% { opacity:1; transform: translateY(0); } 100% { opacity:0; transform: translateY(12px); } }
+    .water-drop { animation: drip 1.5s ease-in infinite; }
+    .water-drop:nth-child(2) { animation-delay: 0.5s; }
+    .water-drop:nth-child(3) { animation-delay: 1s; }
   </style>
 </head>
 <body data-chapter="ch9">
@@ -53,99 +203,749 @@
     <!-- TAB: Lessons -->
     <div class="tab-panel active" id="tab-lessons">
 
+      <!-- LESSON 1 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">1</div><h2>The Gardener Metaphor</h2></div>
         <p>The author uses a beautiful metaphor to capture the Barakah approach to work and life: be like a gardener. A gardener plants seeds, waters them diligently, removes weeds, ensures proper sunlight, and then -- crucially -- waits. They cannot force a seed to sprout. They cannot pull the stem upward to make it grow faster. They do their part with excellence and patience, and then they trust the growth process.</p>
         <p>Similarly, in your career, relationships, and spiritual life, you plant seeds through effort and intention, you nurture them through consistency and care, you remove the weeds of distraction and sin, and then you trust Allah with the harvest. This is profoundly different from Hustle Culture, which demands that you control every outcome, that you "manifest" results through sheer force of will.</p>
 
-        <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-seedling"></i> The Gardener's Lifecycle</div>
-          <svg viewBox="0 0 600 160" width="100%" height="160">
-            <defs><marker id="arrCh9" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="var(--text-muted)"/></marker></defs>
-            <!-- Step boxes -->
-            <rect x="10" y="40" width="95" height="55" rx="10" fill="var(--accent)" opacity="0.85"/>
-            <text x="57" y="63" text-anchor="middle" fill="white" font-size="10" font-family="Inter" font-weight="700">Plant</text>
-            <text x="57" y="78" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Set intentions</text>
+        <!-- Step-Through Diagram 1: The Gardener's Lifecycle -->
+        <div class="viz-container step-diagram" id="gardenLifecycle">
+          <div class="viz-title"><i class="fas fa-seedling"></i> The Gardener's Lifecycle (Step Through)</div>
+          <svg id="gardenSVG" viewBox="0 0 620 230" width="100%" height="230">
+            <defs>
+              <marker id="arrCh9" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="var(--text-muted)"/></marker>
+              <linearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B6914" stop-opacity="0.3"/><stop offset="100%" stop-color="#5C4A1E" stop-opacity="0.5"/></linearGradient>
+              <filter id="glow1"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <!-- Soil baseline -->
+            <rect x="10" y="160" width="600" height="40" rx="6" fill="url(#soilGrad)"/>
+            <text x="310" y="185" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Your field of effort</text>
 
-            <rect x="130" y="40" width="95" height="55" rx="10" fill="var(--accent-2)" opacity="0.85"/>
-            <text x="177" y="63" text-anchor="middle" fill="white" font-size="10" font-family="Inter" font-weight="700">Nurture</text>
-            <text x="177" y="78" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Consistent effort</text>
+            <!-- Step 1: Plant -->
+            <g class="garden-step" data-step="0" opacity="0.2">
+              <rect x="15" y="55" width="100" height="100" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <circle cx="65" cy="130" r="8" fill="#8B6914"/>
+              <line x1="65" y1="122" x2="65" y2="108" stroke="var(--accent-3)" stroke-width="2"/>
+              <ellipse cx="60" cy="105" rx="5" ry="3" fill="var(--accent-3)" opacity="0.6"/>
+              <ellipse cx="70" cy="105" rx="5" ry="3" fill="var(--accent-3)" opacity="0.6"/>
+              <text x="65" y="78" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Inter" font-weight="700">Plant</text>
+              <text x="65" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Set intentions</text>
+              <text x="65" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">&amp; begin effort</text>
+            </g>
 
-            <rect x="250" y="40" width="95" height="55" rx="10" fill="var(--accent-3)" opacity="0.85"/>
-            <text x="297" y="63" text-anchor="middle" fill="white" font-size="10" font-family="Inter" font-weight="700">Weed</text>
-            <text x="297" y="78" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Remove harms</text>
+            <!-- Step 2: Nurture -->
+            <g class="garden-step" data-step="1" opacity="0.2">
+              <rect x="135" y="55" width="100" height="100" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <line x1="185" y1="135" x2="185" y2="105" stroke="var(--accent-3)" stroke-width="2.5"/>
+              <ellipse cx="185" cy="102" rx="12" ry="8" fill="var(--accent-3)" opacity="0.7"/>
+              <ellipse cx="178" cy="99" rx="6" ry="4" fill="var(--accent-3)" opacity="0.5"/>
+              <ellipse cx="192" cy="99" rx="6" ry="4" fill="var(--accent-3)" opacity="0.5"/>
+              <path d="M170 120 Q177 115, 185 118 Q193 115, 200 120" stroke="#4fc3f7" stroke-width="1.5" fill="none"/>
+              <circle cx="175" cy="125" r="2" fill="#4fc3f7" opacity="0.7" class="water-drop"/>
+              <circle cx="185" cy="123" r="2" fill="#4fc3f7" opacity="0.7" class="water-drop"/>
+              <circle cx="195" cy="125" r="2" fill="#4fc3f7" opacity="0.7" class="water-drop"/>
+              <text x="185" y="78" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Nurture</text>
+              <text x="185" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Consistent effort</text>
+            </g>
 
-            <rect x="370" y="40" width="95" height="55" rx="10" fill="var(--accent-2)" opacity="0.85"/>
-            <text x="417" y="63" text-anchor="middle" fill="white" font-size="10" font-family="Inter" font-weight="700">Trust</text>
-            <text x="417" y="78" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Tawakkul in Allah</text>
+            <!-- Step 3: Weed -->
+            <g class="garden-step" data-step="2" opacity="0.2">
+              <rect x="255" y="55" width="100" height="100" rx="12" fill="var(--accent-3)" opacity="0.15" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <line x1="295" y1="135" x2="295" y2="105" stroke="var(--accent-3)" stroke-width="2.5"/>
+              <circle cx="295" cy="100" r="10" fill="var(--accent-3)" opacity="0.5"/>
+              <ellipse cx="289" cy="97" rx="5" ry="4" fill="var(--accent-3)" opacity="0.4"/>
+              <ellipse cx="301" cy="97" rx="5" ry="4" fill="var(--accent-3)" opacity="0.4"/>
+              <line x1="275" y1="130" x2="275" y2="118" stroke="var(--accent-danger)" stroke-width="1.5" stroke-dasharray="3"/>
+              <line x1="268" y1="115" x2="282" y2="125" stroke="var(--accent-danger)" stroke-width="2"/>
+              <line x1="282" y1="115" x2="268" y2="125" stroke="var(--accent-danger)" stroke-width="2"/>
+              <text x="305" y="78" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">Weed</text>
+              <text x="305" y="92" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Remove harms</text>
+            </g>
 
-            <rect x="490" y="40" width="95" height="55" rx="10" fill="var(--accent)" opacity="0.85"/>
-            <text x="537" y="63" text-anchor="middle" fill="white" font-size="10" font-family="Inter" font-weight="700">Harvest</text>
-            <text x="537" y="78" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Accept the outcome</text>
+            <!-- Step 4: Trust -->
+            <g class="garden-step" data-step="3" opacity="0.2">
+              <rect x="375" y="55" width="100" height="100" rx="12" fill="var(--accent-2)" opacity="0.15" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <line x1="425" y1="140" x2="425" y2="100" stroke="var(--accent-3)" stroke-width="3"/>
+              <circle cx="425" cy="95" r="14" fill="var(--accent-3)" opacity="0.4"/>
+              <circle cx="415" cy="88" r="5" fill="var(--accent-3)" opacity="0.6"/>
+              <circle cx="435" cy="88" r="5" fill="var(--accent-3)" opacity="0.6"/>
+              <path d="M415 115 Q420 108, 425 112 Q430 108, 435 115" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" opacity="0.3"/>
+              <!-- Hands raised in du'a -->
+              <path d="M418 72 Q415 65, 418 60" stroke="var(--accent-2)" stroke-width="1.5" fill="none"/>
+              <path d="M432 72 Q435 65, 432 60" stroke="var(--accent-2)" stroke-width="1.5" fill="none"/>
+              <text x="425" y="78" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Trust</text>
+              <text x="425" y="145" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">Tawakkul</text>
+            </g>
 
-            <!-- Arrows -->
-            <line x1="105" y1="67" x2="128" y2="67" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
-            <line x1="225" y1="67" x2="248" y2="67" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
-            <line x1="345" y1="67" x2="368" y2="67" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
-            <line x1="465" y1="67" x2="488" y2="67" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <!-- Step 5: Harvest -->
+            <g class="garden-step" data-step="4" opacity="0.2">
+              <rect x="495" y="55" width="110" height="100" rx="12" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+              <line x1="550" y1="140" x2="550" y2="95" stroke="var(--accent-3)" stroke-width="3.5"/>
+              <circle cx="550" cy="90" r="16" fill="var(--accent-3)" opacity="0.5"/>
+              <circle cx="538" cy="108" r="6" fill="var(--accent)" opacity="0.8"/>
+              <circle cx="562" cy="108" r="6" fill="var(--accent)" opacity="0.8"/>
+              <circle cx="550" cy="80" r="5" fill="var(--accent)" opacity="0.8"/>
+              <circle cx="542" cy="74" r="4" fill="var(--accent-2)" opacity="0.7"/>
+              <circle cx="558" cy="74" r="4" fill="var(--accent-2)" opacity="0.7"/>
+              <text x="550" y="72" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Inter" font-weight="700">Harvest</text>
+            </g>
 
-            <text x="300" y="130" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-family="Inter">You control the planting and nurturing. Allah controls the harvest.</text>
+            <!-- Arrows between steps -->
+            <line class="garden-step" data-step="1" opacity="0.2" x1="115" y1="105" x2="133" y2="105" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <line class="garden-step" data-step="2" opacity="0.2" x1="235" y1="105" x2="253" y2="105" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <line class="garden-step" data-step="3" opacity="0.2" x1="355" y1="105" x2="373" y2="105" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <line class="garden-step" data-step="4" opacity="0.2" x1="475" y1="105" x2="493" y2="105" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+
+            <text x="310" y="215" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter" class="garden-step" data-step="4" opacity="0.2">You control the planting and nurturing. Allah controls the harvest.</text>
           </svg>
-          <p class="viz-caption">The gardener does their best at every stage, then trusts the outcome to the Lord of the harvest.</p>
+          <div class="step-controls">
+            <button class="btn-step" id="gardenPrev" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="gardenIndicator">Step 1 / 5</span>
+            <button class="btn-step" id="gardenNext"><i class="fas fa-arrow-right"></i> Next</button>
+          </div>
+          <div class="step-desc" id="gardenDesc">Plant seeds: set your intentions, make du'a, and begin your effort with bismillah.</div>
+        </div>
+
+        <!-- SVG: Gardener vs Controller comparison -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale"></i> Gardener Mindset vs Controller Mindset</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Left: Gardener -->
+            <rect x="10" y="15" width="280" height="170" rx="14" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="150" y="40" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="700">Gardener Mindset</text>
+            <circle cx="50" cy="80" r="5" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="65" y="84" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Does their best, trusts Allah</text>
+            <circle cx="50" cy="105" r="5" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="65" y="109" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Accepts outcomes with gratitude</text>
+            <circle cx="50" cy="130" r="5" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="65" y="134" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Focuses on process over results</text>
+            <circle cx="50" cy="155" r="5" fill="var(--accent-3)" opacity="0.6"/>
+            <text x="65" y="159" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Peaceful, patient, persistent</text>
+            <!-- VS -->
+            <text x="310" y="105" text-anchor="middle" fill="var(--text-light)" font-size="12" font-family="Inter" font-weight="800">VS</text>
+            <!-- Right: Controller -->
+            <rect x="330" y="15" width="280" height="170" rx="14" fill="var(--accent-danger)" opacity="0.08" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="470" y="40" text-anchor="middle" fill="var(--accent-danger)" font-size="13" font-family="Inter" font-weight="700">Controller Mindset</text>
+            <circle cx="370" cy="80" r="5" fill="var(--accent-danger)" opacity="0.6"/>
+            <text x="385" y="84" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Tries to force every outcome</text>
+            <circle cx="370" cy="105" r="5" fill="var(--accent-danger)" opacity="0.6"/>
+            <text x="385" y="109" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Anxious when plans go awry</text>
+            <circle cx="370" cy="130" r="5" fill="var(--accent-danger)" opacity="0.6"/>
+            <text x="385" y="134" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Obsesses over metrics and KPIs</text>
+            <circle cx="370" cy="155" r="5" fill="var(--accent-danger)" opacity="0.6"/>
+            <text x="385" y="159" fill="var(--text-muted)" font-size="9.5" font-family="Inter">Stressed, burned out, resentful</text>
+          </svg>
+          <p class="viz-caption">The gardener finds peace in effort, while the controller finds stress in outcomes they cannot guarantee.</p>
+        </div>
+
+        <!-- SVG: Seed-to-Harvest Funnel Diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-filter"></i> From Seed to Harvest: What You Control vs What You Don't</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Your control zone -->
+            <rect x="20" y="20" width="360" height="160" rx="14" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1.5" stroke-dasharray="6"/>
+            <text x="200" y="15" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">WITHIN YOUR CONTROL</text>
+            <!-- Seed -->
+            <circle cx="70" cy="100" r="22" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="70" y="96" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">Intention</text>
+            <text x="70" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Niyyah</text>
+            <!-- Arrow -->
+            <line x1="92" y1="100" x2="118" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <!-- Effort -->
+            <circle cx="150" cy="100" r="26" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="150" y="96" text-anchor="middle" fill="var(--accent-2)" font-size="9" font-family="Inter" font-weight="700">Effort</text>
+            <text x="150" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">'Amal</text>
+            <!-- Arrow -->
+            <line x1="176" y1="100" x2="202" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <!-- Consistency -->
+            <circle cx="238" cy="100" r="28" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="238" y="96" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="700">Consistency</text>
+            <text x="238" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Istiqamah</text>
+            <!-- Arrow -->
+            <line x1="266" y1="100" x2="296" y2="100" stroke="var(--text-muted)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+            <!-- Du'a -->
+            <circle cx="330" cy="100" r="26" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="330" y="96" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Inter" font-weight="700">Du'a</text>
+            <text x="330" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">Supplication</text>
+
+            <!-- Dividing line -->
+            <line x1="395" y1="20" x2="395" y2="180" stroke="var(--text-light)" stroke-width="1.5" stroke-dasharray="4"/>
+
+            <!-- Allah's control zone -->
+            <rect x="410" y="20" width="190" height="160" rx="14" fill="var(--accent)" opacity="0.06" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6"/>
+            <text x="505" y="15" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">ALLAH'S DECREE</text>
+            <!-- Arrow from du'a to outcome -->
+            <line x1="356" y1="100" x2="435" y2="100" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrCh9)" stroke-dasharray="5"/>
+            <!-- Outcome -->
+            <circle cx="505" cy="80" r="20" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="505" y="77" text-anchor="middle" fill="var(--accent)" font-size="8.5" font-family="Inter" font-weight="700">Timing</text>
+            <text x="505" y="88" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">When it happens</text>
+            <circle cx="460" cy="140" r="20" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="460" y="137" text-anchor="middle" fill="var(--accent-2)" font-size="8.5" font-family="Inter" font-weight="700">Form</text>
+            <text x="460" y="148" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">How it comes</text>
+            <circle cx="550" cy="140" r="20" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="550" y="137" text-anchor="middle" fill="var(--accent-3)" font-size="8.5" font-family="Inter" font-weight="700">Scale</text>
+            <text x="550" y="148" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">How much</text>
+          </svg>
+          <p class="viz-caption">Focus your energy on the four circles within your control. The outcome's timing, form, and scale belong to Allah.</p>
         </div>
       </div>
 
+      <!-- LESSON 2 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">2</div><h2>Tawakkul: Trust in Allah</h2></div>
         <p>Allah says in the Quran: "And whoever relies upon Allah -- then He is sufficient for him. Indeed, Allah will accomplish His purpose. Allah has already set for everything a decreed extent" (Quran 65:3). Tawakkul is one of the most powerful spiritual states a Muslim can cultivate, and it is the beating heart of the gardener metaphor.</p>
         <p>However, there is a critical distinction between Tawakkul and tawakul (laziness). Tawakkul means doing your absolute best -- studying for the exam, preparing the business plan, training for the competition -- and then leaving the results to Allah. Tawakul means sitting at home, doing nothing, and saying "Allah will provide." Umar ibn Al-Khattab rebuked people who neglected work under the guise of trust in Allah, telling them: "The sky does not rain gold and silver."</p>
         <p>The Prophet (peace be upon him) illustrated this perfectly when a man asked whether he should tie his camel or trust in Allah. The answer? "Tie your camel and then trust in Allah." Both elements are essential: maximum effort followed by complete reliance.</p>
+
+        <!-- SVG: Tawakkul vs Tawakul spectrum -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-balance-scale-left"></i> The Tawakkul Spectrum</div>
+          <svg viewBox="0 0 620 210" width="100%" height="210">
+            <!-- Spectrum bar -->
+            <defs>
+              <linearGradient id="spectrumGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--accent-danger)" stop-opacity="0.7"/>
+                <stop offset="50%" stop-color="var(--accent-3)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--accent-danger)" stop-opacity="0.7"/>
+              </linearGradient>
+            </defs>
+            <rect x="40" y="80" width="540" height="16" rx="8" fill="url(#spectrumGrad)"/>
+            <!-- Markers -->
+            <line x1="40" y1="76" x2="40" y2="100" stroke="var(--accent-danger)" stroke-width="2"/>
+            <line x1="310" y1="72" x2="310" y2="104" stroke="var(--accent-3)" stroke-width="3"/>
+            <line x1="580" y1="76" x2="580" y2="100" stroke="var(--accent-danger)" stroke-width="2"/>
+            <!-- Labels -->
+            <text x="40" y="65" text-anchor="middle" fill="var(--accent-danger)" font-size="11" font-family="Inter" font-weight="700">Tawakul</text>
+            <text x="40" y="118" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">No effort</text>
+            <text x="40" y="128" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"Allah will provide"</text>
+            <text x="310" y="60" text-anchor="middle" fill="var(--accent-3)" font-size="13" font-family="Inter" font-weight="800">True Tawakkul</text>
+            <text x="310" y="120" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="600">Maximum Effort + Complete Trust</text>
+            <text x="310" y="134" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"Tie your camel AND trust in Allah"</text>
+            <text x="580" y="65" text-anchor="middle" fill="var(--accent-danger)" font-size="11" font-family="Inter" font-weight="700">Obsession</text>
+            <text x="580" y="118" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">All effort, no trust</text>
+            <text x="580" y="128" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Anxiety &amp; control</text>
+            <!-- Bottom quote -->
+            <text x="310" y="175" text-anchor="middle" fill="var(--text-light)" font-size="9.5" font-family="Inter" font-style="italic">"Tie your camel and then trust in Allah" - Prophet Muhammad (PBUH)</text>
+            <text x="310" y="195" text-anchor="middle" fill="var(--text-light)" font-size="8.5" font-family="Inter">"The sky does not rain gold and silver" - Umar ibn Al-Khattab (RA)</text>
+          </svg>
+          <p class="viz-caption">The balanced centre is true Tawakkul: neither laziness nor anxious control, but diligent effort coupled with serene trust.</p>
+        </div>
+
+        <!-- SVG: The Camel Hadith Diagram -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hands-praying"></i> The Tied Camel: Two Halves of One Whole</div>
+          <svg viewBox="0 0 620 220" width="100%" height="220">
+            <!-- Left half: Action -->
+            <path d="M310 20 L60 20 Q30 20, 30 50 L30 170 Q30 200, 60 200 L310 200 Z" fill="var(--accent-2)" opacity="0.08" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="170" y="45" text-anchor="middle" fill="var(--accent-2)" font-size="14" font-family="Inter" font-weight="800">ACTION</text>
+            <text x="170" y="62" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"Tie your camel..."</text>
+            <!-- Action items -->
+            <rect x="55" y="80" width="230" height="24" rx="6" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="170" y="96" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Study hard for the exam</text>
+            <rect x="55" y="110" width="230" height="24" rx="6" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="170" y="126" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Build a thorough business plan</text>
+            <rect x="55" y="140" width="230" height="24" rx="6" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="170" y="156" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Take care of your health</text>
+            <rect x="55" y="170" width="230" height="24" rx="6" fill="var(--accent-2)" opacity="0.12"/>
+            <text x="170" y="186" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Apply for the job, prepare the resume</text>
+
+            <!-- Right half: Trust -->
+            <path d="M310 20 L560 20 Q590 20, 590 50 L590 170 Q590 200, 560 200 L310 200 Z" fill="var(--accent-3)" opacity="0.08" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="450" y="45" text-anchor="middle" fill="var(--accent-3)" font-size="14" font-family="Inter" font-weight="800">TRUST</text>
+            <text x="450" y="62" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">"...and trust in Allah"</text>
+            <!-- Trust items -->
+            <rect x="335" y="80" width="230" height="24" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="450" y="96" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Accept the grade Allah decrees</text>
+            <rect x="335" y="110" width="230" height="24" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="450" y="126" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Trust success or failure to His wisdom</text>
+            <rect x="335" y="140" width="230" height="24" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="450" y="156" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Know that illness has a purpose too</text>
+            <rect x="335" y="170" width="230" height="24" rx="6" fill="var(--accent-3)" opacity="0.12"/>
+            <text x="450" y="186" text-anchor="middle" fill="var(--text)" font-size="9" font-family="Inter">Believe the right door will open</text>
+
+            <!-- Center connector -->
+            <circle cx="310" cy="110" r="22" fill="var(--accent)" opacity="0.9"/>
+            <text x="310" y="107" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">BOTH</text>
+            <text x="310" y="117" text-anchor="middle" fill="white" font-size="8" font-family="Inter" font-weight="700">TOGETHER</text>
+          </svg>
+          <p class="viz-caption">Neither half alone is sufficient. The Sunnah model is to tie the camel (take action) AND trust Allah (surrender the outcome).</p>
+        </div>
+
         <div class="insight-box">
           <strong>Key distinction:</strong> Tawakkul = full effort + trust in Allah for the outcome. Tawakul (laziness) = no effort + false reliance. The gardener plants and waters (effort), then trusts Allah to make the seed grow (tawakkul). They do not leave the field empty and expect a harvest.
         </div>
       </div>
 
+      <!-- LESSON 3 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">3</div><h2>Focused and Hardworking</h2></div>
         <p>Islam deeply values effort and work. The Prophet Muhammad (peace be upon him) worked as a shepherd in his youth and as a merchant before prophethood. Abu Bakr As-Siddiq, the first Khalifah and the Prophet's closest companion, continued his trading even after assuming leadership of the Muslim community, until the companions convinced him to accept a stipend so he could dedicate himself to governance.</p>
         <p>The key insight from the gardener metaphor is that hard work must be directed -- focused on what truly matters rather than scattered across a thousand tasks. A gardener does not plant seeds everywhere randomly; they choose the right soil, the right season, and the right crops. Similarly, a Muslim professional should be strategic about where they invest their energy.</p>
         <p>This is the antithesis of the busyness that Hustle Culture glorifies. Being busy is not the same as being productive. Running in circles is exhausting but covers no ground. The gardener is both hardworking and purposeful -- every action has a reason, every effort is directed toward growth.</p>
+
+        <!-- SVG: Focused vs Scattered Effort -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-bullseye"></i> Focused Effort vs Scattered Busyness</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Left: Scattered -->
+            <text x="150" y="22" text-anchor="middle" fill="var(--accent-danger)" font-size="12" font-family="Inter" font-weight="700">Scattered (Hustle Culture)</text>
+            <circle cx="150" cy="110" r="70" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>
+            <!-- Scattered arrows going everywhere -->
+            <line x1="150" y1="110" x2="80" y2="60" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="220" y2="55" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="90" y2="150" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="210" y2="160" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="70" y2="110" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="230" y2="110" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="130" y2="40" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <line x1="150" y1="110" x2="170" y2="180" stroke="var(--accent-danger)" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="150" cy="110" r="6" fill="var(--accent-danger)" opacity="0.8"/>
+            <text x="150" y="195" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Energy dispersed in all directions</text>
+
+            <!-- Right: Focused -->
+            <text x="470" y="22" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="700">Focused (Barakah Culture)</text>
+            <!-- Target rings -->
+            <circle cx="470" cy="110" r="70" fill="none" stroke="var(--accent-3)" stroke-width="1" opacity="0.2"/>
+            <circle cx="470" cy="110" r="50" fill="none" stroke="var(--accent-3)" stroke-width="1" opacity="0.3"/>
+            <circle cx="470" cy="110" r="30" fill="none" stroke="var(--accent-3)" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="470" cy="110" r="10" fill="var(--accent-3)" opacity="0.8"/>
+            <!-- Focused arrows converging -->
+            <line x1="400" y1="60" x2="460" y2="105" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrCh9)"/>
+            <line x1="540" y1="60" x2="480" y2="105" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrCh9)"/>
+            <line x1="400" y1="160" x2="460" y2="115" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrCh9)"/>
+            <line x1="540" y1="160" x2="480" y2="115" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arrCh9)"/>
+            <text x="470" y="195" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">All energy directed at what matters most</text>
+          </svg>
+          <p class="viz-caption">A gardener does not scatter seeds randomly. They choose the right soil, the right season, and the right crop.</p>
+        </div>
+
+        <!-- SVG: The Strategic Gardener's Decision Matrix -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-th-large"></i> The Strategic Gardener's Decision Matrix</div>
+          <svg viewBox="0 0 620 280" width="100%" height="280">
+            <!-- Axes -->
+            <line x1="60" y1="250" x2="600" y2="250" stroke="var(--text-light)" stroke-width="1.5"/>
+            <line x1="60" y1="250" x2="60" y2="20" stroke="var(--text-light)" stroke-width="1.5"/>
+            <text x="330" y="275" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter" font-weight="600">Alignment with Your Purpose (Akhirah + Dunya)</text>
+            <text x="15" y="135" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Inter" font-weight="600" transform="rotate(-90 15 135)">Impact Potential</text>
+
+            <!-- Quadrant 1: High Impact, High Alignment = PLANT HERE -->
+            <rect x="330" y="25" width="265" height="110" rx="10" fill="var(--accent-3)" opacity="0.1" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <text x="462" y="50" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="800">PLANT HERE</text>
+            <text x="462" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">High impact + aligned with purpose</text>
+            <text x="462" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Your career that serves the Ummah</text>
+            <text x="462" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Skills that benefit others</text>
+            <text x="462" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Sadaqah jariyah projects</text>
+
+            <!-- Quadrant 2: High Impact, Low Alignment = EVALUATE -->
+            <rect x="65" y="25" width="260" height="110" rx="10" fill="var(--accent-2)" opacity="0.1" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="195" y="50" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-family="Inter" font-weight="800">EVALUATE</text>
+            <text x="195" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">High impact but low alignment</text>
+            <text x="195" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Lucrative but spiritually empty work</text>
+            <text x="195" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Prestigious roles that drain you</text>
+
+            <!-- Quadrant 3: Low Impact, Low Alignment = WEED OUT -->
+            <rect x="65" y="140" width="260" height="105" rx="10" fill="var(--accent-danger)" opacity="0.1" stroke="var(--accent-danger)" stroke-width="1.5"/>
+            <text x="195" y="165" text-anchor="middle" fill="var(--accent-danger)" font-size="12" font-family="Inter" font-weight="800">WEED OUT</text>
+            <text x="195" y="183" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Low impact + low alignment</text>
+            <text x="195" y="197" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Mindless scrolling, gossip, busywork</text>
+            <text x="195" y="211" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Saying yes to everything</text>
+
+            <!-- Quadrant 4: Low Impact, High Alignment = NURTURE GENTLY -->
+            <rect x="330" y="140" width="265" height="105" rx="10" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="462" y="165" text-anchor="middle" fill="var(--accent)" font-size="12" font-family="Inter" font-weight="800">NURTURE GENTLY</text>
+            <text x="462" y="183" text-anchor="middle" fill="var(--text-muted)" font-size="8.5" font-family="Inter">Low impact now but aligned</text>
+            <text x="462" y="197" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Daily adhkar, small good deeds</text>
+            <text x="462" y="211" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Learning a new skill, dawah seeds</text>
+          </svg>
+          <p class="viz-caption">Like a gardener choosing where to plant, invest your best energy where impact and purpose align. Weed out what drains you without return.</p>
+        </div>
       </div>
 
+      <!-- LESSON 4 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">4</div><h2>Gentle Growth vs Toxic Growth</h2></div>
         <p>The Prophet (peace be upon him) said: "The most beloved deeds to Allah are the most consistent ones, even if they are small" (Bukhari and Muslim). This hadith is a direct rebuke of the sprint-and-crash cycle that defines modern productivity culture. Barakah Culture favours steady, sustainable growth over burnout-inducing sprints.</p>
         <p>A tree that grows slowly develops deep roots. It can withstand storms, droughts, and harsh winters because its foundation is solid. A tree that shoots up rapidly often has shallow roots -- it looks impressive but collapses at the first serious test. The same principle applies to careers, businesses, Islamic knowledge, and personal development.</p>
 
-        <div class="viz-container">
-          <div class="viz-title"><i class="fas fa-chart-line"></i> Sprint-Crash Cycle vs Steady Growth</div>
-          <svg viewBox="0 0 600 250" width="100%" height="250">
-            <!-- Sprint-crash (left) -->
-            <text x="150" y="22" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="700">Hustle Culture (Sprint &amp; Crash)</text>
-            <polyline points="20,180 60,60 100,190 140,50 180,200 220,80 260,210" stroke="var(--accent-3)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
-            <text x="140" y="230" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Dramatic highs, devastating lows, burnout</text>
-            <!-- Steady growth (right) -->
-            <text x="450" y="22" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-family="Inter" font-weight="700">Barakah Culture (Steady Growth)</text>
-            <path d="M 320 190 Q 380 170, 420 145 Q 460 120, 500 90 Q 540 65, 580 45" stroke="var(--accent-2)" stroke-width="2.5" fill="none"/>
-            <text x="450" y="230" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter">Consistent, sustainable, deeply rooted</text>
-            <!-- Dotted baseline -->
-            <line x1="20" y1="200" x2="280" y2="200" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="320" y1="200" x2="590" y2="200" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>
+        <!-- Step-Through Diagram 2: Tree Root Growth -->
+        <div class="viz-container step-diagram" id="treeGrowth">
+          <div class="viz-title"><i class="fas fa-tree"></i> Deep Roots vs Shallow Roots (Step Through)</div>
+          <svg id="treeSVG" viewBox="0 0 620 300" width="100%" height="300">
+            <!-- Ground line -->
+            <rect x="0" y="140" width="620" height="4" fill="var(--text-light)" opacity="0.2" rx="2"/>
+            <text x="310" y="155" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Ground level</text>
+
+            <!-- LEFT: Fast tree stages -->
+            <text x="155" y="20" text-anchor="middle" fill="var(--accent-danger)" font-size="12" font-family="Inter" font-weight="700">Rapid Growth Tree</text>
+
+            <!-- Year 1 -->
+            <g class="tree-step" data-step="0" opacity="0.15">
+              <line x1="155" y1="140" x2="155" y2="115" stroke="#8B6914" stroke-width="3"/>
+              <circle cx="155" cy="110" r="10" fill="var(--accent-3)" opacity="0.5"/>
+              <line x1="155" y1="140" x2="145" y2="155" stroke="#8B6914" stroke-width="1.5"/>
+              <line x1="155" y1="140" x2="165" y2="155" stroke="#8B6914" stroke-width="1.5"/>
+            </g>
+            <!-- Year 2 -->
+            <g class="tree-step" data-step="1" opacity="0.15">
+              <line x1="155" y1="140" x2="155" y2="80" stroke="#8B6914" stroke-width="5"/>
+              <circle cx="155" cy="72" r="22" fill="var(--accent-3)" opacity="0.4"/>
+              <line x1="155" y1="140" x2="138" y2="162" stroke="#8B6914" stroke-width="1.5"/>
+              <line x1="155" y1="140" x2="172" y2="162" stroke="#8B6914" stroke-width="1.5"/>
+            </g>
+            <!-- Year 3: tall but shallow -->
+            <g class="tree-step" data-step="2" opacity="0.15">
+              <line x1="155" y1="140" x2="155" y2="45" stroke="#8B6914" stroke-width="6"/>
+              <circle cx="155" cy="40" r="30" fill="var(--accent-3)" opacity="0.35"/>
+              <line x1="155" y1="140" x2="140" y2="165" stroke="#8B6914" stroke-width="1.5"/>
+              <line x1="155" y1="140" x2="170" y2="165" stroke="#8B6914" stroke-width="1.5"/>
+              <text x="155" y="175" text-anchor="middle" fill="var(--text-light)" font-size="7.5" font-family="Inter">Shallow roots</text>
+            </g>
+            <!-- Year 4: storm topples it -->
+            <g class="tree-step" data-step="3" opacity="0.15">
+              <line x1="155" y1="140" x2="200" y2="90" stroke="#8B6914" stroke-width="5" opacity="0.5"/>
+              <circle cx="210" cy="85" r="28" fill="var(--accent-3)" opacity="0.15"/>
+              <text x="155" y="175" text-anchor="middle" fill="var(--accent-danger)" font-size="9" font-family="Inter" font-weight="600">Toppled by storm!</text>
+              <path d="M95 80 Q110 70, 120 80 Q130 70, 140 80" stroke="var(--text-light)" stroke-width="1.5" fill="none" opacity="0.5"/>
+              <text x="108" y="72" fill="var(--text-light)" font-size="9" font-family="Inter">wind</text>
+            </g>
+
+            <!-- RIGHT: Slow tree stages -->
+            <text x="465" y="20" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="700">Steady Growth Tree</text>
+
+            <!-- Year 1 -->
+            <g class="tree-step" data-step="0" opacity="0.15">
+              <line x1="465" y1="140" x2="465" y2="120" stroke="#8B6914" stroke-width="2.5"/>
+              <circle cx="465" cy="116" r="8" fill="var(--accent-3)" opacity="0.5"/>
+              <line x1="465" y1="140" x2="445" y2="175" stroke="#8B6914" stroke-width="2"/>
+              <line x1="465" y1="140" x2="485" y2="175" stroke="#8B6914" stroke-width="2"/>
+              <line x1="455" y1="160" x2="440" y2="185" stroke="#8B6914" stroke-width="1.5"/>
+              <line x1="475" y1="160" x2="490" y2="185" stroke="#8B6914" stroke-width="1.5"/>
+            </g>
+            <!-- Year 2 -->
+            <g class="tree-step" data-step="1" opacity="0.15">
+              <line x1="465" y1="140" x2="465" y2="105" stroke="#8B6914" stroke-width="3.5"/>
+              <circle cx="465" cy="100" r="14" fill="var(--accent-3)" opacity="0.45"/>
+              <line x1="465" y1="140" x2="435" y2="195" stroke="#8B6914" stroke-width="2.5"/>
+              <line x1="465" y1="140" x2="495" y2="195" stroke="#8B6914" stroke-width="2.5"/>
+              <line x1="445" y1="170" x2="425" y2="210" stroke="#8B6914" stroke-width="2"/>
+              <line x1="485" y1="170" x2="505" y2="210" stroke="#8B6914" stroke-width="2"/>
+            </g>
+            <!-- Year 3 -->
+            <g class="tree-step" data-step="2" opacity="0.15">
+              <line x1="465" y1="140" x2="465" y2="85" stroke="#8B6914" stroke-width="5"/>
+              <circle cx="465" cy="78" r="20" fill="var(--accent-3)" opacity="0.45"/>
+              <line x1="465" y1="140" x2="425" y2="215" stroke="#8B6914" stroke-width="3"/>
+              <line x1="465" y1="140" x2="505" y2="215" stroke="#8B6914" stroke-width="3"/>
+              <line x1="435" y1="185" x2="415" y2="235" stroke="#8B6914" stroke-width="2.5"/>
+              <line x1="495" y1="185" x2="515" y2="235" stroke="#8B6914" stroke-width="2.5"/>
+              <text x="465" y="245" text-anchor="middle" fill="var(--text-light)" font-size="7.5" font-family="Inter">Deep, strong roots</text>
+            </g>
+            <!-- Year 4: storm, still standing -->
+            <g class="tree-step" data-step="3" opacity="0.15">
+              <line x1="465" y1="140" x2="465" y2="55" stroke="#8B6914" stroke-width="6"/>
+              <circle cx="465" cy="48" r="28" fill="var(--accent-3)" opacity="0.5"/>
+              <circle cx="452" cy="70" r="6" fill="var(--accent)" opacity="0.7"/>
+              <circle cx="478" cy="65" r="6" fill="var(--accent)" opacity="0.7"/>
+              <line x1="465" y1="140" x2="420" y2="230" stroke="#8B6914" stroke-width="3.5"/>
+              <line x1="465" y1="140" x2="510" y2="230" stroke="#8B6914" stroke-width="3.5"/>
+              <line x1="430" y1="195" x2="405" y2="250" stroke="#8B6914" stroke-width="2.5"/>
+              <line x1="500" y1="195" x2="525" y2="250" stroke="#8B6914" stroke-width="2.5"/>
+              <text x="465" y="272" text-anchor="middle" fill="var(--accent-3)" font-size="9" font-family="Inter" font-weight="600">Standing strong! Bearing fruit!</text>
+              <path d="M395 45 Q410 35, 420 45 Q430 35, 440 45" stroke="var(--text-light)" stroke-width="1.5" fill="none" opacity="0.5"/>
+              <text x="410" y="37" fill="var(--text-light)" font-size="9" font-family="Inter">wind</text>
+            </g>
           </svg>
-          <p class="viz-caption">Consistency beats intensity. Small daily steps compound into extraordinary results over time.</p>
+          <div class="step-controls">
+            <button class="btn-step" id="treePrev" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="treeIndicator">Year 1 / 4</span>
+            <button class="btn-step" id="treeNext"><i class="fas fa-arrow-right"></i> Next</button>
+          </div>
+          <div class="step-desc" id="treeDesc">Year 1: Both trees begin growing. The rapid tree is already taller, but the steady tree is building deep roots underground.</div>
         </div>
 
         <p>Gentle growth also means being kind to yourself. Islam does not demand that you destroy your body and mind in pursuit of goals. The Prophet (peace be upon him) told Abdullah ibn Amr, who was fasting every day and praying all night: "Your body has a right over you, your eyes have a right over you, your spouse has a right over you." Balance and gentleness are inherent to the Islamic approach.</p>
+
+        <!-- SVG: Rights Balance Wheel -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-circle-notch"></i> Rights Over You: The Balance Wheel</div>
+          <svg viewBox="0 0 400 300" width="100%" height="300">
+            <circle cx="200" cy="150" r="110" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="6"/>
+            <circle cx="200" cy="150" r="30" fill="var(--accent)" opacity="0.15"/>
+            <text x="200" y="147" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">YOU</text>
+            <text x="200" y="159" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">Centre</text>
+            <!-- Spokes and labels -->
+            <line x1="200" y1="120" x2="200" y2="50" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <circle cx="200" cy="42" r="18" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="200" y="46" text-anchor="middle" fill="var(--accent-3)" font-size="8.5" font-family="Inter" font-weight="600">Body</text>
+
+            <line x1="225" y1="128" x2="290" y2="80" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <circle cx="298" cy="72" r="18" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="298" y="76" text-anchor="middle" fill="var(--accent-2)" font-size="8.5" font-family="Inter" font-weight="600">Eyes</text>
+
+            <line x1="230" y1="150" x2="315" y2="150" stroke="var(--accent)" stroke-width="1.5"/>
+            <circle cx="325" cy="150" r="18" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
+            <text x="325" y="154" text-anchor="middle" fill="var(--accent)" font-size="8.5" font-family="Inter" font-weight="600">Spouse</text>
+
+            <line x1="225" y1="172" x2="290" y2="220" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <circle cx="298" cy="228" r="18" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="298" y="232" text-anchor="middle" fill="var(--accent-3)" font-size="8.5" font-family="Inter" font-weight="600">Family</text>
+
+            <line x1="200" y1="180" x2="200" y2="250" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <circle cx="200" cy="258" r="18" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="200" y="262" text-anchor="middle" fill="var(--accent-2)" font-size="8.5" font-family="Inter" font-weight="600">Soul</text>
+
+            <line x1="175" y1="172" x2="110" y2="220" stroke="var(--accent)" stroke-width="1.5"/>
+            <circle cx="102" cy="228" r="18" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" stroke-width="1"/>
+            <text x="102" y="232" text-anchor="middle" fill="var(--accent)" font-size="8.5" font-family="Inter" font-weight="600">Community</text>
+
+            <line x1="170" y1="150" x2="85" y2="150" stroke="var(--accent-3)" stroke-width="1.5"/>
+            <circle cx="75" cy="150" r="18" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="75" y="154" text-anchor="middle" fill="var(--accent-3)" font-size="8.5" font-family="Inter" font-weight="600">Lord</text>
+
+            <line x1="175" y1="128" x2="110" y2="80" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <circle cx="102" cy="72" r="18" fill="var(--accent-2)" opacity="0.2" stroke="var(--accent-2)" stroke-width="1"/>
+            <text x="102" y="76" text-anchor="middle" fill="var(--accent-2)" font-size="8.5" font-family="Inter" font-weight="600">Mind</text>
+          </svg>
+          <p class="viz-caption">The Prophet (PBUH) taught that every part of your life has a right over you. True productivity honours all of them.</p>
+        </div>
+
+        <!-- SVG: Sprint-Crash Cycle vs Steady Consistency -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-chart-line"></i> Sprint-Crash Cycle vs Steady Progress</div>
+          <svg viewBox="0 0 620 200" width="100%" height="200">
+            <!-- Grid lines -->
+            <line x1="60" y1="30" x2="60" y2="170" stroke="var(--border)" stroke-width="1"/>
+            <line x1="60" y1="170" x2="590" y2="170" stroke="var(--border)" stroke-width="1"/>
+            <text x="15" y="100" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter" transform="rotate(-90 15 100)">Output</text>
+            <text x="330" y="192" text-anchor="middle" fill="var(--text-light)" font-size="8" font-family="Inter">Time</text>
+            <!-- Sprint-crash line (red, zigzag) -->
+            <path d="M70 150 L120 40 L160 155 L210 35 L250 160 L300 45 L340 165 L380 55 L420 158 L460 70 L500 160 L540 85" stroke="var(--accent-danger)" stroke-width="2" fill="none" opacity="0.7"/>
+            <text x="540" y="78" fill="var(--accent-danger)" font-size="8" font-family="Inter" font-weight="600">Burnout</text>
+            <text x="540" y="88" fill="var(--accent-danger)" font-size="7" font-family="Inter">Sprint-Crash</text>
+            <!-- Steady line (green, gradual upward) -->
+            <path d="M70 150 Q200 140, 300 120 Q400 100, 500 65 L540 55" stroke="var(--accent-3)" stroke-width="2.5" fill="none"/>
+            <text x="545" y="50" fill="var(--accent-3)" font-size="8" font-family="Inter" font-weight="600">Steady</text>
+            <text x="545" y="60" fill="var(--accent-3)" font-size="7" font-family="Inter">Istiqamah</text>
+            <!-- Net result annotation -->
+            <line x1="540" y1="55" x2="540" y2="85" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3"/>
+            <text x="570" y="73" fill="var(--accent)" font-size="7" font-family="Inter" font-weight="600">Gap</text>
+          </svg>
+          <p class="viz-caption">Over time, the steady path (Istiqamah) always outpaces the sprint-crash cycle. Consistency compounds; burnout deducts.</p>
+        </div>
       </div>
 
+      <!-- LESSON 5 -->
       <div class="lesson">
         <div class="lesson-header"><div class="lesson-number">5</div><h2>Patience (Sabr) in the Process</h2></div>
         <p>Sometimes results take longer than expected. Sometimes they come in forms you did not anticipate. Sometimes the seeds you planted years ago sprout when you have almost forgotten about them. The gardener understands this deeply -- they do not dig up seeds to check on their progress. They trust the process and remain patient.</p>
         <p>Sabr (patience) in Islam is not passive endurance. It is an active, conscious choice to continue doing what is right even when results are invisible. The Quran mentions Sabr over 90 times, and Allah promises: "Indeed, the patient will be given their reward without account" (Quran 39:10) -- meaning the reward for patience is immeasurable.</p>
         <p>In practical terms, this means: do not quit a beneficial project because the results are slow. Do not abandon a good habit because you do not see immediate transformation. Do not lose faith in your du'as because they are not answered on your timeline. The gardener who planted an olive tree knows it may take years before it bears fruit -- but when it does, it will feed generations.</p>
+
+        <!-- SVG: Olive Tree Timeline -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hourglass-half"></i> The Olive Tree Timeline: Patience Pays Off</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <!-- Timeline base -->
+            <line x1="30" y1="100" x2="590" y2="100" stroke="var(--border)" stroke-width="2"/>
+            <!-- Milestones -->
+            <circle cx="60" cy="100" r="6" fill="var(--accent-2)"/>
+            <text x="60" y="85" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="700">Year 0</text>
+            <text x="60" y="122" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">Seed planted</text>
+
+            <circle cx="160" cy="100" r="6" fill="var(--accent-2)"/>
+            <text x="160" y="85" text-anchor="middle" fill="var(--accent-2)" font-size="10" font-family="Inter" font-weight="700">Year 3</text>
+            <text x="160" y="122" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">First sprouts</text>
+
+            <circle cx="260" cy="100" r="6" fill="var(--accent-3)"/>
+            <text x="260" y="85" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">Year 5</text>
+            <text x="260" y="122" text-anchor="middle" fill="var(--accent-3)" font-size="7.5" font-family="Inter">First fruit!</text>
+
+            <circle cx="380" cy="100" r="6" fill="var(--accent-3)"/>
+            <text x="380" y="85" text-anchor="middle" fill="var(--accent-3)" font-size="10" font-family="Inter" font-weight="700">Year 20</text>
+            <text x="380" y="122" text-anchor="middle" fill="var(--accent-3)" font-size="7.5" font-family="Inter">Full production</text>
+
+            <circle cx="530" cy="100" r="8" fill="var(--accent)"/>
+            <text x="530" y="82" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Inter" font-weight="700">Year 1000+</text>
+            <text x="530" y="122" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">Still bearing fruit!</text>
+            <text x="530" y="134" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">Feeding generations</text>
+
+            <!-- Growth curve -->
+            <path d="M60 100 Q110 98, 160 95 Q210 88, 260 75 Q320 55, 380 42 Q450 32, 530 28" stroke="var(--accent-3)" stroke-width="2" fill="none" stroke-dasharray="5"/>
+            <!-- Patience zone -->
+            <rect x="60" y="140" width="200" height="20" rx="4" fill="var(--accent-2)" opacity="0.1"/>
+            <text x="160" y="155" text-anchor="middle" fill="var(--accent-2)" font-size="8" font-family="Inter" font-weight="600">The Patience Zone: no visible results yet</text>
+          </svg>
+          <p class="viz-caption">An olive tree takes 3-5 years to produce its first fruit, 15-20 years to reach full production, and can live for over 1,000 years.</p>
+        </div>
+
+        <!-- Step-Through Diagram 3: The Three Types of Sabr -->
+        <div class="viz-container step-diagram" id="sabrTypes">
+          <div class="viz-title"><i class="fas fa-shield-alt"></i> The Three Types of Sabr (Step Through)</div>
+          <svg id="sabrSVG" viewBox="0 0 620 240" width="100%" height="240">
+            <defs>
+              <linearGradient id="sabrGrad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent-3)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--accent-3)" stop-opacity="0.05"/></linearGradient>
+              <linearGradient id="sabrGrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent-2)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--accent-2)" stop-opacity="0.05"/></linearGradient>
+              <linearGradient id="sabrGrad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.2"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.05"/></linearGradient>
+            </defs>
+
+            <!-- Centre Shield -->
+            <path d="M310 30 L360 55 L360 115 Q360 155, 310 175 Q260 155, 260 115 L260 55 Z" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="310" y="90" text-anchor="middle" fill="var(--accent)" font-size="14" font-family="Inter" font-weight="800">SABR</text>
+            <text x="310" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Patience</text>
+            <text x="310" y="120" text-anchor="middle" fill="var(--text-muted)" font-size="7" font-family="Inter">90+ Quran refs</text>
+            <text x="310" y="145" text-anchor="middle" fill="var(--accent)" font-size="7.5" font-family="Inter" font-style="italic">"Reward without account"</text>
+            <text x="310" y="155" text-anchor="middle" fill="var(--accent)" font-size="7" font-family="Inter" font-style="italic">Quran 39:10</text>
+
+            <!-- Type 1: Sabr upon obedience -->
+            <g class="sabr-step" data-step="0" opacity="0.15">
+              <rect x="15" y="25" width="215" height="90" rx="14" fill="url(#sabrGrad1)" stroke="var(--accent-3)" stroke-width="1.5"/>
+              <circle cx="45" cy="52" r="14" fill="var(--accent-3)" opacity="0.3"/>
+              <text x="45" y="56" text-anchor="middle" fill="var(--accent-3)" font-size="12" font-family="Inter" font-weight="800">1</text>
+              <text x="135" y="50" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">Sabr in Obedience</text>
+              <text x="120" y="68" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Patience in doing what Allah commands</text>
+              <text x="120" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">e.g., praying Fajr on time even when tired</text>
+              <text x="120" y="96" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">fasting long summer days, giving charity</text>
+            </g>
+            <!-- Arrow 1 -->
+            <line class="sabr-step" data-step="0" opacity="0.15" x1="230" y1="70" x2="258" y2="80" stroke="var(--accent-3)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+
+            <!-- Type 2: Sabr away from sin -->
+            <g class="sabr-step" data-step="1" opacity="0.15">
+              <rect x="15" y="135" width="215" height="90" rx="14" fill="url(#sabrGrad2)" stroke="var(--accent-2)" stroke-width="1.5"/>
+              <circle cx="45" cy="162" r="14" fill="var(--accent-2)" opacity="0.3"/>
+              <text x="45" y="166" text-anchor="middle" fill="var(--accent-2)" font-size="12" font-family="Inter" font-weight="800">2</text>
+              <text x="135" y="160" text-anchor="middle" fill="var(--accent-2)" font-size="11" font-family="Inter" font-weight="700">Sabr from Sin</text>
+              <text x="120" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Patience in avoiding what Allah forbids</text>
+              <text x="120" y="192" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">e.g., lowering gaze, avoiding gossip,</text>
+              <text x="120" y="206" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">resisting shortcuts and haram income</text>
+            </g>
+            <!-- Arrow 2 -->
+            <line class="sabr-step" data-step="1" opacity="0.15" x1="230" y1="180" x2="258" y2="140" stroke="var(--accent-2)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+
+            <!-- Type 3: Sabr during hardship -->
+            <g class="sabr-step" data-step="2" opacity="0.15">
+              <rect x="390" y="80" width="215" height="90" rx="14" fill="url(#sabrGrad3)" stroke="var(--accent)" stroke-width="1.5"/>
+              <circle cx="420" cy="107" r="14" fill="var(--accent)" opacity="0.3"/>
+              <text x="420" y="111" text-anchor="middle" fill="var(--accent)" font-size="12" font-family="Inter" font-weight="800">3</text>
+              <text x="510" y="106" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Inter" font-weight="700">Sabr in Trials</text>
+              <text x="500" y="124" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">Patience during tests and hardships</text>
+              <text x="500" y="138" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">e.g., illness, job loss, delayed results,</text>
+              <text x="500" y="152" text-anchor="middle" fill="var(--text-muted)" font-size="7.5" font-family="Inter">loss of a loved one, unanswered du'a</text>
+            </g>
+            <!-- Arrow 3 -->
+            <line class="sabr-step" data-step="2" opacity="0.15" x1="388" y1="120" x2="362" y2="115" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrCh9)"/>
+          </svg>
+          <div class="step-controls">
+            <button class="btn-step" id="sabrPrev" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <span class="step-indicator" id="sabrIndicator">Type 1 / 3</span>
+            <button class="btn-step" id="sabrNext"><i class="fas fa-arrow-right"></i> Next</button>
+          </div>
+          <div class="step-desc" id="sabrDesc">Sabr in Obedience: the patience to consistently fulfil what Allah commands, even when it is difficult -- like praying Fajr on time or fasting long summer days.</div>
+        </div>
+
+        <!-- SVG: Don't Dig Up Seeds -->
+        <div class="viz-container">
+          <div class="viz-title"><i class="fas fa-hand-holding-seedling"></i> Don't Dig Up Your Seeds</div>
+          <svg viewBox="0 0 620 180" width="100%" height="180">
+            <!-- Ground -->
+            <rect x="0" y="100" width="620" height="80" rx="0" fill="url(#soilGrad)"/>
+            <!-- Left: Impatient person digging -->
+            <rect x="20" y="10" width="270" height="85" rx="10" fill="var(--accent-danger)" opacity="0.06" stroke="var(--accent-danger)" stroke-width="1"/>
+            <text x="155" y="30" text-anchor="middle" fill="var(--accent-danger)" font-size="11" font-family="Inter" font-weight="700">The Impatient Approach</text>
+            <!-- Shovel -->
+            <line x1="100" y1="55" x2="100" y2="90" stroke="var(--text-light)" stroke-width="2"/>
+            <rect x="88" y="88" width="24" height="6" rx="2" fill="var(--text-light)"/>
+            <!-- Dug up seed -->
+            <circle cx="100" cy="115" r="6" fill="#8B6914" opacity="0.5"/>
+            <text x="100" y="140" text-anchor="middle" fill="var(--text-light)" font-size="6" font-family="Inter">dug up!</text>
+            <!-- Cross -->
+            <line x1="90" y1="105" x2="110" y2="125" stroke="var(--accent-danger)" stroke-width="2"/>
+            <line x1="110" y1="105" x2="90" y2="125" stroke="var(--accent-danger)" stroke-width="2"/>
+            <text x="195" y="52" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"Why isn't it growing yet?"</text>
+            <text x="195" y="65" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"Let me check... again..."</text>
+            <text x="195" y="78" text-anchor="middle" fill="var(--accent-danger)" font-size="8" font-family="Inter" font-weight="600">Result: killed the seed</text>
+
+            <!-- Right: Patient gardener waiting -->
+            <rect x="330" y="10" width="270" height="85" rx="10" fill="var(--accent-3)" opacity="0.06" stroke="var(--accent-3)" stroke-width="1"/>
+            <text x="465" y="30" text-anchor="middle" fill="var(--accent-3)" font-size="11" font-family="Inter" font-weight="700">The Patient Approach</text>
+            <!-- Buried seed growing -->
+            <circle cx="410" cy="120" r="6" fill="#8B6914"/>
+            <line x1="410" y1="114" x2="410" y2="102" stroke="var(--accent-3)" stroke-width="2"/>
+            <ellipse cx="405" cy="100" rx="5" ry="3" fill="var(--accent-3)" opacity="0.6"/>
+            <ellipse cx="415" cy="100" rx="5" ry="3" fill="var(--accent-3)" opacity="0.6"/>
+            <!-- Check mark -->
+            <path d="M400 90 L407 97 L420 84" stroke="var(--accent-3)" stroke-width="2" fill="none"/>
+            <text x="500" y="52" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"I've done my part."</text>
+            <text x="500" y="65" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="Inter">"Allah's timing is perfect."</text>
+            <text x="500" y="78" text-anchor="middle" fill="var(--accent-3)" font-size="8" font-family="Inter" font-weight="600">Result: growth in its season</text>
+          </svg>
+          <p class="viz-caption">Do not dig up your seeds to check progress. Trust the process, keep watering, and let growth happen in Allah's time.</p>
+        </div>
+
         <div class="insight-box">
           <strong>The olive tree test:</strong> An olive tree takes 3-5 years to produce its first fruit and 15-20 years to reach full production. Yet it can live for over 1,000 years. Barakah Culture asks: are you planting olive trees or chasing seasonal flowers? The slow, patient investment yields the most enduring harvest.
         </div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 1: Gardener Sequence Sort -->
+      <div class="exercise-box" id="exercise1">
+        <h4><i class="fas fa-sort-amount-down"></i> Exercise 1: Sort the Gardener's Steps</h4>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Drag and drop (or use the arrows) to put the gardener's lifecycle steps in the correct order:</p>
+        <ul class="drag-list" id="dragList">
+          <li class="drag-item" draggable="true" data-correct="2" data-id="weed"><span class="drag-handle"><i class="fas fa-grip-vertical"></i></span> Remove weeds (distractions &amp; sins)</li>
+          <li class="drag-item" draggable="true" data-correct="4" data-id="harvest"><span class="drag-handle"><i class="fas fa-grip-vertical"></i></span> Accept the harvest (outcome)</li>
+          <li class="drag-item" draggable="true" data-correct="0" data-id="plant"><span class="drag-handle"><i class="fas fa-grip-vertical"></i></span> Plant seeds (set intentions)</li>
+          <li class="drag-item" draggable="true" data-correct="3" data-id="trust"><span class="drag-handle"><i class="fas fa-grip-vertical"></i></span> Trust Allah with the results (tawakkul)</li>
+          <li class="drag-item" draggable="true" data-correct="1" data-id="nurture"><span class="drag-handle"><i class="fas fa-grip-vertical"></i></span> Nurture with consistent effort</li>
+        </ul>
+        <button class="btn-exercise" id="checkOrder"><i class="fas fa-check"></i> Check Order</button>
+        <div class="exercise-result" id="orderResult"></div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 2: Tawakkul Scenario Classifier -->
+      <div class="exercise-box" id="exercise2">
+        <h4><i class="fas fa-clipboard-check"></i> Exercise 2: Tawakkul or Tawakul?</h4>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">For each scenario, decide if it demonstrates true <strong>Tawakkul</strong> (effort + trust) or <strong>Tawakul</strong> (laziness). Click the correct label for each:</p>
+        <div id="scenarioContainer"></div>
+        <button class="btn-exercise" id="checkScenarios" style="margin-top:1rem;"><i class="fas fa-check"></i> Check Answers</button>
+        <div class="exercise-result" id="scenarioResult"></div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 3: Rate Your Balance Wheel -->
+      <div class="exercise-box" id="exercise3">
+        <h4><i class="fas fa-sliders-h"></i> Exercise 3: Rate Your Balance Wheel</h4>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">The Prophet (PBUH) taught that different areas of your life have rights over you. Rate how well you are honouring each right on a scale of 1-10:</p>
+        <div class="slider-exercise" id="sliderExercise">
+          <div class="slider-row"><span class="slider-label">Body (sleep, exercise, health)</span><input type="range" min="1" max="10" value="5" data-area="body"/><span class="slider-val">5</span></div>
+          <div class="slider-row"><span class="slider-label">Mind (learning, reflection)</span><input type="range" min="1" max="10" value="5" data-area="mind"/><span class="slider-val">5</span></div>
+          <div class="slider-row"><span class="slider-label">Soul (salah, Quran, dhikr)</span><input type="range" min="1" max="10" value="5" data-area="soul"/><span class="slider-val">5</span></div>
+          <div class="slider-row"><span class="slider-label">Family (spouse, parents, children)</span><input type="range" min="1" max="10" value="5" data-area="family"/><span class="slider-val">5</span></div>
+          <div class="slider-row"><span class="slider-label">Community (service, dawah, charity)</span><input type="range" min="1" max="10" value="5" data-area="community"/><span class="slider-val">5</span></div>
+          <div class="slider-row"><span class="slider-label">Career (work, skills, contribution)</span><input type="range" min="1" max="10" value="5" data-area="career"/><span class="slider-val">5</span></div>
+        </div>
+        <button class="btn-exercise" id="checkBalance"><i class="fas fa-chart-radar"></i> Analyse My Balance</button>
+        <div class="exercise-result" id="balanceResult"></div>
+        <div style="margin-top:1rem;">
+          <svg id="radarSVG" viewBox="0 0 320 320" width="100%" style="max-width:320px; display:none; margin:0 auto;">
+          </svg>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE EXERCISE 4: Reflection Journal -->
+      <div class="exercise-box" id="exercise4">
+        <h4><i class="fas fa-pen-fancy"></i> Exercise 4: Gardener's Reflection</h4>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:0.75rem;">Apply the gardener metaphor to your own life. Write a brief reflection for each prompt:</p>
+        <p style="font-size:0.85rem; color:var(--text); margin-bottom:0.3rem; font-weight:600;">1. What seeds have you planted recently? (goals, intentions, projects)</p>
+        <textarea class="reflection-area" id="reflect1" placeholder="Write your reflection here..." rows="2"></textarea>
+        <p style="font-size:0.85rem; color:var(--text); margin-top:0.75rem; margin-bottom:0.3rem; font-weight:600;">2. What weeds do you need to remove? (distractions, bad habits, toxic influences)</p>
+        <textarea class="reflection-area" id="reflect2" placeholder="Write your reflection here..." rows="2"></textarea>
+        <p style="font-size:0.85rem; color:var(--text); margin-top:0.75rem; margin-bottom:0.3rem; font-weight:600;">3. Where do you need more sabr (patience)? What seeds have you been tempted to dig up?</p>
+        <textarea class="reflection-area" id="reflect3" placeholder="Write your reflection here..." rows="2"></textarea>
+        <button class="btn-exercise" id="saveReflection" style="margin-top:0.75rem;"><i class="fas fa-save"></i> Save Reflections</button>
+        <div class="exercise-result" id="reflectionResult"></div>
       </div>
 
     </div>
@@ -182,50 +982,178 @@
       <div class="quiz-box" id="quizContainer"></div>
     </div>
 
-    <!-- TAB: Mind Map -->
+    <!-- TAB: Mind Map (Interactive Expand/Collapse) -->
     <div class="tab-panel" id="tab-mindmap">
-      <div class="viz-container" style="min-height:420px; display:flex; align-items:center; justify-content:center;">
-        <svg id="mmCh9" viewBox="0 0 700 420" width="100%" height="420" style="max-width:700px;">
+      <div class="viz-container mindmap-interactive">
+        <div class="viz-title"><i class="fas fa-project-diagram"></i> Chapter 9 Interactive Mind Map</div>
+        <div style="text-align:center;">
+          <button class="mm-toggle-all" id="mmToggleAll"><i class="fas fa-expand-arrows-alt"></i> Expand All</button>
+        </div>
+        <svg id="mmCh9" viewBox="0 0 840 680" width="100%" height="680" style="max-width:840px;">
           <style>
-            #mmCh9 .mm-node { animation: mmFadeInCH9 0.5s ease both; cursor:pointer; }
-            @keyframes mmFadeInCH9 { from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-            #mmCh9 .mm-node:hover ellipse { filter: brightness(1.15); }
-            #mmCh9 .mm-label { font-family:'Inter',sans-serif; font-size:11px; fill:var(--text); pointer-events:none; }
-            #mmCh9 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:var(--text); pointer-events:none; }
+            #mmCh9 .mm-label { font-family:'Inter',sans-serif; font-size:10.5px; fill:var(--text); pointer-events:none; }
+            #mmCh9 .mm-center-label { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; fill:white; pointer-events:none; }
             #mmCh9 .mm-branch { stroke:var(--border); stroke-width:1.5; fill:none; }
+            #mmCh9 .mm-sub-label { font-family:'Inter',sans-serif; font-size:8.5px; fill:var(--text-muted); pointer-events:none; }
           </style>
-          <line class="mm-branch" x1="350" y1="210" x2="140" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="350" y2="55"/>
-          <line class="mm-branch" x1="350" y1="210" x2="560" y2="70"/>
-          <line class="mm-branch" x1="350" y1="210" x2="120" y2="290"/>
-          <line class="mm-branch" x1="350" y1="210" x2="580" y2="290"/>
 
-          <g class="mm-node" style="animation-delay:0s">
-            <ellipse cx="350" cy="210" rx="72" ry="32" fill="var(--accent)" opacity="0.9"/>
-            <text class="mm-center-label" x="350" y="206" text-anchor="middle">The Gardener</text>
-            <text class="mm-center-label" x="350" y="222" text-anchor="middle">Approach</text>
+          <!-- Branches (lines from center to main nodes) -->
+          <line class="mm-branch" x1="420" y1="340" x2="130" y2="100"/>
+          <line class="mm-branch" x1="420" y1="340" x2="420" y2="80"/>
+          <line class="mm-branch" x1="420" y1="340" x2="710" y2="100"/>
+          <line class="mm-branch" x1="420" y1="340" x2="130" y2="520"/>
+          <line class="mm-branch" x1="420" y1="340" x2="710" y2="520"/>
+
+          <!-- Child branch lines: Gardener Lifecycle -->
+          <line class="mm-child-line collapsed" data-parent="gardener" x1="130" y1="100" x2="40" y2="35"/>
+          <line class="mm-child-line collapsed" data-parent="gardener" x1="130" y1="100" x2="130" y2="25"/>
+          <line class="mm-child-line collapsed" data-parent="gardener" x1="130" y1="100" x2="220" y2="35"/>
+          <line class="mm-child-line collapsed" data-parent="gardener" x1="130" y1="100" x2="80" y2="170"/>
+          <line class="mm-child-line collapsed" data-parent="gardener" x1="130" y1="100" x2="180" y2="170"/>
+
+          <!-- Child branch lines: Tawakkul -->
+          <line class="mm-child-line collapsed" data-parent="tawakkul" x1="420" y1="80" x2="310" y2="20"/>
+          <line class="mm-child-line collapsed" data-parent="tawakkul" x1="420" y1="80" x2="420" y2="15"/>
+          <line class="mm-child-line collapsed" data-parent="tawakkul" x1="420" y1="80" x2="530" y2="20"/>
+
+          <!-- Child branch lines: Focused -->
+          <line class="mm-child-line collapsed" data-parent="focused" x1="710" y1="100" x2="650" y2="30"/>
+          <line class="mm-child-line collapsed" data-parent="focused" x1="710" y1="100" x2="770" y2="30"/>
+          <line class="mm-child-line collapsed" data-parent="focused" x1="710" y1="100" x2="710" y2="175"/>
+
+          <!-- Child branch lines: Gentle -->
+          <line class="mm-child-line collapsed" data-parent="gentle" x1="130" y1="520" x2="35" y2="580"/>
+          <line class="mm-child-line collapsed" data-parent="gentle" x1="130" y1="520" x2="130" y2="595"/>
+          <line class="mm-child-line collapsed" data-parent="gentle" x1="130" y1="520" x2="225" y2="580"/>
+          <line class="mm-child-line collapsed" data-parent="gentle" x1="130" y1="520" x2="130" y2="650"/>
+
+          <!-- Child branch lines: Sabr -->
+          <line class="mm-child-line collapsed" data-parent="sabr" x1="710" y1="520" x2="620" y2="585"/>
+          <line class="mm-child-line collapsed" data-parent="sabr" x1="710" y1="520" x2="710" y2="600"/>
+          <line class="mm-child-line collapsed" data-parent="sabr" x1="710" y1="520" x2="800" y2="585"/>
+          <line class="mm-child-line collapsed" data-parent="sabr" x1="710" y1="520" x2="710" y2="655"/>
+
+          <!-- Center Node -->
+          <g class="mm-node-group">
+            <ellipse cx="420" cy="340" rx="90" ry="42" fill="var(--accent)" opacity="0.92"/>
+            <text class="mm-center-label" x="420" y="332" text-anchor="middle">The Gardener</text>
+            <text class="mm-center-label" x="420" y="350" text-anchor="middle">Approach</text>
+            <text x="420" y="366" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Inter">Chapter 9</text>
           </g>
-          <g class="mm-node" style="animation-delay:0.1s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="140" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="140" y="74" text-anchor="middle">Gardener Lifecycle</text>
+
+          <!-- Main Node 1: Gardener Lifecycle -->
+          <g class="mm-node-group" data-node="gardener">
+            <ellipse cx="130" cy="100" rx="75" ry="28" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="96" text-anchor="middle" fill="white" font-weight="600">Gardener Lifecycle</text>
+            <text x="130" y="110" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Inter">click to expand</text>
           </g>
-          <g class="mm-node" style="animation-delay:0.2s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="350" cy="55" rx="58" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="350" y="59" text-anchor="middle">Tawakkul</text>
+          <!-- Children -->
+          <g class="mm-child-group collapsed" data-parent="gardener">
+            <rect x="5" y="18" width="68" height="28" rx="8" fill="var(--accent-3)" opacity="0.3"/>
+            <text class="mm-sub-label" x="39" y="36" text-anchor="middle">Plant seeds</text>
           </g>
-          <g class="mm-node" style="animation-delay:0.3s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="560" cy="70" rx="65" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="560" y="74" text-anchor="middle">Focused Hard Work</text>
+          <g class="mm-child-group collapsed" data-parent="gardener">
+            <rect x="96" y="8" width="68" height="28" rx="8" fill="var(--accent-3)" opacity="0.3"/>
+            <text class="mm-sub-label" x="130" y="26" text-anchor="middle">Nurture &amp; Water</text>
           </g>
-          <g class="mm-node" style="animation-delay:0.4s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="120" cy="290" rx="62" ry="24" fill="var(--accent-2)" opacity="0.85"/>
-            <text class="mm-label" x="120" y="294" text-anchor="middle">Gentle Growth</text>
+          <g class="mm-child-group collapsed" data-parent="gardener">
+            <rect x="186" y="18" width="68" height="28" rx="8" fill="var(--accent-3)" opacity="0.3"/>
+            <text class="mm-sub-label" x="220" y="36" text-anchor="middle">Remove weeds</text>
           </g>
-          <g class="mm-node" style="animation-delay:0.5s" onclick="this.querySelector('ellipse').style.fill=this.querySelector('ellipse').style.fill==='var(--accent-2)'?'var(--accent-3)':'var(--accent-2)'">
-            <ellipse cx="580" cy="290" rx="58" ry="24" fill="var(--accent-3)" opacity="0.85"/>
-            <text class="mm-label" x="580" y="294" text-anchor="middle">Sabr (Patience)</text>
+          <g class="mm-child-group collapsed" data-parent="gardener">
+            <rect x="40" y="158" width="80" height="28" rx="8" fill="var(--accent-3)" opacity="0.25"/>
+            <text class="mm-sub-label" x="80" y="176" text-anchor="middle">Trust &amp; wait</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="gardener">
+            <rect x="140" y="158" width="80" height="28" rx="8" fill="var(--accent-3)" opacity="0.25"/>
+            <text class="mm-sub-label" x="180" y="176" text-anchor="middle">Accept harvest</text>
+          </g>
+
+          <!-- Main Node 2: Tawakkul -->
+          <g class="mm-node-group" data-node="tawakkul">
+            <ellipse cx="420" cy="80" rx="68" ry="28" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="420" y="76" text-anchor="middle" fill="white" font-weight="600">Tawakkul</text>
+            <text x="420" y="90" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Inter">click to expand</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="tawakkul">
+            <rect x="260" y="6" width="100" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="310" y="24" text-anchor="middle">Effort + Trust</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="tawakkul">
+            <rect x="370" y="0" width="100" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="420" y="18" text-anchor="middle">Tie your camel</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="tawakkul">
+            <rect x="480" y="6" width="100" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="530" y="24" text-anchor="middle">Not laziness!</text>
+          </g>
+
+          <!-- Main Node 3: Focused Hard Work -->
+          <g class="mm-node-group" data-node="focused">
+            <ellipse cx="710" cy="100" rx="72" ry="28" fill="var(--accent-3)" opacity="0.85"/>
+            <text class="mm-label" x="710" y="96" text-anchor="middle" fill="white" font-weight="600">Focused Hard Work</text>
+            <text x="710" y="110" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Inter">click to expand</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="focused">
+            <rect x="600" y="14" width="100" height="28" rx="8" fill="var(--accent-3)" opacity="0.3"/>
+            <text class="mm-sub-label" x="650" y="32" text-anchor="middle">Right soil &amp; season</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="focused">
+            <rect x="720" y="14" width="100" height="28" rx="8" fill="var(--accent-3)" opacity="0.3"/>
+            <text class="mm-sub-label" x="770" y="32" text-anchor="middle">Directed, not busy</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="focused">
+            <rect x="660" y="162" width="100" height="28" rx="8" fill="var(--accent-3)" opacity="0.25"/>
+            <text class="mm-sub-label" x="710" y="180" text-anchor="middle">Strategic matrix</text>
+          </g>
+
+          <!-- Main Node 4: Gentle Growth -->
+          <g class="mm-node-group" data-node="gentle">
+            <ellipse cx="130" cy="520" rx="72" ry="28" fill="var(--accent-2)" opacity="0.85"/>
+            <text class="mm-label" x="130" y="516" text-anchor="middle" fill="white" font-weight="600">Gentle Growth</text>
+            <text x="130" y="530" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Inter">click to expand</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="gentle">
+            <rect x="0" y="566" width="72" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="36" y="584" text-anchor="middle">Consistency</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="gentle">
+            <rect x="94" y="582" width="72" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="130" y="600" text-anchor="middle">Deep roots</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="gentle">
+            <rect x="190" y="566" width="72" height="28" rx="8" fill="var(--accent-2)" opacity="0.3"/>
+            <text class="mm-sub-label" x="226" y="584" text-anchor="middle">Balance &amp; rest</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="gentle">
+            <rect x="78" y="636" width="104" height="28" rx="8" fill="var(--accent-2)" opacity="0.25"/>
+            <text class="mm-sub-label" x="130" y="654" text-anchor="middle">Rights balance wheel</text>
+          </g>
+
+          <!-- Main Node 5: Sabr (Patience) -->
+          <g class="mm-node-group" data-node="sabr">
+            <ellipse cx="710" cy="520" rx="68" ry="28" fill="var(--accent)" opacity="0.85"/>
+            <text class="mm-label" x="710" y="516" text-anchor="middle" fill="white" font-weight="600">Sabr (Patience)</text>
+            <text x="710" y="530" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Inter">click to expand</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="sabr">
+            <rect x="572" y="570" width="96" height="28" rx="8" fill="var(--accent)" opacity="0.3"/>
+            <text class="mm-sub-label" x="620" y="588" text-anchor="middle">In obedience</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="sabr">
+            <rect x="662" y="586" width="96" height="28" rx="8" fill="var(--accent)" opacity="0.3"/>
+            <text class="mm-sub-label" x="710" y="604" text-anchor="middle">From sin</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="sabr">
+            <rect x="752" y="570" width="96" height="28" rx="8" fill="var(--accent)" opacity="0.3"/>
+            <text class="mm-sub-label" x="800" y="588" text-anchor="middle">During hardship</text>
+          </g>
+          <g class="mm-child-group collapsed" data-parent="sabr">
+            <rect x="658" y="640" width="104" height="28" rx="8" fill="var(--accent)" opacity="0.25"/>
+            <text class="mm-sub-label" x="710" y="658" text-anchor="middle">Olive tree test</text>
           </g>
         </svg>
+        <p class="mm-hint">Click any main node to expand/collapse its children. Use the button above to toggle all.</p>
       </div>
     </div>
 
@@ -242,7 +1170,10 @@
 
   <script src="app.js"></script>
   <script>
-    const QUESTIONS = [
+    // ==========================================
+    // Quiz
+    // ==========================================
+    var QUESTIONS = [
       { question: "What is the core metaphor of this chapter?", options: ["Be like a warrior -- fight for your goals", "Be like a gardener -- plant, nurture, trust, and harvest", "Be like a merchant -- trade wisely", "Be like a student -- always learning"], correct: 1, explanation: "The gardener metaphor captures the Barakah approach: plant seeds (intention/effort), nurture them (consistency), remove weeds (distractions), and trust Allah with the harvest (outcome)." },
       { question: "What Quranic verse establishes the foundation of Tawakkul?", options: ["Quran 2:255", "Quran 65:3 ('Whoever relies upon Allah, He is sufficient for him')", "Quran 112:1", "Quran 1:1"], correct: 1, explanation: "Quran 65:3 states: 'And whoever relies upon Allah -- then He is sufficient for him. Indeed, Allah will accomplish His purpose.'" },
       { question: "What is the difference between Tawakkul and tawakul?", options: ["They are the same concept", "Tawakkul is effort + trust in Allah; tawakul is laziness disguised as trust", "Tawakul is a higher form of Tawakkul", "Tawakkul is only for scholars"], correct: 1, explanation: "Tawakkul means doing your absolute best then trusting Allah with the outcome. Tawakul is laziness -- neglecting effort while falsely claiming reliance on Allah." },
@@ -256,6 +1187,439 @@
     ];
     VB.initQuiz('quizContainer', QUESTIONS);
     VB.initTabs('chapterTabs');
+
+    // ==========================================
+    // Step-Through Diagram 1: Garden Lifecycle
+    // ==========================================
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 5;
+      var descs = [
+        "Plant seeds: set your intentions, make du'a, and begin your effort with bismillah.",
+        "Nurture: water your efforts daily with consistent, focused work and good habits.",
+        "Weed: remove distractions, sins, and toxic influences that choke your growth.",
+        "Trust (Tawakkul): you have done your part -- now trust Allah completely with the outcome.",
+        "Harvest: accept the outcome with gratitude, whether it matches your expectations or not. Allah knows best."
+      ];
+
+      function updateGarden() {
+        var steps = document.querySelectorAll('#gardenSVG .garden-step');
+        steps.forEach(function(el) {
+          var s = parseInt(el.getAttribute('data-step'));
+          el.setAttribute('opacity', s <= currentStep ? '1' : '0.15');
+        });
+        document.getElementById('gardenIndicator').textContent = 'Step ' + (currentStep + 1) + ' / ' + totalSteps;
+        document.getElementById('gardenDesc').textContent = descs[currentStep];
+        document.getElementById('gardenPrev').disabled = currentStep === 0;
+        document.getElementById('gardenNext').disabled = currentStep === totalSteps - 1;
+      }
+
+      document.getElementById('gardenNext').addEventListener('click', function() {
+        if (currentStep < totalSteps - 1) { currentStep++; updateGarden(); }
+      });
+      document.getElementById('gardenPrev').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; updateGarden(); }
+      });
+      updateGarden();
+    })();
+
+    // ==========================================
+    // Step-Through Diagram 2: Tree Root Growth
+    // ==========================================
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 4;
+      var labels = ['Year 1', 'Year 2', 'Year 3', 'Year 4: Storm!'];
+      var descs = [
+        "Year 1: Both trees begin growing. The rapid tree is already taller, but the steady tree is building deep roots underground.",
+        "Year 2: The rapid tree shoots up impressively. The steady tree grows modestly but its root system expands far below the surface.",
+        "Year 3: The rapid tree looks tall but has shallow roots. The steady tree has deep, strong roots -- its foundation is solid.",
+        "Year 4: A storm hits! The rapid tree topples from its shallow roots. The steady tree stands strong and even bears fruit. Patience wins."
+      ];
+
+      function updateTree() {
+        var steps = document.querySelectorAll('#treeSVG .tree-step');
+        steps.forEach(function(el) {
+          var s = parseInt(el.getAttribute('data-step'));
+          el.setAttribute('opacity', s === currentStep ? '1' : '0.1');
+        });
+        document.getElementById('treeIndicator').textContent = labels[currentStep] + ' / ' + totalSteps;
+        document.getElementById('treeDesc').textContent = descs[currentStep];
+        document.getElementById('treePrev').disabled = currentStep === 0;
+        document.getElementById('treeNext').disabled = currentStep === totalSteps - 1;
+      }
+
+      document.getElementById('treeNext').addEventListener('click', function() {
+        if (currentStep < totalSteps - 1) { currentStep++; updateTree(); }
+      });
+      document.getElementById('treePrev').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; updateTree(); }
+      });
+      updateTree();
+    })();
+
+    // ==========================================
+    // Step-Through Diagram 3: Three Types of Sabr
+    // ==========================================
+    (function() {
+      var currentStep = 0;
+      var totalSteps = 3;
+      var descs = [
+        "Sabr in Obedience: the patience to consistently fulfil what Allah commands, even when it is difficult -- like praying Fajr on time or fasting long summer days.",
+        "Sabr from Sin: the patience to restrain yourself from what Allah forbids -- like avoiding gossip, lowering the gaze, and resisting haram income even when it seems easy.",
+        "Sabr during Trials: the patience to endure tests and hardships with grace -- like illness, loss, delayed results, or unanswered du'a. This is where tawakkul meets sabr."
+      ];
+
+      function updateSabr() {
+        var steps = document.querySelectorAll('#sabrSVG .sabr-step');
+        steps.forEach(function(el) {
+          var s = parseInt(el.getAttribute('data-step'));
+          el.setAttribute('opacity', s <= currentStep ? '1' : '0.15');
+        });
+        document.getElementById('sabrIndicator').textContent = 'Type ' + (currentStep + 1) + ' / ' + totalSteps;
+        document.getElementById('sabrDesc').textContent = descs[currentStep];
+        document.getElementById('sabrPrev').disabled = currentStep === 0;
+        document.getElementById('sabrNext').disabled = currentStep === totalSteps - 1;
+      }
+
+      document.getElementById('sabrNext').addEventListener('click', function() {
+        if (currentStep < totalSteps - 1) { currentStep++; updateSabr(); }
+      });
+      document.getElementById('sabrPrev').addEventListener('click', function() {
+        if (currentStep > 0) { currentStep--; updateSabr(); }
+      });
+      updateSabr();
+    })();
+
+    // ==========================================
+    // Interactive Mind Map (Expand/Collapse)
+    // ==========================================
+    (function() {
+      var expanded = {};
+      var nodes = document.querySelectorAll('#mmCh9 .mm-node-group[data-node]');
+
+      nodes.forEach(function(node) {
+        node.addEventListener('click', function() {
+          var key = node.getAttribute('data-node');
+          expanded[key] = !expanded[key];
+          toggleChildren(key, expanded[key]);
+          var texts = node.querySelectorAll('text');
+          var hint = texts[texts.length - 1];
+          if (hint) hint.textContent = expanded[key] ? 'click to collapse' : 'click to expand';
+        });
+      });
+
+      function toggleChildren(parentKey, show) {
+        var children = document.querySelectorAll('#mmCh9 .mm-child-group[data-parent="' + parentKey + '"]');
+        var lines = document.querySelectorAll('#mmCh9 .mm-child-line[data-parent="' + parentKey + '"]');
+        children.forEach(function(c) { c.classList.toggle('collapsed', !show); });
+        lines.forEach(function(l) { l.classList.toggle('collapsed', !show); });
+      }
+
+      var allExpanded = false;
+      document.getElementById('mmToggleAll').addEventListener('click', function() {
+        allExpanded = !allExpanded;
+        var btn = document.getElementById('mmToggleAll');
+        while (btn.firstChild) btn.removeChild(btn.firstChild);
+        var icon = document.createElement('i');
+        icon.className = allExpanded ? 'fas fa-compress-arrows-alt' : 'fas fa-expand-arrows-alt';
+        btn.appendChild(icon);
+        btn.appendChild(document.createTextNode(allExpanded ? ' Collapse All' : ' Expand All'));
+        nodes.forEach(function(node) {
+          var key = node.getAttribute('data-node');
+          expanded[key] = allExpanded;
+          toggleChildren(key, allExpanded);
+          var texts = node.querySelectorAll('text');
+          var hint = texts[texts.length - 1];
+          if (hint) hint.textContent = allExpanded ? 'click to collapse' : 'click to expand';
+        });
+      });
+    })();
+
+    // ==========================================
+    // Exercise 1: Drag-and-Drop Sort
+    // ==========================================
+    (function() {
+      var list = document.getElementById('dragList');
+      var draggedItem = null;
+
+      list.addEventListener('dragstart', function(e) {
+        draggedItem = e.target.closest('.drag-item');
+        if (draggedItem) {
+          draggedItem.style.opacity = '0.5';
+          e.dataTransfer.effectAllowed = 'move';
+        }
+      });
+      list.addEventListener('dragend', function(e) {
+        var item = e.target.closest('.drag-item');
+        if (item) item.style.opacity = '1';
+        list.querySelectorAll('.drag-item').forEach(function(i) { i.classList.remove('drag-over'); });
+      });
+      list.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        var target = e.target.closest('.drag-item');
+        if (target && target !== draggedItem) {
+          list.querySelectorAll('.drag-item').forEach(function(i) { i.classList.remove('drag-over'); });
+          target.classList.add('drag-over');
+        }
+      });
+      list.addEventListener('drop', function(e) {
+        e.preventDefault();
+        var target = e.target.closest('.drag-item');
+        if (target && draggedItem && target !== draggedItem) {
+          var items = Array.from(list.children);
+          var dragIdx = items.indexOf(draggedItem);
+          var dropIdx = items.indexOf(target);
+          if (dragIdx < dropIdx) {
+            list.insertBefore(draggedItem, target.nextSibling);
+          } else {
+            list.insertBefore(draggedItem, target);
+          }
+        }
+        list.querySelectorAll('.drag-item').forEach(function(i) { i.classList.remove('drag-over'); });
+      });
+
+      document.getElementById('checkOrder').addEventListener('click', function() {
+        var items = list.querySelectorAll('.drag-item');
+        var correct = 0;
+        items.forEach(function(item, idx) {
+          var correctPos = parseInt(item.getAttribute('data-correct'));
+          item.classList.remove('correct-pos', 'wrong-pos');
+          if (idx === correctPos) {
+            item.classList.add('correct-pos');
+            correct++;
+          } else {
+            item.classList.add('wrong-pos');
+          }
+        });
+        var result = document.getElementById('orderResult');
+        result.classList.add('show');
+        if (correct === 5) {
+          result.className = 'exercise-result show correct';
+          result.textContent = 'Perfect! You got all 5 steps in the correct order: Plant, Nurture, Weed, Trust, Harvest.';
+        } else {
+          result.className = 'exercise-result show incorrect';
+          result.textContent = correct + ' of 5 correct. The right order is: Plant seeds, Nurture with effort, Remove weeds, Trust Allah, Accept the harvest. Try again!';
+        }
+      });
+    })();
+
+    // ==========================================
+    // Exercise 2: Tawakkul vs Tawakul Classifier
+    // ==========================================
+    (function() {
+      var scenarios = [
+        { text: "A student studies all night for the exam, then makes du'a and leaves the result to Allah.", answer: "tawakkul" },
+        { text: "A person quits their job and sits at home saying 'Allah will provide my rizq.'", answer: "tawakul" },
+        { text: "An entrepreneur researches the market, builds a solid plan, launches the product, and accepts whatever outcome Allah decrees.", answer: "tawakkul" },
+        { text: "A farmer refuses to irrigate their land, saying 'If Allah wills it, rain will come.'", answer: "tawakul" },
+        { text: "A job seeker polishes their resume, applies widely, prepares for interviews, then trusts Allah for the right opportunity.", answer: "tawakkul" },
+        { text: "A student does not study and says 'If I am meant to pass, I will pass.'", answer: "tawakul" }
+      ];
+
+      var container = document.getElementById('scenarioContainer');
+
+      scenarios.forEach(function(s, i) {
+        var card = document.createElement('div');
+        card.className = 'scenario-card';
+
+        var p = document.createElement('p');
+        p.textContent = (i + 1) + '. ' + s.text;
+        card.appendChild(p);
+
+        var opts = document.createElement('div');
+        opts.className = 'scenario-options';
+
+        var label1 = document.createElement('label');
+        var radio1 = document.createElement('input');
+        radio1.type = 'radio';
+        radio1.name = 'scenario' + i;
+        radio1.value = 'tawakkul';
+        label1.appendChild(radio1);
+        label1.appendChild(document.createTextNode(' Tawakkul'));
+        opts.appendChild(label1);
+
+        var label2 = document.createElement('label');
+        var radio2 = document.createElement('input');
+        radio2.type = 'radio';
+        radio2.name = 'scenario' + i;
+        radio2.value = 'tawakul';
+        label2.appendChild(radio2);
+        label2.appendChild(document.createTextNode(' Tawakul'));
+        opts.appendChild(label2);
+
+        card.appendChild(opts);
+        container.appendChild(card);
+      });
+
+      document.getElementById('checkScenarios').addEventListener('click', function() {
+        var correct = 0;
+        scenarios.forEach(function(s, i) {
+          var selected = document.querySelector('input[name="scenario' + i + '"]:checked');
+          var card = container.children[i];
+          card.style.borderColor = '';
+          card.style.background = '';
+          if (selected && selected.value === s.answer) {
+            correct++;
+            card.style.borderColor = 'var(--accent-3)';
+            card.style.background = 'var(--success-bg)';
+          } else if (selected) {
+            card.style.borderColor = 'var(--accent-danger)';
+            card.style.background = 'var(--error-bg)';
+          } else {
+            card.style.borderColor = 'var(--accent-danger)';
+          }
+        });
+        var result = document.getElementById('scenarioResult');
+        result.classList.add('show');
+        if (correct === scenarios.length) {
+          result.className = 'exercise-result show correct';
+          result.textContent = 'Excellent! You correctly identified all ' + scenarios.length + ' scenarios. You understand the difference between Tawakkul and tawakul!';
+        } else {
+          result.className = 'exercise-result show ' + (correct >= 4 ? 'neutral' : 'incorrect');
+          result.textContent = correct + ' of ' + scenarios.length + ' correct. Remember: Tawakkul = full effort + trust in Allah. Tawakul = no effort + false reliance.';
+        }
+      });
+    })();
+
+    // ==========================================
+    // Exercise 3: Balance Wheel Radar Chart
+    // ==========================================
+    (function() {
+      // Sync slider values
+      var sliders = document.querySelectorAll('#sliderExercise input[type="range"]');
+      sliders.forEach(function(slider) {
+        slider.addEventListener('input', function() {
+          slider.parentElement.querySelector('.slider-val').textContent = slider.value;
+        });
+      });
+
+      document.getElementById('checkBalance').addEventListener('click', function() {
+        var values = {};
+        var total = 0;
+        sliders.forEach(function(slider) {
+          var area = slider.getAttribute('data-area');
+          var val = parseInt(slider.value);
+          values[area] = val;
+          total += val;
+        });
+        var avg = (total / 6).toFixed(1);
+        var areas = ['body', 'mind', 'soul', 'family', 'community', 'career'];
+        var labels = ['Body', 'Mind', 'Soul', 'Family', 'Community', 'Career'];
+
+        // Find weakest and strongest
+        var minVal = 11, maxVal = 0, minArea = '', maxArea = '';
+        areas.forEach(function(a, i) {
+          if (values[a] < minVal) { minVal = values[a]; minArea = labels[i]; }
+          if (values[a] > maxVal) { maxVal = values[a]; maxArea = labels[i]; }
+        });
+
+        var result = document.getElementById('balanceResult');
+        result.classList.add('show');
+        var diff = maxVal - minVal;
+        if (diff <= 2) {
+          result.className = 'exercise-result show correct';
+          result.innerHTML = '<strong>Well balanced!</strong> Your scores are quite even (avg: ' + avg + '/10). The gardener honours all rights. Keep nurturing all areas. Strongest: ' + maxArea + ' (' + maxVal + '). Weakest: ' + minArea + ' (' + minVal + ').';
+        } else if (diff <= 4) {
+          result.className = 'exercise-result show neutral';
+          result.innerHTML = '<strong>Some imbalance detected.</strong> Average: ' + avg + '/10. Your strongest area is <strong>' + maxArea + '</strong> (' + maxVal + ') and your weakest is <strong>' + minArea + '</strong> (' + minVal + '). Consider giving more attention to ' + minArea + ' -- the Prophet reminded us every part of life has a right over us.';
+        } else {
+          result.className = 'exercise-result show incorrect';
+          result.innerHTML = '<strong>Significant imbalance.</strong> Average: ' + avg + '/10. <strong>' + maxArea + '</strong> (' + maxVal + ') far outweighs <strong>' + minArea + '</strong> (' + minVal + '). The gardener approach means nurturing all areas. Prioritise ' + minArea + ' to restore balance and bring more barakah into your life.';
+        }
+
+        // Draw radar chart
+        var svg = document.getElementById('radarSVG');
+        svg.style.display = 'block';
+        var cx = 160, cy = 160, maxR = 120;
+        var n = areas.length;
+
+        var html = '';
+        // Draw grid rings
+        for (var ring = 2; ring <= 10; ring += 2) {
+          var points = [];
+          for (var j = 0; j < n; j++) {
+            var angle = (Math.PI * 2 * j / n) - Math.PI / 2;
+            var r = maxR * ring / 10;
+            points.push((cx + r * Math.cos(angle)).toFixed(1) + ',' + (cy + r * Math.sin(angle)).toFixed(1));
+          }
+          html += '<polygon points="' + points.join(' ') + '" fill="none" stroke="var(--border)" stroke-width="0.5"/>';
+          // Ring label
+          var lAngle = -Math.PI / 2;
+          html += '<text x="' + (cx + maxR * ring / 10 * Math.cos(lAngle) + 8) + '" y="' + (cy + maxR * ring / 10 * Math.sin(lAngle) + 3) + '" fill="var(--text-light)" font-size="7" font-family="Inter">' + ring + '</text>';
+        }
+
+        // Draw spokes and labels
+        for (var k = 0; k < n; k++) {
+          var angle = (Math.PI * 2 * k / n) - Math.PI / 2;
+          var ex = cx + maxR * Math.cos(angle);
+          var ey = cy + maxR * Math.sin(angle);
+          html += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) + '" stroke="var(--border)" stroke-width="0.5"/>';
+          var lx = cx + (maxR + 18) * Math.cos(angle);
+          var ly = cy + (maxR + 18) * Math.sin(angle);
+          html += '<text x="' + lx.toFixed(1) + '" y="' + (ly + 3).toFixed(1) + '" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Inter" font-weight="600">' + labels[k] + '</text>';
+        }
+
+        // Draw data polygon
+        var dataPoints = [];
+        for (var m = 0; m < n; m++) {
+          var angle2 = (Math.PI * 2 * m / n) - Math.PI / 2;
+          var r2 = maxR * values[areas[m]] / 10;
+          dataPoints.push((cx + r2 * Math.cos(angle2)).toFixed(1) + ',' + (cy + r2 * Math.sin(angle2)).toFixed(1));
+        }
+        html += '<polygon points="' + dataPoints.join(' ') + '" fill="var(--accent-3)" opacity="0.2" stroke="var(--accent-3)" stroke-width="2"/>';
+
+        // Draw data points
+        for (var p = 0; p < n; p++) {
+          var angle3 = (Math.PI * 2 * p / n) - Math.PI / 2;
+          var r3 = maxR * values[areas[p]] / 10;
+          var px = cx + r3 * Math.cos(angle3);
+          var py = cy + r3 * Math.sin(angle3);
+          html += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="4" fill="var(--accent-3)"/>';
+        }
+
+        svg.innerHTML = html;
+      });
+    })();
+
+    // ==========================================
+    // Exercise 4: Reflection Journal (localStorage)
+    // ==========================================
+    (function() {
+      var KEY = 'vb-ch9-reflections';
+      // Load saved reflections
+      try {
+        var saved = JSON.parse(localStorage.getItem(KEY));
+        if (saved) {
+          if (saved.r1) document.getElementById('reflect1').value = saved.r1;
+          if (saved.r2) document.getElementById('reflect2').value = saved.r2;
+          if (saved.r3) document.getElementById('reflect3').value = saved.r3;
+        }
+      } catch(e) {}
+
+      document.getElementById('saveReflection').addEventListener('click', function() {
+        var r1 = document.getElementById('reflect1').value.trim();
+        var r2 = document.getElementById('reflect2').value.trim();
+        var r3 = document.getElementById('reflect3').value.trim();
+        var result = document.getElementById('reflectionResult');
+
+        if (!r1 && !r2 && !r3) {
+          result.className = 'exercise-result show incorrect';
+          result.textContent = 'Please write at least one reflection before saving.';
+          return;
+        }
+
+        try {
+          localStorage.setItem(KEY, JSON.stringify({ r1: r1, r2: r2, r3: r3, date: new Date().toISOString() }));
+          var count = [r1, r2, r3].filter(function(x) { return x.length > 0; }).length;
+          result.className = 'exercise-result show correct';
+          result.textContent = 'Saved ' + count + ' of 3 reflections to your browser. Your gardener\'s journal is growing! May Allah bless your seeds with barakah.';
+        } catch(e) {
+          result.className = 'exercise-result show neutral';
+          result.textContent = 'Could not save to localStorage. Your reflections are still visible on this page.';
+        }
+      });
+    })();
   </script>
 </body>
 </html>
