@@ -144,8 +144,7 @@ const DATA = {
     { label: "Experience", href: "#experience" },
     { label: "Skills", href: "#skills" },
     { label: "Certifications", href: "#certifications" },
-    { label: "Projects", href: "#projects" },
-    { label: "Pages", href: "pages/index.html" }
+    { label: "Projects", href: "#projects" }
   ],
   blogLinks: [
     { label: "Medium", url: "https://medium.com/@info.saifzaman" },
@@ -341,11 +340,14 @@ function renderFooter() {
         <li><i class="fas fa-phone"></i> ${p.phone}</li>
         <li><i class="fas fa-map-marker-alt"></i> ${p.location}</li>`;
 
-    const quickLinks = ['#about', '#experience', '#skills', '#certifications', '#projects', '#contact'];
-    document.getElementById('footerLinks').innerHTML = quickLinks.map(href => {
-        const label = href.replace('#', '');
-        return `<li><a href="${href}">${label.charAt(0).toUpperCase() + label.slice(1)}</a></li>`;
-    }).join('');
+    const quickLinks = [
+        { href: '#about', label: 'About' },
+        { href: '#contact', label: 'Contact' },
+        { href: 'pages/index.html', label: 'Pages' }
+    ];
+    document.getElementById('footerLinks').innerHTML = quickLinks.map(({ href, label }) =>
+        `<li><a href="${href}">${label}</a></li>`
+    ).join('');
 
     renderSocialLinks('footerSocialLinks', p.social.slice(0, 3));
 }
