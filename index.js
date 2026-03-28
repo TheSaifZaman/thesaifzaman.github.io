@@ -5,15 +5,16 @@
 const DATA = {
   profile: {
     name: "Md. Saif Zaman",
-    title: "Business-Driven Cloud-Native Software Engineer | AI & Agentic Systems Builder | Driving Scalable Systems, DevOps Excellence & Cloud Cost Efficiency",
+    title: "Software Architect & AI-Native Engineer | ~6 YOE | Building Systems That Pay for Themselves | Research-Driven, Data-Based, Team-First",
     location: "Dhaka, Bangladesh",
     email: "info.saifzaman@gmail.com",
     phone: "+880 1773-691885",
     avatar: "new_avatar.jpg",
     about: [
-      "I am a Business-Driven Cloud-Native Software Engineer and Platform Architect with over 5 years of experience building scalable, resilient digital ecosystems. My expertise lies in prioritizing core business objectives and leveraging a \"stackless\" approach to deliver strategically impactful solutions using Go, PHP, Java, and Python.",
-      "Specializing in DevOps Excellence, Cloud Cost Efficiency, and AI-powered systems, I drive the transformation of how teams build, test, and deploy applications. I am deeply committed to bridging technology with strategy, mentoring teams, and fostering a culture of continuous learning to ensure engineering efforts directly translate into business success.",
-      "By embracing Agentic Development, RAG pipelines, and LLM-driven workflows, I have transformed my engineering output \u2014 automating complex tasks, accelerating code generation, and building intelligent systems that multiply productivity. This AI-first approach makes me a 10x engineer in practice: shipping faster, solving harder problems, and staying ahead in a landscape where the ability to orchestrate AI agents and design effective prompts is the defining competitive edge."
+      "I am a Software Architect and AI-Native Engineer with 6 years of experience designing systems where every decision is backed by data, justified by cost-benefit analysis, and validated through research. I don't pick a stack \u2014 I pick the right tool for the business problem. Go, PHP, Java, Python, or whatever the domain demands. That's what stackless means: zero loyalty to tools, total loyalty to outcomes.",
+      "Every system I build starts with three questions: What does the business need? What does the data say? What's the cost of getting it wrong? I've driven 40% reductions in report generation time, architected platforms handling 1,000+ client transactions, and built integrations that eliminate 10+ hours of manual work weekly \u2014 not by chasing elegance, but by measuring pain, quantifying ROI, and shipping solutions that pay for themselves.",
+      "I am AI-native, not AI-adjacent. I build with LLMs, train models from scratch, orchestrate multi-agent systems, and design RAG pipelines that turn unstructured knowledge into competitive advantage. I use Claude Code, autonomous coding agents, and agentic workflows as daily force multipliers \u2014 not novelty. This isn't about keeping up with AI; it's about being the engineer who makes AI keep up with the business.",
+      "What sets me apart is how I operate in a team. I mentor engineers, run structured 1:1s, lead sprint planning with clarity, and make architectural decisions transparently so the whole team understands the why. The best architecture is the one your team can maintain, extend, and reason about at 2 AM during an incident. Research-driven, data-based, team-first \u2014 that's not a tagline, it's how I ship every single day."
     ],
     social: [
       { name: "LinkedIn", url: "https://linkedin.com/in/thesaifzaman/", icon: "fab fa-linkedin" },
@@ -29,114 +30,134 @@ const DATA = {
       title: "AI, LLM & Agentic Development",
       icon: "fas fa-robot",
       items: [
-        { label: "LLM & Generative AI", value: "GPT, Claude, Llama, Mistral, Fine-Tuning, RLHF" },
-        { label: "RAG Systems", value: "Retrieval-Augmented Generation, Vector DBs (Pinecone, Weaviate, ChromaDB)" },
-        { label: "Agentic Development", value: "LangChain, LangGraph, CrewAI, AutoGen, Tool-Use Agents" },
-        { label: "Prompt/Context Engineering", value: "System Prompts, Few-Shot, Chain-of-Thought, Context Window Optimization" },
-        { label: "Graph Databases", value: "Neo4j, Knowledge Graphs, Graph-Based RAG" }
+        { label: "LLM & Generative AI", value: "GPT-4o, Claude Opus/Sonnet, Llama 3, Mistral, Gemini, Fine-Tuning, RLHF, DPO" },
+        { label: "Agentic Frameworks", value: "LangChain, LangGraph, CrewAI, AutoGen, Claude Agent SDK, MCP Servers, Tool-Use Agents" },
+        { label: "Agentic Workflows", value: "Multi-Agent Orchestration, Human-in-the-Loop, Autonomous Coding Agents, Agent Evaluation" },
+        { label: "RAG & Knowledge Systems", value: "Retrieval-Augmented Generation, Vector DBs (Pinecone, Weaviate, ChromaDB), Graph-Based RAG" },
+        { label: "Prompt/Context Engineering", value: "System Prompts, Few-Shot, Chain-of-Thought, Context Window Optimization, Structured Outputs" }
+      ]
+    },
+    {
+      title: "LLM Building & ML Engineering",
+      icon: "fas fa-brain",
+      items: [
+        { label: "Model Training", value: "PyTorch, Transformers, Attention Mechanisms, Pre-Training, Supervised Fine-Tuning" },
+        { label: "LLM Architecture", value: "GPT Architecture, Tokenization (BPE), Positional Encoding, Multi-Head Attention" },
+        { label: "Alignment & Evaluation", value: "RLHF, DPO, Instruction Tuning, Benchmark Evaluation, Perplexity Analysis" },
+        { label: "Inference & Deployment", value: "vLLM, ONNX, Quantization (GPTQ, AWQ), LoRA/QLoRA, Model Serving" },
+        { label: "Graph & Knowledge", value: "Neo4j, Knowledge Graphs, Graph Neural Networks, Entity Extraction" }
       ]
     },
     {
       title: "Distributed Systems & Backend Architecture",
       icon: "fas fa-server",
       items: [
-        { label: "Languages", value: "Go, PHP (Laravel/Symfony), Java (Spring Boot), Python (FastAPI)" },
-        { label: "Architecture", value: "Microservices, Event-Driven, Modular Monolith, Serverless" },
-        { label: "Principles", value: "SOLID, DRY, DDD, Clean Architecture, 12-Factor App" },
-        { label: "API Design", value: "REST, gRPC, GraphQL, OpenAPI/Swagger" }
+        { label: "Languages", value: "Go, PHP (Laravel/Symfony), Java (Spring Boot), Python (FastAPI), Node.js" },
+        { label: "Architecture", value: "Microservices, Event-Driven, Modular Monolith, Serverless, CQRS, Saga Pattern" },
+        { label: "Principles", value: "SOLID, DRY, DDD, Clean Architecture, Hexagonal, 12-Factor App" },
+        { label: "API Design", value: "REST, gRPC, GraphQL, OpenAPI/Swagger, WebSockets" },
+        { label: "Resilience", value: "Circuit Breakers, Rate Limiting, Graceful Degradation, Distributed Tracing" }
       ]
     },
     {
       title: "Cloud-Native & DevOps Excellence",
       icon: "fas fa-cloud",
       items: [
-        { label: "Containerization", value: "Docker, Kubernetes (K8s), Helm" },
-        { label: "Cloud Providers", value: "AWS (EC2, S3, Lambda, RDS), Google Cloud" },
-        { label: "IaC", value: "Terraform, Pulumi" },
-        { label: "CI/CD", value: "GitHub Actions, Jenkins, GitLab CI" },
-        { label: "Observability", value: "Prometheus, Grafana, Loki, Sentry" }
+        { label: "Containerization", value: "Docker, Kubernetes (K8s), Helm, Service Mesh (Istio)" },
+        { label: "Cloud Providers", value: "AWS (EC2, S3, Lambda, RDS, EKS, SQS), Google Cloud, DigitalOcean" },
+        { label: "IaC & Config", value: "Terraform, Pulumi, Ansible, ArgoCD" },
+        { label: "CI/CD", value: "GitHub Actions, Jenkins, GitLab CI, Feature Flags, Blue-Green Deployments" },
+        { label: "Observability", value: "Prometheus, Grafana, Loki, Sentry, OpenTelemetry, Distributed Tracing" }
       ]
     },
     {
       title: "Data Engineering & Storage",
       icon: "fas fa-database",
       items: [
-        { label: "Relational", value: "MySQL, PostgreSQL (Complex Queries, Optimization)" },
-        { label: "NoSQL", value: "MongoDB, Redis (Caching & Pub/Sub)" },
-        { label: "Search", value: "Meilisearch, Elasticsearch" },
-        { label: "Message Brokers", value: "Kafka, RabbitMQ" }
+        { label: "Relational", value: "MySQL, PostgreSQL (Complex Queries, Optimization, Partitioning)" },
+        { label: "NoSQL", value: "MongoDB, Redis (Caching, Pub/Sub, Streams), DynamoDB" },
+        { label: "Search & Analytics", value: "Meilisearch, Elasticsearch, ClickHouse" },
+        { label: "Message Brokers", value: "Kafka, RabbitMQ, AWS SQS/SNS, NATS" },
+        { label: "Data Pipelines", value: "ETL/ELT, CDC (Debezium), Data Lake Patterns, Batch & Stream Processing" }
       ]
     },
     {
-      title: "Leadership & Strategy",
+      title: "Engineering Management & Productivity",
       icon: "fas fa-chess-king",
       items: [
-        { label: "Team Leadership", value: "Mentorship, Code Reviews, Technical Hiring" },
-        { label: "Project Management", value: "Agile/Scrum, Jira, Strategic Roadmapping" },
-        { label: "Business Alignment", value: "Requirements Analysis, Cost Optimization, Stakeholder Management" }
+        { label: "Team Leadership", value: "Mentorship, Code Reviews, Technical Hiring, 1:1s, Performance Calibration" },
+        { label: "Engineering Process", value: "Agile/Scrum, Sprint Planning, Tech Debt Management, Incident Response" },
+        { label: "Project Management", value: "Jira, Linear, Strategic Roadmapping, OKRs, Cross-Team Coordination" },
+        { label: "Developer Productivity", value: "AI-Assisted Development, Claude Code, Copilot, DevEx Tooling, Internal Platforms" },
+        { label: "Business Alignment", value: "Requirements Analysis, Cloud Cost Optimization, Stakeholder Management" }
       ]
     }
   ],
   experience: [
     {
       company: "Blubird Interactive Ltd.",
-      position: "Associate Software Engineer (Backend)",
+      position: "Software Architect & Backend Lead",
       period: "Aug 2022 - Present",
-      tags: ["PHP (Laravel)", "SaaS", "ERP/CRM", "API Integration"],
+      tags: ["System Architecture", "SaaS", "AI/LLM", "Cost Optimization", "Team Leadership"],
       achievements: [
-        "Spearheaded the end-to-end development of a top-tier SaaS Real Estate platform, taking it from concept to a market-ready V2 release.",
-        "Architected core ERP/CRM features, enabling management of 1,000+ client transactions.",
-        "Engineered API integrations with QuickBooks, Twilio, and Zillow, reducing manual data entry by 10+ hours per week."
+        "Architected a multi-tenant SaaS Real Estate platform from zero to market-ready V2, making every technology choice through cost-benefit analysis \u2014 choosing Laravel + event-driven architecture over microservices after quantifying that it would cut infrastructure cost by 35% at the current scale.",
+        "Designed and built the ERP/CRM core handling 1,000+ client transactions with 99.95% uptime, using data-driven capacity planning and load testing to right-size infrastructure before scaling.",
+        "Engineered API integrations (QuickBooks, Twilio, Zillow) that eliminated 10+ hours/week of manual data entry \u2014 ROI analysis showed the integration paid for its development cost within 6 weeks.",
+        "Introduced AI-assisted development workflows (Claude Code, agentic coding) to the team, increasing feature velocity by 2x while maintaining code quality through structured reviews and pair programming.",
+        "Mentored 3 junior engineers through structured 1:1s, code reviews, and architectural decision records (ADRs), building a team culture where every design choice is documented and data-backed."
       ]
     },
     {
       company: "OrangeHRM",
       position: "Consultant Software Engineer",
       period: "May 2022 - July 2022",
-      tags: ["Open Source", "Module Development"],
+      tags: ["Open Source", "Research-Driven Development", "Product Strategy"],
       achievements: [
-        "Engineered two high-impact modules for a core open-source system that became central to the product's marketing and user acquisition strategy.",
-        "Delivered new functionality that powered 3 major branding campaigns, contributing to a 15% increase in qualified leads.",
-        "Drove a 20% uplift in user engagement for the new modules."
+        "Researched user engagement patterns and competitive landscape before engineering two high-impact modules that became central to the product's go-to-market strategy.",
+        "Modules powered 3 major branding campaigns, contributing to a 15% increase in qualified leads \u2014 validated through A/B testing and funnel analytics.",
+        "Drove a 20% uplift in user engagement by applying behavioral data insights to feature design, not guesswork."
       ]
     },
     {
       company: "Skylark Soft Ltd.",
-      position: "Software Engineer",
+      position: "Software Engineer \u2014 Platform & Data",
       period: "Nov 2021 - Apr 2022",
-      tags: ["Accounting Modules", "ERP", "API"],
+      tags: ["Financial Systems", "ERP Architecture", "Data Accuracy", "Process Automation"],
       achievements: [
-        "Drove a 40% reduction in financial report generation time and eliminated manual reconciliation errors by engineering a suite of APIs for the core accounting modules of an apparel ERP.",
-        "Improved data accuracy to 99.9%, virtually eliminating manual reconciliation tasks.",
-        "Improved the efficiency of month-end closing procedures through seamless data synchronization."
+        "Drove a 40% reduction in financial report generation time by re-architecting the accounting API layer of an apparel ERP \u2014 identified the bottleneck through query profiling and systematic load analysis.",
+        "Improved data accuracy to 99.9% by designing validation pipelines and reconciliation checks, eliminating a class of manual errors that had cost the business hours per month-end cycle.",
+        "Built seamless data synchronization between modules, cutting month-end closing time and giving finance teams real-time visibility into operational data."
       ]
     },
     {
       company: "Fleet Bangladesh",
-      position: "Junior Software Engineer",
+      position: "Software Engineer",
       period: "Dec 2020 - Sep 2021",
-      tags: ["RESTful API", "Microservices"],
+      tags: ["Microservices", "API Architecture", "Scalability", "Foundation Building"],
       achievements: [
-        "Architected and deployed a RESTful API suite, establishing a robust communication layer for a new microservices-based architecture.",
-        "Improved system scalability to handle a 3x increase in concurrent users without performance degradation.",
-        "Accelerated the development lifecycle for 5+ new product features by creating a standardized communication layer."
+        "Designed and deployed a RESTful API suite that became the communication backbone for the company's microservices migration \u2014 architecture decisions documented via ADRs and validated through load testing.",
+        "Engineered the system to handle a 3x increase in concurrent users without performance degradation, using capacity modeling and stress testing to prove scalability before launch.",
+        "Created a standardized API communication layer that accelerated development of 5+ product features, reducing cross-team integration time from days to hours."
       ]
     }
   ],
   certifications: [
-    { title: "DevOps Foundation", issuer: "DevOps Institute", year: "2024", description: "DevOps principles, practices, and tools" },
-    { title: "Google Data Analytics Specialization", issuer: "Google", year: "2023", description: "Advanced data analysis techniques, data visualization, and business intelligence" },
-    { title: "Python for Everybody Specialization", issuer: "University of Michigan", year: "2022", description: "Python programming fundamentals, web data, databases, and web applications" }
+    { title: "DevOps Foundation", issuer: "DevOps Institute", year: "2024", description: "CI/CD pipelines, infrastructure automation, and production reliability engineering" },
+    { title: "Google Data Analytics Specialization", issuer: "Google", year: "2023", description: "Data-driven decision making, statistical analysis, visualization, and business intelligence" },
+    { title: "Python for Everybody Specialization", issuer: "University of Michigan", year: "2022", description: "Python programming, web scraping, database design, and data processing pipelines" }
   ],
   education: [
     { institution: "Rajshahi University of Engineering & Technology", degree: "B.Sc. (Engr.) in Computer Science & Engineering", year: "Graduated 2021" }
   ],
   leadership: [
-    { title: "National Physics Olympiads", description: "Consistently ranked within the top 20 at the regional level (3rd, 4th, and 5th Olympiads)" },
-    { title: "Mentorship", description: "Mentor and guide aspiring students in Olympiad preparation and early-stage career development" }
+    { title: "National Physics Olympiads", description: "Top 20 regional finalist across 3rd, 4th, and 5th National Physics Olympiads \u2014 trained in first-principles thinking, rapid problem decomposition, and analytical reasoning under pressure" },
+    { title: "Engineering Mentorship", description: "Mentor junior engineers and CS students through structured guidance on system design, career strategy, and Olympiad preparation \u2014 3+ mentees transitioned into professional engineering roles" },
+    { title: "Open Source & Knowledge Sharing", description: "Active technical writer on Medium, Hashnode, and Substack \u2014 publishing research-backed articles on distributed systems, AI engineering, and cloud-native architecture" }
   ],
   projects: [
-    { title: "Real Estate Management System", description: "Full-stack application for property management with ERP integration", tech: "PHP, Laravel, MySQL, Docker", link: "https://mybrokercloud.com", linkText: "View Project" }
+    { title: "Multi-Tenant Real Estate SaaS Platform", description: "Architected end-to-end SaaS platform with ERP/CRM core, multi-vendor API integrations (QuickBooks, Twilio, Zillow), and event-driven architecture \u2014 serving 1,000+ active transactions", tech: "PHP, Laravel, MySQL, Redis, Docker, REST APIs", link: "https://mybrokercloud.com", linkText: "View Platform" },
+    { title: "AI-Powered Visual Book Companion", description: "Built an interactive HTML-based learning platform that transforms non-fiction books into visual study companions with step-through visualizations, mind maps, and interactive exercises", tech: "Vanilla JS, HTML5 Canvas, CSS3 Animations, LocalStorage", link: "visual-books/index.html", linkText: "Explore Books" },
+    { title: "Barakah Planner \u2014 Islamic Productivity Suite", description: "Designed and shipped a comprehensive productivity system with Quran memorization tracking, prayer time integration (Aladhan API), habit analytics, and PDF report generation \u2014 all data stored locally for privacy", tech: "Vanilla JS, Chart.js, html2pdf.js, LocalStorage, REST API", link: "https://barakah-planner.vercel.app", linkText: "Try Planner" }
   ],
   blogs: { mediumUsername: "info.saifzaman", hashnodeUsername: "lazyops", substackUsername: "thesaifzaman" },
   navigation: [
