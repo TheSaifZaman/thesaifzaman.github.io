@@ -238,7 +238,7 @@ const VB = (() => {
 
   // ---------- Landing Stats ----------
   function renderLandingStats() {
-    const chapters = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
+    const chapters = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','capstone'];
     const progress = loadProgress();
     let totalScore = 0, totalQ = 0, completed = 0;
     chapters.forEach(k => {
