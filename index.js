@@ -5,7 +5,7 @@
 const DATA = {
   profile: {
     name: "Md. Saif Zaman",
-    title: "Software Architect & AI-Native Engineer | ~6 YOE | Building Systems That Pay for Themselves | Research-Driven, Data-Based, Team-First",
+    title: "Abdullah | Software Architect & AI-Native Engineer | ~6 YOE | Building Systems That Pay for Themselves | Research-Driven, Data-Based, Team-First",
     location: "Dhaka, Bangladesh",
     email: "info.saifzaman@gmail.com",
     phone: "+880 1773-691885",
