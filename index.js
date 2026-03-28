@@ -27,36 +27,14 @@ const DATA = {
   },
   skills: [
     {
-      title: "AI, LLM & Agentic Development",
-      icon: "fas fa-robot",
-      items: [
-        { label: "LLM & Generative AI", value: "GPT-4o, Claude Opus/Sonnet, Llama 3, Mistral, Gemini, Fine-Tuning, RLHF, DPO" },
-        { label: "Agentic Frameworks", value: "LangChain, LangGraph, CrewAI, AutoGen, Claude Agent SDK, MCP Servers, Tool-Use Agents" },
-        { label: "Agentic Workflows", value: "Multi-Agent Orchestration, Human-in-the-Loop, Autonomous Coding Agents, Agent Evaluation" },
-        { label: "RAG & Knowledge Systems", value: "Retrieval-Augmented Generation, Vector DBs (Pinecone, Weaviate, ChromaDB), Graph-Based RAG" },
-        { label: "Prompt/Context Engineering", value: "System Prompts, Few-Shot, Chain-of-Thought, Context Window Optimization, Structured Outputs" }
-      ]
-    },
-    {
-      title: "LLM Building & ML Engineering",
-      icon: "fas fa-brain",
-      items: [
-        { label: "Model Training", value: "PyTorch, Transformers, Attention Mechanisms, Pre-Training, Supervised Fine-Tuning" },
-        { label: "LLM Architecture", value: "GPT Architecture, Tokenization (BPE), Positional Encoding, Multi-Head Attention" },
-        { label: "Alignment & Evaluation", value: "RLHF, DPO, Instruction Tuning, Benchmark Evaluation, Perplexity Analysis" },
-        { label: "Inference & Deployment", value: "vLLM, ONNX, Quantization (GPTQ, AWQ), LoRA/QLoRA, Model Serving" },
-        { label: "Graph & Knowledge", value: "Neo4j, Knowledge Graphs, Graph Neural Networks, Entity Extraction" }
-      ]
-    },
-    {
       title: "Distributed Systems & Backend Architecture",
       icon: "fas fa-server",
       items: [
-        { label: "Languages", value: "Go, PHP (Laravel/Symfony), Java (Spring Boot), Python (FastAPI), Node.js" },
+        { label: "Languages", value: "Go, PHP (Laravel/Symfony), Java (Spring Boot), Python (FastAPI), Node.js, TypeScript" },
         { label: "Architecture", value: "Microservices, Event-Driven, Modular Monolith, Serverless, CQRS, Saga Pattern" },
         { label: "Principles", value: "SOLID, DRY, DDD, Clean Architecture, Hexagonal, 12-Factor App" },
         { label: "API Design", value: "REST, gRPC, GraphQL, OpenAPI/Swagger, WebSockets" },
-        { label: "Resilience", value: "Circuit Breakers, Rate Limiting, Graceful Degradation, Distributed Tracing" }
+        { label: "Enterprise Patterns", value: "Circuit Breakers, Rate Limiting, Graceful Degradation, Multi-Tenancy, Audit Logging" }
       ]
     },
     {
@@ -82,6 +60,61 @@ const DATA = {
       ]
     },
     {
+      title: "AI, LLM & Agentic Development",
+      icon: "fas fa-robot",
+      items: [
+        { label: "LLM & Generative AI", value: "GPT-*, Claude Opus/Sonnet, Llama 3, Mistral, Gemini, Fine-Tuning, RLHF, DPO" },
+        { label: "Agentic Frameworks", value: "LangChain, LangGraph, CrewAI, AutoGen, Claude Agent SDK, MCP Servers, Tool-Use Agents" },
+        { label: "Agentic Workflows", value: "Multi-Agent Orchestration, Human-in-the-Loop, Autonomous Coding Agents, Agent Evaluation" },
+        { label: "RAG & Knowledge Systems", value: "Retrieval-Augmented Generation, Vector DBs (Pinecone, Weaviate, ChromaDB), Graph-Based RAG" },
+        { label: "Prompt/Context Engineering", value: "System Prompts, Few-Shot, Chain-of-Thought, Context Window Optimization, Structured Outputs" }
+      ]
+    },
+    {
+      title: "LLM Building & ML Engineering",
+      icon: "fas fa-brain",
+      items: [
+        { label: "Model Training", value: "PyTorch, Transformers, Attention Mechanisms, Pre-Training, Supervised Fine-Tuning" },
+        { label: "LLM Architecture", value: "GPT Architecture, Tokenization (BPE), Positional Encoding, Multi-Head Attention" },
+        { label: "Alignment & Evaluation", value: "RLHF, DPO, Instruction Tuning, Benchmark Evaluation, Perplexity Analysis" },
+        { label: "Inference & Deployment", value: "vLLM, ONNX, Quantization (GPTQ, AWQ), LoRA/QLoRA, Model Serving" },
+        { label: "Graph & Knowledge", value: "Neo4j, Knowledge Graphs, Graph Neural Networks, Entity Extraction" }
+      ]
+    },
+    {
+      title: "Frontend & UI Engineering",
+      icon: "fas fa-palette",
+      items: [
+        { label: "Languages", value: "Vanilla JavaScript (ES6+), TypeScript, HTML5, CSS3" },
+        { label: "Frameworks", value: "Vue.js (3/3.5), Nuxt.js, React (Familiarity), Tailwind CSS, Bootstrap" },
+        { label: "Design Principles", value: "Color Theory, Typography, Visual Hierarchy, Responsive Design, Accessibility (a11y)" },
+        { label: "Tooling", value: "Vite, Webpack, PostCSS, CSS Variables, Component Libraries" },
+        { label: "Patterns", value: "Component Architecture, State Management (Pinia/Vuex), SSR/SSG, Progressive Enhancement" }
+      ]
+    },
+    {
+      title: "Testing, Security & Quality",
+      icon: "fas fa-shield-alt",
+      items: [
+        { label: "Testing", value: "Unit (PHPUnit, Jest, PyTest), Integration, E2E (Cypress), TDD, Load Testing (k6)" },
+        { label: "Security", value: "OWASP Top 10, JWT/OAuth2, RBAC, Input Validation, SQL Injection Prevention" },
+        { label: "Code Quality", value: "Static Analysis, Linting (ESLint, PHPStan), Code Review Standards, SonarQube" },
+        { label: "Reliability", value: "Error Budgets, SLIs/SLOs, Chaos Engineering Principles, Post-Mortems" },
+        { label: "Compliance", value: "Data Privacy, Audit Trails, Secure SDLC, Dependency Scanning" }
+      ]
+    },
+    {
+      title: "Enterprise Software & Architecture",
+      icon: "fas fa-building",
+      items: [
+        { label: "Enterprise Patterns", value: "Multi-Tenancy, Feature Flags, A/B Testing, Canary Releases, Blue-Green" },
+        { label: "Integration", value: "ERP/CRM Systems, Payment Gateways, Third-Party APIs, Webhooks, ETL Pipelines" },
+        { label: "Documentation", value: "ADRs, RFC Process, API Documentation (OpenAPI), Runbooks, System Design Docs" },
+        { label: "Scalability", value: "Horizontal Scaling, Caching Strategies, CDN, Database Sharding, Read Replicas" },
+        { label: "Cost Engineering", value: "Cloud Cost Optimization, Right-Sizing, Reserved Instances, FinOps Principles" }
+      ]
+    },
+    {
       title: "Engineering Management & Productivity",
       icon: "fas fa-chess-king",
       items: [
@@ -96,7 +129,7 @@ const DATA = {
   experience: [
     {
       company: "Blubird Interactive Ltd.",
-      position: "Software Architect & Backend Lead",
+      position: "Associate Software Engineer (& Project Lead)",
       period: "Aug 2022 - Present",
       tags: ["System Architecture", "SaaS", "AI/LLM", "Cost Optimization", "Team Leadership"],
       achievements: [
@@ -140,6 +173,14 @@ const DATA = {
         "Created a standardized API communication layer that accelerated development of 5+ product features, reducing cross-team integration time from days to hours."
       ]
     }
+  ],
+  whyHire: [
+    { icon: "fas fa-chart-line", title: "Business-First Thinking", desc: "Every feature, refactor, and architecture choice starts with a business case. I quantify ROI before touching the keyboard and ship solutions that pay for themselves." },
+    { icon: "fas fa-balance-scale", title: "Cost-Benefit Analyst", desc: "Saved 35% on infrastructure by choosing the right architecture at the right scale. I treat engineering budgets like my own money \u2014 every dollar is justified." },
+    { icon: "fas fa-flask", title: "Research-Driven Engineer", desc: "I read papers, benchmark alternatives, and prototype before committing. No hype-driven development here \u2014 only evidence-based, validated decisions." },
+    { icon: "fas fa-database", title: "Data-Based Decisions", desc: "Query profiling, load testing, A/B validation \u2014 I measure first, build second. Every claim on this page has a real number behind it." },
+    { icon: "fas fa-microchip", title: "AI-Native Builder", desc: "I build with LLMs, train models from scratch, orchestrate multi-agent systems, and ship AI-powered features in production \u2014 not just demos." },
+    { icon: "fas fa-users", title: "Team Force Multiplier", desc: "I mentor engineers, document ADRs, run clear sprint planning, and make the whole team faster \u2014 not just myself. Code your team can own." }
   ],
   certifications: [
     { title: "DevOps Foundation", issuer: "DevOps Institute", year: "2024", description: "CI/CD pipelines, infrastructure automation, and production reliability engineering" },
@@ -192,6 +233,7 @@ function renderAll() {
     renderNav();
     renderHero();
     renderAbout();
+    renderWhyHire();
     renderSkills();
     renderExperience();
     renderCertifications();
@@ -235,9 +277,24 @@ function renderNav() {
 function renderHero() {
     const p = DATA.profile;
     document.getElementById('heroName').textContent = p.name;
-    document.getElementById('heroTitle').textContent = p.title;
     document.getElementById('heroAvatar').src = p.avatar;
     document.getElementById('heroAvatar').alt = p.name;
+
+    // Typing effect for the title
+    const titleEl = document.getElementById('heroTitle');
+    titleEl.textContent = '';
+    titleEl.classList.add('typing-cursor');
+    let i = 0;
+    function typeTitle() {
+        if (i < p.title.length) {
+            titleEl.textContent += p.title.charAt(i);
+            i++;
+            setTimeout(typeTitle, 22);
+        } else {
+            titleEl.classList.remove('typing-cursor');
+        }
+    }
+    setTimeout(typeTitle, 600);
 
     document.getElementById('heroMeta').innerHTML = `
         <div class="hero-meta-item"><i class="fas fa-map-marker-alt"></i><span>${p.location}</span></div>
@@ -261,6 +318,19 @@ function renderAbout() {
         DATA.profile.about.map(p => `<p>${p}</p>`).join('');
 }
 
+// ── Why Hire Me ──
+function renderWhyHire() {
+    const grid = document.getElementById('hireGrid');
+    if (!grid || !DATA.whyHire) return;
+    grid.innerHTML = DATA.whyHire.map(item => `
+        <div class="hire-card">
+            <div class="hire-icon"><i class="${item.icon}"></i></div>
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+        </div>
+    `).join('');
+}
+
 // ── Skills ──
 function renderSkills() {
     document.getElementById('skillsGrid').innerHTML = DATA.skills.map(cat => `
@@ -281,7 +351,11 @@ function renderSkills() {
 
 // ── Experience ──
 function renderExperience() {
-    document.getElementById('experienceTimeline').innerHTML = DATA.experience.map(exp => `
+    document.getElementById('experienceTimeline').innerHTML = DATA.experience.map((exp, idx) => {
+        const hasMore = exp.achievements.length > 2;
+        const visible = exp.achievements.slice(0, 2);
+        const hidden = exp.achievements.slice(2);
+        return `
         <div class="timeline-item">
             <h3 class="timeline-company">${exp.company}</h3>
             <div class="timeline-meta">
@@ -292,10 +366,27 @@ function renderExperience() {
                 ${exp.tags.map(t => `<span class="tag">${t}</span>`).join('')}
             </div>
             <ul class="timeline-achievements">
-                ${exp.achievements.map(a => `<li>${a}</li>`).join('')}
+                ${visible.map(a => `<li>${a}</li>`).join('')}
+                ${hasMore ? `<div class="achievements-hidden" id="exp-hidden-${idx}" style="display:none">
+                    ${hidden.map(a => `<li>${a}</li>`).join('')}
+                </div>
+                <li class="expand-toggle" data-idx="${idx}"><span class="expand-btn">Show ${hidden.length} more <i class="fas fa-chevron-down"></i></span></li>` : ''}
             </ul>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
+
+    document.querySelectorAll('.expand-toggle').forEach(el => {
+        el.addEventListener('click', function() {
+            const idx = this.dataset.idx;
+            const hidden = document.getElementById('exp-hidden-' + idx);
+            const isOpen = hidden.style.display !== 'none';
+            hidden.style.display = isOpen ? 'none' : 'contents';
+            const count = hidden.querySelectorAll('li').length;
+            this.querySelector('.expand-btn').innerHTML = isOpen
+                ? 'Show ' + count + ' more <i class="fas fa-chevron-down"></i>'
+                : 'Show less <i class="fas fa-chevron-up"></i>';
+        });
+    });
 }
 
 // ── Certifications ──
@@ -522,7 +613,73 @@ function initScrollReveal() {
         s.classList.add('fade-in');
         observer.observe(s);
     });
+
+    // Stagger children within grids
+    document.querySelectorAll('.skills-grid, .cards-grid').forEach(grid => {
+        const childObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const children = entry.target.children;
+                    Array.from(children).forEach((child, i) => {
+                        child.style.opacity = '0';
+                        child.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            child.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                            child.style.opacity = '1';
+                            child.style.transform = 'translateY(0)';
+                        }, i * 100);
+                    });
+                    childObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        childObs.observe(grid);
+    });
+}
+
+// ── Animated Counters ──
+function initCounters() {
+    const bar = document.getElementById('impactBar');
+    if (!bar) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                bar.querySelectorAll('.impact-number').forEach(el => {
+                    const target = parseInt(el.dataset.target);
+                    const duration = 1800;
+                    const start = performance.now();
+                    function tick(now) {
+                        const elapsed = now - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.floor(eased * target);
+                        if (progress < 1) requestAnimationFrame(tick);
+                        else el.textContent = target;
+                    }
+                    requestAnimationFrame(tick);
+                });
+                bar.classList.add('visible');
+                observer.unobserve(bar);
+            }
+        });
+    }, { threshold: 0.5 });
+    observer.observe(bar);
+}
+
+// ── Skill Card Active State ──
+function initSkillInteraction() {
+    document.querySelectorAll('.skill-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('skill-active'));
+            this.classList.add('skill-active');
+        });
+    });
 }
 
 // ── Start ──
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initCounters();
+    initSkillInteraction();
+});
