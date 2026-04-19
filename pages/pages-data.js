@@ -19,6 +19,16 @@ var PAGES_DATA = [
         featured: true
     },
     {
+        title: "Body Blueprint",
+        description: "Zero-to-mastery bodyweight calisthenics. 5 phases, 60+ exercises with video tutorials, weekly split, rest timer, streak tracker, and a Bangladesh/Asia-focused calorie + meal plan.",
+        href: "../body-blueprint/index.html",
+        icon: "fas fa-dumbbell",
+        color: "rose",
+        category: "Health",
+        tags: ["calisthenics", "workout", "fitness", "6-pack", "nutrition", "progression", "daily"],
+        featured: true
+    },
+    {
         title: "Annual Intentions Reset",
         description: "A comprehensive annual review and goal-setting workbook to reflect on the past year and plan the next.",
         href: "../annual-intentions-reset/index.html",
