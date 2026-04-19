@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch 2: The Why &amp; Decluttering — The Bullet Journal Method</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-chapter="ch2">
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="book-tag">Chapter 2</span>
+      <span class="header-title">The Why &amp; Decluttering</span>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn-icon" title="Book Home"><i class="fas fa-home"></i></a>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="tab-bar" id="mainTabs">
+      <button class="tab-btn active" data-tab="lessons">Lessons</button>
+      <button class="tab-btn" data-tab="summary">Summary</button>
+      <button class="tab-btn" data-tab="quiz">Quiz</button>
+      <button class="tab-btn" data-tab="mindmap">Mind Map</button>
+    </div>
+
+    <!-- LESSONS -->
+    <div class="tab-pane active" id="lessons">
+      <div class="section">
+        <div class="section-label">The Why</div>
+        <h2>Living with Intention</h2>
+        <p>Carroll's first start-up, Paintapic, taught him a crucial lesson. Despite building a successful product, he and his partner realized they weren't passionate about it&mdash;they'd fallen in love with the <em>process</em> of building, not the product itself.</p>
+
+        <div class="key-insight">
+          <strong>Intentionality</strong> is the power of the mind to direct itself toward that which it finds meaningful and take action toward that end. The opposite is operating on autopilot.
+        </div>
+
+        <p>The number one regret of dying patients, recorded by palliative care nurse Bronnie Ware, was that they wished they had stayed true to themselves. Most dreams went unfulfilled due to choices made&mdash;or not made.</p>
+
+        <div class="quote-block">
+          "Intentional living is the art of making our own choices before others' choices make us."
+          <span class="attribution">&mdash; Richie Norton</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Decluttering Your Mind</h2>
+        <p>Studies suggest we have <strong>50,000 to 70,000 thoughts per day</strong>. That is enough content to produce a book every single day. Unlike a book, our thoughts are not neatly composed. This is why we feel "busy" rather than productive.</p>
+
+        <div class="key-insight">
+          <strong>Key distinction:</strong> "Being busy" is code for being functionally overwhelmed. Being busy is not the same thing as being productive.
+        </div>
+
+        <h3>Decision Fatigue</h3>
+        <p>Every decision requires focus, and focus is an investment of your time and energy. The more decisions you make, the harder it becomes to make them well. This is why Barack Obama wore only gray or blue suits, and Mark Zuckerberg his gray hoodies&mdash;to limit trivial decisions.</p>
+
+        <!-- Interactive Decision Fatigue Meter -->
+        <div class="diagram-container">
+          <h4 style="text-transform:none;letter-spacing:0;color:var(--text);margin-bottom:1rem;">Decision Fatigue Simulator</h4>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;">
+            <button class="interactive-btn" id="addDecision">+ Add Decision</button>
+            <button class="interactive-btn secondary" id="resetDecisions">Reset</button>
+          </div>
+          <div style="margin-bottom:0.5rem;">
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-muted);margin-bottom:0.25rem;">
+              <span>Willpower</span>
+              <span id="willpowerPct">100%</span>
+            </div>
+            <div class="progress-bar-bg" style="height:12px;">
+              <div id="willpowerBar" class="progress-bar-fill" style="width:100%;transition:width 0.5s;"></div>
+            </div>
+          </div>
+          <div id="decisionFeedback" class="diagram-label">Click "Add Decision" to see how your willpower depletes throughout the day</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>The Mental Inventory</h2>
+        <p>The first step to recovering from decision fatigue is the <strong>Mental Inventory</strong>&mdash;a simple exercise to externalize everything in your head into three columns:</p>
+
+        <!-- Interactive Mental Inventory -->
+        <div class="diagram-container" style="text-align:left;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+            <div>
+              <h4 style="color:var(--accent);text-transform:none;letter-spacing:0;margin-bottom:0.5rem;">Working On</h4>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">Things you are presently doing</p>
+              <div id="col1Items" style="min-height:80px;"></div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <input type="text" id="col1Input" placeholder="Add item..." style="flex:1;padding:0.4rem;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.82rem;">
+                <button class="interactive-btn" style="padding:0.4rem 0.8rem;font-size:0.78rem;" onclick="addInventoryItem(1)">+</button>
+              </div>
+            </div>
+            <div>
+              <h4 style="color:var(--accent);text-transform:none;letter-spacing:0;margin-bottom:0.5rem;">Should Be Working On</h4>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">Things you should be doing</p>
+              <div id="col2Items" style="min-height:80px;"></div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <input type="text" id="col2Input" placeholder="Add item..." style="flex:1;padding:0.4rem;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.82rem;">
+                <button class="interactive-btn" style="padding:0.4rem 0.8rem;font-size:0.78rem;" onclick="addInventoryItem(2)">+</button>
+              </div>
+            </div>
+            <div>
+              <h4 style="color:var(--accent);text-transform:none;letter-spacing:0;margin-bottom:0.5rem;">Want To Work On</h4>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">Things you want to be doing</p>
+              <div id="col3Items" style="min-height:80px;"></div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <input type="text" id="col3Input" placeholder="Add item..." style="flex:1;padding:0.4rem;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.82rem;">
+                <button class="interactive-btn" style="padding:0.4rem 0.8rem;font-size:0.78rem;" onclick="addInventoryItem(3)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>The Test: Filtering Your List</h2>
+        <p>Once you have your Mental Inventory, ask two questions about each item to decide if it stays:</p>
+
+        <!-- Interactive Flowchart -->
+        <div class="diagram-container">
+          <svg viewBox="0 0 400 380" width="400" height="380">
+            <defs><marker id="arr2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)"/>
+            </marker></defs>
+            <!-- Task box -->
+            <rect x="130" y="10" width="140" height="40" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="200" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text)">TASK</text>
+            <!-- Arrow down -->
+            <line x1="200" y1="50" x2="200" y2="80" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr2)"/>
+            <!-- Is it vital? -->
+            <rect x="115" y="85" width="170" height="45" rx="8" fill="rgba(200,164,21,0.1)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="200" y="112" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Is it VITAL?</text>
+            <!-- Yes arrow right -->
+            <line x1="285" y1="107" x2="340" y2="107" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arr2)"/>
+            <text x="310" y="100" font-size="10" fill="var(--accent-3)" font-weight="600">YES</text>
+            <rect x="345" y="87" width="50" height="40" rx="8" fill="var(--success-bg)" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="370" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-3)">KEEP</text>
+            <!-- No arrow down -->
+            <line x1="200" y1="130" x2="200" y2="170" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr2)"/>
+            <text x="210" y="155" font-size="10" fill="var(--accent-danger)" font-weight="600">NO</text>
+            <!-- Does it matter? -->
+            <rect x="100" y="175" width="200" height="45" rx="8" fill="rgba(200,164,21,0.1)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="200" y="202" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)">Does it MATTER?</text>
+            <!-- Yes arrow right -->
+            <line x1="300" y1="197" x2="340" y2="197" stroke="var(--accent-3)" stroke-width="2" marker-end="url(#arr2)"/>
+            <text x="317" y="190" font-size="10" fill="var(--accent-3)" font-weight="600">YES</text>
+            <rect x="345" y="177" width="50" height="40" rx="8" fill="var(--success-bg)" stroke="var(--accent-3)" stroke-width="2"/>
+            <text x="370" y="202" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-3)">KEEP</text>
+            <!-- No arrow down -->
+            <line x1="200" y1="220" x2="200" y2="270" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr2)"/>
+            <text x="210" y="250" font-size="10" fill="var(--accent-danger)" font-weight="600">NO</text>
+            <!-- Distraction -->
+            <rect x="130" y="275" width="140" height="45" rx="8" fill="var(--error-bg)" stroke="var(--accent-danger)" stroke-width="2"/>
+            <text x="200" y="295" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-danger)">DISTRACTION</text>
+            <text x="200" y="310" text-anchor="middle" font-size="9" fill="var(--text-muted)">Cross it off</text>
+          </svg>
+          <div class="diagram-label">The Two-Question Test for filtering your Mental Inventory</div>
+        </div>
+
+        <div class="key-insight">
+          <strong>TIP:</strong> If you struggle to answer these questions, ask yourself: what would happen if this item just didn't get done? <em>Ever.</em> Would there be any real repercussions?
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="tab-pane" id="summary">
+      <div class="section">
+        <h2>Chapter 2 Summary</h2>
+        <div class="concept-card">
+          <h4>Living with Intention</h4>
+          <p>The number one regret of dying patients was not staying true to themselves. Intentionality means directing your mind toward what you find meaningful, rather than operating on autopilot. You can view your BuJo as a living autobiography.</p>
+        </div>
+        <div class="concept-card">
+          <h4>Busy vs. Productive</h4>
+          <p>With 50,000-70,000 thoughts per day and countless choices, we suffer from decision fatigue. The more decisions we make, the harder they become. Leaders like Obama and Zuckerberg actively limit trivial decisions.</p>
+        </div>
+        <div class="concept-card">
+          <h4>The Mental Inventory</h4>
+          <p>Three columns: (1) Working on, (2) Should be working on, (3) Want to work on. Externalize everything from your head onto paper to get perspective and control.</p>
+        </div>
+        <div class="concept-card">
+          <h4>The Two-Question Test</h4>
+          <p>For each item: Does this matter? Is this vital? Items that fail both are distractions. Cross them off. You will be left with needs (responsibilities) and wants (goals).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="tab-pane" id="quiz">
+      <div class="section">
+        <h2>Test Your Knowledge</h2>
+        <div id="quizContainer"></div>
+      </div>
+    </div>
+
+    <!-- MIND MAP -->
+    <div class="tab-pane" id="mindmap">
+      <div class="section">
+        <h2>Chapter Mind Map</h2>
+        <div class="mind-map-container">
+          <svg viewBox="0 0 800 500" width="800" height="500">
+            <circle cx="400" cy="250" r="45" fill="var(--accent)"/>
+            <text x="400" y="246" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">WHY &amp;</text>
+            <text x="400" y="262" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">DECLUTTER</text>
+
+            <line x1="355" y1="225" x2="160" y2="100" stroke="var(--accent)" stroke-width="2"/>
+            <circle cx="160" cy="100" r="30" fill="rgba(200,164,21,0.15)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="160" y="98" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="600">The Why</text>
+            <line x1="130" y1="78" x2="60" y2="50" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+            <text x="55" y="45" text-anchor="middle" fill="var(--text-muted)" font-size="9">Intentionality</text>
+            <line x1="188" y1="78" x2="250" y2="45" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+            <text x="255" y="40" text-anchor="middle" fill="var(--text-muted)" font-size="9">Top 5 regrets</text>
+
+            <line x1="445" y1="225" x2="640" y2="100" stroke="#10b981" stroke-width="2"/>
+            <circle cx="640" cy="100" r="30" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
+            <text x="640" y="98" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="600">Decisions</text>
+            <line x1="668" y1="82" x2="740" y2="50" stroke="#10b981" stroke-width="1" opacity="0.5"/>
+            <text x="745" y="45" text-anchor="middle" fill="var(--text-muted)" font-size="9">Decision fatigue</text>
+            <line x1="668" y1="115" x2="740" y2="140" stroke="#10b981" stroke-width="1" opacity="0.5"/>
+            <text x="745" y="136" text-anchor="middle" fill="var(--text-muted)" font-size="9">50-70k thoughts</text>
+
+            <line x1="355" y1="275" x2="150" y2="400" stroke="#e8a020" stroke-width="2"/>
+            <circle cx="150" cy="400" r="30" fill="rgba(232,160,32,0.15)" stroke="#e8a020" stroke-width="2"/>
+            <text x="150" y="396" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="600">Mental</text>
+            <text x="150" y="410" text-anchor="middle" fill="var(--text-muted)" font-size="8">Inventory</text>
+            <line x1="120" y1="425" x2="55" y2="460" stroke="#e8a020" stroke-width="1" opacity="0.5"/>
+            <text x="50" y="456" text-anchor="middle" fill="var(--text-muted)" font-size="9">3 columns</text>
+
+            <line x1="445" y1="275" x2="650" y2="400" stroke="#6366f1" stroke-width="2"/>
+            <circle cx="650" cy="400" r="30" fill="rgba(99,102,241,0.15)" stroke="#6366f1" stroke-width="2"/>
+            <text x="650" y="398" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="600">The Test</text>
+            <line x1="680" y1="415" x2="740" y2="440" stroke="#6366f1" stroke-width="1" opacity="0.5"/>
+            <text x="745" y="436" text-anchor="middle" fill="var(--text-muted)" font-size="9">Vital? Matter?</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-nav">
+      <a href="ch1.html"><i class="fas fa-arrow-left"></i> Chapter 1</a>
+      <a href="ch3.html">Chapter 3 <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Based on <em>The Bullet Journal Method</em> by Ryder Carroll, &copy; 2018 Portfolio/Penguin. <a href="../index.html">Visual Books</a></p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    VB.initTabs('mainTabs');
+
+    // Decision Fatigue Simulator
+    var willpower = 100;
+    var decisionCount = 0;
+    document.getElementById('addDecision').addEventListener('click', function() {
+      if (willpower <= 0) return;
+      decisionCount++;
+      var drain = Math.min(5 + Math.floor(decisionCount * 1.5), 20);
+      willpower = Math.max(0, willpower - drain);
+      document.getElementById('willpowerBar').style.width = willpower + '%';
+      document.getElementById('willpowerPct').textContent = willpower + '%';
+      var msgs = [
+        'Good morning! Still sharp.',
+        'Decisions flowing easily.',
+        'Slight mental strain starting...',
+        'Getting harder to choose well.',
+        'Willpower is depleting fast.',
+        'Decision quality dropping.',
+        'You are now in decision fatigue territory.',
+        'Choosing is exhausting. You want to avoid it.',
+        'Critical: you will likely make a poor decision now.',
+        'Willpower tank is empty. Time for recovery.'
+      ];
+      var idx = Math.min(Math.floor((100 - willpower) / 11), msgs.length - 1);
+      document.getElementById('decisionFeedback').textContent = 'Decision #' + decisionCount + ': ' + msgs[idx];
+      if (willpower <= 20) {
+        document.getElementById('willpowerBar').style.background = 'var(--accent-danger)';
+      } else if (willpower <= 50) {
+        document.getElementById('willpowerBar').style.background = 'var(--accent)';
+      }
+    });
+    document.getElementById('resetDecisions').addEventListener('click', function() {
+      willpower = 100;
+      decisionCount = 0;
+      document.getElementById('willpowerBar').style.width = '100%';
+      document.getElementById('willpowerBar').style.background = '';
+      document.getElementById('willpowerPct').textContent = '100%';
+      document.getElementById('decisionFeedback').textContent = 'Click "Add Decision" to see how your willpower depletes throughout the day';
+    });
+
+    // Mental Inventory
+    function addInventoryItem(col) {
+      var input = document.getElementById('col' + col + 'Input');
+      var val = input.value.trim();
+      if (!val) return;
+      var container = document.getElementById('col' + col + 'Items');
+      var item = document.createElement('div');
+      item.style.cssText = 'display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:0.35rem;font-size:0.82rem;';
+      var dot = document.createElement('span');
+      dot.style.cssText = 'width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0;';
+      var text = document.createElement('span');
+      text.textContent = val;
+      text.style.flex = '1';
+      var del = document.createElement('button');
+      del.textContent = '\u00d7';
+      del.style.cssText = 'background:none;border:none;color:var(--text-light);cursor:pointer;font-size:1rem;padding:0;';
+      del.addEventListener('click', function() { item.remove(); });
+      item.appendChild(dot);
+      item.appendChild(text);
+      item.appendChild(del);
+      container.appendChild(item);
+      input.value = '';
+    }
+    document.querySelectorAll('[id^="col"][id$="Input"]').forEach(function(input) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          var col = this.id.replace('col','').replace('Input','');
+          addInventoryItem(parseInt(col));
+        }
+      });
+    });
+
+    VB.initQuiz('quizContainer', [
+      {
+        question: 'What lesson did Carroll learn from his startup Paintapic?',
+        options: ['That startups always fail', 'He had fallen in love with building, not the product', 'He needed more funding', 'The product was too complex'],
+        answer: 1,
+        explanation: 'Carroll realized he and his partner loved the entrepreneurial challenge of building, but were not passionate about the product itself.'
+      },
+      {
+        question: 'How many thoughts do studies suggest we have per day?',
+        options: ['10,000-20,000', '50,000-70,000', '100,000-200,000', '500-1,000'],
+        answer: 1,
+        explanation: 'Studies suggest we have 50,000 to 70,000 thoughts per day, enough to fill a book daily.'
+      },
+      {
+        question: 'What is "decision fatigue"?',
+        options: ['Being tired from physical work', 'The state where making decisions depletes mental energy', 'Forgetting what you decided', 'Making decisions too quickly'],
+        answer: 1,
+        explanation: 'Decision fatigue is the state where making many decisions depletes your mental energy, making each subsequent decision harder.'
+      },
+      {
+        question: 'Why did Barack Obama wear only gray or blue suits?',
+        options: ['Fashion statement', 'To pare down decisions and save mental energy', 'Office dress code', 'He only liked those colors'],
+        answer: 1,
+        explanation: 'Obama said "I am trying to pare down decisions" because he had too many important decisions to make.'
+      },
+      {
+        question: 'What are the three columns of the Mental Inventory?',
+        options: ['Past, Present, Future', 'Working on, Should be working on, Want to work on', 'Tasks, Events, Notes', 'Urgent, Important, Optional'],
+        answer: 1,
+        explanation: 'The three columns are: things you are presently working on, things you should be working on, and things you want to work on.'
+      },
+      {
+        question: 'What two questions form "The Test" for filtering your inventory?',
+        options: ['Is it fun? Is it easy?', 'Does it matter? Is it vital?', 'Can I do it? Should I do it?', 'Is it urgent? Is it important?'],
+        answer: 1,
+        explanation: 'The two questions are: Does this matter (to you or someone you love)? Is this vital (rent, taxes, your job)?'
+      },
+      {
+        question: 'What should you do with items that fail both test questions?',
+        options: ['Delegate them', 'Cross them off as distractions', 'Schedule them for later', 'Ask someone else'],
+        answer: 1,
+        explanation: 'Any item that does not pass the test is a distraction. Cross it off. Be ruthless.'
+      },
+      {
+        question: 'What was the number one regret of dying patients according to Bronnie Ware?',
+        options: ['Not making more money', 'They wished they had stayed true to themselves', 'Not traveling enough', 'Working too little'],
+        answer: 1,
+        explanation: 'The number one regret was that they wished they had stayed true to themselves and not lived the life others expected.'
+      },
+      {
+        question: 'According to Carroll, what is "being busy" code for?',
+        options: ['Being successful', 'Being functionally overwhelmed', 'Being productive', 'Being important'],
+        answer: 1,
+        explanation: 'For most of us, "being busy" is code for being functionally overwhelmed.'
+      },
+      {
+        question: 'After completing the Mental Inventory and Test, what two types of items remain?',
+        options: ['Tasks and Events', 'Things you need to do (responsibilities) and things you want to do (goals)', 'Urgent and non-urgent', 'Personal and professional'],
+        answer: 1,
+        explanation: 'You are left with things you need to do (responsibilities) and things you want to do (goals).'
+      }
+    ]);
+  </script>
+</body>
+</html>

@@ -5,13 +5,13 @@
 const DATA = {
   profile: {
     name: "Md. Saif Zaman",
-    title: "Abdullah | Software Architect & AI-Native Engineer | ~6 YOE | Building Systems That Pay for Themselves | Research-Driven, Data-Based, Team-First",
+    title: "Abdullah | AI-Native Software Engineer | ~6 YOE | Building Systems That Pay for Themselves | Research-Driven, Data-Based, Team-First",
     location: "Dhaka, Bangladesh",
     email: "info.saifzaman@gmail.com",
     phone: "+880 1773-691885",
     avatar: "new_avatar.jpg",
     about: [
-      "I am a Software Architect and AI-Native Engineer with 6 years of experience designing systems where every decision is backed by data, justified by cost-benefit analysis, and validated through research. I don't pick a stack \u2014 I pick the right tool for the business problem. Go, PHP, Java, Python, or whatever the domain demands. That's what stackless means: zero loyalty to tools, total loyalty to outcomes.",
+      "I am an AI-Native Software Engineer with 6 years of experience designing systems where every decision is backed by data, justified by cost-benefit analysis, and validated through research. I don't pick a stack \u2014 I pick the right tool for the business problem. Go, PHP, Java, Python, or whatever the domain demands. That's what stackless means: zero loyalty to tools, total loyalty to outcomes.",
       "Every system I build starts with three questions: What does the business need? What does the data say? What's the cost of getting it wrong? I've driven 40% reductions in report generation time, architected platforms handling 1,000+ client transactions, and built integrations that eliminate 10+ hours of manual work weekly \u2014 not by chasing elegance, but by measuring pain, quantifying ROI, and shipping solutions that pay for themselves.",
       "I am AI-native, not AI-adjacent. I build with LLMs, train models from scratch, orchestrate multi-agent systems, and design RAG pipelines that turn unstructured knowledge into competitive advantage. I use Claude Code, autonomous coding agents, and agentic workflows as daily force multipliers \u2014 not novelty. This isn't about keeping up with AI; it's about being the engineer who makes AI keep up with the business.",
       "What sets me apart is how I operate in a team. I mentor engineers, run structured 1:1s, lead sprint planning with clarity, and make architectural decisions transparently so the whole team understands the why. The best architecture is the one your team can maintain, extend, and reason about at 2 AM during an incident. Research-driven, data-based, team-first \u2014 that's not a tagline, it's how I ship every single day."
@@ -312,68 +312,185 @@ function renderSocialLinks(id, links) {
     ).join('');
 }
 
+// ── Space Illustrations (monochrome line art) ──
+const SPACE_SVG = {
+    // Saturn-ringed planet (THE APPROACH — navigating cost/benefit orbits)
+    planet:
+        '<svg class="chapter-art" viewBox="0 0 120 120" aria-hidden="true">' +
+            '<ellipse cx="60" cy="60" rx="55" ry="14" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4" transform="rotate(-20 60 60)"/>' +
+            '<ellipse cx="60" cy="60" rx="48" ry="10" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(-20 60 60)"/>' +
+            '<circle cx="60" cy="60" r="22" fill="currentColor" opacity="0.12"/>' +
+            '<circle cx="60" cy="60" r="22" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<circle cx="52" cy="54" r="3" fill="currentColor" opacity="0.4"/>' +
+            '<circle cx="66" cy="65" r="2" fill="currentColor" opacity="0.3"/>' +
+            '<circle cx="58" cy="68" r="1.5" fill="currentColor" opacity="0.5"/>' +
+        '</svg>',
+    // Satellite with dish + signals (THE EVIDENCE — measuring, signaling)
+    satellite:
+        '<svg class="chapter-art" viewBox="0 0 120 120" aria-hidden="true">' +
+            '<rect x="52" y="52" width="16" height="16" fill="currentColor" opacity="0.2"/>' +
+            '<rect x="52" y="52" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<line x1="60" y1="52" x2="60" y2="68" stroke="currentColor" opacity="0.5"/>' +
+            '<line x1="52" y1="60" x2="68" y2="60" stroke="currentColor" opacity="0.5"/>' +
+            '<rect x="15" y="56" width="32" height="8" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+            '<line x1="23" y1="56" x2="23" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<line x1="31" y1="56" x2="31" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<line x1="39" y1="56" x2="39" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<rect x="73" y="56" width="32" height="8" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+            '<line x1="81" y1="56" x2="81" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<line x1="89" y1="56" x2="89" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<line x1="97" y1="56" x2="97" y2="64" stroke="currentColor" opacity="0.4"/>' +
+            '<path d="M60 52 Q50 45 50 30 Q60 36 70 30 Q70 45 60 52" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<line x1="60" y1="30" x2="60" y2="52" stroke="currentColor" opacity="0.4"/>' +
+            '<path d="M75 20 Q82 14 90 10" fill="none" stroke="currentColor" stroke-dasharray="2 3" opacity="0.6"/>' +
+            '<path d="M78 25 Q88 20 98 18" fill="none" stroke="currentColor" stroke-dasharray="2 3" opacity="0.4"/>' +
+        '</svg>',
+    // Rocket launching (THE EDGE — AI-native lift-off)
+    rocket:
+        '<svg class="chapter-art" viewBox="0 0 120 120" aria-hidden="true">' +
+            '<path d="M60 10 L50 32 L50 82 L70 82 L70 32 Z" fill="currentColor" opacity="0.12"/>' +
+            '<path d="M60 10 L50 32 L50 82 L70 82 L70 32 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<line x1="50" y1="45" x2="70" y2="45" stroke="currentColor" opacity="0.5"/>' +
+            '<line x1="50" y1="60" x2="70" y2="60" stroke="currentColor" opacity="0.5"/>' +
+            '<circle cx="60" cy="50" r="3.5" fill="none" stroke="currentColor" stroke-width="1"/>' +
+            '<circle cx="60" cy="50" r="1.5" fill="currentColor"/>' +
+            '<path d="M50 82 L40 100 L50 92 Z" fill="currentColor" opacity="0.4"/>' +
+            '<path d="M70 82 L80 100 L70 92 Z" fill="currentColor" opacity="0.4"/>' +
+            '<path d="M50 82 L50 92 L70 92 L70 82" fill="none" stroke="currentColor"/>' +
+            '<path d="M55 95 L60 115 L65 95" fill="none" stroke="currentColor" stroke-dasharray="2 2" opacity="0.7" class="exhaust"/>' +
+            '<circle cx="60" cy="108" r="1.5" fill="currentColor" opacity="0.6" class="exhaust"/>' +
+        '</svg>',
+    // Space station ring (THE TEAM — Endurance-style)
+    station:
+        '<svg class="chapter-art" viewBox="0 0 120 120" aria-hidden="true">' +
+            '<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<circle cx="60" cy="60" r="38" fill="none" stroke="currentColor" opacity="0.35"/>' +
+            '<line x1="60" y1="10" x2="60" y2="110" stroke="currentColor" opacity="0.3"/>' +
+            '<line x1="10" y1="60" x2="110" y2="60" stroke="currentColor" opacity="0.3"/>' +
+            '<line x1="25" y1="25" x2="95" y2="95" stroke="currentColor" opacity="0.2"/>' +
+            '<line x1="95" y1="25" x2="25" y2="95" stroke="currentColor" opacity="0.2"/>' +
+            '<rect x="55" y="4" width="10" height="12" fill="currentColor" opacity="0.8"/>' +
+            '<rect x="104" y="55" width="12" height="10" fill="currentColor" opacity="0.7"/>' +
+            '<rect x="55" y="104" width="10" height="12" fill="currentColor" opacity="0.7"/>' +
+            '<rect x="4" y="55" width="12" height="10" fill="currentColor" opacity="0.8"/>' +
+            '<circle cx="60" cy="60" r="10" fill="currentColor" opacity="0.25"/>' +
+            '<circle cx="60" cy="60" r="10" fill="none" stroke="currentColor"/>' +
+            '<circle cx="60" cy="60" r="3" fill="currentColor"/>' +
+        '</svg>'
+};
+
 // ── About ──
 function renderAbout() {
-    document.getElementById('aboutContent').innerHTML =
-        DATA.profile.about.map(p => `<p>${p}</p>`).join('');
+    const chapters = [
+        { num: '01', label: 'THE APPROACH', icon: 'fas fa-compass',   art: SPACE_SVG.planet },
+        { num: '02', label: 'THE EVIDENCE', icon: 'fas fa-chart-line', art: SPACE_SVG.satellite },
+        { num: '03', label: 'THE EDGE',     icon: 'fas fa-brain',      art: SPACE_SVG.rocket },
+        { num: '04', label: 'THE TEAM',     icon: 'fas fa-users',      art: SPACE_SVG.station }
+    ];
+    const html = DATA.profile.about.map((p, i) => {
+        const c = chapters[i] || chapters[chapters.length - 1];
+        return '<div class="about-chapter">' +
+            '<div class="chapter-mark">' +
+                '<span class="chapter-num">' + c.num + '</span>' +
+                '<span class="chapter-line"></span>' +
+                '<span class="chapter-icon"><i class="' + c.icon + '"></i></span>' +
+            '</div>' +
+            '<div class="chapter-body">' +
+                '<span class="chapter-label">' + c.label + '</span>' +
+                '<p>' + p + '</p>' +
+            '</div>' +
+            '<div class="chapter-art-wrap">' + c.art + '</div>' +
+        '</div>';
+    }).join('');
+    document.getElementById('aboutContent').innerHTML = html;
 }
 
 // ── Why Hire Me ──
 function renderWhyHire() {
     const grid = document.getElementById('hireGrid');
     if (!grid || !DATA.whyHire) return;
-    grid.innerHTML = DATA.whyHire.map(item => `
-        <div class="hire-card">
-            <div class="hire-icon"><i class="${item.icon}"></i></div>
-            <h3>${item.title}</h3>
-            <p>${item.desc}</p>
-        </div>
-    `).join('');
+    const badgePattern = '<svg class="hire-pattern" viewBox="0 0 60 60" aria-hidden="true">' +
+        '<defs><pattern id="hpDots" width="8" height="8" patternUnits="userSpaceOnUse">' +
+        '<circle cx="1" cy="1" r="0.8" fill="currentColor" opacity="0.5"/></pattern></defs>' +
+        '<circle cx="30" cy="30" r="28" fill="url(#hpDots)"/></svg>';
+    const html = DATA.whyHire.map((item, i) => {
+        const n = String(i + 1).padStart(2, '0');
+        return '<div class="hire-card">' +
+            '<span class="hire-index">' + n + '</span>' +
+            '<div class="hire-badge">' +
+                badgePattern +
+                '<div class="hire-icon"><i class="' + item.icon + '"></i></div>' +
+            '</div>' +
+            '<h3>' + item.title + '</h3>' +
+            '<p>' + item.desc + '</p>' +
+            '<span class="hire-corner"></span>' +
+        '</div>';
+    }).join('');
+    grid.innerHTML = html;
 }
 
 // ── Skills ──
 function renderSkills() {
-    document.getElementById('skillsGrid').innerHTML = DATA.skills.map(cat => `
-        <div class="skill-card">
-            <div class="skill-card-header">
-                <i class="${cat.icon}"></i>
-                <h3>${cat.title}</h3>
-            </div>
-            ${cat.items.map(item => `
-                <div class="skill-item">
-                    <span class="skill-label">${item.label}</span>
-                    <span class="skill-value">${item.value}</span>
-                </div>
-            `).join('')}
-        </div>
-    `).join('');
+    const masteryMap = [5, 5, 4, 5, 4, 4, 4, 4, 5];
+    const html = DATA.skills.map((cat, idx) => {
+        const level = masteryMap[idx] || 4;
+        let dots = '';
+        for (let d = 0; d < 5; d++) {
+            dots += '<span class="mastery-dot' + (d < level ? ' filled' : '') + '"></span>';
+        }
+        const items = cat.items.map(item =>
+            '<div class="skill-item">' +
+                '<span class="skill-label">' + item.label + '</span>' +
+                '<span class="skill-value">' + item.value + '</span>' +
+            '</div>'
+        ).join('');
+        return '<div class="skill-card">' +
+            '<span class="skill-bg-glyph"><i class="' + cat.icon + '"></i></span>' +
+            '<div class="skill-card-header">' +
+                '<i class="' + cat.icon + '"></i>' +
+                '<h3>' + cat.title + '</h3>' +
+            '</div>' +
+            '<div class="skill-mastery" title="Mastery level">' +
+                '<span class="mastery-label">MASTERY</span>' +
+                '<div class="mastery-dots">' + dots + '</div>' +
+            '</div>' +
+            items +
+        '</div>';
+    }).join('');
+    document.getElementById('skillsGrid').innerHTML = html;
 }
 
 // ── Experience ──
+function getMonogram(name) {
+    return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+}
 function renderExperience() {
-    document.getElementById('experienceTimeline').innerHTML = DATA.experience.map((exp, idx) => {
+    const html = DATA.experience.map((exp, idx) => {
         const hasMore = exp.achievements.length > 2;
         const visible = exp.achievements.slice(0, 2);
         const hidden = exp.achievements.slice(2);
-        return `
-        <div class="timeline-item">
-            <h3 class="timeline-company">${exp.company}</h3>
-            <div class="timeline-meta">
-                <span class="timeline-position">${exp.position}</span>
-                <span class="timeline-period">${exp.period}</span>
-            </div>
-            <div class="timeline-tags">
-                ${exp.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-            </div>
-            <ul class="timeline-achievements">
-                ${visible.map(a => `<li>${a}</li>`).join('')}
-                ${hasMore ? `<div class="achievements-hidden" id="exp-hidden-${idx}" style="display:none">
-                    ${hidden.map(a => `<li>${a}</li>`).join('')}
-                </div>
-                <li class="expand-toggle" data-idx="${idx}"><span class="expand-btn">Show ${hidden.length} more <i class="fas fa-chevron-down"></i></span></li>` : ''}
-            </ul>
-        </div>`;
+        const monogram = getMonogram(exp.company);
+        const visibleLis = visible.map(a => '<li>' + a + '</li>').join('');
+        const hiddenLis = hidden.map(a => '<li>' + a + '</li>').join('');
+        const tagsHtml = exp.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+        const expandBlock = hasMore ?
+            '<div class="achievements-hidden" id="exp-hidden-' + idx + '" style="display:none">' + hiddenLis + '</div>' +
+            '<li class="expand-toggle" data-idx="' + idx + '"><span class="expand-btn">Show ' + hidden.length + ' more <i class="fas fa-chevron-down"></i></span></li>'
+            : '';
+        return '<div class="timeline-item">' +
+            '<div class="timeline-marker"><span class="timeline-monogram">' + monogram + '</span></div>' +
+            '<div class="timeline-inner">' +
+                '<h3 class="timeline-company">' + exp.company + '</h3>' +
+                '<div class="timeline-meta">' +
+                    '<span class="timeline-position">' + exp.position + '</span>' +
+                    '<span class="timeline-period">' + exp.period + '</span>' +
+                '</div>' +
+                '<div class="timeline-tags">' + tagsHtml + '</div>' +
+                '<ul class="timeline-achievements">' + visibleLis + expandBlock + '</ul>' +
+            '</div>' +
+        '</div>';
     }).join('');
+    document.getElementById('experienceTimeline').innerHTML = html;
 
     document.querySelectorAll('.expand-toggle').forEach(el => {
         el.addEventListener('click', function() {
@@ -425,16 +542,90 @@ function renderLeadership() {
     `).join('');
 }
 
+// ── Spaceship illustrations for projects ──
+const SHIPS = {
+    // Endurance ring ship
+    endurance:
+        '<svg class="project-ship ship-endurance" viewBox="0 0 160 80" aria-hidden="true">' +
+            '<g class="ship-spin" style="transform-origin: 80px 40px">' +
+                '<ellipse cx="80" cy="40" rx="34" ry="32" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+                '<ellipse cx="80" cy="40" rx="22" ry="20" fill="none" stroke="currentColor" opacity="0.4"/>' +
+                '<line x1="80" y1="8" x2="80" y2="72" stroke="currentColor" opacity="0.4"/>' +
+                '<line x1="46" y1="40" x2="114" y2="40" stroke="currentColor" opacity="0.4"/>' +
+                '<line x1="57" y1="17" x2="103" y2="63" stroke="currentColor" opacity="0.25"/>' +
+                '<line x1="103" y1="17" x2="57" y2="63" stroke="currentColor" opacity="0.25"/>' +
+                '<rect x="75" y="4" width="10" height="9" fill="currentColor"/>' +
+                '<rect x="108" y="35" width="10" height="10" fill="currentColor"/>' +
+                '<rect x="75" y="67" width="10" height="9" fill="currentColor"/>' +
+                '<rect x="42" y="35" width="10" height="10" fill="currentColor"/>' +
+                '<circle cx="80" cy="40" r="6" fill="currentColor"/>' +
+            '</g>' +
+        '</svg>',
+    // Sleek cruiser (Ranger-style)
+    ranger:
+        '<svg class="project-ship ship-ranger" viewBox="0 0 200 80" aria-hidden="true">' +
+            '<path d="M20 40 L140 28 L170 40 L140 52 Z" fill="currentColor" opacity="0.15"/>' +
+            '<path d="M20 40 L140 28 L170 40 L140 52 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<path d="M80 28 L90 10 L110 10 L120 28" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+            '<path d="M80 52 L90 70 L110 70 L120 52" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+            '<circle cx="150" cy="40" r="3.5" fill="none" stroke="currentColor" stroke-width="1"/>' +
+            '<circle cx="150" cy="40" r="1.5" fill="currentColor"/>' +
+            '<line x1="70" y1="35" x2="90" y2="35" stroke="currentColor" opacity="0.5"/>' +
+            '<line x1="70" y1="45" x2="90" y2="45" stroke="currentColor" opacity="0.5"/>' +
+            '<path d="M20 40 L0 40" stroke="currentColor" stroke-dasharray="3 4" opacity="0.8" class="ship-trail"/>' +
+            '<path d="M10 36 L-6 36" stroke="currentColor" stroke-dasharray="2 3" opacity="0.5"/>' +
+            '<path d="M10 44 L-6 44" stroke="currentColor" stroke-dasharray="2 3" opacity="0.5"/>' +
+        '</svg>',
+    // Classic rocket with fins
+    rocket:
+        '<svg class="project-ship ship-rocket" viewBox="0 0 100 160" aria-hidden="true">' +
+            '<path d="M50 10 L35 38 L35 110 L65 110 L65 38 Z" fill="currentColor" opacity="0.12"/>' +
+            '<path d="M50 10 L35 38 L35 110 L65 110 L65 38 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+            '<line x1="35" y1="55" x2="65" y2="55" stroke="currentColor" opacity="0.5"/>' +
+            '<line x1="35" y1="75" x2="65" y2="75" stroke="currentColor" opacity="0.5"/>' +
+            '<line x1="35" y1="95" x2="65" y2="95" stroke="currentColor" opacity="0.5"/>' +
+            '<circle cx="50" cy="60" r="5" fill="none" stroke="currentColor" stroke-width="1"/>' +
+            '<circle cx="50" cy="60" r="2" fill="currentColor"/>' +
+            '<path d="M35 110 L20 140 L35 128 Z" fill="currentColor" opacity="0.4"/>' +
+            '<path d="M65 110 L80 140 L65 128 Z" fill="currentColor" opacity="0.4"/>' +
+            '<path d="M35 110 L35 128 L65 128 L65 110" fill="none" stroke="currentColor"/>' +
+            '<path d="M42 132 L50 156 L58 132" fill="none" stroke="currentColor" stroke-dasharray="2 3" opacity="0.7" class="ship-trail"/>' +
+        '</svg>'
+};
+
 // ── Projects ──
 function renderProjects() {
-    document.getElementById('projectsGrid').innerHTML = DATA.projects.map(proj => `
-        <div class="card">
-            <h3>${proj.title}</h3>
-            <p class="card-desc">${proj.description}</p>
-            <span class="card-tech">${proj.tech}</span>
-            ${proj.link ? `<a href="${proj.link}" class="card-link" target="_blank"><i class="fas fa-external-link-alt"></i> ${proj.linkText || 'View'}</a>` : ''}
-        </div>
-    `).join('');
+    const icons = ['fas fa-building', 'fas fa-book-open', 'fas fa-mosque'];
+    const ships = [SHIPS.endurance, SHIPS.ranger, SHIPS.rocket];
+    const html = DATA.projects.map((proj, i) => {
+        const icon = icons[i] || 'fas fa-cube';
+        const ship = ships[i] || SHIPS.ranger;
+        const host = (proj.link || '').replace(/^https?:\/\//, '').split('/')[0] || 'local';
+        const linkHtml = proj.link ?
+            '<a href="' + proj.link + '" class="card-link" target="_blank"><i class="fas fa-external-link-alt"></i> ' + (proj.linkText || 'View') + '</a>'
+            : '';
+        return '<div class="card project-card">' +
+            '<div class="project-preview" aria-hidden="true">' +
+                '<div class="browser-bar">' +
+                    '<span class="dot"></span><span class="dot"></span><span class="dot"></span>' +
+                    '<span class="browser-url">' + host + '</span>' +
+                '</div>' +
+                '<div class="browser-body">' +
+                    '<span class="preview-stars"></span>' +
+                    ship +
+                    '<i class="' + icon + ' project-hero-icon"></i>' +
+                    '<div class="browser-lines">' +
+                        '<span class="bl bl-1"></span><span class="bl bl-2"></span><span class="bl bl-3"></span>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<h3>' + proj.title + '</h3>' +
+            '<p class="card-desc">' + proj.description + '</p>' +
+            '<span class="card-tech">' + proj.tech + '</span>' +
+            linkHtml +
+        '</div>';
+    }).join('');
+    document.getElementById('projectsGrid').innerHTML = html;
 }
 
 // ── Contact ──
@@ -689,9 +880,37 @@ function initSkillInteraction() {
     });
 }
 
+// ── Parallax: nebula + stars drift with mouse ──
+function initParallax() {
+    const sky = document.querySelector('.cosmic-sky');
+    if (!sky) return;
+    const layers = [
+        { el: sky.querySelector('.stars-sm'), factor: 8 },
+        { el: sky.querySelector('.stars-md'), factor: 16 },
+        { el: sky.querySelector('.stars-lg'), factor: 26 },
+        { el: sky.querySelector('.nebula-1'), factor: 40 },
+        { el: sky.querySelector('.nebula-2'), factor: 55 }
+    ];
+    let targetX = 0, targetY = 0, curX = 0, curY = 0;
+    window.addEventListener('mousemove', (e) => {
+        targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    }, { passive: true });
+    function render() {
+        curX += (targetX - curX) * 0.04;
+        curY += (targetY - curY) * 0.04;
+        layers.forEach(({ el, factor }) => {
+            if (el) el.style.transform = 'translate(' + (-curX * factor) + 'px, ' + (-curY * factor) + 'px)';
+        });
+        requestAnimationFrame(render);
+    }
+    render();
+}
+
 // ── Start ──
 document.addEventListener('DOMContentLoaded', () => {
     init();
     initCounters();
     initSkillInteraction();
+    initParallax();
 });
