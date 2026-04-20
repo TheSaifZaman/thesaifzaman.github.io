@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initGrocery();
     initStatsLog();
     initWaterSleep();
+    initTabs();
+    initSideNav();
 });
 
 // ── THEME ──
@@ -1262,5 +1264,100 @@ function updateSleepStatus(hours) {
     else if (hours < 7) { el.textContent = '⚠️ Below target. Aim for 7–9 hours.'; el.className = 'sleep-status warn'; }
     else if (hours <= 9) { el.textContent = '✓ In the zone. Prime recovery.'; el.className = 'sleep-status ok'; }
     else { el.textContent = '⚠️ Oversleep can also hurt. 7–9 is ideal.'; el.className = 'sleep-status warn'; }
+}
+
+// ── TAB BAR (Train / Fuel / Track / Learn) ──
+const TAB_IDS = ['train', 'fuel', 'track', 'learn'];
+
+function setActiveTab(tab, opts) {
+    if (!TAB_IDS.includes(tab)) tab = 'train';
+    const body = document.body;
+    TAB_IDS.forEach(t => body.classList.toggle('tab-' + t, t === tab));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        const on = b.getAttribute('data-tab') === tab;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    localStorage.setItem('bb_active_tab', tab);
+    if (!opts || !opts.silent) {
+        // Scroll viewport up to the tab bar so the user sees the new tab from the top
+        const bar = document.getElementById('tabsBar');
+        if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Resolve which tab owns a section id
+function tabForSectionId(id) {
+    const sec = document.getElementById(id);
+    return sec ? sec.getAttribute('data-tab') : null;
+}
+
+function initTabs() {
+    const saved = localStorage.getItem('bb_active_tab') || 'train';
+    setActiveTab(saved, { silent: true });
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.addEventListener('click', () => setActiveTab(b.getAttribute('data-tab')));
+    });
+}
+
+// ── FLOATING SIDE NAV (scroll spy, tab-aware) ──
+function initSideNav() {
+    const nav = document.getElementById('sideNav');
+    if (!nav) return;
+    const items = Array.from(nav.querySelectorAll('.side-nav-item'));
+    const sectionMap = new Map();
+    items.forEach(a => {
+        const id = a.getAttribute('data-spy');
+        const sec = document.getElementById(id);
+        if (sec) sectionMap.set(id, { item: a, section: sec });
+    });
+
+    const activate = id => {
+        items.forEach(i => i.classList.toggle('active', i.getAttribute('data-spy') === id));
+        // On mobile, scroll the pill so active item is visible
+        const list = nav.querySelector('.side-nav-list');
+        const activeEl = nav.querySelector('.side-nav-item.active');
+        if (list && activeEl && window.matchMedia('(max-width: 600px)').matches) {
+            const offset = activeEl.offsetLeft - list.clientWidth / 2 + activeEl.clientWidth / 2;
+            list.scrollTo({ left: offset, behavior: 'smooth' });
+        }
+    };
+
+    // IntersectionObserver picks whichever section is most in view
+    const visibility = new Map();
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            const id = e.target.id;
+            visibility.set(id, e.isIntersecting ? e.intersectionRatio : 0);
+        });
+        let bestId = null, best = 0;
+        visibility.forEach((ratio, id) => {
+            if (ratio > best) { best = ratio; bestId = id; }
+        });
+        if (bestId) activate(bestId);
+    }, {
+        threshold: [0, 0.2, 0.4, 0.6, 0.8, 1],
+        rootMargin: '-20% 0px -40% 0px'
+    });
+    sectionMap.forEach(({ section }) => io.observe(section));
+
+    // Click: switch to the link's tab if needed, then let native anchor scroll happen
+    items.forEach(a => {
+        a.addEventListener('click', (e) => {
+            const id = a.getAttribute('data-spy');
+            const tab = tabForSectionId(id);
+            const currentTab = localStorage.getItem('bb_active_tab') || 'train';
+            if (tab && tab !== currentTab) {
+                e.preventDefault();
+                setActiveTab(tab, { silent: true });
+                // Wait a tick for layout, then jump to the section
+                requestAnimationFrame(() => {
+                    const sec = document.getElementById(id);
+                    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+            activate(id);
+        });
+    });
 }
 

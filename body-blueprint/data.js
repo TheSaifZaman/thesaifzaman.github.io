@@ -68,6 +68,15 @@ const EXERCISES = [
     { id: 'muscle-up', name: 'Muscle-Up', cat: 'pull', muscles: ['Lats','Chest','Triceps','Core'], difficulty: 5, desc: 'Explosive pull-up transitioning into a dip above the bar.', video: YT('strict muscle up tutorial'), tip: 'False grip + explosive pull + fast transition = strict muscle-up.' },
     { id: 'onearm-pullup', name: 'One-Arm Pull-Up', cat: 'pull', muscles: ['Lats','Biceps','Core'], difficulty: 5, desc: 'Full pull-up using only one arm, chin over bar.', video: YT('one arm pull up tutorial'), tip: 'Elite. Archer pull-ups are the gateway.' },
 
+    // No-bar pull alternatives — use when no pull-up bar is available
+    { id: 'superman', name: 'Superman Hold', cat: 'pull', muscles: ['Lower Back','Glutes','Upper Back'], difficulty: 1, desc: 'Lie face-down. Lift arms, chest, and legs off floor at once. Squeeze the back. Hold.', video: YT('superman exercise tutorial'), tip: 'Bar-free posterior-chain starter. Build to 30s holds.' },
+    { id: 'ytw-raise', name: 'Prone Y-T-W Raise', cat: 'pull', muscles: ['Upper Back','Rear Delts','Rhomboids'], difficulty: 2, desc: 'Face-down on floor. Arms sweep through Y, then T, then W shapes — lifted off floor, thumbs up. Slow.', video: YT('prone YTW raise tutorial'), tip: 'No bar? This nails the upper back you\'d miss from skipping pull-ups.' },
+    { id: 'table-row', name: 'Inverted Row (Table)', cat: 'pull', muscles: ['Back','Biceps','Rear Delts'], difficulty: 2, desc: 'Lie under a sturdy table. Grip the edge overhand. Pull chest up to the table with body straight, heels on floor.', video: YT('inverted row under table bodyweight'), tip: 'Strongest no-bar pull-up substitute. Test table stability first.' },
+    { id: 'door-row', name: 'Towel Door Row', cat: 'pull', muscles: ['Back','Biceps','Grip'], difficulty: 2, desc: 'Loop a towel around a locked door handle (both sides). Feet close to door. Lean back, arms straight. Pull chest to door.', video: YT('towel door row tutorial'), tip: 'Zero equipment. The lower you lean, the harder it gets.' },
+    { id: 'bp-row', name: 'Backpack Bent-Over Row', cat: 'pull', muscles: ['Lats','Upper Back','Biceps'], difficulty: 2, desc: 'Load a backpack with books (5–15kg). Hinge at hips, flat back. Row the pack to your lower ribs. Lower slow.', video: YT('bent over row backpack bodyweight'), tip: 'Closest mimic of a pull. Add books as you get stronger.' },
+    { id: 'onearm-row', name: 'One-Arm Backpack Row', cat: 'pull', muscles: ['Lats','Biceps','Core'], difficulty: 3, desc: 'Knee and hand on chair/bed. Row a loaded backpack with the free arm — elbow drives back past ribs.', video: YT('single arm dumbbell row form'), tip: 'Unilateral = heavier per side. Killer lat isolation.' },
+    { id: 'archer-row', name: 'Archer Inverted Row', cat: 'pull', muscles: ['Lats','Biceps','Core'], difficulty: 4, desc: 'Inverted row under a table with hands wide. Pull toward one hand while the other arm straightens sideways.', video: YT('archer row tutorial'), tip: 'Advanced bar-free pulling. Gateway to one-arm row.' },
+
     { id: 'assist-squat', name: 'Assisted Squat', cat: 'legs', muscles: ['Quads','Glutes'], difficulty: 1, desc: 'Hold a door frame/pole. Squat down with support. Rise.', video: YT('assisted squat tutorial'), tip: 'For absolute beginners. Build confidence first.' },
     { id: 'air-squat', name: 'Air Squat', cat: 'legs', muscles: ['Quads','Glutes','Hamstrings'], difficulty: 2, desc: 'Feet shoulder-width. Sit down as if onto a chair. Knees track over toes. Thighs parallel.', video: YT('air squat perfect form'), tip: 'Chest up. Heels grounded. Full depth every rep.' },
     { id: 'jump-squat', name: 'Jump Squat', cat: 'legs', muscles: ['Quads','Glutes','Calves'], difficulty: 2, desc: 'Squat down, explode up into a jump. Land soft. Go again.', video: YT('jump squat tutorial'), tip: 'Power + conditioning. Soft landings save knees.' },
@@ -136,7 +145,7 @@ const DAY_FOCUS = [
 const PLAN = {
     foundation: [
         ['wall-pushup','incline-pushup','pike-pushup','plank','shoulder-dis'],
-        ['dead-hang','scap-pulls','glute-bridge','cobra','wall-slide'],
+        ['superman','ytw-raise','glute-bridge','cobra','wall-slide'],
         ['assist-squat','glute-bridge','calf-raise','cossack-squat','pigeon'],
         ['plank','leg-raise','russian-twist','hollow-hold','cat-cow'],
         ['incline-pushup','scap-pulls','air-squat','plank','mountain-climber'],
@@ -145,7 +154,7 @@ const PLAN = {
     ],
     beginner: [
         ['pushup','knee-pushup','pike-pushup','diamond-pushup','plank'],
-        ['neg-pullup','chin-up','scap-pulls','russian-twist','cobra'],
+        ['table-row','door-row','bp-row','russian-twist','cobra'],
         ['air-squat','bulgarian-split','glute-bridge','single-leg-bridge','calf-raise'],
         ['plank','hollow-hold','leg-raise','russian-twist','side-plank','mountain-climber'],
         ['pushup','chin-up','air-squat','burpee','plank'],
@@ -154,7 +163,7 @@ const PLAN = {
     ],
     intermediate: [
         ['pushup','decline-pushup','diamond-pushup','pike-pushup','psplanche-pushup','plank'],
-        ['pullup','wide-pullup','chin-up','archer-pullup','hang-leg-raise'],
+        ['table-row','door-row','bp-row','ytw-raise','superman'],
         ['bulgarian-split','cossack-squat','shrimp-squat','nat-leg-curl','jump-squat','calf-raise'],
         ['hollow-rocks','v-up','hang-leg-raise','side-plank','lsit','dragon-flag'],
         ['archer-pushup','pullup','pistol-squat','handstand-wall','burpee'],
@@ -163,7 +172,7 @@ const PLAN = {
     ],
     advanced: [
         ['archer-pushup','psplanche-pushup','decline-pushup','handstand-pushup','diamond-pushup'],
-        ['pullup','archer-pullup','muscle-up','lsit-pullup','front-lever-tuck'],
+        ['archer-row','onearm-row','table-row','bp-row','ytw-raise'],
         ['pistol-squat','shrimp-squat','nat-leg-curl','jump-squat','bulgarian-split'],
         ['dragon-flag','lsit','hang-leg-raise','toes-to-bar','ab-wheel','hollow-rocks'],
         ['muscle-up','pistol-squat','handstand-wall','tuck-planche','front-lever-tuck'],
@@ -172,7 +181,7 @@ const PLAN = {
     ],
     mastery: [
         ['onearm-pushup','handstand-pushup','psplanche-pushup','archer-pushup'],
-        ['onearm-pullup','muscle-up','archer-pullup','front-lever-tuck','full-front-lever'],
+        ['archer-row','onearm-row','bp-row','ytw-raise','superman'],
         ['pistol-squat','shrimp-squat','nat-leg-curl','jump-squat'],
         ['dragon-flag','lsit','toes-to-bar','ab-wheel','full-front-lever'],
         ['full-planche','full-front-lever','human-flag','freestand-hs','onearm-pullup'],
@@ -266,15 +275,81 @@ const SWAPS = {
     'pullup': [
         { id: 'chin-up', reason: 'Easier grip' },
         { id: 'neg-pullup', reason: 'Easier (eccentric)' },
-        { id: 'scap-pulls', reason: 'No bar? Skip' }
+        { id: 'table-row', reason: 'No bar — under table' },
+        { id: 'door-row', reason: 'No bar — towel + door' },
+        { id: 'bp-row', reason: 'No bar — backpack row' }
     ],
     'wide-pullup': [
         { id: 'pullup', reason: 'Easier' },
-        { id: 'chin-up', reason: 'Much easier' }
+        { id: 'chin-up', reason: 'Much easier' },
+        { id: 'table-row', reason: 'No bar — under table' }
+    ],
+    'chin-up': [
+        { id: 'neg-pullup', reason: 'Easier (eccentric)' },
+        { id: 'table-row', reason: 'No bar — under table' },
+        { id: 'bp-row', reason: 'No bar — backpack row' }
+    ],
+    'neg-pullup': [
+        { id: 'table-row', reason: 'No bar — under table' },
+        { id: 'door-row', reason: 'No bar — towel + door' },
+        { id: 'bp-row', reason: 'No bar — backpack row' }
+    ],
+    'dead-hang': [
+        { id: 'superman', reason: 'No bar — back activation' },
+        { id: 'ytw-raise', reason: 'No bar — upper back' }
+    ],
+    'scap-pulls': [
+        { id: 'ytw-raise', reason: 'No bar — upper back' },
+        { id: 'superman', reason: 'No bar — back activation' }
+    ],
+    'archer-pullup': [
+        { id: 'pullup', reason: 'Easier' },
+        { id: 'archer-row', reason: 'No bar — under table' },
+        { id: 'onearm-row', reason: 'No bar — backpack' }
+    ],
+    'lsit-pullup': [
+        { id: 'pullup', reason: 'Easier' },
+        { id: 'table-row', reason: 'No bar — under table' }
+    ],
+    'onearm-pullup': [
+        { id: 'archer-pullup', reason: 'Easier' },
+        { id: 'archer-row', reason: 'No bar — under table' },
+        { id: 'onearm-row', reason: 'No bar — backpack' }
     ],
     'muscle-up': [
         { id: 'archer-pullup', reason: 'Easier' },
-        { id: 'pullup', reason: 'Much easier' }
+        { id: 'pullup', reason: 'Much easier' },
+        { id: 'archer-row', reason: 'No bar — under table' }
+    ],
+    'table-row': [
+        { id: 'door-row', reason: 'Alternative (door + towel)' },
+        { id: 'bp-row', reason: 'Alternative (backpack)' },
+        { id: 'archer-row', reason: 'Harder (one-arm progression)' },
+        { id: 'pullup', reason: 'If bar available' }
+    ],
+    'door-row': [
+        { id: 'table-row', reason: 'Alternative (under table)' },
+        { id: 'bp-row', reason: 'Alternative (backpack)' }
+    ],
+    'bp-row': [
+        { id: 'onearm-row', reason: 'Harder (unilateral)' },
+        { id: 'table-row', reason: 'Alternative (under table)' },
+        { id: 'door-row', reason: 'Alternative (door + towel)' }
+    ],
+    'onearm-row': [
+        { id: 'bp-row', reason: 'Easier (two arms)' },
+        { id: 'archer-row', reason: 'Alternative' }
+    ],
+    'archer-row': [
+        { id: 'table-row', reason: 'Easier' },
+        { id: 'onearm-row', reason: 'Alternative (backpack)' }
+    ],
+    'superman': [
+        { id: 'ytw-raise', reason: 'Alternative' },
+        { id: 'cobra', reason: 'Easier' }
+    ],
+    'ytw-raise': [
+        { id: 'superman', reason: 'Alternative' }
     ],
     'air-squat': [
         { id: 'assist-squat', reason: 'Knee-friendly' },
@@ -360,7 +435,7 @@ const SIXPACK = {
 // ── WEEKLY CHALLENGES (rotate by ISO week) ──
 const CHALLENGES = [
     { title: '300 Push-Up Challenge', goal: 300, unit: 'reps', desc: 'Spread across the week. Cumulative count.', icon: 'fas fa-hand-fist' },
-    { title: '50 Pull-Up Challenge', goal: 50, unit: 'reps', desc: 'If bar-free: swap for 200 scap pulls.', icon: 'fas fa-hand-back-fist' },
+    { title: '50 Pull Challenge', goal: 50, unit: 'reps', desc: 'Pull-ups count 1:1. No bar? 1 rep = 2× inverted/door/backpack rows, or 4× scap pulls, or 2× supermans (5s hold). Mix freely.', icon: 'fas fa-hand-back-fist' },
     { title: '500 Squat Challenge', goal: 500, unit: 'reps', desc: 'Knees out, heels grounded. Depth matters.', icon: 'fas fa-person-walking' },
     { title: '15-Minute Plank Week', goal: 900, unit: 'seconds', desc: 'Total plank time across the week.', icon: 'fas fa-shield-halved' },
     { title: '1000 Ab Rep Week', goal: 1000, unit: 'reps', desc: 'Any core exercise counts. Mix it up.', icon: 'fas fa-fire' },
