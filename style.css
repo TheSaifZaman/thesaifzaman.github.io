@@ -2,6 +2,29 @@
    Black & White Glassy Portfolio
    ═══════════════════════════════════════ */
 
+/* Accessibility: skip-to-content link (WCAG 2.4.1) */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 8px;
+    z-index: 10000;
+    padding: 10px 16px;
+    background: #000;
+    color: #fff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: top 0.2s ease;
+}
+.skip-link:focus {
+    top: 8px;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
 :root {
     --bg: #ffffff;
     --bg-matte: #f5f5f5;
@@ -180,6 +203,19 @@ ul { list-style: none; }
 
 /* Nav Dropdown */
 .nav-links .dropdown { position: relative; }
+/* Bridge the gap between button and dropdown so hover doesn't drop while
+   the cursor traverses empty space. */
+.nav-links .dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    height: 14px;
+    pointer-events: none;
+}
+.nav-links .dropdown:hover::after,
+.nav-links .dropdown:focus-within::after { pointer-events: auto; }
 .nav-links .dropbtn {
     background: none;
     border: none;
@@ -217,7 +253,9 @@ ul { list-style: none; }
     color: var(--text-1);
     opacity: 1;
 }
-.nav-links .dropdown:hover .dropdown-content { display: block; }
+.nav-links .dropdown:hover .dropdown-content,
+.nav-links .dropdown:focus-within .dropdown-content,
+.nav-links .dropdown.open .dropdown-content { display: block; }
 
 .nav-actions {
     display: flex;

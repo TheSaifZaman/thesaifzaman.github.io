@@ -653,6 +653,9 @@ function renderFooter() {
     ).join('');
 
     renderSocialLinks('footerSocialLinks', p.social.slice(0, 3));
+
+    const yearEl = document.getElementById('footerYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
 // ── Blogs ──
@@ -735,19 +738,44 @@ function initMobileMenu() {
     const open = document.getElementById('menuToggle');
     const close = document.getElementById('closeMenu');
 
-    function toggle() {
-        menu.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+    function setOpen(isOpen) {
+        menu.classList.toggle('active', isOpen);
+        menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        open?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
     }
+    function toggle() {
+        setOpen(!menu.classList.contains('active'));
+    }
+    open?.setAttribute('aria-expanded', 'false');
     open?.addEventListener('click', toggle);
     close?.addEventListener('click', toggle);
-    menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-        menu.classList.remove('active');
-        document.body.style.overflow = '';
-    }));
+    menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
     menu?.querySelectorAll('.dropbtn').forEach(btn => {
         btn.addEventListener('click', () => {
             btn.closest('.dropdown').classList.toggle('open');
+        });
+    });
+
+    // Desktop nav: click-to-toggle dropdowns (touch/keyboard fallback) + outside-click to close
+    document.querySelectorAll('.nav-links .dropdown').forEach(drop => {
+        const btn = drop.querySelector('.dropbtn');
+        btn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const willOpen = !drop.classList.contains('open');
+            document.querySelectorAll('.nav-links .dropdown.open').forEach(d => {
+                if (d !== drop) d.classList.remove('open');
+            });
+            drop.classList.toggle('open', willOpen);
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        });
+    });
+    document.addEventListener('click', (e) => {
+        document.querySelectorAll('.nav-links .dropdown.open').forEach(drop => {
+            if (!drop.contains(e.target)) {
+                drop.classList.remove('open');
+                drop.querySelector('.dropbtn')?.setAttribute('aria-expanded', 'false');
+            }
         });
     });
 }
