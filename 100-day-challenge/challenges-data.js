@@ -789,7 +789,7 @@ var CHALLENGE_TEMPLATES = [
         goal: 'Spend 30+ minutes of quality, screen-free time with family',
         category: 'social',
         duration: 30,
-        tags: ['family', 'quality time', 'presence', 'bonding']
+        tags: ['family', 'Quality Time', 'presence', 'bonding']
     },
     {
         icon: '\uD83D\uDDE3\uFE0F',

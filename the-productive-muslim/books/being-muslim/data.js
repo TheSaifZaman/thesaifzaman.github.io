@@ -678,7 +678,7 @@ var BOOK_DATA = {
             "actionItems": [
                 "Call a family member you haven't spoken to recently",
                 "Attend Jumu'ah prayer this Friday and greet someone new",
-                "Spend quality time with your family without screens tonight",
+                "Spend Quality Time with your family without screens tonight",
                 "Identify one way to serve your local Muslim community this week"
             ],
             "quiz": [
