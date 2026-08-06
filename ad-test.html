@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ad Serving Test — Adzoic Engine</title>
+
+<!-- Statcounter: site analytics for this page. Separate from the vendor tags
+     the ad engine injects into the creative itself. -->
+<script type="text/javascript">
+  var sc_project = 13340482;
+  var sc_invisible = 1;
+  var sc_security = "faec3d7b";
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+<noscript><div class="statcounter"><img class="statcounter"
+  src="https://c.statcounter.com/13340482/0/faec3d7b/1/" alt="Web Analytics"
+  referrerPolicy="no-referrer-when-downgrade"></div></noscript>
+
+<style>
+  :root {
+    --bg: #0f1117; --panel: #171a23; --line: #262b38;
+    --text: #e7e9ee; --muted: #9aa3b2; --accent: #4f8cff;
+    --ok: #35c46b; --warn: #f0b429; --err: #ff5c5c;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7f9; --panel: #fff; --line: #e3e6ec;
+      --text: #1a1d24; --muted: #626b7a; --accent: #2563eb;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    padding: 28px 20px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(79,140,255,.09), transparent);
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 20px; }
+  h1 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: 14px; }
+  main { padding: 24px 0 60px; }
+  .grid { display: grid; gap: 20px; grid-template-columns: 320px minmax(0,1fr); }
+  @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px;
+  }
+  .card h2 {
+    margin: 0 0 12px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted); font-weight: 600;
+  }
+  #slot {
+    width: 300px; height: 250px; margin: 0 auto;
+    border: 1px dashed var(--line); border-radius: 8px;
+    display: grid; place-items: center; overflow: hidden; background: var(--bg);
+  }
+  #slot iframe { width: 300px; height: 250px; border: 0; display: block; }
+  .placeholder { color: var(--muted); font-size: 13px; }
+  dl { margin: 0; display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 6px 12px; font-size: 13px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; word-break: break-all; font-variant-numeric: tabular-nums; }
+  .pill {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; letter-spacing: .03em;
+  }
+  .pill.ok   { background: rgba(53,196,107,.15); color: var(--ok); }
+  .pill.warn { background: rgba(240,180,41,.15); color: var(--warn); }
+  .pill.err  { background: rgba(255,92,92,.15);  color: var(--err); }
+  .checks { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+  .checks li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line); }
+  .checks li:last-child { border-bottom: 0; }
+  .checks span:first-child { color: var(--muted); }
+  pre {
+    margin: 0; padding: 12px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; font-size: 12px; line-height: 1.5;
+    max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+  }
+  button {
+    appearance: none; border: 1px solid var(--line); background: var(--accent);
+    color: #fff; font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--text); }
+  button:hover { filter: brightness(1.08); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  code.inline { background: var(--bg); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; font-size: 12px; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Ad Serving Test</h1>
+    <div class="sub">
+      Live 300×250 slot served by the Adzoic RTB engine, with third-party
+      measurement verification.
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+
+    <div>
+      <div class="card">
+        <h2>Ad Slot — 300×250</h2>
+        <div id="slot"><span class="placeholder">loading…</span></div>
+        <div class="row">
+          <button id="reload">Request new ad</button>
+          <button id="copy" class="secondary">Copy response</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h2>Result</h2>
+        <dl id="meta">
+          <dt>Status</dt><dd id="m-status">—</dd>
+          <dt>Campaign</dt><dd id="m-campaign">—</dd>
+          <dt>Creative</dt><dd id="m-creative">—</dd>
+          <dt>Price</dt><dd id="m-price">—</dd>
+          <dt>Size</dt><dd id="m-size">—</dd>
+          <dt>Request ID</dt><dd id="m-rid">—</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Third-party measurement in the creative</h2>
+        <ul class="checks">
+          <li><span>Engine impression pixel</span><span id="c-imp">—</span></li>
+          <li><span>Engine click tracker (<code class="inline">/c</code>)</span><span id="c-click">—</span></li>
+          <li><span>Statcounter tag / pixel</span><span id="c-sc">—</span></li>
+          <li><span>Third-party click tracker</span><span id="c-tpc">—</span></li>
+          <li><span>Macros expanded</span><span id="c-macro">—</span></li>
+        </ul>
+        <div class="note">
+          The engine injects whatever is configured on the campaign’s
+          <strong>Measurement</strong> panel. When a vendor’s JS tag and its 1×1
+          pixel are both present, the pixel is suppressed so the impression is
+          not counted twice.
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h2>Engine response</h2>
+        <pre id="raw">—</pre>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // Engine origin. Override for a deployed engine with ?engine=https://host
+  //   ad-test.html?engine=https://rtb.example.com
+  var params = new URLSearchParams(location.search);
+  var ENGINE = (params.get('engine') || 'http://localhost:8080').replace(/\/+$/, '');
+  var TENANT = params.get('tid') || '1';
+  var SLOT   = params.get('slot') || '29';
+  var COUNTRY = params.get('country') || 'AF';   // campaigns target AF locally
+
+  var $ = function (id) { return document.getElementById(id); };
+  var lastResponse = null;
+
+  function pill(el, state, text) {
+    el.innerHTML = '<span class="pill ' + state + '">' + text + '</span>';
+  }
+
+  function check(el, present) {
+    pill(el, present ? 'ok' : 'warn', present ? 'present' : 'absent');
+  }
+
+  function renderAd(markup) {
+    var slot = $('slot');
+    slot.innerHTML = '';
+    var f = document.createElement('iframe');
+    // allow-scripts for the creative's own JS (GSAP etc); allow-popups so the
+    // click can open the landing page in a new tab.
+    f.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
+    f.setAttribute('scrolling', 'no');
+    f.srcdoc = markup;
+    slot.appendChild(f);
+  }
+
+  function fire(url) {
+    if (!url) return;
+    var i = new Image();
+    i.src = url;
+  }
+
+  function load() {
+    $('slot').innerHTML = '<span class="placeholder">requesting…</span>';
+    pill($('m-status'), 'warn', 'requesting');
+
+    var qs = new URLSearchParams({
+      slot_id: SLOT, w: '300', h: '250', pub_id: '1',
+      country: COUNTRY, page: location.href
+    });
+
+    fetch(ENGINE + '/api/v1/request?' + qs.toString(), {
+      method: 'GET',
+      headers: { 'Accept': 'application/json', 'X-Tenant-ID': TENANT },
+      cache: 'no-store'
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        lastResponse = d;
+        var markup = d.ad || d.template || '';
+        $('raw').textContent = JSON.stringify(
+          Object.assign({}, d, markup ? { ad: '<' + markup.length + ' bytes of markup>' } : {}),
+          null, 2
+        );
+
+        if (!markup || d.passback) {
+          pill($('m-status'), 'err', 'no fill (passback)');
+          $('slot').innerHTML = '<span class="placeholder">no ad available</span>';
+          ['c-imp','c-click','c-sc','c-tpc','c-macro'].forEach(function (id) {
+            pill($(id), 'err', 'n/a');
+          });
+          return;
+        }
+
+        pill($('m-status'), 'ok', 'filled');
+        $('m-campaign').textContent = d.campaign_id || '—';
+        $('m-creative').textContent = d.creative_id || '—';
+        $('m-price').textContent = (d.price != null ? d.price : '—') + ' ' + (d.currency || '');
+        $('m-size').textContent = (d.width || '?') + '×' + (d.height || '?');
+        $('m-rid').textContent = d.request_id || d.request_uid || '—';
+
+        check($('c-imp'),  !!(d.impression_url || /\/t\/imp/.test(markup)));
+        check($('c-click'), /\/c\?/.test(markup));
+        check($('c-sc'),   /statcounter\.com/.test(markup));
+        check($('c-tpc'),  /event=click/.test(markup));
+        pill($('c-macro'),
+          /\{(campaign_id|creative_id|cachebuster|CLICK_URL)\}/.test(markup) ? 'err' : 'ok',
+          /\{(campaign_id|creative_id|cachebuster|CLICK_URL)\}/.test(markup) ? 'unexpanded' : 'expanded');
+
+        renderAd(markup);
+
+        // Impression pixel — the engine counts the impression here, not at
+        // bid time, so this must fire for the ad to register.
+        fire(d.impression_url || (d.tracking && d.tracking.impression));
+      })
+      .catch(function (e) {
+        pill($('m-status'), 'err', 'unreachable');
+        $('slot').innerHTML = '<span class="placeholder">engine unreachable</span>';
+        $('raw').textContent =
+          'Could not reach ' + ENGINE + '\n\n' + e +
+          '\n\nThis page calls the ad engine directly from your browser, so the ' +
+          'engine must be running and reachable from THIS machine.\n\n' +
+          'Point it elsewhere with ?engine=https://your-engine-host';
+      });
+  }
+
+  $('reload').addEventListener('click', load);
+  $('copy').addEventListener('click', function () {
+    navigator.clipboard.writeText(JSON.stringify(lastResponse, null, 2));
+  });
+
+  load();
+})();
+</script>
+
+</body>
+</html>
