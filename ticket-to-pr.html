@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ticket to PR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ffffff; --paper-2:#f4f4f4; --ink:#111111; --ink-2:#2e2e2e; --ink-3:#5c5c5c; --rule:#111111;
+  --serif:"Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --type:"Special Elite", "Courier New", monospace;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:var(--serif)}
+body{overflow:hidden}
+/* paper grain */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.06;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+
+/* stage: 1600x900 slides scaled to fit */
+#stage{position:fixed;inset:0;overflow:hidden}
+.deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;transform:translate(-50%,-50%)}
+.slide{position:absolute;inset:0;padding:70px 96px 64px;display:none;flex-direction:column;
+  border:2px solid var(--rule);outline:1px solid var(--rule);outline-offset:-10px;background:var(--paper)}
+.slide.on{display:flex;animation:ink .35s ease-out}
+@keyframes ink{from{opacity:0;filter:blur(2px)}to{opacity:1;filter:none}}
+@media (prefers-reduced-motion: reduce){.slide.on{animation:none}}
+
+/* typography */
+.kicker{font-family:var(--type);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+  display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.kicker::after{content:"";flex:1;border-top:1px solid var(--rule)}
+h1,h2{font-family:var(--serif);font-weight:700;margin:0;line-height:1.05;letter-spacing:-.01em}
+h1{font-size:96px}
+h2{font-size:62px;margin-bottom:28px}
+h2 em,h1 em{font-weight:400}
+p,li{font-size:30px;line-height:1.42;color:var(--ink)}
+p{margin:0 0 18px}
+.lead{font-size:36px;font-style:italic;color:var(--ink-2)}
+.small{font-size:22px;color:var(--ink-2)}
+ul{margin:0;padding:0;list-style:none}
+ul.ticks li{padding-left:44px;position:relative;margin-bottom:12px}
+ul.ticks li::before{content:"✦";position:absolute;left:0;top:0;font-size:24px}
+ul.dash li{padding-left:34px;position:relative;margin-bottom:10px}
+ul.dash li::before{content:"—";position:absolute;left:0}
+code,.mono{font-family:var(--mono);font-size:.82em}
+pre{font-family:var(--mono);font-size:19px;line-height:1.5;margin:0;padding:22px 26px;border:1.5px solid var(--rule);
+  background:var(--paper-2);white-space:pre;overflow:hidden;color:var(--ink)}
+pre .c{color:var(--ink-3)} pre b{font-weight:600}
+.rule{border:0;border-top:3px double var(--rule);margin:22px 0}
+.foot{position:absolute;left:96px;right:96px;bottom:26px;display:flex;justify-content:space-between;
+  font-family:var(--type);font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+
+/* layout helpers */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:48px;flex:1;min-height:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.box{border:1.5px solid var(--rule);padding:22px 24px;background:var(--paper)}
+.box h3{font-family:var(--type);font-weight:400;font-size:22px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 10px}
+.box p,.box li{font-size:24px;line-height:1.38}
+.stamp{display:inline-block;font-family:var(--type);border:2.5px solid var(--ink);padding:4px 14px;transform:rotate(-3deg);
+  letter-spacing:.12em;text-transform:uppercase;font-size:22px}
+.wq{font-family:var(--type);font-size:150px;line-height:.8;position:absolute;right:90px;top:70px;opacity:.12}
+table{border-collapse:collapse;width:100%;font-size:23px}
+th,td{border-bottom:1px solid var(--rule);padding:9px 12px;text-align:left;vertical-align:top}
+th{font-family:var(--type);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:18px;border-bottom:2px solid var(--rule)}
+td code{font-size:19px}
+
+/* title slide */
+.title{justify-content:center;text-align:center;align-items:center}
+.title .orn{font-family:var(--type);font-size:22px;letter-spacing:.3em;text-transform:uppercase}
+.title h1{font-size:110px;margin:26px 0 8px}
+.title .sub{font-size:40px;font-style:italic;max-width:1200px}
+.title .meta{margin-top:40px;font-family:var(--type);font-size:24px;letter-spacing:.14em}
+.double{border-top:3px double var(--rule);width:640px;margin:18px auto}
+
+/* flow diagram */
+.flow svg{width:100%;height:100%}
+.flow text{font-family:var(--mono);fill:var(--ink)}
+.flow .lbl{font-family:var(--type);letter-spacing:.08em}
+.flow rect,.flow path,.flow line,.flow polygon,.flow circle{stroke:var(--ink);fill:none}
+.flow .fill{fill:var(--ink)}
+.flow .paper{fill:var(--paper)}
+.flow text.inv{fill:var(--paper)}
+
+/* dial */
+.dial{display:flex;gap:18px;margin-top:6px}
+.dial .lv{flex:1;border:1.5px solid var(--rule);padding:18px 20px;position:relative}
+.dial .lv > b{font-family:var(--type);font-size:58px;font-weight:400;display:block;line-height:1}
+pre.tight{font-size:16.5px;line-height:1.38;padding:16px 22px}
+.dial .lv span{font-size:22px;line-height:1.35;display:block;margin-top:10px}
+.dial .lv.def{background:var(--ink);color:var(--paper)}
+.dial .lv.def span{color:var(--paper)}
+
+/* controls */
+#bar{position:fixed;left:0;bottom:0;height:4px;background:var(--ink);z-index:60;transition:width .25s}
+#hud{position:fixed;right:16px;bottom:12px;z-index:60;font-family:var(--type);font-size:14px;color:var(--ink-3);letter-spacing:.12em;
+  display:flex;gap:10px;align-items:center}
+#hud button{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);padding:4px 10px;cursor:pointer}
+#hud button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* print / overview */
+@media print{
+  body{overflow:visible} body::before,#hud,#bar{display:none}
+  #stage{position:static;display:block;overflow:visible} .deck{position:static;transform:none!important;width:auto;height:auto}
+  .slide{position:relative;display:flex!important;width:1600px;height:900px;page-break-after:always;animation:none}
+  @page{size:1600px 900px;margin:0}
+}
+@media (max-width:700px){ #hud .hint{display:none} }
+/* full screen: slide fills the screen, controls hide until the mouse moves */
+.is-full #hud{opacity:0;transition:opacity .3s}
+.is-full.show-hud #hud{opacity:1}
+.is-full{cursor:none} .is-full.show-hud{cursor:auto}
+</style>
+</head>
+<body>
+<div id="stage"><main class="deck" id="deck" aria-live="polite">
+
+<!-- 1 TITLE -->
+<section class="slide title" data-title="Title">
+  <div class="orn">✦ &nbsp; A talk in plain markdown &nbsp; ✦</div>
+  <h1>Ticket to PR,<br><em>No Humans… Mostly</em></h1>
+  <div class="double"></div>
+  <p class="sub">My 18-Agent Engineering Org in Plain Markdown Files</p>
+  <div class="meta">3:45 — 4:45 PM &nbsp;·&nbsp; MORE BASH THAN HYPE</div>
+</section>
+
+<!-- 2 PROMISE -->
+<section class="slide" data-title="What you'll see">
+  <div class="kicker">The programme</div>
+  <h2>What you'll see in the next hour</h2>
+  <ul class="ticks">
+    <li><b>18 specialised subagents</b>, each defined in a single markdown file</li>
+    <li>An <b>orchestrator</b> that dispatches each phase and <b>never commits on its own</b></li>
+    <li>Plain <b>shell scripts</b> for agent selection, resumable state and definition-of-done checks</li>
+    <li>An <b>autonomy dial</b> with guardrails: payments, migrations and auth always go back to a human</li>
+    <li><b>Cost control</b> by choosing the right model for each job</li>
+    <li>An <b>honest scorecard</b> of the real files — what was wrong, and the fixes now in the code</li>
+  </ul>
+  <hr class="rule">
+  <p class="lead">More bash than hype — and a setup you can copy today.</p>
+  <div class="foot"><span>Ticket to PR</span><span>02</span></div>
+</section>
+
+<!-- 3 SIX QUESTIONS -->
+<section class="slide" data-title="Six questions">
+  <div class="kicker">How this talk is built</div>
+  <h2>Six questions, answered in order</h2>
+  <div class="grid3">
+    <div class="box"><h3>What?</h3><p>A GitHub issue goes in. A reviewed, tested pull request comes out.</p></div>
+    <div class="box"><h3>Why?</h3><p>Every ticket repeats the same ten steps. Machines are good at repeating steps.</p></div>
+    <div class="box"><h3>Who?</h3><p>18 agents with one job each, plus one orchestrator — and you.</p></div>
+    <div class="box"><h3>Where?</h3><p>Inside the repo: <code>.claude/</code> — markdown, JSON and bash. No server.</p></div>
+    <div class="box"><h3>When?</h3><p>On demand: <code>/rto gh-123</code>. Resumes after any crash.</p></div>
+    <div class="box"><h3>How?</h3><p>Phases, artifacts, scripts, gates — and a dial for how much to trust it.</p></div>
+  </div>
+  <div class="foot"><span>Ticket to PR</span><span>03</span></div>
+</section>
+
+<!-- 4 WHAT -->
+<section class="slide" data-title="What">
+  <div class="wq">?</div>
+  <div class="kicker">Q1 · What is it</div>
+  <h2>An engineering org that fits in a folder</h2>
+  <div class="grid2">
+    <div>
+      <ul class="dash">
+        <li><b>18 agents</b> — each one a <code>.md</code> file with a role, tools, a model and an output.</li>
+        <li><b>1 orchestrator</b> — the <code>rto</code> skill. It plans the run and dispatches agents.</li>
+        <li><b>A few bash scripts</b> — selection, run-state, verify, Definition of Done.</li>
+        <li><b>1 JSON config</b> — risk weights, autonomy level, guardrails.</li>
+      </ul>
+      <p class="small" style="margin-top:22px">No framework. No vector DB. No custom runtime. It runs inside Claude Code.</p>
+    </div>
+<pre><span class="c"># one command</span>
+<b>/rto gh-123</b>
+
+<span class="c"># what comes back</span>
+.claude/artifacts/gh-123/
+  00-ticket-context.md   <span class="c">← business analyst</span>
+  01-spec.md             <span class="c">← product manager</span>
+  02-adr.md              <span class="c">← CTO</span>
+  03-plan.md             <span class="c">← staff engineer</span>
+  04-implementation.md   <span class="c">← sr backend</span>
+  05-tests.md            <span class="c">← QA</span>
+  06-review.md           <span class="c">← PR reviewer</span>
+  10-security-audit.md   <span class="c">← only if called</span>
+  15-sentrux-gate.md     <span class="c">← structural check</span>
+  discovery.json         <span class="c">← shared cache</span>
+  pipeline-state.json    <span class="c">← resumable ledger</span>
+
+<span class="c"># …and one PR, after you say yes</span></pre>
+  </div>
+  <div class="foot"><span>What</span><span>04</span></div>
+</section>
+
+<!-- 5 WHY -->
+<section class="slide" data-title="Why">
+  <div class="wq">?</div>
+  <div class="kicker">Q2 · Why build it</div>
+  <h2>Why not just “ask the AI”?</h2>
+  <div class="grid2">
+    <div class="box"><h3>The pain</h3>
+      <ul class="dash">
+        <li>Every ticket: read, spec, design, plan, code, test, review, PR. Same steps, every time.</li>
+        <li>One long chat loses context and mixes jobs.</li>
+        <li>Agents say <b>“Linter: PASS”</b> when it didn't.</li>
+        <li>One big model for everything is slow and expensive.</li>
+        <li>Reviewing a transcript is harder than reviewing a diff.</li>
+      </ul></div>
+    <div class="box"><h3>Why plain markdown</h3>
+      <ul class="dash">
+        <li><b>Diffable</b> — agent changes go through code review like any code.</li>
+        <li><b>Portable</b> — copy a folder, not a platform.</li>
+        <li><b>Readable</b> — a new hire can read the whole org in an afternoon.</li>
+        <li><b>Testable</b> — bash scripts give exit codes, not opinions.</li>
+      </ul></div>
+  </div>
+  <div class="foot"><span>Why</span><span>05</span></div>
+</section>
+
+<!-- 6 WHO -->
+<section class="slide" data-title="Who: the org chart">
+  <div class="kicker">Q3 · Who does the work</div>
+  <h2>The org chart: 18 agents, one job each</h2>
+  <div class="grid4">
+    <div class="box"><h3>Analysis</h3><ul class="dash"><li>business-analyst</li><li>product-manager</li></ul></div>
+    <div class="box"><h3>Planning</h3><ul class="dash"><li>cto</li><li>staff-engineer</li></ul></div>
+    <div class="box"><h3>Build</h3><ul class="dash"><li>sr-backend-engineer</li></ul></div>
+    <div class="box"><h3>Always review</h3><ul class="dash"><li>qa-engineer</li><li>pr-reviewer</li></ul></div>
+  </div>
+  <div class="grid3" style="margin-top:22px">
+    <div class="box" style="grid-column:span 2"><h3>Specialists — called only when the diff needs them</h3>
+      <ul class="dash" style="columns:2;column-gap:40px">
+        <li>security-engineer</li><li>performance-engineer</li><li>tenancy-reviewer</li><li>deptrac-architecture-reviewer</li>
+        <li>stripe-quickbooks-reviewer</li><li>openai-usage-reviewer</li><li>postman-doc-creator</li><li>documentation-engineer</li><li>sentrux-quality-gate</li>
+      </ul></div>
+    <div class="box"><h3>Recovery</h3><ul class="dash"><li>rollback-engineer</li><li>pr-review-auto-fixer</li></ul>
+      <p class="small" style="margin-top:14px">And the orchestrator — <code>rto</code> — the CEO that never commits.</p></div>
+  </div>
+  <div class="foot"><span>Who</span><span>06</span></div>
+</section>
+
+<!-- 7 WHERE -->
+<section class="slide" data-title="Where">
+  <div class="kicker">Q4 · Where it lives</div>
+  <h2>Everything is a file in the repo</h2>
+  <div class="grid2">
+<pre>.claude/
+├── agents/                 <span class="c"># 18 × agent.md</span>
+│   ├── business-analyst.md
+│   ├── cto.md
+│   ├── qa-engineer.md
+│   └── …
+├── skills/rto/
+│   ├── SKILL.md            <span class="c"># the orchestrator</span>
+│   └── agent-lint.sh       <span class="c"># drift check</span>
+├── config/
+│   └── agent-selection-config.json
+├── utils/
+│   ├── agent-selection.sh  <span class="c"># who to call</span>
+│   └── pipeline-state.sh   <span class="c"># resumable ledger</span>
+└── artifacts/&lt;ticket&gt;/     <span class="c"># the paper trail</span>
+ci-toolkit/scripts/ci/
+├── verify.sh               <span class="c"># re-run the checks</span>
+└── dod-check.sh            <span class="c"># Definition of Done</span></pre>
+    <div>
+      <ul class="dash">
+        <li><b>Agents</b> are prompts with a contract.</li>
+        <li><b>Scripts</b> make every decision that can be a rule.</li>
+        <li><b>Artifacts</b> are how agents talk to each other — never transcripts.</li>
+        <li><b>Config</b> holds the numbers you will want to tune.</li>
+      </ul>
+      <p class="small" style="margin-top:20px">Commit the whole thing. Review agent changes like code changes.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Where</span><span>07</span></div>
+</section>
+
+<!-- 8 WHEN -->
+<section class="slide" data-title="When">
+  <div class="kicker">Q5 · When it runs</div>
+  <h2>When does each agent run?</h2>
+  <table>
+    <tr><th>Agent</th><th>Runs when…</th><th>Phase</th></tr>
+    <tr><td>business-analyst → product-manager → cto → staff-engineer → sr-backend</td><td>Every ticket, in order</td><td>sequential</td></tr>
+    <tr><td>qa-engineer → full verify → pr-reviewer (once)</td><td>Always — review sees the final code</td><td>sequential</td></tr>
+    <tr><td>security-engineer</td><td>Code changed and the ticket isn't docs-only</td><td>parallel</td></tr>
+    <tr><td>performance-engineer</td><td>Perf-sensitive, a migration, or a big blast radius</td><td>parallel</td></tr>
+    <tr><td>tenancy-reviewer</td><td>Tenancy code or a migration</td><td>parallel</td></tr>
+    <tr><td>stripe-quickbooks-reviewer</td><td>Payment or accounting code</td><td>parallel</td></tr>
+    <tr><td>postman-doc-creator · deptrac · openai-usage</td><td>Routes/controllers · Actions/Services · LLM calls</td><td>parallel</td></tr>
+    <tr><td>documentation-engineer</td><td>Routes, config or controllers changed, or a <code>doc</code> label</td><td>parallel</td></tr>
+    <tr><td>rollback-engineer · sentrux-quality-gate</td><td>Payments/tenancy/migration/hotfix · structural check</td><td>post-review</td></tr>
+  </table>
+  <p class="small" style="margin-top:16px">Rules live in <code>agent-selection.sh</code>, not in the prompt. Same input → same team, every run.</p>
+  <div class="foot"><span>When</span><span>08</span></div>
+</section>
+
+<!-- 9 HOW: FLOW -->
+<section class="slide flow" data-title="How: the agent flow">
+  <div class="kicker">Q6 · How it flows</div>
+  <h2 style="margin-bottom:14px">The agent flow, end to end</h2>
+  <div style="flex:1;min-height:0">
+  <svg viewBox="0 0 1408 600" role="img" aria-label="Agent flow from issue to pull request with three gates">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="fill" stroke="none"/></marker></defs>
+    <!-- phase bands -->
+    <g stroke-width="1" stroke-dasharray="3 5">
+      <rect x="4" y="4" width="430" height="250"/><rect x="452" y="4" width="430" height="250"/><rect x="900" y="4" width="504" height="250"/>
+      <rect x="4" y="300" width="1400" height="296"/>
+    </g>
+    <g class="lbl" font-size="15"><text x="18" y="28">I · ANALYSIS</text><text x="466" y="28">II · PLANNING</text><text x="914" y="28">III · BUILD + VERIFY</text><text x="18" y="324">IV · REVIEW + DELIVERY</text></g>
+    <g stroke-width="2" font-size="16">
+      <!-- row 1 -->
+      <rect x="24" y="48" width="160" height="60"/><text x="104" y="76" text-anchor="middle">GitHub issue</text><text x="104" y="96" text-anchor="middle" font-size="13">/rto gh-123</text>
+      <rect x="24" y="168" width="180" height="60"/><text x="114" y="196" text-anchor="middle">business-analyst</text><text x="114" y="216" text-anchor="middle" font-size="13">00-ticket-context</text>
+      <rect x="236" y="168" width="180" height="60"/><text x="326" y="196" text-anchor="middle">product-manager</text><text x="326" y="216" text-anchor="middle" font-size="13">01-spec (Gherkin)</text>
+      <polygon points="326,52 380,80 326,108 272,80" stroke-width="2.5"/><text x="326" y="86" text-anchor="middle" class="lbl" font-size="14">GATE 1</text>
+      <rect x="472" y="168" width="180" height="60"/><text x="562" y="196" text-anchor="middle">cto</text><text x="562" y="216" text-anchor="middle" font-size="13">02-adr + blast radius</text>
+      <rect x="684" y="168" width="180" height="60"/><text x="774" y="196" text-anchor="middle">staff-engineer</text><text x="774" y="216" text-anchor="middle" font-size="13">03-plan</text>
+      <polygon points="774,52 828,80 774,108 720,80" stroke-width="2.5"/><text x="774" y="86" text-anchor="middle" class="lbl" font-size="14">GATE 2</text>
+      <rect x="920" y="168" width="200" height="60"/><text x="1020" y="196" text-anchor="middle">sr-backend-engineer</text><text x="1020" y="216" text-anchor="middle" font-size="13">04-implementation</text>
+      <rect x="1180" y="168" width="200" height="60" stroke-width="3"/><text x="1280" y="196" text-anchor="middle">verify.sh</text><text x="1280" y="216" text-anchor="middle" font-size="13">exit code, not prose</text>
+      <rect x="1180" y="48" width="200" height="60" stroke-dasharray="5 4"/><text x="1280" y="76" text-anchor="middle" font-size="14">fail → fix (max 2)</text><text x="1280" y="96" text-anchor="middle" font-size="13">back to sr-backend</text>
+      <!-- row 2 -->
+      <rect x="1180" y="352" width="200" height="60" stroke-width="3"/><text x="1280" y="380" text-anchor="middle">agent-selection.sh</text><text x="1280" y="400" text-anchor="middle" font-size="13">one JSON decision</text>
+      <rect x="880" y="340" width="250" height="236"/><text x="1005" y="364" text-anchor="middle" class="lbl" font-size="14">PARALLEL SPECIALISTS</text>
+      <g font-size="14"><text x="900" y="394">security · performance</text><text x="900" y="420">tenancy · deptrac</text><text x="900" y="446">stripe-qbo · openai-usage</text><text x="900" y="472">postman · docs</text></g>
+      <text x="1005" y="510" text-anchor="middle" font-size="13">only the ones the diff needs</text>
+      <rect x="610" y="352" width="200" height="60"/><text x="710" y="380" text-anchor="middle">qa-engineer</text><text x="710" y="400" text-anchor="middle" font-size="13">05-tests · full verify</text>
+      <rect x="610" y="452" width="200" height="60"/><text x="710" y="480" text-anchor="middle">pr-reviewer</text><text x="710" y="500" text-anchor="middle" font-size="13">06-review · runs once</text>
+      <rect x="350" y="452" width="200" height="60" stroke-width="3"/><text x="450" y="480" text-anchor="middle">dod-check.sh</text><text x="450" y="500" text-anchor="middle" font-size="13">manifest · fingerprint</text>
+      <polygon points="260,420 320,452 260,484 200,452" stroke-width="2.5"/><text x="260" y="458" text-anchor="middle" class="lbl" font-size="14">GATE 3</text>
+      <rect x="24" y="352" width="160" height="60" class="fill"/><text x="104" y="380" text-anchor="middle" class="inv" fill="var(--paper)">commit · push</text><text x="104" y="400" text-anchor="middle" font-size="13" class="inv">PR → live</text>
+      <rect x="24" y="500" width="160" height="60"/><text x="104" y="528" text-anchor="middle">lessons.md</text><text x="104" y="548" text-anchor="middle" font-size="13">next run is smarter</text>
+    </g>
+    <g stroke-width="2" marker-end="url(#ar)">
+      <path d="M104,108 L104,166"/><path d="M204,198 L234,198"/><path d="M326,166 L326,110"/>
+      <path d="M380,80 L470,80 L562,80 L562,166"/><path d="M652,198 L682,198"/><path d="M774,166 L774,110"/>
+      <path d="M828,80 L1020,80 L1020,166"/><path d="M1120,198 L1178,198"/>
+      <path d="M1280,166 L1280,110"/><path d="M1180,78 L1150,78 L1150,150 L1122,170" stroke-dasharray="4 4"/>
+      <path d="M1280,230 L1280,350"/><path d="M1180,382 L1132,382"/><path d="M880,382 L812,382"/>
+      <path d="M710,412 L710,450"/><path d="M610,482 L552,482"/><path d="M350,482 L322,462"/>
+      <path d="M200,452 L104,452 L104,414"/><path d="M104,412 L104,412"/><path d="M60,414 L60,498" />
+    </g>
+    <g font-size="13" class="lbl"><text x="336" y="560">human, or an adversarial critic at levels 1–2</text></g>
+  </svg>
+  </div>
+  <div class="foot"><span>How · the flow</span><span>09</span></div>
+</section>
+
+<!-- 10 PHASES & ARTIFACTS -->
+<section class="slide" data-title="Phases and artifacts">
+  <div class="kicker">How · hand-offs</div>
+  <h2>Agents talk through files, not chat</h2>
+  <div class="grid2">
+    <div>
+      <ul class="dash">
+        <li>Each agent <b>reads named artifacts</b> and <b>writes exactly one</b>.</li>
+        <li>The orchestrator reads the <b>artifact</b>, never the agent's transcript — the transcript is noise.</li>
+        <li><code>discovery.json</code> is the shared cache: files, schema, blast radius. Nobody re-explores the repo.</li>
+        <li>Artifacts are <b>kept forever</b>: audit trail, post-mortems, and memory for the next ticket.</li>
+      </ul>
+    </div>
+<pre><span class="c"># 14 canonical phases</span>
+analysis → spec → <b>gate1</b> → claim
+→ adr → plan → <b>gate2</b>
+→ implement → verify → selection
+→ review → <b>gate3</b> → delivery → lessons
+
+<span class="c"># each phase is marked on disk</span>
+pipeline-state.sh set-phase gh-123 spec done
+
+<span class="c"># crash? context reset? come back:</span>
+/rto gh-123 --resume
+<span class="c">→ {"nextPhase":"plan",
+   "action":"read 02-adr.md, continue"}</span></pre>
+  </div>
+  <div class="foot"><span>How · artifacts</span><span>10</span></div>
+</section>
+
+<!-- 11 AGENT SNIPPET -->
+<section class="slide" data-title="Anatomy of an agent">
+  <div class="kicker">How · one agent</div>
+  <h2>Anatomy of an agent file</h2>
+  <div class="grid2" style="grid-template-columns:1.25fr 1fr">
+<pre class="tight">---
+<b>name:</b> qa-engineer
+<b>model:</b> claude-haiku-4-5-20251001
+<b>description:</b> &gt;
+  Writes and runs Pest 3 tests (Feature + Unit
+  + arch()) for implemented changes. Every AC
+  gets a test. Pattern-driven work — Haiku is
+  optimal for speed.
+<b>tools:</b> &gt;
+  mcp__sentrux__test_gaps, mcp__gitnexus__context,
+  mcp__laravel-boost__DatabaseSchema, …
+  Read, Grep, Glob, Bash, Edit, Write
+<b>maxTurns:</b> 18
+---
+## Input     <span class="c">· artifacts it reads</span>
+## Tools     <span class="c">· a table: tool → when</span>
+## Workflow  <span class="c">· numbered steps</span>
+## Output    <span class="c">· 05-tests.md</span>
+## Rules     <span class="c">· Always / Never</span>
+## Harness Mechanism
+  <span class="c">only your FINAL message reaches the</span>
+  <span class="c">orchestrator · turn budget · no user</span>
+  <span class="c">interaction · files are the only handoff</span></pre>
+    <div>
+      <ul class="dash">
+        <li><b>name</b> — how the orchestrator calls it.</li>
+        <li><b>description</b> — what it does and when. Write it for the dispatcher.</li>
+        <li><b>model</b> — the cheapest one that does the job well.</li>
+        <li><b>tools</b> — least privilege. QA can't push.</li>
+        <li><b>maxTurns</b> — a hard stop, so it can't wander.</li>
+        <li><b>body</b> — the same six sections in all 18 files.</li>
+        <li><b>Harness Mechanism</b> — tells the agent how it's run: fresh context, one return message, no questions.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>How · agent.md</span><span>11</span></div>
+</section>
+
+<!-- 12 HOW TO WRITE -->
+<section class="slide" data-title="How to write an agent">
+  <div class="kicker">How · write your own</div>
+  <h2>A template you can copy</h2>
+  <div class="grid2" style="grid-template-columns:1.1fr 1fr">
+<pre class="tight">---
+name: &lt;role-in-kebab-case&gt;
+model: &lt;haiku | sonnet | opus&gt;
+description: &gt;
+  &lt;One job.&gt; &lt;When to call it.&gt; &lt;Why this model.&gt;
+tools: &lt;only what this job needs&gt;
+maxTurns: &lt;8–35&gt;
+---
+# &lt;Role&gt;
+You are the &lt;role&gt; in an automated pipeline.
+## Input
+Read: artifacts/&lt;KEY&gt;/&lt;NN-previous&gt;.md
+## Tools
+| tool | when to use it |
+## Workflow
+1. …  2. …  3. …
+## Output
+Write: artifacts/&lt;KEY&gt;/&lt;NN-mine&gt;.md
+### Verdict: PASS / FAIL / WARN
+## Files Changed       <span class="c"># if you can Edit</span>
+FILE: app/Services/Foo.php
+## Rules
+NEVER commit, push, or create branches
+NEVER edit files outside your scope
+## Harness Mechanism
+Only your final message returns. No questions.</pre>
+    <div>
+      <p><b>Six sections, always the same order.</b></p>
+      <ul class="dash">
+        <li>Inputs and outputs are <b>file paths</b>, not vibes.</li>
+        <li>One <b>parseable verdict</b> a script can grep: <code>### Verdict:</code></li>
+        <li>Anyone with Edit ends with <code>FILE:</code> lines — that's the commit list.</li>
+        <li>The <b>Never</b> list is shorter and stronger than the rules list.</li>
+        <li>Put examples of good output in the file — the model copies them.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>How · template</span><span>12</span></div>
+</section>
+
+<!-- 13 BEST PRACTICES -->
+<section class="slide" data-title="Best practices">
+  <div class="kicker">How · lessons from real runs</div>
+  <h2>Best practices for agent files</h2>
+  <div class="grid2">
+    <ul class="ticks">
+      <li><b>One job per agent.</b> A reviewer that also fixes, reviews its own fixes.</li>
+      <li><b>Least tools.</b> Reviewers get Write for their report, never Edit. Anyone with Edit must list what they touched.</li>
+      <li><b>Name the artifact</b> it reads and the one it writes.</li>
+      <li><b>Cap the turns.</b> Turn limits are a cheap budget.</li>
+    </ul>
+    <ul class="ticks">
+      <li><b>Rules go in bash, judgement in markdown.</b> If it can be an <code>if</code>, it's not a prompt.</li>
+      <li><b>Never trust a self-report.</b> Re-run the linter yourself.</li>
+      <li><b>Say what not to do.</b> “Do NOT rewrite the spec yourself.”</li>
+      <li><b>Version it.</b> Agent edits get code review, like any change.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>How · best practices</span><span>13</span></div>
+</section>
+
+<!-- 14 ORCHESTRATOR -->
+<section class="slide" data-title="The orchestrator">
+  <div class="kicker">How · the conductor</div>
+  <h2>The orchestrator never commits</h2>
+  <div class="grid2">
+    <div>
+      <ul class="dash">
+        <li>One skill file: <code>skills/rto/SKILL.md</code>. It's a runbook, step by step.</li>
+        <li>It <b>calls agents</b>, <b>runs scripts</b>, <b>reads artifacts</b> and <b>opens gates</b>.</li>
+        <li>Agents leave changes in the <b>working tree only</b>.</li>
+        <li>Commit, push and PR happen <b>once</b>, after Gate 3.</li>
+        <li>It stages <b>only files agents declared</b> in <code>## Files Changed</code> — never <code>git add .</code></li>
+      </ul>
+    </div>
+<pre><span class="c">## Commit &amp; Branch Policy (enforced)</span>
+- Agents NEVER commit or push during
+  the pipeline. All changes land in
+  the working tree only.
+- Commits/push/PR happen exactly once
+  — at Step 12, AFTER explicit Gate 3
+  approval.
+- The pre-push hook blocks --no-verify
+  — never bypass it; if it fails, fix
+  the cause.
+- Stage only files declared in the
+  agents' Files Changed manifests.</pre>
+  </div>
+  <div class="foot"><span>How · orchestrator</span><span>14</span></div>
+</section>
+
+<!-- 15 SCRIPTS: SELECTION -->
+<section class="slide" data-title="agent-selection.sh">
+  <div class="kicker">How · bash, not hype · 1 of 3</div>
+  <h2><code>agent-selection.sh</code> — who gets called</h2>
+  <div class="grid2">
+<pre>$ bash .claude/utils/agent-selection.sh gh-123
+{
+  "ticketType": "feature",
+  "confidence": 0.82,
+  "risk":  { "level": "HIGH", "score": 45 },
+  "blast": { "d1": 7, "d2": 31 },
+  "agents": {
+    "parallel":   ["security-engineer",
+                   "performance-engineer",
+                   "tenancy-reviewer"],
+    "sequential": ["qa-engineer","pr-reviewer"],
+    "post":       ["rollback-engineer"]
+  },
+  "gates": { "gate1":"human", "gate2":"human",
+             "gate3":"human",
+             "excludedBy":["hasMigration"] },
+  "delivery": { "baseBranch": "live" }
+}</pre>
+    <div>
+      <ul class="dash">
+        <li><b>One command, one JSON object.</b> The orchestrator just reads fields.</li>
+        <li>Signals come from the <b>real file list</b> and the blast radius, with text as a fallback.</li>
+        <li>Same ticket → same team, every time.</li>
+      </ul>
+      <p class="small" style="margin-top:18px">Why a script: the old version was bash mixed into the prompt. Counters vanished in a subshell, and a security ticket was filed as “documentation”.</p>
+    </div>
+  </div>
+  <div class="foot"><span>How · selection</span><span>15</span></div>
+</section>
+
+<!-- 16 SCRIPTS: STATE -->
+<section class="slide" data-title="pipeline-state.sh">
+  <div class="kicker">How · bash, not hype · 2 of 3</div>
+  <h2><code>pipeline-state.sh</code> — resumable, with ceilings</h2>
+  <div class="grid2">
+<pre>pipeline-state.sh init       gh-123
+pipeline-state.sh set-phase  gh-123 plan done
+pipeline-state.sh record-dispatch \
+        gh-123 qa-engineer 212 true
+pipeline-state.sh <b>guardrail</b>  gh-123
+  <span class="c"># exit 1 when a ceiling is hit:</span>
+  <span class="c">#   maxTicketTokens  400000</span>
+  <span class="c">#   maxAgentRuns         14</span>
+  <span class="c">#   maxFixRetries         2</span>
+pipeline-state.sh <b>resume</b>     gh-123
+  <span class="c"># → next phase + what to do</span></pre>
+    <div>
+      <ul class="dash">
+        <li>The run state lives <b>on disk</b>, not in the model's memory.</li>
+        <li>Check the guardrail <b>before every dispatch</b>. Tripped → stop and show a human.</li>
+        <li>Tokens are recorded <b>only when measured</b>. No estimates.</li>
+        <li>Resume never redoes a finished phase.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>How · state</span><span>16</span></div>
+</section>
+
+<!-- 17 SCRIPTS: VERIFY / DOD -->
+<section class="slide" data-title="verify.sh and dod-check.sh">
+  <div class="kicker">How · bash, not hype · 3 of 3</div>
+  <h2>Don't trust “PASS”. Check the exit code.</h2>
+  <div class="grid2">
+<pre><span class="c"># Step 8.2 — anti-hallucination gate</span>
+CLAIMED=$(grep -i 'Linter|Syntax' \
+   04-implementation.md)       <span class="c"># what it says</span>
+bash ci-toolkit/scripts/ci/verify.sh gh-123
+VERIFY_RC=$?                    <span class="c"># what it is</span>
+
+<span class="c"># rc 1 → re-dispatch with the real errors</span>
+<span class="c">#        (max 2), then stop and ask</span>
+
+<span class="c"># Gate 3 — Definition of Done as a script</span>
+PEST_FULL=1 bash dod-check.sh gh-123
+<span class="c"># 0 = artifacts exist, tests reference</span>
+<span class="c">#     tests/, review says PASS,</span>
+<span class="c">#     lint + types + full suite pass</span></pre>
+    <div>
+      <ul class="dash">
+        <li><code>verify.sh</code> re-runs pint, phpstan, syntax and Pest on the <b>changed files</b>.</li>
+        <li>An agent that claims success and fails here either erred or lied. Both get the real errors back.</li>
+        <li><code>dod-check.sh</code> makes “done” a number: 0 or 1.</li>
+        <li><b>Missing tool = skip with a warning.</b> Only real violations fail.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>How · verify &amp; DoD</span><span>17</span></div>
+</section>
+
+<!-- 18 AUTONOMY DIAL -->
+<section class="slide" data-title="The autonomy dial">
+  <div class="kicker">How much to trust it</div>
+  <h2>The autonomy dial</h2>
+  <div class="dial">
+    <div class="lv def"><b>0</b><span><b>Every gate human.</b><br>The default. Start here.</span></div>
+    <div class="lv"><b>1</b><span>Gates 1–2 auto for low-risk tickets. <b>Gate 3 stays human.</b></span></div>
+    <div class="lv"><b>2</b><span>Gate 3 auto too: commit, push and PR without asking — if eligible.</span></div>
+    <div class="lv"><b>3</b><span>Factory mode: a driver claims queued tickets.</span></div>
+  </div>
+  <hr class="rule">
+  <div class="grid2" style="grid-template-columns:1fr 1fr;gap:36px">
+    <div><p><b>“Eligible” means all of:</b></p>
+      <ul class="dash" style="columns:2;column-gap:28px"><li>risk LOW or MEDIUM</li><li>bugfix, refactor or docs</li><li>confidence ≥ 0.55</li><li>no exclusion signal</li></ul></div>
+<pre>"autonomy": {
+  "level": 0,
+  "autoGateMaxRisk": "MEDIUM",
+  "autoGateTypes": ["bugfix","refactor",
+                    "documentation"],
+  "minConfidence": 0.55
+}   <span class="c"># env AUTONOMY_LEVEL overrides</span></pre>
+  </div>
+  <div class="foot"><span>Autonomy</span><span>18</span></div>
+</section>
+
+<!-- 19 GUARDRAILS -->
+<section class="slide" data-title="Guardrails">
+  <div class="kicker">The parts that never go automatic</div>
+  <h2>Guardrails: some doors stay locked</h2>
+  <div class="grid2">
+    <div>
+      <p><span class="stamp">Always human</span></p>
+      <ul class="dash" style="margin-top:18px">
+        <li><b>Payments</b> — Stripe, QuickBooks, anything with money</li>
+        <li><b>Migrations</b> — schema changes are hard to undo</li>
+        <li><b>Auth &amp; security</b> — roles, tokens, passwords</li>
+        <li><b>Tenancy</b> — one customer's data, another's screen</li>
+      </ul>
+      <p class="small" style="margin-top:16px">At any autonomy level, these four force a human Gate 3. So does an issue with instruction-like text in it (<code>## Suspicious Content</code>) — then every gate is human.</p>
+    </div>
+    <div>
+      <table>
+        <tr><th>Risk signal</th><th>Points</th></tr>
+        <tr><td>Security-sensitive</td><td>+20</td></tr>
+        <tr><td>Migration</td><td>+20</td></tr>
+        <tr><td>Hotfix</td><td>+20</td></tr>
+        <tr><td>Blast radius d1 ≥ 10 / d2 ≥ 50</td><td>+20 each</td></tr>
+        <tr><td>Any code change</td><td>+10</td></tr>
+      </table>
+      <p class="small" style="margin-top:12px">0–19 LOW · 20–39 MEDIUM · 40–59 HIGH · 60+ CRITICAL</p>
+    </div>
+  </div>
+  <div class="foot"><span>Guardrails</span><span>19</span></div>
+</section>
+
+<!-- 20 WHY HUMAN IN THE LOOP -->
+<section class="slide" data-title="Why human in the loop">
+  <div class="kicker">Why the human stays</div>
+  <h2>Why a human stays in the loop</h2>
+  <div class="grid3">
+    <div class="box"><h3>Accountability</h3><p>Someone signs the PR. An agent can't be on call at 3 a.m.</p></div>
+    <div class="box"><h3>Irreversibility</h3><p>A bad migration or a wrong charge can't be reverted with <code>git revert</code>.</p></div>
+    <div class="box"><h3>Confident errors</h3><p>Models are most sure when they're wrong. A human spots “that's not what we meant”.</p></div>
+    <div class="box"><h3>Intent</h3><p>The ticket says what. Only people know <i>why</i> — and when to say no.</p></div>
+    <div class="box"><h3>Trust is earned</h3><p>Start at level 0. Raise the dial only on ticket types with a clean record.</p></div>
+    <div class="box"><h3>Cheap review</h3><p>The human reads a <b>diff + verdicts + DoD box</b> — 2 minutes, not a transcript.</p></div>
+  </div>
+  <div class="foot"><span>Human in the loop</span><span>20</span></div>
+</section>
+
+<!-- 21 GATES -->
+<section class="slide" data-title="The three gates">
+  <div class="kicker">Where the human looks</div>
+  <h2>Three gates, and what replaces you at each</h2>
+  <div class="grid3">
+    <div class="box"><h3>Gate 1 · Spec</h3><p>Do the acceptance criteria match the issue?</p><p class="small">Auto path: the CTO agent <b>red-teams</b> the spec — untraced criteria, missing ones, untestable ones.</p></div>
+    <div class="box"><h3>Gate 2 · Plan</h3><p>Is the plan safe for the blast radius?</p><p class="small">Auto path: <b>pr-reviewer</b> red-teams the plan — the CTO wrote the ADR, so it doesn't grade it.</p></div>
+    <div class="box"><h3>Gate 3 · Ship</h3><p>Commit, push, PR?</p><p class="small">Auto only at level 2 <b>and</b> DoD = 0 <b>and</b> review is fresh <b>and</b> no undeclared files <b>and</b> no exclusion.</p></div>
+  </div>
+<pre style="margin-top:24px">──── GATE 3: Ready to Commit + PR ────
+Type / Target:  bugfix → PR base `live`     Autonomy: level 0 → gate3=human
+Diff vs live:   6 files changed, 212 insertions(+), 14 deletions(-)
+Review: PASS (fingerprint 3fa9c1e2b7d0 = current tree)   Tests: PASS (changed + full suite)
+Manifest: 7 files declared, 0 undeclared                Structural: 7420 → 7455 ✓
+Approve commit + push + PR to `live`? [yes | no + feedback]</pre>
+  <div class="foot"><span>Gates</span><span>21</span></div>
+</section>
+
+<!-- 22 COST -->
+<section class="slide" data-title="Cost control">
+  <div class="kicker">Cost control</div>
+  <h2>The right model for each job</h2>
+  <div class="grid2" style="grid-template-columns:1.2fr 1fr">
+    <table>
+      <tr><th>Model</th><th>Agents</th><th>Why</th></tr>
+      <tr><td><b>Opus</b></td><td>cto · staff-engineer · sr-backend · pr-reviewer</td><td>Design, precise plans, production code, deep review</td></tr>
+      <tr><td><b>Sonnet</b></td><td>security · performance · tenancy · deptrac · stripe-qbo · openai · rollback · sentrux · auto-fixer</td><td>Focused analysis, balanced speed</td></tr>
+      <tr><td><b>Haiku</b></td><td>business-analyst · product-manager · qa · docs · postman</td><td>Fetching, templates, pattern work</td></tr>
+    </table>
+    <div>
+      <ul class="dash">
+        <li><b>4 of 18</b> agents use the big model. The rest don't need it.</li>
+        <li><b>Compressed artifacts</b> in, not whole transcripts.</li>
+        <li><code>discovery.json</code> stops every agent re-reading the repo.</li>
+        <li>Specialists run <b>only when the diff needs them</b>.</li>
+        <li>Hard ceilings: tokens, runs, retries.</li>
+        <li>pr-reviewer runs <b>once</b> per ticket (it used to run twice).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Cost</span><span>22</span></div>
+</section>
+
+<!-- 23 FAILURE MODES -->
+<section class="slide" data-title="What broke">
+  <div class="kicker">Honest bit</div>
+  <h2>What broke, and what fixed it</h2>
+  <table>
+    <tr><th>What happened</th><th>The fix</th></tr>
+    <tr><td>An agent wrote “Linter: PASS”. It wasn't.</td><td><code>verify.sh</code> re-runs the checks and gates on the exit code</td></tr>
+    <tr><td>Token and run counters lived in the chat and vanished on a crash</td><td><code>pipeline-state.sh</code>: state on disk, resume from the next phase</td></tr>
+    <tr><td>Bash pasted into the prompt: counters lost in a <code>while read</code> subshell; didn't parse on macOS bash 3.2</td><td>One executable script, one JSON answer</td></tr>
+    <tr><td>A security ticket was classified as “documentation” (empty file list)</td><td>Selection falls back to text signals when <code>discovery.json</code> is empty</td></tr>
+    <tr><td>Push failed on phpstan baseline drift from the base branch</td><td>Classify drift vs real errors; fix drift once, never <code>--no-verify</code></td></tr>
+    <tr><td>Agents made their own branches and commits</td><td>Policy: working tree only; one commit after Gate 3</td></tr>
+  </table>
+  <div class="foot"><span>Failure modes</span><span>23</span></div>
+</section>
+
+<!-- 24 SCORECARD -->
+<section class="slide" data-title="Scorecard">
+  <div class="kicker">Rating the real files · .claude/agents + skills/rto</div>
+  <h2>Scorecard: before and after the fixes</h2>
+  <div class="grid2" style="grid-template-columns:1.6fr 1fr;gap:40px">
+    <table style="font-size:20px;align-self:start">
+      <tr><th>Area</th><th style="width:118px">Before → After</th><th>What changed</th></tr>
+      <tr><td><b>Orchestration</b></td><td>9 → 9.5</td><td>pr-reviewer runs once, after the final verify</td></tr>
+      <tr><td><b>Rules in bash</b></td><td>8.5 → 9</td><td>Manifest and review fingerprint are script checks. Sentrux is still grepped from text</td></tr>
+      <tr><td><b>Agent files</b></td><td>8 → 8.5</td><td>One <code>### Verdict:</code> heading; writers end with <code>FILE:</code> lines</td></tr>
+      <tr><td><b>Safety</b></td><td>8 → 8.5</td><td>Planted instructions in an issue force human gates; no web search when gates are automatic</td></tr>
+      <tr><td><b>Cost</b></td><td>7.5 → 8</td><td>One fewer Opus run per ticket</td></tr>
+      <tr><td><b>Least privilege</b></td><td>7 → 8</td><td>Every agent with Edit must declare its files; lint blocks Edit on reviewers</td></tr>
+      <tr><td><b>Consistency</b></td><td>5.5 → 8.5</td><td>Copied model table gone; <code>agent-lint.sh</code> runs before every ticket</td></tr>
+    </table>
+    <div style="display:flex;flex-direction:column;align-items:flex-start">
+      <div style="font-family:var(--type);font-size:44px;line-height:1;color:var(--ink-3)"><s>7.5</s> →</div>
+      <div style="font-family:var(--type);font-size:150px;line-height:.9">8.5<span style="font-size:60px">/10</span></div>
+      <p style="margin-top:10px"><span class="stamp">Fixed in code · next: one real ticket</span></p>
+      <ul class="dash" style="margin-top:18px">
+        <li style="font-size:23px">18 agents · 1 orchestrator · 1 lint</li>
+        <li style="font-size:23px">4 Opus · 9 Sonnet · 5 Haiku</li>
+        <li style="font-size:23px">14 phases · 3 gates · 4 locked doors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Scorecard</span><span>24</span></div>
+</section>
+
+<!-- 25 RUN-ORDER BUGS, FIXED -->
+<section class="slide" data-title="Run-order bugs, fixed">
+  <div class="kicker">Rating · what could actually go wrong</div>
+  <h2>Four run-order bugs — fixed in <code>SKILL.md</code></h2>
+  <table style="font-size:21px">
+    <tr><th style="width:40%">What was wrong</th><th>The fix</th></tr>
+    <tr><td><b>Reviewed diff ≠ shipped diff.</b> pr-reviewer ran, then the full-suite verify could trigger more fixes that nobody reviewed.</td><td>pr-reviewer now runs <b>after</b> the full-suite verify. A fingerprint records the code it saw; if the code changes later, verify + review run again (Steps 9 and 11).</td></tr>
+    <tr><td><b>The commit could miss files.</b> Only <code>04-implementation.md</code> + <code>tests/</code> were staged, so performance and docs edits were left behind.</td><td>Every agent with Edit ends its artifact with <code>FILE:</code> lines. Gate 3 compares them with <code>git status</code>: any undeclared file stops the run. Step 12 stages only declared files.</td></tr>
+    <tr><td><b>pr-reviewer ran twice</b> — in the sequential phase and again at Step 9.</td><td>Sequential phase is qa-engineer only. pr-reviewer runs once at Step 9; post-review agents moved to Step 9.5.</td></tr>
+    <tr><td><b>Gate 2 graded its own work.</b> The CTO checked a plan built on its own ADR.</td><td>pr-reviewer red-teams the plan. The CTO still checks the spec, which it didn't write.</td></tr>
+  </table>
+  <div class="foot"><span>Rating · run order</span><span>25</span></div>
+</section>
+
+<!-- 26 NEW CHECKS -->
+<section class="slide" data-title="Two new checks before Gate 3">
+  <div class="kicker">Rating · more bash than hype</div>
+  <h2>Two new checks before Gate 3</h2>
+  <div class="grid2" style="gap:28px;flex:none">
+<pre class="tight" style="font-size:15.5px"><span class="c"># 1. was the shipped code reviewed?</span>
+review_fp() {   <span class="c"># artifacts excluded, new files included</span>
+  { git diff "$BASE_BRANCH" -- . ':(exclude).claude/artifacts'
+    git ls-files --others --exclude-standard -z \
+      -- . ':(exclude).claude/artifacts' | xargs -0 shasum
+  } | shasum | cut -c1-12
+}
+review_fp &gt; $ART/.review-fp       <span class="c"># Step 9</span>
+
+<span class="c"># Step 11</span>
+[ "$(review_fp)" != "$(cat $ART/.review-fp)" ] &amp;&amp;
+  echo "code changed after review → verify + review"</pre>
+<pre class="tight" style="font-size:15.5px"><span class="c"># 2. is every changed file accounted for?</span>
+DECLARED=$(grep -hE '^FILE: ' $ART/*.md \
+           | cut -c7- | sort -u)
+ACTUAL=$(git status --porcelain --untracked-files=all \
+         -- . ':(exclude).claude/artifacts' \
+         | cut -c4- | sed 's/.* -&gt; //' | sort -u)
+UNDECLARED=$(comm -13 &lt;(echo "$DECLARED") &lt;(echo "$ACTUAL"))
+STAGE_LIST=$(comm -12 &lt;(echo "$DECLARED") &lt;(echo "$ACTUAL"))
+
+<span class="c"># undeclared → no auto path, shown above Gate 3</span>
+<span class="c"># Step 12 stages STAGE_LIST only, one path at a time</span></pre>
+  </div>
+<pre class="tight" style="margin-top:18px"><span class="c"># tested in a scratch repo</span>
+fp: artifact write does not invalidate ✓     fp: code change invalidates ✓
+undeclared: app/Stray.php      staged: app/A.php  routes/api.php (deleted)  tests/ATest.php</pre>
+  <div class="foot"><span>Rating · new checks</span><span>26</span></div>
+</section>
+
+<!-- 27 DRIFT, FIXED -->
+<section class="slide" data-title="Drift, fixed">
+  <div class="kicker">Rating · the files disagreed with each other</div>
+  <h2>Drift — fixed in the agent files</h2>
+  <table style="font-size:20px">
+    <tr><th style="width:44%">Found</th><th>Fixed</th></tr>
+    <tr><td><b>maxTurns</b> differed for 4 agents (tenancy 12 vs 18, stripe-qbo 12 vs 16, deptrac 12 vs 16, openai 12 vs 15)</td><td>The SKILL table is gone. Frontmatter is the only copy; lint fails if a table comes back</td></tr>
+    <tr><td><b>Model IDs in 19 places</b></td><td>18 now — one per agent file, nowhere else</td></tr>
+    <tr><td><b>Four verdict styles</b>; 5 of 10 reviewers had no verdict line</td><td>Every reviewer: <code>### Verdict: PASS / FAIL / WARN</code>. pr-reviewer keeps <code>Result:</code> until <code>dod-check.sh</code> reads Verdict</td></tr>
+    <tr><td><b>sr-backend contradicted itself</b> (“git commit” in tools, “commit logical units”)</td><td>Read-only git; “do NOT commit”</td></tr>
+    <tr><td><b>documentation-engineer</b> never ran</td><td>Step 8.3 adds it when routes, config or controllers change, or the issue has a <code>doc</code> label</td></tr>
+    <tr><td><b>rollback-engineer</b> used old <code>RE-{ID}</code> keys</td><td><code>backup/gh-123-&lt;time&gt;</code></td></tr>
+    <tr><td><b>Issue text</b> reached agents that have Bash</td><td>BA lists instruction-like text under <code>## Suspicious Content</code> → all gates human. Web search only at level 0</td></tr>
+  </table>
+  <div class="foot"><span>Rating · drift</span><span>27</span></div>
+</section>
+
+<!-- 28 AGENT LINT -->
+<section class="slide" data-title="Lint the org chart">
+  <div class="kicker">Rating · keep it fixed</div>
+  <h2>Agents are code. Code gets a linter.</h2>
+  <div class="grid2" style="grid-template-columns:1.4fr 1fr;gap:28px">
+<pre class="tight" style="font-size:15.5px;line-height:1.6"><span class="c"># .claude/skills/rto/agent-lint.sh — rto pre-flight step 10</span>
+for f in "$AGENTS"/*.md; do
+  n=$(basename "$f" .md); fm=$(awk '/^---$/{c++;next} c==1' "$f")
+  for k in name model description tools maxTurns; do
+    grep -q "^$k:" &lt;&lt;&lt;"$fm" || err "$n: frontmatter missing '$k'"; done
+  case $n in *-reviewer|security-engineer|qa-engineer|…)
+    grep -q '^### Verdict: ' "$f" || err "$n: no '### Verdict:' line";; esac
+  case $n in *-reviewer|security-engineer|sentrux-quality-gate)
+    grep -qw Edit &lt;&lt;&lt;"$tools" &amp;&amp; err "$n: reviewer has the Edit tool";; esac
+  grep -qw Edit &lt;&lt;&lt;"$tools" &amp;&amp; ! grep -q 'Files Changed' "$f" &amp;&amp;
+    err "$n: has Edit but no Files Changed manifest"
+done
+for a in $(grep -oE 'Agent\([a-z-]+\)' "$SKILL" | …); do
+  [ -f "$AGENTS/$a.md" ] || err "SKILL dispatches '$a' — no such file"
+done
+grep -qE '^\| *[a-z-]+ *\| *`claude-' "$SKILL" &amp;&amp;
+  err "SKILL repeats a model table — frontmatter is the source of truth"</pre>
+<pre class="tight" style="font-size:18px;line-height:1.55"><span class="c"># 5 problems planted in a copy</span>
+✗ documentation-engineer: has Edit
+  but no '## Files Changed' manifest
+✗ pr-reviewer: no '### Verdict:' line
+✗ tenancy-reviewer: reviewer has Edit
+✗ SKILL dispatches 'ghost-agent'
+  — no such file
+✗ SKILL repeats a model/maxTurns table
+<b>exit=1</b>
+
+<span class="c"># the real files, after the fixes</span>
+✓ agent-lint: 18 agents clean
+<b>exit=0</b></pre>
+  </div>
+  <div class="foot"><span>Rating · lint</span><span>28</span></div>
+</section>
+
+<!-- 29 CHANGED / OPEN -->
+<section class="slide" data-title="Changed and still open">
+  <div class="kicker">Rating · where it stands</div>
+  <h2>What changed, and what's still open</h2>
+  <div class="grid2" style="gap:36px">
+    <div class="box"><h3>Changed</h3>
+      <ul class="dash">
+        <li><code>SKILL.md</code> — review order, fingerprint, manifest staging, Gate 2 critic, docs trigger, untrusted-input rule, lint in pre-flight</li>
+        <li>9 agent files — verdict lines, <code>FILE:</code> manifests, sr-backend and rollback cleanup, BA input rule</li>
+        <li><code>agent-lint.sh</code> — new</li>
+      </ul></div>
+    <div class="box"><h3>Still open</h3>
+      <ul class="dash">
+        <li><code>dod-check.sh</code>: read <code>### Verdict:</code>, then drop <code>Result:</code></li>
+        <li>Move the docs rule into <code>agent-selection.sh</code></li>
+        <li>Sentrux: parse JSON, not text</li>
+        <li>Add <code>agent-lint.sh</code> to CI</li>
+      </ul></div>
+  </div>
+  <div class="box" style="margin-top:22px"><h3>Before trusting any of it</h3>
+    <p>Run one ticket at level 0 and read every artifact. Check that the manifest lists match the real diff and that the fingerprint matches at Gate 3.</p></div>
+  <div class="foot"><span>Rating · status</span><span>29</span></div>
+</section>
+
+<!-- 29 COPY THIS -->
+<section class="slide" data-title="Copy this setup">
+  <div class="kicker">Take it home</div>
+  <h2>Copy this setup in an afternoon</h2>
+  <div class="grid2">
+<pre><span class="c"># 1. bring the folder</span>
+cp -R agents/.claude      your-repo/
+cp -R agents/ci-toolkit   your-repo/
+
+<span class="c"># 2. make the rules yours</span>
+$EDITOR .claude/config/agent-selection-config.json
+  <span class="c">#  baseBranch, risk weights, exclusions</span>
+
+<span class="c"># 3. check the agents agree with the skill</span>
+bash .claude/skills/rto/agent-lint.sh
+
+<span class="c"># 4. start fully supervised</span>
+export AUTONOMY_LEVEL=0
+
+<span class="c"># 5. run one ticket, read every artifact</span>
+/rto gh-123
+
+<span class="c"># 6. interrupted? pick up where it stopped</span>
+/rto gh-123 --resume</pre>
+    <div>
+      <ul class="ticks">
+        <li>Rewrite the agents' stack sections for <b>your</b> language and tools.</li>
+        <li>Keep <code>verify.sh</code> honest: your linter, your tests.</li>
+        <li>Add a specialist only when a review keeps missing the same thing.</li>
+        <li>Raise the dial one ticket type at a time.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Copy it</span><span>24</span></div>
+</section>
+
+<!-- 25 SUMMARY -->
+<section class="slide" data-title="Summary">
+  <div class="kicker">The whole talk on one page</div>
+  <h2>Six answers</h2>
+  <table>
+    <tr><td style="width:150px"><b>What</b></td><td>Issue in, reviewed PR out — 18 markdown agents, one orchestrator, a few scripts.</td></tr>
+    <tr><td><b>Why</b></td><td>Repeatable steps, honest checks, lower cost, and a diff a human can review in minutes.</td></tr>
+    <tr><td><b>Who</b></td><td>One job per agent; specialists only when the diff needs them; you at the gates.</td></tr>
+    <tr><td><b>Where</b></td><td>In the repo: <code>.claude/</code> and <code>ci-toolkit/</code>. Versioned like code.</td></tr>
+    <tr><td><b>When</b></td><td><code>/rto gh-123</code> on demand; <code>--resume</code> after any interruption.</td></tr>
+    <tr><td><b>How</b></td><td>Phases → artifacts → scripts decide → gates; the dial sets how often a human is asked.</td></tr>
+    <tr><td><b>Score</b></td><td>7.5 → 8.5 / 10 after the fixes — run order fixed, drift removed, and a lint so it stays fixed.</td></tr>
+  </table>
+  <div class="foot"><span>Summary</span><span>25</span></div>
+</section>
+
+<!-- 26 CLOSE -->
+<section class="slide title" data-title="Thank you">
+  <div class="orn">✦ &nbsp; Questions &nbsp; ✦</div>
+  <h1 style="font-size:96px">More bash<br><em>than hype.</em></h1>
+  <div class="double"></div>
+  <p class="sub">The agents do the work. The scripts keep them honest.<br>The human keeps the keys.</p>
+  <div class="meta">THANK YOU</div>
+</section>
+
+</main></div>
+
+<div id="bar" aria-hidden="true"></div>
+<div id="hud">
+  <span class="hint">← → to move · F full screen</span>
+  <button id="prev" aria-label="Previous slide">‹</button>
+  <span id="count">1 / 1</span>
+  <button id="next" aria-label="Next slide">›</button>
+  <button id="full" aria-label="Full screen">⛶ Full screen</button>
+</div>
+
+<script>
+(function(){
+  const deck=document.getElementById('deck'), slides=[...deck.querySelectorAll('.slide')];
+  const count=document.getElementById('count'), bar=document.getElementById('bar');
+  let i=0;
+  // number every slide footer from its position, so inserting a slide never breaks the count
+  slides.forEach((s,k)=>{ const n=s.querySelector('.foot span:last-child'); if(n) n.textContent=String(k+1).padStart(2,'0'); });
+  const root=document.documentElement, fullBtn=document.getElementById('full');
+  const isFull=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+  function fit(){ const s=Math.min(innerWidth/1600, innerHeight/900)*(isFull()?1:0.97); deck.style.transform='translate(-50%,-50%) scale('+s+')'; }
+  function toggleFull(){
+    if(isFull()) (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    else (root.requestFullscreen||root.webkitRequestFullscreen).call(root);
+  }
+  function onFullChange(){ root.classList.toggle('is-full',isFull()); fullBtn.textContent=isFull()?'Exit full screen':'⛶ Full screen'; fit(); }
+  document.addEventListener('fullscreenchange',onFullChange);
+  document.addEventListener('webkitfullscreenchange',onFullChange);
+  fullBtn.onclick=toggleFull;
+  deck.addEventListener('dblclick',toggleFull);
+  let hideT; addEventListener('mousemove',()=>{ root.classList.add('show-hud'); clearTimeout(hideT); hideT=setTimeout(()=>root.classList.remove('show-hud'),1800); });
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    count.textContent=(i+1)+' / '+slides.length;
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    document.title='Ticket to PR — '+(slides[i].dataset.title||'');
+    if(location.hash!=='#'+(i+1)) history.replaceState(null,'','#'+(i+1));
+  }
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(i+1);}
+    else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(i-1);}
+    else if(e.key==='Home') go(0); else if(e.key==='End') go(slides.length-1);
+    else if(e.key==='f'||e.key==='F') toggleFull();  });
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.getElementById('next').onclick=()=>go(i+1);
+  let x0=null; addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{ if(x0===null) return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>40) go(i+(dx<0?1:-1)); x0=null; });
+  addEventListener('resize',fit); fit();
+  go(Math.max(0,(parseInt(location.hash.slice(1),10)||1)-1));
+})();
+</script>
+</body>
+</html>
